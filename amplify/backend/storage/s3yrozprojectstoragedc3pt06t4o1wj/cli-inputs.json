@@ -1,0 +1,12 @@
+{
+  "resourceName": "s3yrozprojectstoragedc3pt06t4o1wj",
+  "bucketName": "yroz-project-storage-dc3pt06t4o1wj",
+  "policyUUID": "ce41defb",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-yrozproject-staging-155919-authRole",
+      "UnauthRoleArn": "arn:aws:iam::210566832033:role/amplify-yrozproject-staging-155919-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::210566832033:role/amplify-yrozproject-staging-155919-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-yrozproject-staging-155919-deployment",
+      "UnauthRoleName": "amplify-yrozproject-staging-155919-unauthRole",
+      "StackName": "amplify-yrozproject-staging-155919",
+      "StackId": "arn:aws:cloudformation:us-east-1:210566832033:stack/amplify-yrozproject-staging-155919/f6a35a00-5dbf-11ec-ba2c-0ae4c6fb675b",
+      "AmplifyAppId": "dc3pt06t4o1wj"
+    },
+    "categories": {
+      "auth": {
+        "yrozproject": {}
+      }
+    }
+  }
+}
