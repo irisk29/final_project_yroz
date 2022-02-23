@@ -30,9 +30,9 @@ class Place2 {
 class Place {
   final Geometry geometry;
   final String name;
-  final String vicinity;
+  final String? vicinity;
 
-  Place({required this.geometry, required this.name, required this.vicinity});
+  Place({required this.geometry, required this.name, this.vicinity});
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(

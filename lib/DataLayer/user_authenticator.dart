@@ -24,7 +24,7 @@ class UserAuthenticator {
         if (element.userAttributeKey == "picture") picture = element.value;
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
-      UserModel currUser =
+      UserModel? currUser =
           await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
       return currUser;

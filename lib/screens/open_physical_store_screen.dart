@@ -1,5 +1,6 @@
 import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/stores.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +55,6 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
             'name': _editedStore!.name,
             'phoneNumber': _editedStore!.phoneNumber,
             'address': _editedStore!.address,
-            'imageUrl': _editedStore!.image
           };
           _imageUrlController.text = _editedStore!.image.toString();
         }
@@ -98,11 +98,11 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   }
 
   Future<void> _saveForm() async {
-    _form.currentState.save();
+    _form.currentState!.save();
     setState(() {
       _isLoading = true;
     });
-    if (_editedStore.id != null) {
+    if (_editedStore!.id != null) {
       await Provider.of<Stores>(context, listen: false)
           .updatePhysicalStore(_editedStore.id, _editedStore);
     } else {

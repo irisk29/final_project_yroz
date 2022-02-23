@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:final_project_yroz/LogicModels/geometry.dart';
+import 'package:final_project_yroz/LogicModels/location.dart';
 import 'package:final_project_yroz/LogicModels/place.dart';
 import 'package:final_project_yroz/LogicModels/place_search.dart';
 import 'package:flutter/foundation.dart';
@@ -16,14 +18,13 @@ class ApplicationBloc with ChangeNotifier {
 
   //Variables
   Position? currentLocation;
-  List<PlaceSearch> searchResults;
-  StreamController<Place> selectedLocation =
-      StreamController<Place>.broadcast();
-  StreamController<LatLngBounds> bounds =
-      StreamController<LatLngBounds>.broadcast();
-  Place selectedLocationStatic;
-  String placeType;
-  List<Place> placeResults;
+  List<PlaceSearch>? searchResults;
+  StreamController<Place?> selectedLocation =
+      StreamController<Place?>.broadcast();
+  StreamController<LatLngBounds?> bounds =
+      StreamController<LatLngBounds?>.broadcast();
+  Place? selectedLocationStatic;
+  String? placeType;
   List<Marker> markers = <Marker>[];
 
   ApplicationBloc() {
@@ -33,10 +34,10 @@ class ApplicationBloc with ChangeNotifier {
   setCurrentLocation() async {
     currentLocation = await geoLocatorService.getCurrentLocation();
     selectedLocationStatic = Place(
-      name: null,
+      name: "null",
       geometry: Geometry(
         location: Location(
-            lat: currentLocation.latitude, lng: currentLocation.longitude),
+            lat: currentLocation!.latitude, lng: currentLocation!.longitude),
       ),
     );
     notifyListeners();
@@ -72,9 +73,9 @@ class ApplicationBloc with ChangeNotifier {
 
     if (placeType != null) {
       var places = await placesService.getPlaces(
-          selectedLocationStatic.geometry.location.lat,
-          selectedLocationStatic.geometry.location.lng,
-          placeType);
+          selectedLocationStatic!.geometry.location.lat,
+          selectedLocationStatic!.geometry.location.lng,
+          placeType!);
       markers = [];
       if (places.length > 0) {
         var newMarker = markerService.createMarkerFromPlace(places[0], false);
@@ -82,7 +83,7 @@ class ApplicationBloc with ChangeNotifier {
       }
 
       var locationMarker =
-          markerService.createMarkerFromPlace(selectedLocationStatic, true);
+          markerService.createMarkerFromPlace(selectedLocationStatic!, true);
       markers.add(locationMarker);
 
       var _bounds = markerService.bounds(Set<Marker>.of(markers));
