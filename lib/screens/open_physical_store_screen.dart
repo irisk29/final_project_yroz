@@ -1,13 +1,7 @@
-import 'dart:io';
+import 'package:final_project_yroz/providers/physical_store.dart';
+import 'package:final_project_yroz/providers/stores.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:project_demo/LogicLayer/Categories.dart';
-import 'package:project_demo/providers/physical_store.dart';
-import 'package:project_demo/providers/stores.dart';
-import 'package:project_demo/screens/tabs_screen.dart';
-import 'package:project_demo/widgets/image_input.dart';
-import '../screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
 
 class OpenPhysicalStoreScreen extends StatefulWidget {
@@ -24,14 +18,15 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  XFile _pickedImage;
-  var _editedStore = PhysicalStore(
+  XFile? _pickedImage;
+  PhysicalStore? _editedStore = PhysicalStore(
+      id: "",
       name: "",
       phoneNumber: "",
       address: "",
       categories: ["Sport"],
       operationHours: {},
-      qrCode: null,
+      qrCode: "",
       image: null);
   var _initValues = {
     'name': '',
@@ -50,17 +45,19 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final storeId = ModalRoute.of(context).settings.arguments as String;
+      final storeId = ModalRoute.of(context)!.settings.arguments as String?;
       if (storeId != null) {
         _editedStore = Provider.of<Stores>(context, listen: false)
             .findPhysicalStoreById(storeId);
-        _initValues = {
-          'name': _editedStore.name,
-          'phoneNumber': _editedStore.phoneNumber,
-          'address': _editedStore.address,
-          'imageUrl': _editedStore.image
-        };
-        _imageUrlController.text = _editedStore.image.toString();
+        if (_editedStore != null) {
+          _initValues = {
+            'name': _editedStore!.name,
+            'phoneNumber': _editedStore!.phoneNumber,
+            'address': _editedStore!.address,
+            'imageUrl': _editedStore!.image
+          };
+          _imageUrlController.text = _editedStore!.image.toString();
+        }
       }
     }
     _isInit = false;

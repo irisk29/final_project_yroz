@@ -1,26 +1,19 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:project_demo/DTOs/PhysicalStoreDTO.dart';
-import 'package:project_demo/DataLayer/user_authenticator.dart';
-import 'package:project_demo/models/UserModel.dart';
+import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/StroreDTO.dart';
+import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
+import 'package:final_project_yroz/models/StoreOwnerModel.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:project_demo/DTOs/ProductDTO.dart';
-import 'package:project_demo/DTOs/StroreDTO.dart';
-import 'package:project_demo/DataLayer/UsersStorageProxy.dart';
-import 'package:project_demo/Result/Failure.dart';
-import 'package:project_demo/Result/OK.dart';
-import 'package:project_demo/Result/ResultInterface.dart';
-import 'package:project_demo/models/OnlineStoreModel.dart';
 import 'dart:convert';
-import 'package:amplify_flutter/amplify.dart';
-import 'package:project_demo/models/PhysicalStoreModel.dart';
-import 'package:project_demo/models/ProductModel.dart';
-import 'package:project_demo/models/StoreOwnerModel.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+
+import 'UsersStorageProxy.dart';
 
 class StoreStorageProxy {
   static final StoreStorageProxy _singleton = StoreStorageProxy._internal();
@@ -32,7 +25,7 @@ class StoreStorageProxy {
   StoreStorageProxy._internal();
 
   Future<ResultInterface> openOnlineStore(StoreDTO store) async {
-    OnlineStoreModel onlineStoreModel = OnlineStoreModel(
+    var onlineStoreModel = OnlineStoreModel(
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
@@ -205,14 +198,12 @@ class StoreStorageProxy {
     try {
       List<PhysicalStoreModel> physicalStores =
           await Amplify.DataStore.query(PhysicalStoreModel.classType);
-      if (physicalStores.isEmpty) return null;
-
       return convertPhysicalStoreModelToDTO(
           physicalStores); //only one physical store per user
     } on Exception catch (e) {
       // TODO: write to log
+      throw e;
     }
-    return null;
   }
 
   Future<String> getDownloadUrl(String keyName) async {
@@ -294,4 +285,11 @@ class StoreStorageProxy {
       return new Failure(e.toString(), null);
     }
   }
+
+  OnlineStoreModel(
+      {String name,
+      String phoneNumber,
+      String address,
+      String categories,
+      String operationHours}) {}
 }

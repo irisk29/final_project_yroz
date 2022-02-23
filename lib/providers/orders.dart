@@ -12,10 +12,10 @@ class OrderItem {
   final DateTime dateTime;
 
   OrderItem({
-    @required this.id,
-    @required this.amount,
-    @required this.products,
-    @required this.dateTime,
+    required this.id,
+    required this.amount,
+    required this.products,
+    required this.dateTime,
   });
 }
 
@@ -31,13 +31,11 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = Uri.https('flutter4-390b1-default-rtdb.firebaseio.com', '/orders/$userId.json?auth=$authToken');
+    final url = Uri.https('flutter4-390b1-default-rtdb.firebaseio.com',
+        '/orders/$userId.json?auth=$authToken');
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
-    if (extractedData == null) {
-      return;
-    }
     extractedData.forEach((orderId, orderData) {
       loadedOrders.add(
         OrderItem(
@@ -47,11 +45,11 @@ class Orders with ChangeNotifier {
           products: (orderData['products'] as List<dynamic>)
               .map(
                 (item) => CartItem(
-                      id: item['id'],
-                      price: item['price'],
-                      quantity: item['quantity'],
-                      title: item['title'],
-                    ),
+                  id: item['id'],
+                  price: item['price'],
+                  quantity: item['quantity'],
+                  title: item['title'],
+                ),
               )
               .toList(),
         ),
@@ -62,7 +60,8 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    final url = Uri.https('flutter4-390b1-default-rtdb.firebaseio.com', '/orders/$userId.json?auth=$authToken');
+    final url = Uri.https('flutter4-390b1-default-rtdb.firebaseio.com',
+        '/orders/$userId.json?auth=$authToken');
     final timestamp = DateTime.now();
     final response = await http.post(
       url,

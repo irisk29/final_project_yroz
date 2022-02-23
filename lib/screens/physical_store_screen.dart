@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import '../screens/edit_product_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/app_drawer.dart';
-import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
 import '../providers/cart.dart';
 import './cart_screen.dart';
-import '../providers/products.dart';
 
 class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
 
   String title = "";
   String address = "";
-  MemoryImage image = null;
+  MemoryImage? image = null;
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
@@ -42,7 +38,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
     final routeArgs =
-        ModalRoute.of(context).settings.arguments as Map<String, Object>;
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
     if (routeArgs != null) {
       widget.title = routeArgs['title'] as String;
       widget.address = routeArgs['address'] as String;
@@ -61,7 +57,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
         actions: [
           Consumer<Cart>(
             builder: (_, cart, ch) => Badge(
-              child: ch,
+              child: ch!,
               value: cart.itemCount.toString(),
             ),
             child: IconButton(
@@ -84,7 +80,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 height: 150,
                 decoration: BoxDecoration(
                   image: new DecorationImage(
-                      fit: BoxFit.cover, image: widget.image),
+                      fit: BoxFit.cover, image: widget.image!),
                 ),
               ),
             ),

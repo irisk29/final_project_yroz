@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project_demo/screens/open_online_store_screen.dart';
-
-import '../dummy_data.dart';
-import '../widgets/category_item.dart';
 import '../screens/open_physical_store_screen.dart';
+import 'open_online_store_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = '/settings';
@@ -13,7 +10,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsScreen> {
-  bool _storeOwner;
+  late bool _storeOwner;
 
   @override
   void initState() {

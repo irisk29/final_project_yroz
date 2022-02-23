@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:project_demo/LogicLayer/User.dart';
-import 'package:project_demo/screens/map_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/splash_screen.dart';
 import '../widgets/app_drawer.dart';
 
 import '../screens/categories_screen.dart';
+import 'map_screen.dart';
 
 class TabsScreen extends StatefulWidget {
   static const routeName = '/tabs-screen';
@@ -17,7 +16,7 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  List<Map<String, Object>> _pages;
+  late List<Map<String, Object>> _pages;
   int _selectedPageIndex = 0;
 
   @override
@@ -53,7 +52,9 @@ class _TabsScreenState extends State<TabsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_pages[_selectedPageIndex]['title'],),
+        title: Text(
+          _pages[_selectedPageIndex]['title'] as String,
+        ),
         actions: [
           IconButton(
             icon: Icon(
@@ -66,7 +67,7 @@ class _TabsScreenState extends State<TabsScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: _pages[_selectedPageIndex]['page'],
+      body: _pages[_selectedPageIndex]['page'] as Widget,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         onTap: _selectPage,

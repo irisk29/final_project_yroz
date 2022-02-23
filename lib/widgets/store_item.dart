@@ -1,13 +1,8 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:http/http.dart' as http;
+import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'package:project_demo/screens/physical_store_screen.dart';
-import '../screens/category_screen.dart';
 
 class StoreItem extends StatelessWidget {
-  final MemoryImage image;
+  final MemoryImage? image;
   final String title;
   final String address;
 
@@ -33,7 +28,9 @@ class StoreItem extends StatelessWidget {
             child: Container(
           decoration: BoxDecoration(
             color: Colors.black,
-            image: DecorationImage(image: this.image, fit: BoxFit.cover),
+            image: this.image != null
+                ? DecorationImage(image: this.image!, fit: BoxFit.cover)
+                : null,
             borderRadius: BorderRadius.circular(15),
           ),
         )),

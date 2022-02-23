@@ -1,6 +1,6 @@
 import 'package:amplify_flutter/amplify.dart';
-import 'package:project_demo/DataLayer/user_authenticator.dart';
-import 'package:project_demo/models/ModelProvider.dart';
+import 'package:final_project_yroz/models/DigitalWalletModel.dart';
+import 'package:final_project_yroz/models/UserModel.dart';
 
 class UsersStorageProxy {
   static final UsersStorageProxy _singleton = UsersStorageProxy._internal();

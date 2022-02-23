@@ -1,12 +1,10 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
-import 'package:project_demo/LogicLayer/User.dart';
 import 'package:provider/src/provider.dart';
 import '../screens/tabs_screen.dart';
 import '../screens/auth_screen.dart';
-import 'package:amplify_flutter/amplify.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-
-import 'splash_screen.dart';
 
 class LandingScreen extends StatelessWidget {
   static const routeName = '/landing';

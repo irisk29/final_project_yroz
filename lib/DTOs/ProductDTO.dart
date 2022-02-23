@@ -1,4 +1,4 @@
-import 'package:project_demo/LogicLayer/Categories.dart';
+import 'package:final_project_yroz/LogicLayer/Categories.dart';
 
 class ProductDTO {
   String name;

@@ -19,189 +19,275 @@
 
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
-import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
+
 
 /** This is an auto generated class representing the PhysicalStoreModel type in your schema. */
 @immutable
 class PhysicalStoreModel extends Model {
   static const classType = const _PhysicalStoreModelModelType();
   final String id;
-  final String name;
-  final String phoneNumber;
-  final String address;
-  final String operationHours;
-  final String categories;
-  final String qrCode;
+  final String? _name;
+  final String? _phoneNumber;
+  final String? _address;
+  final String? _operationHours;
+  final String? _categories;
+  final String? _qrCode;
+  final TemporalDateTime? _createdAt;
+  final TemporalDateTime? _updatedAt;
 
   @override
   getInstanceType() => classType;
-
+  
   @override
   String getId() {
     return id;
   }
-
-  const PhysicalStoreModel._internal(
-      {@required this.id,
-      this.name,
-      this.phoneNumber,
-      this.address,
-      this.operationHours,
-      this.categories,
-      this.qrCode});
-
-  factory PhysicalStoreModel(
-      {String id,
-      String name,
-      String phoneNumber,
-      String address,
-      String operationHours,
-      String categories,
-      String qrCode}) {
-    return PhysicalStoreModel._internal(
-        id: id == null ? UUID.getUUID() : id,
-        name: name,
-        phoneNumber: phoneNumber,
-        address: address,
-        operationHours: operationHours,
-        categories: categories,
-        qrCode: qrCode);
+  
+  String get name {
+    try {
+      return _name!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
-
+  
+  String get phoneNumber {
+    try {
+      return _phoneNumber!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  String get address {
+    try {
+      return _address!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  String get operationHours {
+    try {
+      return _operationHours!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  String get categories {
+    try {
+      return _categories!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  String get qrCode {
+    try {
+      return _qrCode!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  TemporalDateTime? get createdAt {
+    return _createdAt;
+  }
+  
+  TemporalDateTime? get updatedAt {
+    return _updatedAt;
+  }
+  
+  const PhysicalStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, required qrCode, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _qrCode = qrCode, _createdAt = createdAt, _updatedAt = updatedAt;
+  
+  factory PhysicalStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, required String qrCode}) {
+    return PhysicalStoreModel._internal(
+      id: id == null ? UUID.getUUID() : id,
+      name: name,
+      phoneNumber: phoneNumber,
+      address: address,
+      operationHours: operationHours,
+      categories: categories,
+      qrCode: qrCode);
+  }
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is PhysicalStoreModel &&
-        id == other.id &&
-        name == other.name &&
-        phoneNumber == other.phoneNumber &&
-        address == other.address &&
-        operationHours == other.operationHours &&
-        categories == other.categories &&
-        qrCode == other.qrCode;
+      id == other.id &&
+      _name == other._name &&
+      _phoneNumber == other._phoneNumber &&
+      _address == other._address &&
+      _operationHours == other._operationHours &&
+      _categories == other._categories &&
+      _qrCode == other._qrCode;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("PhysicalStoreModel {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("name=" + "$name" + ", ");
-    buffer.write("phoneNumber=" + "$phoneNumber" + ", ");
-    buffer.write("address=" + "$address" + ", ");
-    buffer.write("operationHours=" + "$operationHours" + ", ");
-    buffer.write("categories=" + "$categories" + ", ");
-    buffer.write("qrCode=" + "$qrCode");
+    buffer.write("name=" + "$_name" + ", ");
+    buffer.write("phoneNumber=" + "$_phoneNumber" + ", ");
+    buffer.write("address=" + "$_address" + ", ");
+    buffer.write("operationHours=" + "$_operationHours" + ", ");
+    buffer.write("categories=" + "$_categories" + ", ");
+    buffer.write("qrCode=" + "$_qrCode" + ", ");
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  PhysicalStoreModel copyWith(
-      {String id,
-      String name,
-      String phoneNumber,
-      String address,
-      String operationHours,
-      String categories,
-      String qrCode}) {
-    return PhysicalStoreModel(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        phoneNumber: phoneNumber ?? this.phoneNumber,
-        address: address ?? this.address,
-        operationHours: operationHours ?? this.operationHours,
-        categories: categories ?? this.categories,
-        qrCode: qrCode ?? this.qrCode);
+  
+  PhysicalStoreModel copyWith({String? id, String? name, String? phoneNumber, String? address, String? operationHours, String? categories, String? qrCode}) {
+    return PhysicalStoreModel._internal(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      address: address ?? this.address,
+      operationHours: operationHours ?? this.operationHours,
+      categories: categories ?? this.categories,
+      qrCode: qrCode ?? this.qrCode);
   }
-
-  PhysicalStoreModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        phoneNumber = json['phoneNumber'],
-        address = json['address'],
-        operationHours = json['operationHours'],
-        categories = json['categories'],
-        qrCode = json['qrCode'];
-
+  
+  PhysicalStoreModel.fromJson(Map<String, dynamic> json)  
+    : id = json['id'],
+      _name = json['name'],
+      _phoneNumber = json['phoneNumber'],
+      _address = json['address'],
+      _operationHours = json['operationHours'],
+      _categories = json['categories'],
+      _qrCode = json['qrCode'],
+      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+  
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'phoneNumber': phoneNumber,
-        'address': address,
-        'operationHours': operationHours,
-        'categories': categories,
-        'qrCode': qrCode
-      };
+    'id': id, 'name': _name, 'phoneNumber': _phoneNumber, 'address': _address, 'operationHours': _operationHours, 'categories': _categories, 'qrCode': _qrCode, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+  };
 
   static final QueryField ID = QueryField(fieldName: "physicalStoreModel.id");
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField PHONENUMBER = QueryField(fieldName: "phoneNumber");
   static final QueryField ADDRESS = QueryField(fieldName: "address");
-  static final QueryField OPERATIONHOURS =
-      QueryField(fieldName: "operationHours");
+  static final QueryField OPERATIONHOURS = QueryField(fieldName: "operationHours");
   static final QueryField CATEGORIES = QueryField(fieldName: "categories");
   static final QueryField QRCODE = QueryField(fieldName: "qrCode");
-  static var schema =
-      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "PhysicalStoreModel";
     modelSchemaDefinition.pluralName = "PhysicalStoreModels";
-
+    
     modelSchemaDefinition.authRules = [
-      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
-        ModelOperation.CREATE,
-        ModelOperation.UPDATE,
-        ModelOperation.DELETE,
-        ModelOperation.READ
-      ])
+      AuthRule(
+        authStrategy: AuthStrategy.PUBLIC,
+        operations: [
+          ModelOperation.CREATE,
+          ModelOperation.UPDATE,
+          ModelOperation.DELETE,
+          ModelOperation.READ
+        ])
     ];
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PhysicalStoreModel.NAME,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: PhysicalStoreModel.NAME,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PhysicalStoreModel.PHONENUMBER,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: PhysicalStoreModel.PHONENUMBER,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PhysicalStoreModel.ADDRESS,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: PhysicalStoreModel.ADDRESS,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PhysicalStoreModel.OPERATIONHOURS,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: PhysicalStoreModel.OPERATIONHOURS,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PhysicalStoreModel.CATEGORIES,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: PhysicalStoreModel.CATEGORIES,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PhysicalStoreModel.QRCODE,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+      key: PhysicalStoreModel.QRCODE,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
   });
 }
 
 class _PhysicalStoreModelModelType extends ModelType<PhysicalStoreModel> {
   const _PhysicalStoreModelModelType();
-
+  
   @override
   PhysicalStoreModel fromJson(Map<String, dynamic> jsonData) {
     return PhysicalStoreModel.fromJson(jsonData);
