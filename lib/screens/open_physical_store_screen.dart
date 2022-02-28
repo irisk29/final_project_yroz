@@ -2,12 +2,30 @@ import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/stores.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
+import 'package:final_project_yroz/widgets/multi_select.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../dummy_data.dart';
+
 class OpenPhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/open-physical-store';
+  static List<String> _selectedItems = [];
+  static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _sunday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _monday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _tuesday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _tuesday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _wednesday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _wednesday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _thursday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _thursday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _friday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _friday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _saturday_close = TimeOfDay(hour: 7, minute: 15);
 
   @override
   _OpenPhysicalStoreScreenState createState() =>
@@ -26,8 +44,14 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
       name: "",
       phoneNumber: "",
       address: "",
-      categories: ["Sport"],
-      operationHours: {},
+      categories: OpenPhysicalStoreScreen._selectedItems,
+      operationHours: {'sunday': [OpenPhysicalStoreScreen._sunday_open, OpenPhysicalStoreScreen._sunday_close],
+        'monday': [OpenPhysicalStoreScreen._monday_open, OpenPhysicalStoreScreen._monday_close],
+        'tuesday': [OpenPhysicalStoreScreen._tuesday_open, OpenPhysicalStoreScreen._tuesday_close],
+        'wednesday': [OpenPhysicalStoreScreen._wednesday_open, OpenPhysicalStoreScreen._wednesday_close],
+        'thursday': [OpenPhysicalStoreScreen._thursday_open, OpenPhysicalStoreScreen._thursday_close],
+        'friday': [OpenPhysicalStoreScreen._friday_open, OpenPhysicalStoreScreen._friday_close],
+        'saturday': [OpenPhysicalStoreScreen._saturday_open, OpenPhysicalStoreScreen._saturday_close]},
       qrCode: "",
       image: null);
   var _initValues = {
@@ -134,6 +158,47 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
     Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
   }
 
+  void _showMultiSelect() async {
+    // a list of selectable items
+    // these items can be hard-coded or dynamically fetched from a database/API
+    final List<String> _items = DUMMY_CATEGORIES.map((e) => e.title).toList();
+
+    final List<String> results = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelect(items: _items);
+      },
+    );
+
+    // Update UI
+    if (results != null) {
+      setState(() {
+        OpenPhysicalStoreScreen._selectedItems = results;
+        _editedStore = PhysicalStore(
+            name: _editedStore!.name,
+            phoneNumber: _editedStore!.phoneNumber,
+            address: _editedStore!.address,
+            categories: results,
+            operationHours: _editedStore!.operationHours,
+            qrCode: _editedStore!.qrCode,
+            image: _editedStore!.image, id: '');
+      });
+    }
+  }
+
+  void _selectTime(String time) async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _editedStore!.operationHours[time.substring(0,time.indexOf('['))]![int.parse(time.substring(time.indexOf('[')+1, time.indexOf(']')))],
+      initialEntryMode: TimePickerEntryMode.input,
+    );
+    if (newTime != null) {
+      setState(() {
+        _editedStore!.operationHours[time.substring(0,time.indexOf('['))]![int.parse(time.substring(time.indexOf('[')+1,time.indexOf(']')))] = newTime;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -234,6 +299,109 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image, id: '');
                       },
+                    ),
+                    ElevatedButton(
+                      child: const Text('Select Categories'),
+                      onPressed: _showMultiSelect,
+                    ),
+                    Wrap(
+                      children: OpenPhysicalStoreScreen._selectedItems
+                          .map((e) => Chip(
+                        label: Text(e),
+                      ))
+                          .toList(),
+                    ),
+                    Text('Opening hours:'),
+                    Row(children: [
+                      Text('Sunday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('sunday[0]');},
+                        child: Text(_editedStore!.operationHours['sunday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('sunday[1]');},
+                        child: Text(_editedStore!.operationHours['sunday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Monday'),
+                      ElevatedButton(
+                        onPressed: () => _selectTime('monday[0]'),
+                        child: Text(_editedStore!.operationHours['monday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: () => _selectTime('monday[1]'),
+                        child: Text(_editedStore!.operationHours['monday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Tuesday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('tuesday[0]');},
+                        child: Text(_editedStore!.operationHours['tuesday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('tuesday[1]');},
+                        child: Text(_editedStore!.operationHours['tuesday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Wednesday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('wednesday[0]');},
+                        child: Text(_editedStore!.operationHours['wednesday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('wednesday[1]');},
+                        child: Text(_editedStore!.operationHours['wednesday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Thursday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('thursday[1]');},
+                        child: Text(_editedStore!.operationHours['thursday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('thursday[1]');},
+                        child: Text(_editedStore!.operationHours['thursday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Friday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('friday[0]');},
+                        child: Text(_editedStore!.operationHours['friday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('friday[1]');},
+                        child: Text(_editedStore!.operationHours['friday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Saturday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('saturday[0]');},
+                        child: Text(_editedStore!.operationHours['saturday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('saturday[1]');},
+                        child: Text(_editedStore!.operationHours['saturday']![1].format(context)),
+                      ),
+                    ],
                     ),
                     _pickedImage == null
                         ? Row(

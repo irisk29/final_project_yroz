@@ -4,6 +4,7 @@ import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
+import 'package:flutter/material.dart';
 
 class StoreOwnerState {
   String _storeOwnerID;
@@ -24,7 +25,7 @@ class StoreOwnerState {
         phoneNumber: onlineStoreModel.phoneNumber,
         address: onlineStoreModel.address,
         categories: List<String>.from(categories),
-        operationHours: Map<int, DateTime>.from(operationHours));
+        operationHours: Map<String, List<TimeOfDay>>.from(operationHours));
   }
 
   void setPhysicalStore(PhysicalStoreModel physicalStoreModel) {
@@ -36,7 +37,7 @@ class StoreOwnerState {
       phoneNumber: physicalStoreModel.phoneNumber,
       address: physicalStoreModel.address,
       categories: List<String>.from(categories),
-      operationHours: Map<int, DateTime>.from(operationHours),
+      operationHours: Map<String, List<TimeOfDay>>.from(operationHours),
       qrCode: physicalStoreModel.qrCode,
     );
   }

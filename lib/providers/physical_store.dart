@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class PhysicalStore with ChangeNotifier {
   String id;
@@ -6,7 +7,7 @@ class PhysicalStore with ChangeNotifier {
   String phoneNumber;
   String address;
   List<String> categories;
-  Map<int, DateTime> operationHours;
+  Map<String, List<TimeOfDay>> operationHours;
   String qrCode;
   String? image;
 
