@@ -113,13 +113,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedProduct.id != null) {
+    if (_editedProduct!.id != null) {
       await Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
+          .updateProduct(_editedProduct!.id, _editedProduct!);
     } else {
       try {
         await Provider.of<Products>(context, listen: false)
-            .addProduct(_editedProduct);
+            .addProduct(_editedProduct!);
       } catch (error) {
         await showDialog(
           context: context,
@@ -176,19 +176,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                            title: value,
-                            price: _editedProduct.price,
-                            description: _editedProduct.description,
-                            imageUrl: _editedProduct.imageUrl,
-                            id: _editedProduct.id,
-                            isFavorite: _editedProduct.isFavorite);
+                            title: value!,
+                            price: _editedProduct!.price,
+                            description: _editedProduct!.description,
+                            imageUrl: _editedProduct!.imageUrl,
+                            id: _editedProduct!.id,
+                            isFavorite: _editedProduct!.isFavorite, category: '');
                       },
                     ),
                     TextFormField(
@@ -202,7 +202,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             .requestFocus(_descriptionFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter a price.';
                         }
                         if (double.tryParse(value) == null) {
@@ -215,12 +215,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                            title: _editedProduct.title,
-                            price: double.parse(value),
-                            description: _editedProduct.description,
-                            imageUrl: _editedProduct.imageUrl,
-                            id: _editedProduct.id,
-                            isFavorite: _editedProduct.isFavorite);
+                            title: _editedProduct!.title,
+                            price: double.parse(value!),
+                            description: _editedProduct!.description,
+                            imageUrl: _editedProduct!.imageUrl,
+                            id: _editedProduct!.id,
+                            isFavorite: _editedProduct!.isFavorite, category: '');
                       },
                     ),
                     TextFormField(
@@ -230,7 +230,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       keyboardType: TextInputType.multiline,
                       focusNode: _descriptionFocusNode,
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter a description.';
                         }
                         if (value.length < 10) {
@@ -240,12 +240,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                          title: _editedProduct.title,
-                          price: _editedProduct.price,
-                          description: value,
-                          imageUrl: _editedProduct.imageUrl,
-                          id: _editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite,
+                          title: _editedProduct!.title,
+                          price: _editedProduct!.price,
+                          description: value!,
+                          imageUrl: _editedProduct!.imageUrl,
+                          id: _editedProduct!.id,
+                          isFavorite: _editedProduct!.isFavorite, category: '',
                         );
                       },
                     ),
@@ -285,7 +285,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               _saveForm();
                             },
                             validator: (value) {
-                              if (value.isEmpty) {
+                              if (value!.isEmpty) {
                                 return 'Please enter an image URL.';
                               }
                               if (!value.startsWith('http') &&
@@ -301,12 +301,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             },
                             onSaved: (value) {
                               _editedProduct = Product(
-                                title: _editedProduct.title,
-                                price: _editedProduct.price,
-                                description: _editedProduct.description,
-                                imageUrl: value,
-                                id: _editedProduct.id,
-                                isFavorite: _editedProduct.isFavorite,
+                                title: _editedProduct!.title,
+                                price: _editedProduct!.price,
+                                description: _editedProduct!.description,
+                                imageUrl: value!,
+                                id: _editedProduct!.id,
+                                isFavorite: _editedProduct!.isFavorite, category: '',
                               );
                             },
                           ),

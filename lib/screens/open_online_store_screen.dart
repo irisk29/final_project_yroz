@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import '../screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
@@ -20,13 +21,13 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  File _pickedImage;
+  late File _pickedImage;
   var _editedProduct = Product(
-    id: null,
+    id: '',
     title: '',
     price: 0,
     description: '',
-    imageUrl: '',
+    imageUrl: '', category: '',
   );
   var _initValues = {
     'title': '',
@@ -46,10 +47,10 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context).settings.arguments as String;
+      final productId = ModalRoute.of(context)!.settings.arguments as String;
       if (productId != null) {
         _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+            Provider.of<Products>(context, listen: false).findById(productId)!;
         _initValues = {
           'name': _editedProduct.title,
           'description': _editedProduct.description,
@@ -93,16 +94,16 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
   }
 
   void _unselectImage() {
-    _pickedImage = null;
+    _pickedImage = null as File;
     setState(() {});
   }
 
   Future<void> _saveForm() async {
-    final isValid = _form.currentState.validate();
+    final isValid = _form.currentState!.validate();
     if (!isValid) {
       return;
     }
-    _form.currentState.save();
+    _form.currentState!.save();
     setState(() {
       _isLoading = true;
     });
@@ -169,19 +170,19 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                         FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                            title: value,
+                            title: value!,
                             price: _editedProduct.price,
                             description: _editedProduct.description,
                             imageUrl: _editedProduct.imageUrl,
                             id: _editedProduct.id,
-                            isFavorite: _editedProduct.isFavorite);
+                            isFavorite: _editedProduct.isFavorite, category: '');
                       },
                     ),
                     TextFormField(
@@ -195,7 +196,7 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             .requestFocus(_descriptionFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter an address.';
                         }
                         return null;
@@ -203,11 +204,11 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                       onSaved: (value) {
                         _editedProduct = Product(
                             title: _editedProduct.title,
-                            price: double.parse(value),
+                            price: double.parse(value!),
                             description: _editedProduct.description,
                             imageUrl: _editedProduct.imageUrl,
                             id: _editedProduct.id,
-                            isFavorite: _editedProduct.isFavorite);
+                            isFavorite: _editedProduct.isFavorite, category: '');
                       },
                     ),
                     TextFormField(
@@ -217,7 +218,7 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                       keyboardType: TextInputType.multiline,
                       focusNode: _descriptionFocusNode,
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter a description.';
                         }
                         if (value.length < 10) {
@@ -229,10 +230,10 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                         _editedProduct = Product(
                           title: _editedProduct.title,
                           price: _editedProduct.price,
-                          description: value,
+                          description: value!,
                           imageUrl: _editedProduct.imageUrl,
                           id: _editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite,
+                          isFavorite: _editedProduct.isFavorite, category: '',
                         );
                       },
                     ),
@@ -274,7 +275,7 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                                     _saveForm();
                                   },
                                   validator: (value) {
-                                    if (value.isEmpty) {
+                                    if (value!.isEmpty) {
                                       return 'Please enter an image URL.';
                                     }
                                     if (!value.startsWith('http') &&
@@ -293,9 +294,9 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                                       title: _editedProduct.title,
                                       price: _editedProduct.price,
                                       description: _editedProduct.description,
-                                      imageUrl: value,
+                                      imageUrl: value!,
                                       id: _editedProduct.id,
-                                      isFavorite: _editedProduct.isFavorite,
+                                      isFavorite: _editedProduct.isFavorite, category: '',
                                     );
                                   },
                                 ),

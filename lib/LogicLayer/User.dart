@@ -14,8 +14,8 @@ import 'ShoppingBag.dart';
 import 'StoreOwnerState.dart';
 
 class User extends ChangeNotifier {
-  String email;
-  String name;
+  String? email;
+  String? name;
   List<OnlineStore> favoriteStores;
   List<String> creditCards;
   String? imageUrl;
@@ -31,6 +31,12 @@ class User extends ChangeNotifier {
         creditCards = <String>[],
         bagInStores = <ShoppingBag>[],
         digitalWallet = new DigitalWallet(0) {}
+
+  User.withNull(): favoriteStores = <OnlineStore>[],
+        creditCards = <String>[],
+        bagInStores = <ShoppingBag>[],
+        digitalWallet = new DigitalWallet(0){}
+
   void userFromModel(UserModel model) {
     this.email = model.email;
     this.name = model.name;

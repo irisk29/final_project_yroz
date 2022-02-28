@@ -57,7 +57,7 @@ class _MapScreenState extends State<MapScreen> {
 
     applicationBloc.bounds.stream.listen((bounds) async {
       final GoogleMapController controller = await _mapController.future;
-      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds!, 50));
     });
     super.initState();
   }
@@ -166,7 +166,7 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
                         if (applicationBloc.searchResults != null &&
-                            applicationBloc.searchResults.length != 0)
+                            applicationBloc.searchResults!.length != 0)
                           Container(
                               height: 300.0,
                               width: double.infinity,
@@ -177,18 +177,18 @@ class _MapScreenState extends State<MapScreen> {
                           Container(
                             height: 300.0,
                             child: ListView.builder(
-                                itemCount: applicationBloc.searchResults.length,
+                                itemCount: applicationBloc.searchResults!.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
                                     title: Text(
                                       applicationBloc
-                                          .searchResults[index].description,
+                                          .searchResults![index].description,
                                       style: TextStyle(color: Colors.white),
                                     ),
                                     onTap: () {
                                       applicationBloc.setSelectedLocation(
                                           applicationBloc
-                                              .searchResults[index].placeId);
+                                              .searchResults![index].placeId);
                                     },
                                   );
                                 }),

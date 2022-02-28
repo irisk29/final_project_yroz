@@ -1,6 +1,7 @@
 import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/stores.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
+import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -104,11 +105,11 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
     });
     if (_editedStore!.id != null) {
       await Provider.of<Stores>(context, listen: false)
-          .updatePhysicalStore(_editedStore.id, _editedStore);
+          .updatePhysicalStore(_editedStore!.id, _editedStore!);
     } else {
       try {
         await Provider.of<Stores>(context, listen: false)
-            .addPhysicalStore(_editedStore);
+            .addPhysicalStore(_editedStore!);
       } catch (error) {
         await showDialog(
           context: context,
@@ -165,7 +166,7 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                         FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
                         if (value.length < 8) {
@@ -175,13 +176,13 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                       },
                       onSaved: (value) {
                         _editedStore = PhysicalStore(
-                            name: value,
-                            phoneNumber: _editedStore.phoneNumber,
-                            address: _editedStore.address,
-                            categories: _editedStore.categories,
-                            operationHours: _editedStore.operationHours,
-                            qrCode: _editedStore.qrCode,
-                            image: _editedStore.image);
+                            name: value!,
+                            phoneNumber: _editedStore!.phoneNumber,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            qrCode: _editedStore!.qrCode,
+                            image: _editedStore!.image, id: '');
                       },
                     ),
                     TextFormField(
@@ -195,20 +196,20 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                             .requestFocus(_descriptionFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter a phone Number.';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _editedStore = PhysicalStore(
-                            name: _editedStore.name,
-                            phoneNumber: value,
-                            address: _editedStore.address,
-                            categories: _editedStore.categories,
-                            operationHours: _editedStore.operationHours,
-                            qrCode: _editedStore.qrCode,
-                            image: _editedStore.image);
+                            name: _editedStore!.name,
+                            phoneNumber: value!,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            qrCode: _editedStore!.qrCode,
+                            image: _editedStore!.image, id: '');
                       },
                     ),
                     TextFormField(
@@ -218,20 +219,20 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                       keyboardType: TextInputType.multiline,
                       focusNode: _descriptionFocusNode,
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter an address.';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _editedStore = PhysicalStore(
-                            name: _editedStore.name,
-                            phoneNumber: _editedStore.phoneNumber,
-                            address: value,
-                            categories: _editedStore.categories,
-                            operationHours: _editedStore.operationHours,
-                            qrCode: _editedStore.qrCode,
-                            image: _editedStore.image);
+                            name: _editedStore!.name,
+                            phoneNumber: _editedStore!.phoneNumber,
+                            address: value!,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            qrCode: _editedStore!.qrCode,
+                            image: _editedStore!.image, id: '');
                       },
                     ),
                     _pickedImage == null
@@ -272,7 +273,7 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                                     _saveForm();
                                   },
                                   validator: (value) {
-                                    if (value.isEmpty) {
+                                    if (value!.isEmpty) {
                                       return 'Please enter an image URL.';
                                     }
                                     if (!value.startsWith('http') &&
@@ -288,14 +289,14 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                                   },
                                   onSaved: (value) {
                                     _editedStore = PhysicalStore(
-                                        name: _editedStore.name,
-                                        phoneNumber: _editedStore.phoneNumber,
-                                        address: _editedStore.address,
-                                        categories: _editedStore.categories,
+                                        name: _editedStore!.name,
+                                        phoneNumber: _editedStore!.phoneNumber,
+                                        address: _editedStore!.address,
+                                        categories: _editedStore!.categories,
                                         operationHours:
-                                            _editedStore.operationHours,
-                                        qrCode: _editedStore.qrCode,
-                                        image: value);
+                                            _editedStore!.operationHours,
+                                        qrCode: _editedStore!.qrCode,
+                                        image: value, id: '');
                                   },
                                 ),
                               ),

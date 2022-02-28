@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project_demo/models/store.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
@@ -31,11 +30,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   var _editedProduct = Product(
-    id: null,
+    id: '',
     title: '',
     price: 0,
     description: '',
-    imageUrl: '',
+    imageUrl: '', category: '',
   );
   var _initValues = {
     'title': '',
@@ -55,10 +54,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context).settings.arguments as String;
+      final productId = ModalRoute.of(context)!.settings.arguments as String;
       if (productId != null) {
         _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+            Provider.of<Products>(context, listen: false).findById(productId)!;
         _initValues = {
           'name': _editedProduct.title,
           'description': _editedProduct.description,
@@ -97,11 +96,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   }
 
   Future<void> _saveForm() async {
-    final isValid = _form.currentState.validate();
+    final isValid = _form.currentState!.validate();
     if (!isValid) {
       return;
     }
-    _form.currentState.save();
+    _form.currentState!.save();
     setState(() {
       _isLoading = true;
     });
@@ -166,19 +165,19 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'Please provide a value.';
                   }
                   return null;
                 },
                 onSaved: (value) {
                   _editedProduct = Product(
-                      title: value,
+                      title: value!,
                       price: _editedProduct.price,
                       description: _editedProduct.description,
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id,
-                      isFavorite: _editedProduct.isFavorite);
+                      isFavorite: _editedProduct.isFavorite, category: '');
                 },
               ),
               TextFormField(
@@ -192,7 +191,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       .requestFocus(_descriptionFocusNode);
                 },
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'Please enter an address.';
                   }
                   return null;
@@ -200,11 +199,11 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 onSaved: (value) {
                   _editedProduct = Product(
                       title: _editedProduct.title,
-                      price: double.parse(value),
+                      price: double.parse(value!),
                       description: _editedProduct.description,
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id,
-                      isFavorite: _editedProduct.isFavorite);
+                      isFavorite: _editedProduct.isFavorite, category: '');
                 },
               ),
               TextFormField(
@@ -214,10 +213,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'Please enter a description.';
                   }
-                  if (value.length < 10) {
+                  if (value!.length < 10) {
                     return 'Should be at least 10 characters long.';
                   }
                   return null;
@@ -226,10 +225,10 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   _editedProduct = Product(
                     title: _editedProduct.title,
                     price: _editedProduct.price,
-                    description: value,
+                    description: value!,
                     imageUrl: _editedProduct.imageUrl,
                     id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
+                    isFavorite: _editedProduct.isFavorite, category: '',
                   );
                 },
               ),
@@ -269,16 +268,16 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                         _saveForm();
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter an image URL.';
                         }
-                        if (!value.startsWith('http') &&
-                            !value.startsWith('https')) {
+                        if (!value!.startsWith('http') &&
+                            !value!.startsWith('https')) {
                           return 'Please enter a valid URL.';
                         }
-                        if (!value.endsWith('.png') &&
-                            !value.endsWith('.jpg') &&
-                            !value.endsWith('.jpeg')) {
+                        if (!value!.endsWith('.png') &&
+                            !value!.endsWith('.jpg') &&
+                            !value!.endsWith('.jpeg')) {
                           return 'Please enter a valid image URL.';
                         }
                         return null;
@@ -288,9 +287,9 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                           title: _editedProduct.title,
                           price: _editedProduct.price,
                           description: _editedProduct.description,
-                          imageUrl: value,
+                          imageUrl: value!,
                           id: _editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite,
+                          isFavorite: _editedProduct.isFavorite, category: '',
                         );
                       },
                     ),

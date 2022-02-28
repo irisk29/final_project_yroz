@@ -12,6 +12,8 @@ class Products with ChangeNotifier {
 
   Products(this.authToken, this.userId, this._items);
 
+  Products.withNull(): authToken = '', userId = '', _items = [];
+
   // var _showFavoritesOnly = false;
 
   List<Product> get items {

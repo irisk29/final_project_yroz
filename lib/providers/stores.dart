@@ -13,6 +13,8 @@ class Stores with ChangeNotifier {
 
   Stores(this.user, this._onlineStores, this._physicalStores);
 
+  Stores.withNull(): user = User.withNull(){}
+
   List<OnlineStore> get onlineStores {
     // if (_showFavoritesOnly) {
     //   return _items.where((prodItem) => prodItem.isFavorite).toList();

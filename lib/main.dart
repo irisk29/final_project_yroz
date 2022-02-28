@@ -2,13 +2,16 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/providers/stores.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'LogicLayer/User.dart';
 import 'amplifyconfiguration.dart';
+import 'blocs/application_bloc.dart';
 import 'models/ModelProvider.dart';
 import 'providers/auth.dart';
 import 'providers/cart.dart';
@@ -87,26 +90,26 @@ class _MyAppState extends State<MyApp> {
           value: Auth(),
         ),
         ChangeNotifierProxyProvider<Auth, Products>(
-          create: null,
+          create: (context) => Products.withNull(),
           update: (con, val, old) =>
-              Products(val.token, val.userId, old == null ? [] : old.items),
+              Products(val.token!, val.userId!, old == null ? [] : old.items),
         ),
         ChangeNotifierProvider.value(
           value: Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
-          create: null,
+          create: (context) => Orders.withNull(),
           update: (con, val, old) =>
-              Orders(val.token, val.userId, old == null ? [] : old.orders),
+              Orders(val.token!, val.userId!, old == null ? [] : old.orders),
         ),
         ChangeNotifierProvider(
           create: (context) => ApplicationBloc(),
         ),
         ChangeNotifierProvider(
-          create: (context) => User(),
+          create: (context) => User.withNull(),
         ),
         ChangeNotifierProxyProvider<User, Stores>(
-          create: null,
+          create: (context) => Stores.withNull(),
           update: (con, val, old) => Stores(
               val,
               old == null ? [] : old.onlineStores,
