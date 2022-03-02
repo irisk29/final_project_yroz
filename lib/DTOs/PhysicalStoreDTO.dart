@@ -12,7 +12,7 @@ class PhysicalStoreDTO extends StoreDTO {
       String address,
       String phoneNumber,
       List<String> categories,
-      Map<String, List<TimeOfDay>> operationHours,
+      Map<String, List<String>> operationHours,
       String? image,
       String qrCode)
       : this.qrCode = qrCode,

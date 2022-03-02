@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 class PlacesService {
-  final key = 'AIzaSyB5WVi9hX8knkVn1bk_8oTBIxd0MzMXfvs';
+  final key = 'AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg';
 
   Future<List<PlaceSearch>> getAutocomplete(String search) async {
     var url =
@@ -24,8 +24,8 @@ class PlacesService {
     return Place.fromJson(jsonResult);
   }
 
-  Future<List<Place>> getPlaces(
-      double lat, double lng, String placeType) async {
+  Future<List<Place>> getPlaces(double lat, double lng, String placeType) async {
+    placeType = placeType.toLowerCase();
     var url =
         'https://maps.googleapis.com/maps/api/place/textsearch/json?location=$lat,$lng&type=$placeType&rankby=distance&key=$key';
     var response = await http.get(Uri.parse(url));

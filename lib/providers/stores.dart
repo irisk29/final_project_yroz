@@ -43,8 +43,9 @@ class Stores with ChangeNotifier {
 
   Future<void> addOnlineStore(OnlineStore store) async {
     try {
+      Map<String,List<String>> operationHours = store.operationHours.map((key, value) => MapEntry(key, value.map((e) => e.toString().substring(e.toString().indexOf('('))).toList()));
       StoreDTO dto = StoreDTO(store.name, store.phoneNumber, store.address,
-          store.categories, store.operationHours, "");
+          store.categories, operationHours, "");
       ResultInterface res = await user.openOnlineStore(dto);
       if (!res.getTag()) {
         print(res.getMessage());
@@ -59,8 +60,9 @@ class Stores with ChangeNotifier {
 
   Future<void> addPhysicalStore(PhysicalStore store) async {
     try {
+      Map<String,List<String>> operationHours = store.operationHours.map((key, value) => MapEntry(key, value.map((e) => e.toString().substring(e.toString().indexOf('('))).toList()));
       StoreDTO dto = StoreDTO(store.name, store.phoneNumber, store.address,
-          store.categories, store.operationHours, store.image);
+          store.categories, operationHours, store.image);
       ResultInterface res = await user.openPhysicalStore(dto);
       if (!res.getTag()) {
         print(res.getMessage());

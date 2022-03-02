@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/settings_screen.dart';
 import '../screens/splash_screen.dart';
@@ -39,7 +40,7 @@ class _TabsScreenState extends State<TabsScreen> {
         'title': 'Locations',
       },
       {
-        'page': SplashScreen(),
+        'page': WalletScreen(),
         'title': 'Wallet',
       },
     ];

@@ -50,7 +50,9 @@ dependencies:
   amplify_storage_s3: ^0.4.0
   cupertino_icons: ^1.0.4
   qr_code_scanner: ^0.5.2
-  url_launcher: ^5.0.0
+  url_launcher: ^6.0.0-nullsafety
+  address_search_field: ^4.0.1
+  location: ^4.3.0
 
 dev_dependencies:
   flutter_test:

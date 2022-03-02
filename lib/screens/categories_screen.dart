@@ -85,8 +85,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             child: GridView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.all(25),
-              children: DUMMY_STORES == null
-                  ? [SplashScreen()]
+              children: DUMMY_STORES.isEmpty
+                  ? []
                   : [
                       DUMMY_STORES
                           .map(
