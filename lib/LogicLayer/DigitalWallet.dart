@@ -1,20 +1,21 @@
-import 'package:project_demo/models/DigitalWalletModel.dart';
+import 'package:final_project_yroz/models/DigitalWalletModel.dart';
 
 class DigitalWallet {
-  double cashBaclAmount;
+  double cashBackAmount;
 
-  DigitalWallet(this.cashBaclAmount);
-  DigitalWallet.digitalWalletFromModel(DigitalWalletModel model) {
-    this.cashBaclAmount = model.cashBackAmount;
+  DigitalWallet(this.cashBackAmount);
+  DigitalWallet.digitalWalletFromModel(DigitalWalletModel model)
+      : cashBackAmount = 0 {
+    this.cashBackAmount = model.cashBackAmount;
   }
 
   void increaseAmount(double amount) {
-    this.cashBaclAmount += amount;
+    this.cashBackAmount += amount;
   }
 
   bool decreaseAmount(double amount) {
-    if (this.cashBaclAmount - amount < 0) return false;
-    this.cashBaclAmount -= amount;
+    if (this.cashBackAmount - amount < 0) return false;
+    this.cashBackAmount -= amount;
     return true;
   }
 }

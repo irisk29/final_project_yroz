@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:final_project_yroz/LogicModels/geometry.dart';
+import 'package:final_project_yroz/LogicModels/location.dart';
+import 'package:final_project_yroz/LogicModels/place.dart';
+import 'package:final_project_yroz/LogicModels/place_search.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../models/geometry.dart';
-import '../models/location.dart';
-import '../models/place.dart';
-import '../models/place_search.dart';
 import '../services/geolocator_service.dart';
 import '../services/marker_service.dart';
 import '../services/places_service.dart';
@@ -17,14 +17,15 @@ class ApplicationBloc with ChangeNotifier {
   final markerService = MarkerService();
 
   //Variables
-  Position currentLocation;
-  List<PlaceSearch> searchResults;
-  StreamController<Place> selectedLocation = StreamController<Place>.broadcast();
-  StreamController<LatLngBounds> bounds = StreamController<LatLngBounds>.broadcast();
-  Place selectedLocationStatic;
-  String placeType;
-  List<Place> placeResults;
-  List<Marker> markers = List<Marker>();
+  Position? currentLocation;
+  List<PlaceSearch>? searchResults;
+  StreamController<Place?> selectedLocation =
+      StreamController<Place?>.broadcast();
+  StreamController<LatLngBounds?> bounds =
+      StreamController<LatLngBounds?>.broadcast();
+  Place? selectedLocationStatic;
+  String? placeType;
+  List<Marker> markers = <Marker>[];
 
   ApplicationBloc() {
     setCurrentLocation();
@@ -32,9 +33,13 @@ class ApplicationBloc with ChangeNotifier {
 
   setCurrentLocation() async {
     currentLocation = await geoLocatorService.getCurrentLocation();
-    selectedLocationStatic = Place(name: null,
-      geometry: Geometry(location: Location(
-          lat: currentLocation.latitude, lng: currentLocation.longitude),),);
+    selectedLocationStatic = Place(
+      name: "null",
+      geometry: Geometry(
+        location: Location(
+            lat: currentLocation!.latitude, lng: currentLocation!.longitude),
+      ),
+    );
     notifyListeners();
   }
 
@@ -47,7 +52,7 @@ class ApplicationBloc with ChangeNotifier {
     var sLocation = await placesService.getPlace(placeId);
     selectedLocation.add(sLocation);
     selectedLocationStatic = sLocation;
-    searchResults = new List<PlaceSearch>();
+    searchResults = <PlaceSearch>[];
     notifyListeners();
   }
 
@@ -68,15 +73,17 @@ class ApplicationBloc with ChangeNotifier {
 
     if (placeType != null) {
       var places = await placesService.getPlaces(
-          selectedLocationStatic.geometry.location.lat,
-          selectedLocationStatic.geometry.location.lng, placeType);
-      markers= [];
+          selectedLocationStatic!.geometry.location.lat,
+          selectedLocationStatic!.geometry.location.lng,
+          placeType!);
+      markers = [];
       if (places.length > 0) {
-        var newMarker = markerService.createMarkerFromPlace(places[0],false);
+        var newMarker = markerService.createMarkerFromPlace(places[0], false);
         markers.add(newMarker);
       }
 
-      var locationMarker = markerService.createMarkerFromPlace(selectedLocationStatic,true);
+      var locationMarker =
+          markerService.createMarkerFromPlace(selectedLocationStatic!, true);
       markers.add(locationMarker);
 
       var _bounds = markerService.bounds(Set<Marker>.of(markers));

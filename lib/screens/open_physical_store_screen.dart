@@ -1,17 +1,31 @@
-import 'dart:io';
+import 'package:final_project_yroz/providers/physical_store.dart';
+import 'package:final_project_yroz/providers/stores.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
+import 'package:final_project_yroz/widgets/image_input.dart';
+import 'package:final_project_yroz/widgets/multi_select.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:project_demo/LogicLayer/Categories.dart';
-import 'package:project_demo/providers/physical_store.dart';
-import 'package:project_demo/providers/stores.dart';
-import 'package:project_demo/screens/tabs_screen.dart';
-import 'package:project_demo/widgets/image_input.dart';
-import '../screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
+
+import '../dummy_data.dart';
 
 class OpenPhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/open-physical-store';
+  static List<String> _selectedItems = [];
+  static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _sunday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _monday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _tuesday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _tuesday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _wednesday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _wednesday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _thursday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _thursday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _friday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _friday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _saturday_close = TimeOfDay(hour: 7, minute: 15);
 
   @override
   _OpenPhysicalStoreScreenState createState() =>
@@ -24,14 +38,21 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  XFile _pickedImage;
-  var _editedStore = PhysicalStore(
+  XFile? _pickedImage;
+  PhysicalStore? _editedStore = PhysicalStore(
+      id: "",
       name: "",
       phoneNumber: "",
       address: "",
-      categories: ["Sport"],
-      operationHours: {},
-      qrCode: null,
+      categories: OpenPhysicalStoreScreen._selectedItems,
+      operationHours: {'sunday': [OpenPhysicalStoreScreen._sunday_open, OpenPhysicalStoreScreen._sunday_close],
+        'monday': [OpenPhysicalStoreScreen._monday_open, OpenPhysicalStoreScreen._monday_close],
+        'tuesday': [OpenPhysicalStoreScreen._tuesday_open, OpenPhysicalStoreScreen._tuesday_close],
+        'wednesday': [OpenPhysicalStoreScreen._wednesday_open, OpenPhysicalStoreScreen._wednesday_close],
+        'thursday': [OpenPhysicalStoreScreen._thursday_open, OpenPhysicalStoreScreen._thursday_close],
+        'friday': [OpenPhysicalStoreScreen._friday_open, OpenPhysicalStoreScreen._friday_close],
+        'saturday': [OpenPhysicalStoreScreen._saturday_open, OpenPhysicalStoreScreen._saturday_close]},
+      qrCode: "",
       image: null);
   var _initValues = {
     'name': '',
@@ -50,17 +71,18 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final storeId = ModalRoute.of(context).settings.arguments as String;
+      final storeId = ModalRoute.of(context)!.settings.arguments as String?;
       if (storeId != null) {
         _editedStore = Provider.of<Stores>(context, listen: false)
             .findPhysicalStoreById(storeId);
-        _initValues = {
-          'name': _editedStore.name,
-          'phoneNumber': _editedStore.phoneNumber,
-          'address': _editedStore.address,
-          'imageUrl': _editedStore.image
-        };
-        _imageUrlController.text = _editedStore.image.toString();
+        if (_editedStore != null) {
+          _initValues = {
+            'name': _editedStore!.name,
+            'phoneNumber': _editedStore!.phoneNumber,
+            'address': _editedStore!.address,
+          };
+          _imageUrlController.text = _editedStore!.image.toString();
+        }
       }
     }
     _isInit = false;
@@ -101,17 +123,17 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   }
 
   Future<void> _saveForm() async {
-    _form.currentState.save();
+    _form.currentState!.save();
     setState(() {
       _isLoading = true;
     });
-    if (_editedStore.id != null) {
+    if (_editedStore!.id != null) {
       await Provider.of<Stores>(context, listen: false)
-          .updatePhysicalStore(_editedStore.id, _editedStore);
+          .updatePhysicalStore(_editedStore!.id, _editedStore!);
     } else {
       try {
         await Provider.of<Stores>(context, listen: false)
-            .addPhysicalStore(_editedStore);
+            .addPhysicalStore(_editedStore!);
       } catch (error) {
         await showDialog(
           context: context,
@@ -134,6 +156,47 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
       _isLoading = false;
     });
     Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+  }
+
+  void _showMultiSelect() async {
+    // a list of selectable items
+    // these items can be hard-coded or dynamically fetched from a database/API
+    final List<String> _items = DUMMY_CATEGORIES.map((e) => e.title).toList();
+
+    final List<String> results = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelect(items: _items);
+      },
+    );
+
+    // Update UI
+    if (results != null) {
+      setState(() {
+        OpenPhysicalStoreScreen._selectedItems = results;
+        _editedStore = PhysicalStore(
+            name: _editedStore!.name,
+            phoneNumber: _editedStore!.phoneNumber,
+            address: _editedStore!.address,
+            categories: results,
+            operationHours: _editedStore!.operationHours,
+            qrCode: _editedStore!.qrCode,
+            image: _editedStore!.image, id: '');
+      });
+    }
+  }
+
+  void _selectTime(String time) async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: _editedStore!.operationHours[time.substring(0,time.indexOf('['))]![int.parse(time.substring(time.indexOf('[')+1, time.indexOf(']')))],
+      initialEntryMode: TimePickerEntryMode.input,
+    );
+    if (newTime != null) {
+      setState(() {
+        _editedStore!.operationHours[time.substring(0,time.indexOf('['))]![int.parse(time.substring(time.indexOf('[')+1,time.indexOf(']')))] = newTime;
+      });
+    }
   }
 
   @override
@@ -168,7 +231,7 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                         FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
                         if (value.length < 8) {
@@ -178,13 +241,13 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                       },
                       onSaved: (value) {
                         _editedStore = PhysicalStore(
-                            name: value,
-                            phoneNumber: _editedStore.phoneNumber,
-                            address: _editedStore.address,
-                            categories: _editedStore.categories,
-                            operationHours: _editedStore.operationHours,
-                            qrCode: _editedStore.qrCode,
-                            image: _editedStore.image);
+                            name: value!,
+                            phoneNumber: _editedStore!.phoneNumber,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            qrCode: _editedStore!.qrCode,
+                            image: _editedStore!.image, id: '');
                       },
                     ),
                     TextFormField(
@@ -198,20 +261,20 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                             .requestFocus(_descriptionFocusNode);
                       },
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter a phone Number.';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _editedStore = PhysicalStore(
-                            name: _editedStore.name,
-                            phoneNumber: value,
-                            address: _editedStore.address,
-                            categories: _editedStore.categories,
-                            operationHours: _editedStore.operationHours,
-                            qrCode: _editedStore.qrCode,
-                            image: _editedStore.image);
+                            name: _editedStore!.name,
+                            phoneNumber: value!,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            qrCode: _editedStore!.qrCode,
+                            image: _editedStore!.image, id: '');
                       },
                     ),
                     TextFormField(
@@ -221,21 +284,124 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                       keyboardType: TextInputType.multiline,
                       focusNode: _descriptionFocusNode,
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value!.isEmpty) {
                           return 'Please enter an address.';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _editedStore = PhysicalStore(
-                            name: _editedStore.name,
-                            phoneNumber: _editedStore.phoneNumber,
-                            address: value,
-                            categories: _editedStore.categories,
-                            operationHours: _editedStore.operationHours,
-                            qrCode: _editedStore.qrCode,
-                            image: _editedStore.image);
+                            name: _editedStore!.name,
+                            phoneNumber: _editedStore!.phoneNumber,
+                            address: value!,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            qrCode: _editedStore!.qrCode,
+                            image: _editedStore!.image, id: '');
                       },
+                    ),
+                    ElevatedButton(
+                      child: const Text('Select Categories'),
+                      onPressed: _showMultiSelect,
+                    ),
+                    Wrap(
+                      children: OpenPhysicalStoreScreen._selectedItems
+                          .map((e) => Chip(
+                        label: Text(e),
+                      ))
+                          .toList(),
+                    ),
+                    Text('Opening hours:'),
+                    Row(children: [
+                      Text('Sunday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('sunday[0]');},
+                        child: Text(_editedStore!.operationHours['sunday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('sunday[1]');},
+                        child: Text(_editedStore!.operationHours['sunday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Monday'),
+                      ElevatedButton(
+                        onPressed: () => _selectTime('monday[0]'),
+                        child: Text(_editedStore!.operationHours['monday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: () => _selectTime('monday[1]'),
+                        child: Text(_editedStore!.operationHours['monday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Tuesday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('tuesday[0]');},
+                        child: Text(_editedStore!.operationHours['tuesday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('tuesday[1]');},
+                        child: Text(_editedStore!.operationHours['tuesday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Wednesday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('wednesday[0]');},
+                        child: Text(_editedStore!.operationHours['wednesday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('wednesday[1]');},
+                        child: Text(_editedStore!.operationHours['wednesday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Thursday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('thursday[1]');},
+                        child: Text(_editedStore!.operationHours['thursday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('thursday[1]');},
+                        child: Text(_editedStore!.operationHours['thursday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Friday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('friday[0]');},
+                        child: Text(_editedStore!.operationHours['friday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('friday[1]');},
+                        child: Text(_editedStore!.operationHours['friday']![1].format(context)),
+                      ),
+                    ],
+                    ),
+                    Row(children: [
+                      Text('Saturday'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('saturday[0]');},
+                        child: Text(_editedStore!.operationHours['saturday']![0].format(context)),
+                      ),
+                      Text('-'),
+                      ElevatedButton(
+                        onPressed: (){_selectTime('saturday[1]');},
+                        child: Text(_editedStore!.operationHours['saturday']![1].format(context)),
+                      ),
+                    ],
                     ),
                     _pickedImage == null
                         ? Row(
@@ -275,7 +441,7 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                                     _saveForm();
                                   },
                                   validator: (value) {
-                                    if (value.isEmpty) {
+                                    if (value!.isEmpty) {
                                       return 'Please enter an image URL.';
                                     }
                                     if (!value.startsWith('http') &&
@@ -291,14 +457,14 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                                   },
                                   onSaved: (value) {
                                     _editedStore = PhysicalStore(
-                                        name: _editedStore.name,
-                                        phoneNumber: _editedStore.phoneNumber,
-                                        address: _editedStore.address,
-                                        categories: _editedStore.categories,
+                                        name: _editedStore!.name,
+                                        phoneNumber: _editedStore!.phoneNumber,
+                                        address: _editedStore!.address,
+                                        categories: _editedStore!.categories,
                                         operationHours:
-                                            _editedStore.operationHours,
-                                        qrCode: _editedStore.qrCode,
-                                        image: value);
+                                            _editedStore!.operationHours,
+                                        qrCode: _editedStore!.qrCode,
+                                        image: value, id: '');
                                   },
                                 ),
                               ),

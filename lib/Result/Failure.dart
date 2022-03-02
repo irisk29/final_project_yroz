@@ -4,10 +4,7 @@ class Failure<T> implements ResultInterface<T> {
   String message;
   T value;
 
-  Failure(String message, T value) {
-    this.message = message;
-    this.value = value;
-  }
+  Failure(this.message, this.value) {}
 
   bool getTag() {
     return false;

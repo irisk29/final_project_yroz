@@ -20,182 +20,195 @@
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
 import 'ModelProvider.dart';
-import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
+
 
 /** This is an auto generated class representing the StoreOwnerModel type in your schema. */
 @immutable
 class StoreOwnerModel extends Model {
   static const classType = const _StoreOwnerModelModelType();
   final String id;
-  final OnlineStoreModel onlineStoreModel;
-  final PhysicalStoreModel physicalStoreModel;
-  final String storeOwnerModelOnlineStoreModelId;
-  final String storeOwnerModelPhysicalStoreModelId;
+  final OnlineStoreModel? _onlineStoreModel;
+  final PhysicalStoreModel? _physicalStoreModel;
+  final TemporalDateTime? _createdAt;
+  final TemporalDateTime? _updatedAt;
+  final String? _storeOwnerModelOnlineStoreModelId;
+  final String? _storeOwnerModelPhysicalStoreModelId;
 
   @override
   getInstanceType() => classType;
-
+  
   @override
   String getId() {
     return id;
   }
-
-  const StoreOwnerModel._internal(
-      {@required this.id,
-      this.onlineStoreModel,
-      this.physicalStoreModel,
-      this.storeOwnerModelOnlineStoreModelId,
-      this.storeOwnerModelPhysicalStoreModelId});
-
-  factory StoreOwnerModel(
-      {String id,
-      OnlineStoreModel onlineStoreModel,
-      PhysicalStoreModel physicalStoreModel,
-      String storeOwnerModelOnlineStoreModelId,
-      String storeOwnerModelPhysicalStoreModelId}) {
-    return StoreOwnerModel._internal(
-        id: id == null ? UUID.getUUID() : id,
-        onlineStoreModel: onlineStoreModel,
-        physicalStoreModel: physicalStoreModel,
-        storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId,
-        storeOwnerModelPhysicalStoreModelId:
-            storeOwnerModelPhysicalStoreModelId);
+  
+  OnlineStoreModel? get onlineStoreModel {
+    return _onlineStoreModel;
   }
-
+  
+  PhysicalStoreModel? get physicalStoreModel {
+    return _physicalStoreModel;
+  }
+  
+  TemporalDateTime? get createdAt {
+    return _createdAt;
+  }
+  
+  TemporalDateTime? get updatedAt {
+    return _updatedAt;
+  }
+  
+  String? get storeOwnerModelOnlineStoreModelId {
+    return _storeOwnerModelOnlineStoreModelId;
+  }
+  
+  String? get storeOwnerModelPhysicalStoreModelId {
+    return _storeOwnerModelPhysicalStoreModelId;
+  }
+  
+  const StoreOwnerModel._internal({required this.id, onlineStoreModel, physicalStoreModel, createdAt, updatedAt, storeOwnerModelOnlineStoreModelId, storeOwnerModelPhysicalStoreModelId}): _onlineStoreModel = onlineStoreModel, _physicalStoreModel = physicalStoreModel, _createdAt = createdAt, _updatedAt = updatedAt, _storeOwnerModelOnlineStoreModelId = storeOwnerModelOnlineStoreModelId, _storeOwnerModelPhysicalStoreModelId = storeOwnerModelPhysicalStoreModelId;
+  
+  factory StoreOwnerModel({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
+    return StoreOwnerModel._internal(
+      id: id == null ? UUID.getUUID() : id,
+      onlineStoreModel: onlineStoreModel,
+      physicalStoreModel: physicalStoreModel,
+      storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId,
+      storeOwnerModelPhysicalStoreModelId: storeOwnerModelPhysicalStoreModelId);
+  }
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is StoreOwnerModel &&
-        id == other.id &&
-        onlineStoreModel == other.onlineStoreModel &&
-        physicalStoreModel == other.physicalStoreModel &&
-        storeOwnerModelOnlineStoreModelId ==
-            other.storeOwnerModelOnlineStoreModelId &&
-        storeOwnerModelPhysicalStoreModelId ==
-            other.storeOwnerModelPhysicalStoreModelId;
+      id == other.id &&
+      _onlineStoreModel == other._onlineStoreModel &&
+      _physicalStoreModel == other._physicalStoreModel &&
+      _storeOwnerModelOnlineStoreModelId == other._storeOwnerModelOnlineStoreModelId &&
+      _storeOwnerModelPhysicalStoreModelId == other._storeOwnerModelPhysicalStoreModelId;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("StoreOwnerModel {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("storeOwnerModelOnlineStoreModelId=" +
-        "$storeOwnerModelOnlineStoreModelId" +
-        ", ");
-    buffer.write("storeOwnerModelPhysicalStoreModelId=" +
-        "$storeOwnerModelPhysicalStoreModelId");
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
+    buffer.write("storeOwnerModelOnlineStoreModelId=" + "$_storeOwnerModelOnlineStoreModelId" + ", ");
+    buffer.write("storeOwnerModelPhysicalStoreModelId=" + "$_storeOwnerModelPhysicalStoreModelId");
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  StoreOwnerModel copyWith(
-      {String id,
-      OnlineStoreModel onlineStoreModel,
-      PhysicalStoreModel physicalStoreModel,
-      String storeOwnerModelOnlineStoreModelId,
-      String storeOwnerModelPhysicalStoreModelId}) {
-    return StoreOwnerModel(
-        id: id ?? this.id,
-        onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
-        physicalStoreModel: physicalStoreModel ?? this.physicalStoreModel,
-        storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId ??
-            this.storeOwnerModelOnlineStoreModelId,
-        storeOwnerModelPhysicalStoreModelId:
-            storeOwnerModelPhysicalStoreModelId ??
-                this.storeOwnerModelPhysicalStoreModelId);
+  
+  StoreOwnerModel copyWith({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
+    return StoreOwnerModel._internal(
+      id: id ?? this.id,
+      onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
+      physicalStoreModel: physicalStoreModel ?? this.physicalStoreModel,
+      storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId ?? this.storeOwnerModelOnlineStoreModelId,
+      storeOwnerModelPhysicalStoreModelId: storeOwnerModelPhysicalStoreModelId ?? this.storeOwnerModelPhysicalStoreModelId);
   }
-
-  StoreOwnerModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        onlineStoreModel = json['onlineStoreModel'] != null
-            ? OnlineStoreModel.fromJson(
-                new Map<String, dynamic>.from(json['onlineStoreModel']))
-            : null,
-        physicalStoreModel = json['physicalStoreModel'] != null
-            ? PhysicalStoreModel.fromJson(
-                new Map<String, dynamic>.from(json['physicalStoreModel']))
-            : null,
-        storeOwnerModelOnlineStoreModelId =
-            json['storeOwnerModelOnlineStoreModelId'],
-        storeOwnerModelPhysicalStoreModelId =
-            json['storeOwnerModelPhysicalStoreModelId'];
-
+  
+  StoreOwnerModel.fromJson(Map<String, dynamic> json)  
+    : id = json['id'],
+      _onlineStoreModel = json['onlineStoreModel']?['serializedData'] != null
+        ? OnlineStoreModel.fromJson(new Map<String, dynamic>.from(json['onlineStoreModel']['serializedData']))
+        : null,
+      _physicalStoreModel = json['physicalStoreModel']?['serializedData'] != null
+        ? PhysicalStoreModel.fromJson(new Map<String, dynamic>.from(json['physicalStoreModel']['serializedData']))
+        : null,
+      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
+      _storeOwnerModelOnlineStoreModelId = json['storeOwnerModelOnlineStoreModelId'],
+      _storeOwnerModelPhysicalStoreModelId = json['storeOwnerModelPhysicalStoreModelId'];
+  
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'onlineStoreModel': onlineStoreModel?.toJson(),
-        'physicalStoreModel': physicalStoreModel?.toJson(),
-        'storeOwnerModelOnlineStoreModelId': storeOwnerModelOnlineStoreModelId,
-        'storeOwnerModelPhysicalStoreModelId':
-            storeOwnerModelPhysicalStoreModelId
-      };
+    'id': id, 'onlineStoreModel': _onlineStoreModel?.toJson(), 'physicalStoreModel': _physicalStoreModel?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'storeOwnerModelOnlineStoreModelId': _storeOwnerModelOnlineStoreModelId, 'storeOwnerModelPhysicalStoreModelId': _storeOwnerModelPhysicalStoreModelId
+  };
 
   static final QueryField ID = QueryField(fieldName: "storeOwnerModel.id");
   static final QueryField ONLINESTOREMODEL = QueryField(
-      fieldName: "onlineStoreModel",
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (OnlineStoreModel).toString()));
+    fieldName: "onlineStoreModel",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (OnlineStoreModel).toString()));
   static final QueryField PHYSICALSTOREMODEL = QueryField(
-      fieldName: "physicalStoreModel",
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (PhysicalStoreModel).toString()));
-  static final QueryField STOREOWNERMODELONLINESTOREMODELID =
-      QueryField(fieldName: "storeOwnerModelOnlineStoreModelId");
-  static final QueryField STOREOWNERMODELPHYSICALSTOREMODELID =
-      QueryField(fieldName: "storeOwnerModelPhysicalStoreModelId");
-  static var schema =
-      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+    fieldName: "physicalStoreModel",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (PhysicalStoreModel).toString()));
+  static final QueryField STOREOWNERMODELONLINESTOREMODELID = QueryField(fieldName: "storeOwnerModelOnlineStoreModelId");
+  static final QueryField STOREOWNERMODELPHYSICALSTOREMODELID = QueryField(fieldName: "storeOwnerModelPhysicalStoreModelId");
+  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "StoreOwnerModel";
     modelSchemaDefinition.pluralName = "StoreOwnerModels";
-
+    
     modelSchemaDefinition.authRules = [
-      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
-        ModelOperation.CREATE,
-        ModelOperation.UPDATE,
-        ModelOperation.DELETE,
-        ModelOperation.READ
-      ])
+      AuthRule(
+        authStrategy: AuthStrategy.PUBLIC,
+        operations: [
+          ModelOperation.CREATE,
+          ModelOperation.UPDATE,
+          ModelOperation.DELETE,
+          ModelOperation.READ
+        ])
     ];
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-        key: StoreOwnerModel.ONLINESTOREMODEL,
-        isRequired: false,
-        ofModelName: (OnlineStoreModel).toString(),
-        associatedKey: OnlineStoreModel.ID));
-
+      key: StoreOwnerModel.ONLINESTOREMODEL,
+      isRequired: false,
+      ofModelName: (OnlineStoreModel).toString(),
+      associatedKey: OnlineStoreModel.ID
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-        key: StoreOwnerModel.PHYSICALSTOREMODEL,
-        isRequired: false,
-        ofModelName: (PhysicalStoreModel).toString(),
-        associatedKey: PhysicalStoreModel.ID));
-
+      key: StoreOwnerModel.PHYSICALSTOREMODEL,
+      isRequired: false,
+      ofModelName: (PhysicalStoreModel).toString(),
+      associatedKey: PhysicalStoreModel.ID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: StoreOwnerModel.STOREOWNERMODELONLINESTOREMODELID,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: StoreOwnerModel.STOREOWNERMODELONLINESTOREMODELID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: StoreOwnerModel.STOREOWNERMODELPHYSICALSTOREMODELID,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+      key: StoreOwnerModel.STOREOWNERMODELPHYSICALSTOREMODELID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
   });
 }
 
 class _StoreOwnerModelModelType extends ModelType<StoreOwnerModel> {
   const _StoreOwnerModelModelType();
-
+  
   @override
   StoreOwnerModel fromJson(Map<String, dynamic> jsonData) {
     return StoreOwnerModel.fromJson(jsonData);

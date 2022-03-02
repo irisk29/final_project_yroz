@@ -1,18 +1,9 @@
+import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/widgets/store_item.dart';
 import 'package:flutter/material.dart';
-import 'package:project_demo/DTOs/PhysicalStoreDTO.dart';
-import 'package:project_demo/DataLayer/StoreStorageProxy.dart';
-import 'package:project_demo/models/ModelProvider.dart';
-import 'package:project_demo/widgets/store_item.dart';
-import '../dummy_data.dart';
-import '../widgets/credit_card.dart';
-import '../screens/edit_product_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/app_drawer.dart';
-import '../widgets/products_grid.dart';
-import '../widgets/badge.dart';
-import '../providers/cart.dart';
-import './cart_screen.dart';
 import '../providers/products.dart';
 
 enum FilterOptions {
@@ -23,17 +14,16 @@ enum FilterOptions {
 class CategoryScreen extends StatefulWidget {
   static const routeName = '/category';
 
-  String title;
+  String? title;
 
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  var _showOnlyFavorites = false;
   var _isInit = true;
   var _isLoading = false;
-  List<PhysicalStoreDTO> DUMMY_STORES;
+  late List<PhysicalStoreDTO> DUMMY_STORES;
 
   @override
   void initState() {
@@ -53,7 +43,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void didChangeDependencies() {
     final routeArgs =
-        ModalRoute.of(context).settings.arguments as Map<String, String>;
+        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
     widget.title = routeArgs['title'];
     if (_isInit) {
       setState(() {
@@ -74,7 +64,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.title,
+          widget.title!,
         ),
       ),
       body: _isLoading

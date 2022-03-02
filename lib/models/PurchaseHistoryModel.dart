@@ -20,263 +20,303 @@
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
 import 'ModelProvider.dart';
-import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
+
 
 /** This is an auto generated class representing the PurchaseHistoryModel type in your schema. */
 @immutable
 class PurchaseHistoryModel extends Model {
   static const classType = const _PurchaseHistoryModelModelType();
   final String id;
-  final TemporalDate date;
-  final double amount;
-  final UserModel userModel;
-  final OnlineStoreModel onlineStoreModel;
-  final PhysicalStoreModel physicalStoreModel;
-  final String purchaseHistoryModelUserModelId;
-  final String purchaseHistoryModelOnlineStoreModelId;
-  final String purchaseHistoryModelPhysicalStoreModelId;
+  final TemporalDate? _date;
+  final double? _amount;
+  final UserModel? _userModel;
+  final OnlineStoreModel? _onlineStoreModel;
+  final PhysicalStoreModel? _physicalStoreModel;
+  final TemporalDateTime? _createdAt;
+  final TemporalDateTime? _updatedAt;
+  final String? _purchaseHistoryModelUserModelId;
+  final String? _purchaseHistoryModelOnlineStoreModelId;
+  final String? _purchaseHistoryModelPhysicalStoreModelId;
 
   @override
   getInstanceType() => classType;
-
+  
   @override
   String getId() {
     return id;
   }
-
-  const PurchaseHistoryModel._internal(
-      {@required this.id,
-      this.date,
-      this.amount,
-      this.userModel,
-      this.onlineStoreModel,
-      this.physicalStoreModel,
-      this.purchaseHistoryModelUserModelId,
-      this.purchaseHistoryModelOnlineStoreModelId,
-      this.purchaseHistoryModelPhysicalStoreModelId});
-
-  factory PurchaseHistoryModel(
-      {String id,
-      TemporalDate date,
-      double amount,
-      UserModel userModel,
-      OnlineStoreModel onlineStoreModel,
-      PhysicalStoreModel physicalStoreModel,
-      String purchaseHistoryModelUserModelId,
-      String purchaseHistoryModelOnlineStoreModelId,
-      String purchaseHistoryModelPhysicalStoreModelId}) {
-    return PurchaseHistoryModel._internal(
-        id: id == null ? UUID.getUUID() : id,
-        date: date,
-        amount: amount,
-        userModel: userModel,
-        onlineStoreModel: onlineStoreModel,
-        physicalStoreModel: physicalStoreModel,
-        purchaseHistoryModelUserModelId: purchaseHistoryModelUserModelId,
-        purchaseHistoryModelOnlineStoreModelId:
-            purchaseHistoryModelOnlineStoreModelId,
-        purchaseHistoryModelPhysicalStoreModelId:
-            purchaseHistoryModelPhysicalStoreModelId);
+  
+  TemporalDate get date {
+    try {
+      return _date!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
-
+  
+  double get amount {
+    try {
+      return _amount!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  UserModel get userModel {
+    try {
+      return _userModel!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  OnlineStoreModel? get onlineStoreModel {
+    return _onlineStoreModel;
+  }
+  
+  PhysicalStoreModel? get physicalStoreModel {
+    return _physicalStoreModel;
+  }
+  
+  TemporalDateTime? get createdAt {
+    return _createdAt;
+  }
+  
+  TemporalDateTime? get updatedAt {
+    return _updatedAt;
+  }
+  
+  String get purchaseHistoryModelUserModelId {
+    try {
+      return _purchaseHistoryModelUserModelId!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  String? get purchaseHistoryModelOnlineStoreModelId {
+    return _purchaseHistoryModelOnlineStoreModelId;
+  }
+  
+  String? get purchaseHistoryModelPhysicalStoreModelId {
+    return _purchaseHistoryModelPhysicalStoreModelId;
+  }
+  
+  const PurchaseHistoryModel._internal({required this.id, required date, required amount, required userModel, onlineStoreModel, physicalStoreModel, createdAt, updatedAt, required purchaseHistoryModelUserModelId, purchaseHistoryModelOnlineStoreModelId, purchaseHistoryModelPhysicalStoreModelId}): _date = date, _amount = amount, _userModel = userModel, _onlineStoreModel = onlineStoreModel, _physicalStoreModel = physicalStoreModel, _createdAt = createdAt, _updatedAt = updatedAt, _purchaseHistoryModelUserModelId = purchaseHistoryModelUserModelId, _purchaseHistoryModelOnlineStoreModelId = purchaseHistoryModelOnlineStoreModelId, _purchaseHistoryModelPhysicalStoreModelId = purchaseHistoryModelPhysicalStoreModelId;
+  
+  factory PurchaseHistoryModel({String? id, required TemporalDate date, required double amount, required UserModel userModel, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, required String purchaseHistoryModelUserModelId, String? purchaseHistoryModelOnlineStoreModelId, String? purchaseHistoryModelPhysicalStoreModelId}) {
+    return PurchaseHistoryModel._internal(
+      id: id == null ? UUID.getUUID() : id,
+      date: date,
+      amount: amount,
+      userModel: userModel,
+      onlineStoreModel: onlineStoreModel,
+      physicalStoreModel: physicalStoreModel,
+      purchaseHistoryModelUserModelId: purchaseHistoryModelUserModelId,
+      purchaseHistoryModelOnlineStoreModelId: purchaseHistoryModelOnlineStoreModelId,
+      purchaseHistoryModelPhysicalStoreModelId: purchaseHistoryModelPhysicalStoreModelId);
+  }
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is PurchaseHistoryModel &&
-        id == other.id &&
-        date == other.date &&
-        amount == other.amount &&
-        userModel == other.userModel &&
-        onlineStoreModel == other.onlineStoreModel &&
-        physicalStoreModel == other.physicalStoreModel &&
-        purchaseHistoryModelUserModelId ==
-            other.purchaseHistoryModelUserModelId &&
-        purchaseHistoryModelOnlineStoreModelId ==
-            other.purchaseHistoryModelOnlineStoreModelId &&
-        purchaseHistoryModelPhysicalStoreModelId ==
-            other.purchaseHistoryModelPhysicalStoreModelId;
+      id == other.id &&
+      _date == other._date &&
+      _amount == other._amount &&
+      _userModel == other._userModel &&
+      _onlineStoreModel == other._onlineStoreModel &&
+      _physicalStoreModel == other._physicalStoreModel &&
+      _purchaseHistoryModelUserModelId == other._purchaseHistoryModelUserModelId &&
+      _purchaseHistoryModelOnlineStoreModelId == other._purchaseHistoryModelOnlineStoreModelId &&
+      _purchaseHistoryModelPhysicalStoreModelId == other._purchaseHistoryModelPhysicalStoreModelId;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("PurchaseHistoryModel {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("date=" + (date != null ? date.format() : "null") + ", ");
-    buffer.write(
-        "amount=" + (amount != null ? amount.toString() : "null") + ", ");
-    buffer.write("purchaseHistoryModelUserModelId=" +
-        "$purchaseHistoryModelUserModelId" +
-        ", ");
-    buffer.write("purchaseHistoryModelOnlineStoreModelId=" +
-        "$purchaseHistoryModelOnlineStoreModelId" +
-        ", ");
-    buffer.write("purchaseHistoryModelPhysicalStoreModelId=" +
-        "$purchaseHistoryModelPhysicalStoreModelId");
+    buffer.write("date=" + (_date != null ? _date!.format() : "null") + ", ");
+    buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
+    buffer.write("purchaseHistoryModelUserModelId=" + "$_purchaseHistoryModelUserModelId" + ", ");
+    buffer.write("purchaseHistoryModelOnlineStoreModelId=" + "$_purchaseHistoryModelOnlineStoreModelId" + ", ");
+    buffer.write("purchaseHistoryModelPhysicalStoreModelId=" + "$_purchaseHistoryModelPhysicalStoreModelId");
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  PurchaseHistoryModel copyWith(
-      {String id,
-      TemporalDate date,
-      double amount,
-      UserModel userModel,
-      OnlineStoreModel onlineStoreModel,
-      PhysicalStoreModel physicalStoreModel,
-      String purchaseHistoryModelUserModelId,
-      String purchaseHistoryModelOnlineStoreModelId,
-      String purchaseHistoryModelPhysicalStoreModelId}) {
-    return PurchaseHistoryModel(
-        id: id ?? this.id,
-        date: date ?? this.date,
-        amount: amount ?? this.amount,
-        userModel: userModel ?? this.userModel,
-        onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
-        physicalStoreModel: physicalStoreModel ?? this.physicalStoreModel,
-        purchaseHistoryModelUserModelId: purchaseHistoryModelUserModelId ??
-            this.purchaseHistoryModelUserModelId,
-        purchaseHistoryModelOnlineStoreModelId:
-            purchaseHistoryModelOnlineStoreModelId ??
-                this.purchaseHistoryModelOnlineStoreModelId,
-        purchaseHistoryModelPhysicalStoreModelId:
-            purchaseHistoryModelPhysicalStoreModelId ??
-                this.purchaseHistoryModelPhysicalStoreModelId);
+  
+  PurchaseHistoryModel copyWith({String? id, TemporalDate? date, double? amount, UserModel? userModel, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? purchaseHistoryModelUserModelId, String? purchaseHistoryModelOnlineStoreModelId, String? purchaseHistoryModelPhysicalStoreModelId}) {
+    return PurchaseHistoryModel._internal(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      amount: amount ?? this.amount,
+      userModel: userModel ?? this.userModel,
+      onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
+      physicalStoreModel: physicalStoreModel ?? this.physicalStoreModel,
+      purchaseHistoryModelUserModelId: purchaseHistoryModelUserModelId ?? this.purchaseHistoryModelUserModelId,
+      purchaseHistoryModelOnlineStoreModelId: purchaseHistoryModelOnlineStoreModelId ?? this.purchaseHistoryModelOnlineStoreModelId,
+      purchaseHistoryModelPhysicalStoreModelId: purchaseHistoryModelPhysicalStoreModelId ?? this.purchaseHistoryModelPhysicalStoreModelId);
   }
-
-  PurchaseHistoryModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        date =
-            json['date'] != null ? TemporalDate.fromString(json['date']) : null,
-        amount = (json['amount'] as num)?.toDouble(),
-        userModel = json['userModel'] != null
-            ? UserModel.fromJson(
-                new Map<String, dynamic>.from(json['userModel']))
-            : null,
-        onlineStoreModel = json['onlineStoreModel'] != null
-            ? OnlineStoreModel.fromJson(
-                new Map<String, dynamic>.from(json['onlineStoreModel']))
-            : null,
-        physicalStoreModel = json['physicalStoreModel'] != null
-            ? PhysicalStoreModel.fromJson(
-                new Map<String, dynamic>.from(json['physicalStoreModel']))
-            : null,
-        purchaseHistoryModelUserModelId =
-            json['purchaseHistoryModelUserModelId'],
-        purchaseHistoryModelOnlineStoreModelId =
-            json['purchaseHistoryModelOnlineStoreModelId'],
-        purchaseHistoryModelPhysicalStoreModelId =
-            json['purchaseHistoryModelPhysicalStoreModelId'];
-
+  
+  PurchaseHistoryModel.fromJson(Map<String, dynamic> json)  
+    : id = json['id'],
+      _date = json['date'] != null ? TemporalDate.fromString(json['date']) : null,
+      _amount = (json['amount'] as num?)?.toDouble(),
+      _userModel = json['userModel']?['serializedData'] != null
+        ? UserModel.fromJson(new Map<String, dynamic>.from(json['userModel']['serializedData']))
+        : null,
+      _onlineStoreModel = json['onlineStoreModel']?['serializedData'] != null
+        ? OnlineStoreModel.fromJson(new Map<String, dynamic>.from(json['onlineStoreModel']['serializedData']))
+        : null,
+      _physicalStoreModel = json['physicalStoreModel']?['serializedData'] != null
+        ? PhysicalStoreModel.fromJson(new Map<String, dynamic>.from(json['physicalStoreModel']['serializedData']))
+        : null,
+      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
+      _purchaseHistoryModelUserModelId = json['purchaseHistoryModelUserModelId'],
+      _purchaseHistoryModelOnlineStoreModelId = json['purchaseHistoryModelOnlineStoreModelId'],
+      _purchaseHistoryModelPhysicalStoreModelId = json['purchaseHistoryModelPhysicalStoreModelId'];
+  
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'date': date?.format(),
-        'amount': amount,
-        'userModel': userModel?.toJson(),
-        'onlineStoreModel': onlineStoreModel?.toJson(),
-        'physicalStoreModel': physicalStoreModel?.toJson(),
-        'purchaseHistoryModelUserModelId': purchaseHistoryModelUserModelId,
-        'purchaseHistoryModelOnlineStoreModelId':
-            purchaseHistoryModelOnlineStoreModelId,
-        'purchaseHistoryModelPhysicalStoreModelId':
-            purchaseHistoryModelPhysicalStoreModelId
-      };
+    'id': id, 'date': _date?.format(), 'amount': _amount, 'userModel': _userModel?.toJson(), 'onlineStoreModel': _onlineStoreModel?.toJson(), 'physicalStoreModel': _physicalStoreModel?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'purchaseHistoryModelUserModelId': _purchaseHistoryModelUserModelId, 'purchaseHistoryModelOnlineStoreModelId': _purchaseHistoryModelOnlineStoreModelId, 'purchaseHistoryModelPhysicalStoreModelId': _purchaseHistoryModelPhysicalStoreModelId
+  };
 
   static final QueryField ID = QueryField(fieldName: "purchaseHistoryModel.id");
   static final QueryField DATE = QueryField(fieldName: "date");
   static final QueryField AMOUNT = QueryField(fieldName: "amount");
   static final QueryField USERMODEL = QueryField(
-      fieldName: "userModel",
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (UserModel).toString()));
+    fieldName: "userModel",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (UserModel).toString()));
   static final QueryField ONLINESTOREMODEL = QueryField(
-      fieldName: "onlineStoreModel",
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (OnlineStoreModel).toString()));
+    fieldName: "onlineStoreModel",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (OnlineStoreModel).toString()));
   static final QueryField PHYSICALSTOREMODEL = QueryField(
-      fieldName: "physicalStoreModel",
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (PhysicalStoreModel).toString()));
-  static final QueryField PURCHASEHISTORYMODELUSERMODELID =
-      QueryField(fieldName: "purchaseHistoryModelUserModelId");
-  static final QueryField PURCHASEHISTORYMODELONLINESTOREMODELID =
-      QueryField(fieldName: "purchaseHistoryModelOnlineStoreModelId");
-  static final QueryField PURCHASEHISTORYMODELPHYSICALSTOREMODELID =
-      QueryField(fieldName: "purchaseHistoryModelPhysicalStoreModelId");
-  static var schema =
-      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+    fieldName: "physicalStoreModel",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (PhysicalStoreModel).toString()));
+  static final QueryField PURCHASEHISTORYMODELUSERMODELID = QueryField(fieldName: "purchaseHistoryModelUserModelId");
+  static final QueryField PURCHASEHISTORYMODELONLINESTOREMODELID = QueryField(fieldName: "purchaseHistoryModelOnlineStoreModelId");
+  static final QueryField PURCHASEHISTORYMODELPHYSICALSTOREMODELID = QueryField(fieldName: "purchaseHistoryModelPhysicalStoreModelId");
+  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "PurchaseHistoryModel";
     modelSchemaDefinition.pluralName = "PurchaseHistoryModels";
-
+    
     modelSchemaDefinition.authRules = [
-      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
-        ModelOperation.CREATE,
-        ModelOperation.UPDATE,
-        ModelOperation.DELETE,
-        ModelOperation.READ
-      ])
+      AuthRule(
+        authStrategy: AuthStrategy.PUBLIC,
+        operations: [
+          ModelOperation.CREATE,
+          ModelOperation.UPDATE,
+          ModelOperation.DELETE,
+          ModelOperation.READ
+        ])
     ];
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PurchaseHistoryModel.DATE,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.date)));
-
+      key: PurchaseHistoryModel.DATE,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.date)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PurchaseHistoryModel.AMOUNT,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.double)));
-
+      key: PurchaseHistoryModel.AMOUNT,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-        key: PurchaseHistoryModel.USERMODEL,
-        isRequired: false,
-        ofModelName: (UserModel).toString(),
-        associatedKey: UserModel.ID));
-
+      key: PurchaseHistoryModel.USERMODEL,
+      isRequired: true,
+      ofModelName: (UserModel).toString(),
+      associatedKey: UserModel.ID
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-        key: PurchaseHistoryModel.ONLINESTOREMODEL,
-        isRequired: false,
-        ofModelName: (OnlineStoreModel).toString(),
-        associatedKey: OnlineStoreModel.ID));
-
+      key: PurchaseHistoryModel.ONLINESTOREMODEL,
+      isRequired: false,
+      ofModelName: (OnlineStoreModel).toString(),
+      associatedKey: OnlineStoreModel.ID
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-        key: PurchaseHistoryModel.PHYSICALSTOREMODEL,
-        isRequired: false,
-        ofModelName: (PhysicalStoreModel).toString(),
-        associatedKey: PhysicalStoreModel.ID));
-
+      key: PurchaseHistoryModel.PHYSICALSTOREMODEL,
+      isRequired: false,
+      ofModelName: (PhysicalStoreModel).toString(),
+      associatedKey: PhysicalStoreModel.ID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PurchaseHistoryModel.PURCHASEHISTORYMODELUSERMODELID,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: PurchaseHistoryModel.PURCHASEHISTORYMODELUSERMODELID,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PurchaseHistoryModel.PURCHASEHISTORYMODELONLINESTOREMODELID,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: PurchaseHistoryModel.PURCHASEHISTORYMODELONLINESTOREMODELID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: PurchaseHistoryModel.PURCHASEHISTORYMODELPHYSICALSTOREMODELID,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+      key: PurchaseHistoryModel.PURCHASEHISTORYMODELPHYSICALSTOREMODELID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
   });
 }
 
 class _PurchaseHistoryModelModelType extends ModelType<PurchaseHistoryModel> {
   const _PurchaseHistoryModelModelType();
-
+  
   @override
   PurchaseHistoryModel fromJson(Map<String, dynamic> jsonData) {
     return PurchaseHistoryModel.fromJson(jsonData);

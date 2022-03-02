@@ -1,6 +1,11 @@
-import 'package:amplify_flutter/amplify.dart';
-import 'package:project_demo/DataLayer/user_authenticator.dart';
-import 'package:project_demo/models/ModelProvider.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/models/DigitalWalletModel.dart';
+import 'package:final_project_yroz/models/OnlineStoreModel.dart';
+import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
+import 'package:final_project_yroz/models/ShoppingBagModel.dart';
+import 'package:final_project_yroz/models/StoreOwnerModel.dart';
+import 'package:final_project_yroz/models/UserModel.dart';
 
 class UsersStorageProxy {
   static final UsersStorageProxy _singleton = UsersStorageProxy._internal();
@@ -35,19 +40,12 @@ class UsersStorageProxy {
     List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
         StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(user.userModelStoreOwnerModelId));
-    StoreOwnerModel storeOwner = null;
-    if (!storeOwners.isEmpty) {
-      storeOwner = storeOwners.first;
-    }
-
     List<DigitalWalletModel> digitalWallet = await Amplify.DataStore.query(
         DigitalWalletModel.classType,
         where: DigitalWalletModel.ID.eq(user.userModelDigitalWalletModelId));
-    DigitalWalletModel wallet = null;
-    if (!digitalWallet.isEmpty) {
-      wallet = digitalWallet.first;
-    }
 
+    StoreOwnerModel storeOwner = storeOwners.first;
+    DigitalWalletModel wallet = digitalWallet.first;
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
         ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID.eq(user.id));
@@ -66,16 +64,16 @@ class UsersStorageProxy {
     return fullUser;
   }
 
-  Future<UserModel> getUser(String email) async {
+  Future<UserModel?> getUser(String email) async {
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType,
         where: UserModel.EMAIL.eq(email));
 
     return users.isEmpty ? null : users.first;
   }
 
-  Future<String> getStoreOwnerStateId() async {
+  Future<String?> getStoreOwnerStateId() async {
     String emailCurrUser = UserAuthenticator().getCurrentUserId();
-    UserModel currUser = await getUser(emailCurrUser);
+    UserModel? currUser = await getUser(emailCurrUser);
     if (currUser == null) {
       throw Exception(
           "current user model is null, user's email: " + emailCurrUser);
@@ -83,9 +81,13 @@ class UsersStorageProxy {
     return currUser.userModelStoreOwnerModelId;
   }
 
-  Future<StoreOwnerModel> getStoreOwnerState() async {
+  Future<StoreOwnerModel?> getStoreOwnerState() async {
     String emailCurrUser = UserAuthenticator().getCurrentUserId();
-    UserModel currUser = await getUser(emailCurrUser);
+    UserModel? currUser = await getUser(emailCurrUser);
+    if (currUser == null) {
+      throw Exception(
+          "current user model is null, user's email: " + emailCurrUser);
+    }
     List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
         StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
@@ -93,7 +95,10 @@ class UsersStorageProxy {
   }
 
   void addOnlineStoreToStoreOwnerState(OnlineStoreModel onlineStore) async {
-    StoreOwnerModel oldStoreOwner = await getStoreOwnerState();
+    StoreOwnerModel? oldStoreOwner = await getStoreOwnerState();
+    if (oldStoreOwner == null) {
+      throw Exception();
+    }
     StoreOwnerModel updatedStoreOwner = oldStoreOwner.copyWith(
         id: oldStoreOwner.id,
         onlineStoreModel: onlineStore,
@@ -106,7 +111,10 @@ class UsersStorageProxy {
 
   void addPhysicalStoreToStoreOwnerState(
       PhysicalStoreModel physicalStore) async {
-    StoreOwnerModel oldStoreOwner = await getStoreOwnerState();
+    StoreOwnerModel? oldStoreOwner = await getStoreOwnerState();
+    if (oldStoreOwner == null) {
+      throw Exception();
+    }
     StoreOwnerModel updatedStoreOwner = oldStoreOwner.copyWith(
         id: oldStoreOwner.id,
         onlineStoreModel: oldStoreOwner.onlineStoreModel,

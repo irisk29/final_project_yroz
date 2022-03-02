@@ -3,7 +3,5 @@ import 'dart:collection';
 class ShoppingBag {
   Map<int, int> productsAndQuantity;
 
-  ShoppingBag() {
-    productsAndQuantity = new HashMap();
-  }
+  ShoppingBag() : productsAndQuantity = new HashMap() {}
 }

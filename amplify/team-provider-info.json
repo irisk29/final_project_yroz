@@ -10,11 +10,6 @@
       "StackName": "amplify-yrozproject-staging-155919",
       "StackId": "arn:aws:cloudformation:us-east-1:210566832033:stack/amplify-yrozproject-staging-155919/f6a35a00-5dbf-11ec-ba2c-0ae4c6fb675b",
       "AmplifyAppId": "dc3pt06t4o1wj"
-    },
-    "categories": {
-      "auth": {
-        "yrozproject": {}
-      }
     }
   }
 }

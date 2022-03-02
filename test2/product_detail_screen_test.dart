@@ -5,14 +5,10 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:project_demo/providers/products.dart';
-import 'package:provider/provider.dart';
 import '../lib/screens/product_detail_screen.dart';
 
 void main() {
-
   testWidgets('Product Detail Screen test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(ProductDetailScreen().wrapWithMaterial());

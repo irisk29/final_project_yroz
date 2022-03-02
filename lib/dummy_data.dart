@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project_demo/DataLayer/StoreStorageProxy.dart';
-import 'package:project_demo/models/PhysicalStoreModel.dart';
 
-import './models/category.dart';
-import 'models/store.dart';
+import 'LogicModels/category.dart';
 
 const DUMMY_CATEGORIES = const [
   Category(

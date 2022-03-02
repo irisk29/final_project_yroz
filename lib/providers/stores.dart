@@ -1,17 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-
+import 'package:final_project_yroz/DTOs/StroreDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:project_demo/DTOs/StroreDTO.dart';
-import 'package:project_demo/LogicLayer/User.dart';
-import 'package:project_demo/Result/ResultInterface.dart';
-import 'package:project_demo/providers/online_store.dart';
-import 'package:project_demo/providers/physical_store.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/http_exception.dart';
-import './product.dart';
+import 'online_store.dart';
 
 class Stores with ChangeNotifier {
   User user;
@@ -19,6 +12,8 @@ class Stores with ChangeNotifier {
   List<PhysicalStore> _physicalStores = [];
 
   Stores(this.user, this._onlineStores, this._physicalStores);
+
+  Stores.withNull(): user = User.withNull(){}
 
   List<OnlineStore> get onlineStores {
     // if (_showFavoritesOnly) {
@@ -38,40 +33,12 @@ class Stores with ChangeNotifier {
   //   return _items.where((prodItem) => prodItem.isFavorite).toList();
   // }
 
-  OnlineStore findOnlineStoreById(String id) {
-    return _onlineStores.firstWhere((prod) => prod.id == id,
-        orElse: () => null);
+  OnlineStore? findOnlineStoreById(String id) {
+    return _onlineStores.firstWhere((prod) => prod.id == id, orElse: null);
   }
 
-  PhysicalStore findPhysicalStoreById(String id) {
-    return _physicalStores.firstWhere((prod) => prod.id == id,
-        orElse: () => null);
-  }
-
-  Future<void> _showMyDialog(String error) async {
-    return showDialog<void>(
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(error),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Approve'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  PhysicalStore? findPhysicalStoreById(String id) {
+    return _physicalStores.firstWhere((prod) => prod.id == id, orElse: null);
   }
 
   Future<void> addOnlineStore(OnlineStore store) async {
@@ -80,9 +47,9 @@ class Stores with ChangeNotifier {
           store.categories, store.operationHours, "");
       ResultInterface res = await user.openOnlineStore(dto);
       if (!res.getTag()) {
-        _showMyDialog(res.getMessage());
+        print(res.getMessage());
       }
-      _onlineStores.add(user.storeOwnerState.onlineStore);
+      _onlineStores.add(user.storeOwnerState!.onlineStore!);
       notifyListeners();
     } catch (error) {
       print(error);
@@ -96,9 +63,9 @@ class Stores with ChangeNotifier {
           store.categories, store.operationHours, store.image);
       ResultInterface res = await user.openPhysicalStore(dto);
       if (!res.getTag()) {
-        _showMyDialog(res.getMessage());
+        print(res.getMessage());
       }
-      _physicalStores.add(user.storeOwnerState.physicalStore);
+      _physicalStores.add(user.storeOwnerState!.physicalStore!);
       notifyListeners();
     } catch (error) {
       print(error);
@@ -109,7 +76,7 @@ class Stores with ChangeNotifier {
   Future<void> updateOnlineStore(String id, OnlineStore newStore) async {
     final storeIndex = _onlineStores.indexWhere((prod) => prod.id == id);
     if (storeIndex >= 0) {
-      _onlineStores[storeIndex] = null; //TODO: update store
+      //TODO: update store
       notifyListeners();
     } else {
       print('...');
@@ -119,7 +86,7 @@ class Stores with ChangeNotifier {
   Future<void> updatePhysicalStore(String id, PhysicalStore newStore) async {
     final storeIndex = _physicalStores.indexWhere((prod) => prod.id == id);
     if (storeIndex >= 0) {
-      _physicalStores[storeIndex] = null; //TODO: update store
+      //TODO: update store
       notifyListeners();
     } else {
       print('...');

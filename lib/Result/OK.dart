@@ -4,10 +4,7 @@ class Ok<T> implements ResultInterface<T> {
   String message;
   T value;
 
-  Ok(String message, T value) {
-    this.message = message;
-    this.value = value;
-  }
+  Ok(this.message, this.value) {}
 
   bool getTag() {
     return true;

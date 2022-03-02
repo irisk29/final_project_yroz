@@ -1,8 +1,7 @@
+import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:project_demo/DTOs/PhysicalStoreDTO.dart';
-import 'package:project_demo/DataLayer/StoreStorageProxy.dart';
-import 'package:project_demo/models/PhysicalStoreModel.dart';
-import 'package:project_demo/screens/splash_screen.dart';
 import '../widgets/store_item.dart';
 
 import '../dummy_data.dart';
@@ -14,7 +13,7 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<PhysicalStoreDTO> DUMMY_STORES;
+  late List<PhysicalStoreDTO> DUMMY_STORES;
 
   @override
   void initState() {

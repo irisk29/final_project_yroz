@@ -19,7 +19,7 @@
 
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
-import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'DigitalWalletModel.dart';
 import 'OnlineStoreModel.dart';
 import 'PhysicalStoreModel.dart';
@@ -40,70 +40,35 @@ export 'UserModel.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "aa3f82f2de66cc6d05955ba921c7c5cb";
+  String version = "b48955392004712fd8e9531781fae3ce";
   @override
-  List<ModelSchema> modelSchemas = [
-    DigitalWalletModel.schema,
-    OnlineStoreModel.schema,
-    PhysicalStoreModel.schema,
-    ProductModel.schema,
-    PurchaseHistoryModel.schema,
-    ShoppingBagModel.schema,
-    StoreOwnerModel.schema,
-    UserModel.schema
-  ];
+  List<ModelSchema> modelSchemas = [DigitalWalletModel.schema, OnlineStoreModel.schema, PhysicalStoreModel.schema, ProductModel.schema, PurchaseHistoryModel.schema, ShoppingBagModel.schema, StoreOwnerModel.schema, UserModel.schema];
   static final ModelProvider _instance = ModelProvider();
+  @override
+  List<ModelSchema> customTypeSchemas = [];
 
   static ModelProvider get instance => _instance;
-
+  
   ModelType getModelTypeByModelName(String modelName) {
-    switch (modelName) {
+    switch(modelName) {
       case "DigitalWalletModel":
-        {
-          return DigitalWalletModel.classType;
-        }
-        break;
+        return DigitalWalletModel.classType;
       case "OnlineStoreModel":
-        {
-          return OnlineStoreModel.classType;
-        }
-        break;
+        return OnlineStoreModel.classType;
       case "PhysicalStoreModel":
-        {
-          return PhysicalStoreModel.classType;
-        }
-        break;
+        return PhysicalStoreModel.classType;
       case "ProductModel":
-        {
-          return ProductModel.classType;
-        }
-        break;
+        return ProductModel.classType;
       case "PurchaseHistoryModel":
-        {
-          return PurchaseHistoryModel.classType;
-        }
-        break;
+        return PurchaseHistoryModel.classType;
       case "ShoppingBagModel":
-        {
-          return ShoppingBagModel.classType;
-        }
-        break;
+        return ShoppingBagModel.classType;
       case "StoreOwnerModel":
-        {
-          return StoreOwnerModel.classType;
-        }
-        break;
+        return StoreOwnerModel.classType;
       case "UserModel":
-        {
-          return UserModel.classType;
-        }
-        break;
+        return UserModel.classType;
       default:
-        {
-          throw Exception(
-              "Failed to find model in model provider for model name: " +
-                  modelName);
-        }
+        throw Exception("Failed to find model in model provider for model name: " + modelName);
     }
   }
 }

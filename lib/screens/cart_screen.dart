@@ -13,7 +13,9 @@ class CartScreen extends StatelessWidget {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Cart',),
+        title: Text(
+          'Your Cart',
+        ),
       ),
       body: Column(
         children: <Widget>[
@@ -45,36 +47,37 @@ class CartScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: cart.items.length,
               itemBuilder: (ctx, i) => CartItem(
-                    cart.items.values.toList()[i].id,
-                    cart.items.keys.toList()[i],
-                    cart.items.values.toList()[i].price,
-                    cart.items.values.toList()[i].quantity,
-                    cart.items.values.toList()[i].title,
-                  ),
+                cart.items.values.toList()[i].id,
+                cart.items.keys.toList()[i],
+                cart.items.values.toList()[i].price,
+                cart.items.values.toList()[i].quantity,
+                cart.items.values.toList()[i].title,
+              ),
             ),
           )
         ],
       ),
     );
   }
+
   Widget wrapWithMaterial() => MaterialApp(
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: Cart(),
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: Cart(),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-  );
+      );
 }
 
 class OrderButton extends StatefulWidget {
   const OrderButton({
-    Key key,
-    @required this.cart,
+    Key? key,
+    required this.cart,
   }) : super(key: key);
 
   final Cart cart;

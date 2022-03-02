@@ -1,7 +1,8 @@
-import 'package:amplify_flutter/amplify.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:project_demo/DataLayer/UsersStorageProxy.dart';
-import 'package:project_demo/models/ModelProvider.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/models/UserModel.dart';
+
+import 'UsersStorageProxy.dart';
 
 class UserAuthenticator {
   static final UserAuthenticator _singleton = UserAuthenticator._internal();
@@ -13,7 +14,6 @@ class UserAuthenticator {
   UserAuthenticator._internal();
 
   Future<UserModel> signIn(AuthProvider authProvider) async {
-    UserModel currUser = null;
     try {
       await Amplify.Auth.signInWithWebUI(provider: authProvider);
       var res = await Amplify.Auth.fetchUserAttributes();
@@ -24,12 +24,13 @@ class UserAuthenticator {
         if (element.userAttributeKey == "picture") picture = element.value;
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
-      currUser = await UsersStorageProxy().createUser(email, name, picture);
+      UserModel? currUser =
+          await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
+      return currUser;
     } catch (e) {
-      print(e);
+      throw e;
     }
-    return currUser;
   }
 
   Future<bool> signOut() async {

@@ -1,15 +1,8 @@
-import 'dart:math';
-
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:project_demo/LogicLayer/User.dart';
-import '../screens/tabs_screen.dart';
-import '../models/http_exception.dart';
-import '../providers/auth.dart';
 import 'package:provider/provider.dart';
-
-import 'product_detail_screen.dart';
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -57,18 +50,19 @@ class AuthScreen extends StatelessWidget {
 
 class AuthCard extends StatefulWidget {
   const AuthCard({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   var _isLoading = false;
-  AnimationController _controller;
-  Animation<Size> _heightAnimation;
+  late AnimationController _controller;
+  late Animation<Size> _heightAnimation;
 
   @override
   void initState() {

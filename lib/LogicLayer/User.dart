@@ -1,34 +1,42 @@
-import 'dart:convert';
-
-import 'package:project_demo/DTOs/StroreDTO.dart';
-import 'package:project_demo/DataLayer/StoreStorageProxy.dart';
-import 'package:project_demo/LogicLayer/DigitalWallet.dart';
-import 'package:project_demo/LogicLayer/ShoppingBag.dart';
-import 'package:project_demo/LogicLayer/StoreOwnerState.dart';
+import 'package:final_project_yroz/DTOs/StroreDTO.dart';
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/models/UserModel.dart';
+import 'package:final_project_yroz/providers/online_store.dart';
+import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:project_demo/DataLayer/user_authenticator.dart';
-import 'package:project_demo/Result/ResultInterface.dart';
-import 'package:project_demo/models/ModelProvider.dart';
-import 'package:project_demo/providers/online_store.dart';
-import 'package:project_demo/screens/landing_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 
+import 'DigitalWallet.dart';
+import 'ShoppingBag.dart';
+import 'StoreOwnerState.dart';
+
 class User extends ChangeNotifier {
-  String email;
-  String name;
+  String? email;
+  String? name;
   List<OnlineStore> favoriteStores;
   List<String> creditCards;
-  String imageUrl;
-  String bankAccount;
-  StoreOwnerState storeOwnerState;
+  String? imageUrl;
+  String? bankAccount;
+  StoreOwnerState? storeOwnerState;
   DigitalWallet digitalWallet;
   List<ShoppingBag> bagInStores;
 
   bool isSignedIn = false;
 
-  User();
+  User(this.email, this.name)
+      : favoriteStores = <OnlineStore>[],
+        creditCards = <String>[],
+        bagInStores = <ShoppingBag>[],
+        digitalWallet = new DigitalWallet(0) {}
+
+  User.withNull(): favoriteStores = <OnlineStore>[],
+        creditCards = <String>[],
+        bagInStores = <ShoppingBag>[],
+        digitalWallet = new DigitalWallet(0){}
+
   void userFromModel(UserModel model) {
     this.email = model.email;
     this.name = model.name;
@@ -72,7 +80,7 @@ class User extends ChangeNotifier {
       //we might alredy have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
     }
-    this.storeOwnerState.setOnlineStore(tuple.item1);
+    this.storeOwnerState!.setOnlineStore(tuple.item1);
     return res;
   }
 
@@ -85,7 +93,7 @@ class User extends ChangeNotifier {
       //we might alredy have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
     }
-    this.storeOwnerState.setPhysicalStore(tuple.item1);
+    this.storeOwnerState!.setPhysicalStore(tuple.item1);
     return res;
   }
 }

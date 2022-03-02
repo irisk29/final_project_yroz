@@ -1,17 +1,14 @@
 import 'dart:io';
-
-import 'package:flutter/foundation.dart';
-
 import 'geometry.dart';
 
 class PlaceLocation {
   final double latitude;
   final double longitude;
-  final String address;
+  final String? address;
 
   const PlaceLocation({
-    @required this.latitude,
-    @required this.longitude,
+    required this.latitude,
+    required this.longitude,
     this.address,
   });
 }
@@ -23,21 +20,21 @@ class Place2 {
   final File image;
 
   Place2({
-    @required this.id,
-    @required this.title,
-    @required this.location,
-    @required this.image,
+    required this.id,
+    required this.title,
+    required this.location,
+    required this.image,
   });
 }
 
 class Place {
   final Geometry geometry;
   final String name;
-  final String vicinity;
+  final String? vicinity;
 
-  Place({this.geometry, this.name, this.vicinity});
+  Place({required this.geometry, required this.name, this.vicinity});
 
-  factory Place.fromJson(Map<String,dynamic> json){
+  factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
       geometry: Geometry.fromJson(json['geometry']),
       name: json['formatted_address'],

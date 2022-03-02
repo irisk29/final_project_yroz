@@ -5,8 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:final_project_yroz/screens/edit_product_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:project_demo/screens/edit_product_screen.dart';
 
 void main() {
   testWidgets('Edit product screen test', (WidgetTester tester) async {
