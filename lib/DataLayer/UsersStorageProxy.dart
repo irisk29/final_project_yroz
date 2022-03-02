@@ -44,8 +44,8 @@ class UsersStorageProxy {
         DigitalWalletModel.classType,
         where: DigitalWalletModel.ID.eq(user.userModelDigitalWalletModelId));
 
-    StoreOwnerModel storeOwner = storeOwners.first;
-    DigitalWalletModel wallet = digitalWallet.first;
+    StoreOwnerModel? storeOwner = storeOwners.isNotEmpty ? storeOwners.first : null;
+    DigitalWalletModel? wallet = digitalWallet.isNotEmpty ? digitalWallet.first : null;
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
         ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID.eq(user.id));
@@ -59,8 +59,8 @@ class UsersStorageProxy {
         shoppingBagModel: shoppingBags,
         storeOwnerModel: storeOwner,
         digitalWalletModel: wallet,
-        userModelStoreOwnerModelId: storeOwner.id,
-        userModelDigitalWalletModelId: wallet.id);
+        userModelStoreOwnerModelId: storeOwner==null ? "" : storeOwner.id,
+        userModelDigitalWalletModelId: wallet==null ? "" :wallet.id);
     return fullUser;
   }
 

@@ -4,6 +4,7 @@ import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
+import 'package:final_project_yroz/screens/auth_screen.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -62,9 +63,12 @@ class User extends ChangeNotifier {
     }
   }
 
-  void signOut() async {
+  void signOut(BuildContext context) async {
     try {
       isSignedIn = await UserAuthenticator().signOut();
+      Navigator.pop(context);
+      Navigator.of(context).pushReplacementNamed(LandingScreen.routeName);
+      //Navigator.of(context).pushNamed(LandingScreen.routeName);
       notifyListeners();
     } catch (e) {
       print(e);
@@ -90,10 +94,22 @@ class User extends ChangeNotifier {
     var tuple =
         (res.getValue() as Tuple2); //<physical store model, store owner id>
     if (storeOwnerState == null) {
-      //we might alredy have a store, hence it won't be null
+      //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
     }
     this.storeOwnerState!.setPhysicalStore(tuple.item1);
+    return res;
+  }
+
+  Future<ResultInterface> changeName(String name) async {
+    var res;
+    // TODO: FINISH
+    return res;
+  }
+
+  Future<ResultInterface> changeImage(String imageUrl) async {
+    var res;
+    // TODO: FINISH
     return res;
   }
 }

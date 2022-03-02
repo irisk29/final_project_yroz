@@ -35,7 +35,7 @@ class UserAuthenticator {
 
   Future<bool> signOut() async {
     try {
-      await Amplify.Auth.signOut();
+      await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));
     } on AuthException catch (e) {
       print(e.message);
       return true;
