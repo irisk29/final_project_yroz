@@ -19,13 +19,13 @@ class UserAuthenticator {
       var res = await Amplify.Auth.fetchUserAttributes();
       var email, name, picture;
       for (var element in res) {
-        if (element.userAttributeKey == "given_name") name = element.value;
-        if (element.userAttributeKey == "email") email = element.value;
-        if (element.userAttributeKey == "picture") picture = element.value;
+        if (element.userAttributeKey.key == "given_name") name = element.value;
+        if (element.userAttributeKey.key == "email") email = element.value;
+        if (element.userAttributeKey.key == "picture") picture = element.value;
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
       UserModel? currUser =
-          await UsersStorageProxy().createUser(email, name, picture);
+          await UsersStorageProxy().createUser(email!, name!, picture!);
       _currentUserId = email;
       return currUser;
     } catch (e) {

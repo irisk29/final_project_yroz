@@ -1,4 +1,4 @@
-import 'package:final_project_yroz/DTOs/StroreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';

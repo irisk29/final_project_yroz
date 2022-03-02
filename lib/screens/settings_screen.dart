@@ -1,4 +1,6 @@
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../screens/open_physical_store_screen.dart';
 import 'open_online_store_screen.dart';
 
@@ -7,15 +9,42 @@ class SettingsScreen extends StatefulWidget {
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
+
+  Widget wrapWithMaterial() => MaterialApp(
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User("", ""),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+  );
 }
 
 class _SettingsPageState extends State<SettingsScreen> {
   late bool _storeOwner;
+  var _isInit = true;
+  User? _user = User("","");
 
   @override
   void initState() {
     super.initState();
     _storeOwner = false;
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final user = ModalRoute.of(context)!.settings.arguments as User?;
+      if (user != null) {
+        _user = user;
+        }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   @override
@@ -46,7 +75,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                           //open edit profile
                         },
                         title: Text(
-                          "John Doe",
+                          _user!.name!,
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
@@ -55,7 +84,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                         leading: CircleAvatar(
                           radius: 30.0,
                           backgroundImage:
-                              Image.asset('assets/icon/yroz3.png').image,
+                              Image.network(_user!.imageUrl!).image,
                         ),
                         trailing: Icon(
                           Icons.edit,
