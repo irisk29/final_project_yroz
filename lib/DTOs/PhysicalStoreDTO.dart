@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'StroreDTO.dart';
+import 'StoreDTO.dart';
 
 class PhysicalStoreDTO extends StoreDTO {
   String qrCode;

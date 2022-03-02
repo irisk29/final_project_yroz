@@ -13,7 +13,7 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  late List<PhysicalStoreDTO> DUMMY_STORES;
+  List<PhysicalStoreDTO> DUMMY_STORES = [];
 
   @override
   void initState() {

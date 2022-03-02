@@ -1,4 +1,4 @@
-import 'package:final_project_yroz/DTOs/StroreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';

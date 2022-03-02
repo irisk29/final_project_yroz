@@ -4,7 +4,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
-import 'package:final_project_yroz/DTOs/StroreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
