@@ -43,7 +43,7 @@ class User extends ChangeNotifier {
     this.name = model.name;
     this.imageUrl = model.imageUrl;
     this.digitalWallet =
-        DigitalWallet.digitalWalletFromModel(model.digitalWalletModel);
+        DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)

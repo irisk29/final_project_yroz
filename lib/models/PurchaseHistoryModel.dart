@@ -74,17 +74,8 @@ class PurchaseHistoryModel extends Model {
     }
   }
   
-  UserModel get userModel {
-    try {
-      return _userModel!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  UserModel? get userModel {
+    return _userModel;
   }
   
   OnlineStoreModel? get onlineStoreModel {
@@ -103,17 +94,8 @@ class PurchaseHistoryModel extends Model {
     return _updatedAt;
   }
   
-  String get purchaseHistoryModelUserModelId {
-    try {
-      return _purchaseHistoryModelUserModelId!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get purchaseHistoryModelUserModelId {
+    return _purchaseHistoryModelUserModelId;
   }
   
   String? get purchaseHistoryModelOnlineStoreModelId {
@@ -124,9 +106,9 @@ class PurchaseHistoryModel extends Model {
     return _purchaseHistoryModelPhysicalStoreModelId;
   }
   
-  const PurchaseHistoryModel._internal({required this.id, required date, required amount, required userModel, onlineStoreModel, physicalStoreModel, createdAt, updatedAt, required purchaseHistoryModelUserModelId, purchaseHistoryModelOnlineStoreModelId, purchaseHistoryModelPhysicalStoreModelId}): _date = date, _amount = amount, _userModel = userModel, _onlineStoreModel = onlineStoreModel, _physicalStoreModel = physicalStoreModel, _createdAt = createdAt, _updatedAt = updatedAt, _purchaseHistoryModelUserModelId = purchaseHistoryModelUserModelId, _purchaseHistoryModelOnlineStoreModelId = purchaseHistoryModelOnlineStoreModelId, _purchaseHistoryModelPhysicalStoreModelId = purchaseHistoryModelPhysicalStoreModelId;
+  const PurchaseHistoryModel._internal({required this.id, required date, required amount, userModel, onlineStoreModel, physicalStoreModel, createdAt, updatedAt, purchaseHistoryModelUserModelId, purchaseHistoryModelOnlineStoreModelId, purchaseHistoryModelPhysicalStoreModelId}): _date = date, _amount = amount, _userModel = userModel, _onlineStoreModel = onlineStoreModel, _physicalStoreModel = physicalStoreModel, _createdAt = createdAt, _updatedAt = updatedAt, _purchaseHistoryModelUserModelId = purchaseHistoryModelUserModelId, _purchaseHistoryModelOnlineStoreModelId = purchaseHistoryModelOnlineStoreModelId, _purchaseHistoryModelPhysicalStoreModelId = purchaseHistoryModelPhysicalStoreModelId;
   
-  factory PurchaseHistoryModel({String? id, required TemporalDate date, required double amount, required UserModel userModel, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, required String purchaseHistoryModelUserModelId, String? purchaseHistoryModelOnlineStoreModelId, String? purchaseHistoryModelPhysicalStoreModelId}) {
+  factory PurchaseHistoryModel({String? id, required TemporalDate date, required double amount, UserModel? userModel, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? purchaseHistoryModelUserModelId, String? purchaseHistoryModelOnlineStoreModelId, String? purchaseHistoryModelPhysicalStoreModelId}) {
     return PurchaseHistoryModel._internal(
       id: id == null ? UUID.getUUID() : id,
       date: date,
@@ -261,7 +243,7 @@ class PurchaseHistoryModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
       key: PurchaseHistoryModel.USERMODEL,
-      isRequired: true,
+      isRequired: false,
       ofModelName: (UserModel).toString(),
       associatedKey: UserModel.ID
     ));
@@ -296,7 +278,7 @@ class PurchaseHistoryModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: PurchaseHistoryModel.PURCHASEHISTORYMODELUSERMODELID,
-      isRequired: true,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     

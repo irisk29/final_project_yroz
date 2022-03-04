@@ -58,7 +58,7 @@ class StoreStorageProxy {
           imageUrl: oldUserModel.imageUrl,
           creditCards: oldUserModel.creditCards,
           bankAccount: oldUserModel.bankAccount,
-          shoppingBagModel: oldUserModel.shoppingBagModel,
+          shoppingBagModels: oldUserModel.shoppingBagModels,
           storeOwnerModel: storeOwner,
           digitalWalletModel: oldUserModel.digitalWalletModel,
           userModelDigitalWalletModelId:
@@ -128,7 +128,7 @@ class StoreStorageProxy {
           imageUrl: oldUserModel.imageUrl,
           creditCards: oldUserModel.creditCards,
           bankAccount: oldUserModel.bankAccount,
-          shoppingBagModel: oldUserModel.shoppingBagModel,
+          shoppingBagModels: oldUserModel.shoppingBagModels,
           storeOwnerModel: storeOwner,
           digitalWalletModel: oldUserModel.digitalWalletModel,
           userModelDigitalWalletModelId:
@@ -278,7 +278,7 @@ class StoreStorageProxy {
           price: productDTO.price,
           categories: jsonEncode(productDTO.categories),
           description: productDTO.description,
-          onlinestoremodelID: onlineStoreModel.id);
+          onlinestoremodelID: onlineStoreModel.id, shoppingbagmodelID: '');
 
       onlineStoreModel.productModel!.add(productModel);
       OnlineStoreModel updatedOnlineStore = onlineStoreModel.copyWith(

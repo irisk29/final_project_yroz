@@ -56,7 +56,7 @@ class UsersStorageProxy {
         name: user.name,
         creditCards: user.creditCards,
         bankAccount: user.bankAccount,
-        shoppingBagModel: shoppingBags,
+        shoppingBagModels: shoppingBags,
         storeOwnerModel: storeOwner,
         digitalWalletModel: wallet,
         userModelStoreOwnerModelId: storeOwner==null ? "" : storeOwner.id,
