@@ -305,6 +305,8 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                     Wrap(
                       children: OpenPhysicalStoreScreen._selectedItems
                           .map((e) => Chip(
+                        deleteIcon: Icon( Icons.close, ),
+                        onDeleted: () {setState(() {OpenPhysicalStoreScreen._selectedItems.remove(e);}); },
                         label: Text(e),
                       ))
                           .toList(),

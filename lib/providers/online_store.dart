@@ -11,7 +11,7 @@ class OnlineStore with ChangeNotifier {
   String address;
   List<String> categories;
   Map<String, List<TimeOfDay>> operationHours;
-  File? image;
+  String? image;
 
   OnlineStore(
       {required this.id,
@@ -23,6 +23,6 @@ class OnlineStore with ChangeNotifier {
         this.image});
 
   StoreDTO createDTO() {
-    return StoreDTO(id, name, phoneNumber, address, categories, operationHours, image!.uri.toString());
+    return StoreDTO(id, name, phoneNumber, address, categories, operationHours, image);
   }
 }
