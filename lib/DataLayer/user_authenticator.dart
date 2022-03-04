@@ -25,7 +25,7 @@ class UserAuthenticator {
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
       UserModel? currUser =
-          await UsersStorageProxy().createUser(email!, name!, picture!);
+      await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
       return currUser;
     } catch (e) {

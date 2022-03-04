@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class StoreDTO {
+  String id;
   String name;
   String phoneNumber;
   String address;
   List<String> categories;
-  Map<String, List<String>> operationHours;
+  Map<String, List<TimeOfDay>> operationHours;
   String? image;
 
-  StoreDTO(this.name, this.phoneNumber, this.address, this.categories,
-      this.operationHours, this.image);
+  StoreDTO(this.id,this.name, this.phoneNumber, this.address, this.categories, this.operationHours, this.image);
 }

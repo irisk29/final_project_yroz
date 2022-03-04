@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -13,11 +14,15 @@ class PhysicalStore with ChangeNotifier {
 
   PhysicalStore(
       {required this.id,
-      required this.name,
-      required this.phoneNumber,
-      required this.address,
-      required this.categories,
-      required this.operationHours,
-      required this.qrCode,
-      this.image});
+        required this.name,
+        required this.phoneNumber,
+        required this.address,
+        required this.categories,
+        required this.operationHours,
+        required this.qrCode,
+        this.image});
+
+  PhysicalStoreDTO createDTO() {
+    return PhysicalStoreDTO(id, name, address, phoneNumber, categories, operationHours, image, qrCode);
+  }
 }

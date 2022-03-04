@@ -1,10 +1,11 @@
+import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
-import 'package:final_project_yroz/screens/auth_screen.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -33,17 +34,17 @@ class User extends ChangeNotifier {
         bagInStores = <ShoppingBag>[],
         digitalWallet = new DigitalWallet(0) {}
 
-  User.withNull(): favoriteStores = <OnlineStore>[],
+  User.withNull()
+      : favoriteStores = <OnlineStore>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBag>[],
-        digitalWallet = new DigitalWallet(0){}
+        digitalWallet = new DigitalWallet(0) {}
 
   void userFromModel(UserModel model) {
     this.email = model.email;
     this.name = model.name;
     this.imageUrl = model.imageUrl;
-    this.digitalWallet =
-        DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
+    this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
@@ -68,7 +69,6 @@ class User extends ChangeNotifier {
       isSignedIn = await UserAuthenticator().signOut();
       Navigator.pop(context);
       Navigator.of(context).pushReplacementNamed(LandingScreen.routeName);
-      //Navigator.of(context).pushNamed(LandingScreen.routeName);
       notifyListeners();
     } catch (e) {
       print(e);
@@ -78,8 +78,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openOnlineStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openOnlineStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<online store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
     if (storeOwnerState == null) {
       //we might alredy have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -91,8 +90,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openPhysicalStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<physical store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -101,15 +99,42 @@ class User extends ChangeNotifier {
     return res;
   }
 
+  Future<ResultInterface> updatePhysicalStore(PhysicalStoreDTO store) async {
+    var res = await StoreStorageProxy().updatePhysicalStore(store);
+    if (!res.getTag()) return res; //failure
+
+    this.storeOwnerState!.setPhysicalStore(res.getValue());
+    return res;
+  }
+
+  Future<ResultInterface> updateOnlineStore(StoreDTO store) async {
+    var res = await StoreStorageProxy().updateOnlineStore(store);
+    if (!res.getTag()) return res; //failure
+
+    this.storeOwnerState!.setOnlineStore(res.getValue());
+    return res;
+  }
+
+  Future<ResultInterface> deleteStore(String id, bool isOnline) async {
+    var res = await StoreStorageProxy().deleteStore(id, isOnline);
+    if (!res.getTag()) return res; //failure
+
+    if (isOnline)
+      this.storeOwnerState!.onlineStore = null;
+    else
+      this.storeOwnerState!.physicalStore = null;
+    return res;
+  }
+
   Future<ResultInterface> changeName(String name) async {
-    var res;
-    // TODO: FINISH
+    var res = await UsersStorageProxy().updateUserNameOrUrl(name, "");
+    notifyListeners();
     return res;
   }
 
   Future<ResultInterface> changeImage(String imageUrl) async {
-    var res;
-    // TODO: FINISH
+    var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
+    notifyListeners();
     return res;
   }
 }

@@ -101,8 +101,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200,
                 childAspectRatio: 2 / 3,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
+                crossAxisSpacing: 40,
               ),
             ),
           ),

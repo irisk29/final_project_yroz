@@ -138,7 +138,7 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedStore!.id != "") {
+    if (_editedStore!.id.isNotEmpty) {
       await Provider.of<Stores>(context, listen: false)
           .updatePhysicalStore(_editedStore!.id, _editedStore!);
     } else {
