@@ -253,13 +253,25 @@ class StoreStorageProxy {
           model.address,
           model.phoneNumber,
           jsonDecode(model.categories).cast<String>(),
-          jsonDecode(model.operationHours).cast<String, List<TimeOfDay>>(),
+          opHours(jsonDecode(model.operationHours)),
           url,
           model.qrCode);
       await dto.initImageFile();
       lst.add(dto);
     }
     return lst;
+  }
+
+  Map<String, List<TimeOfDay>> opHours(Map<String, dynamic> oper){
+    Map<String, List<TimeOfDay>> map = {};
+    for(MapEntry e in oper.entries){
+      List<TimeOfDay> l = [];
+      for(dynamic d in e.value){
+        l.add(TimeOfDay.fromDateTime(DateFormat.jm().parse(d.toString())));
+      }
+      map.addEntries([MapEntry(e.key, l)]);
+    }
+    return map;
   }
 
   Future<List<OnlineStoreModel>?> fetchAllOnlineStores() async {

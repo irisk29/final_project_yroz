@@ -94,6 +94,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               storeData.imageFile,
                               storeData.name,
                               storeData.address,
+                              storeData.phoneNumber,
+                              Map<String,List<TimeOfDay>>.from(storeData.operationHours)
                             ),
                           )
                           .toList(),
