@@ -113,7 +113,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedProduct!.id != null) {
+    if (_editedProduct!.id != "") {
       await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct!.id, _editedProduct!);
     } else {
@@ -125,12 +125,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('An error occurred!'),
-            content: Text('Something went wrong.'),
+            content: Text(error.toString()),
             actions: <Widget>[
               FlatButton(
                 child: Text('Okay'),
                 onPressed: () {
-                  Navigator.of(ctx).pop(_editedProduct);
+                  Navigator.of(ctx).pop();
                 },
               )
             ],
@@ -141,7 +141,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(_editedProduct);
   }
 
   @override

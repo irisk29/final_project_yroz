@@ -75,8 +75,10 @@ class ApplicationBloc with ChangeNotifier {
       var places = await placesService.getPlacesFromList(placeType!);
       markers = [];
       if (places.length > 0) {
-        var newMarker = markerService.createMarkerFromPlace(places[0], false);
-        markers.add(newMarker);
+        for(Place p in places) {
+          var newMarker = markerService.createMarkerFromPlace(p, false);
+          markers.add(newMarker);
+        }
       }
 
       var locationMarker =
@@ -88,6 +90,19 @@ class ApplicationBloc with ChangeNotifier {
 
       notifyListeners();
     }
+  }
+
+  createMarkers() async {
+    var places = await placesService.getPlacesFromList("");
+    markers = [];
+    if (places.length > 0) {
+      for(Place p in places) {
+        var newMarker = markerService.createMarkerFromPlace(p, false);
+        markers.add(newMarker);
+      }
+    }
+
+    notifyListeners();
   }
 
   @override

@@ -72,6 +72,8 @@ class _MapScreenState extends State<MapScreen> {
       final GoogleMapController controller = await _mapController.future;
       controller.animateCamera(CameraUpdate.newLatLngBounds(bounds!, 50));
     });
+
+    applicationBloc.createMarkers();
     super.initState();
   }
 
@@ -137,8 +139,7 @@ class _MapScreenState extends State<MapScreen> {
                                   label: Text(e.title),
                                   onSelected: (val) => applicationBloc
                                       .togglePlaceType(e.title, val),
-                                  selected:
-                                  applicationBloc.placeType == e.title,
+                                  selected: applicationBloc.placeType == e.title,
                                   selectedColor: Colors.blue,
                                 ),
                               ),
