@@ -11,7 +11,9 @@ class OnlineStoreScreen extends StatefulWidget {
 
   String title = "";
   String address = "";
-  String image = "";
+  MemoryImage? image = null;
+  String phoneNumber = "";
+  Map<String, List<TimeOfDay>> operationHours = {};
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
@@ -42,13 +44,29 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   @override
   void didChangeDependencies() {
     final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>?;
-    if (routeArgs != null) {
-      widget.title = routeArgs['title']!;
-      widget.address = routeArgs['address']!;
-      widget.image = routeArgs['image']!;
-    }
+    ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
+    widget.title = routeArgs['title'] as String;
+    widget.address = routeArgs['address'] as String;
+    widget.image = routeArgs['image'] as MemoryImage;
+    widget.phoneNumber = routeArgs['phoneNumber'] as String;
+    Object? abc = routeArgs['operationHours'];
+    if(abc!=null)
+      widget.operationHours = abc as Map<String,List<TimeOfDay>>;
     super.didChangeDependencies();
+  }
+
+  String mapAsString(){
+    String map = "";
+    for(MapEntry<String,List<TimeOfDay>> e in widget.operationHours.entries){
+      map = map + e.key + ": ";
+      for(int i = 0; i<e.value.length; i++){
+        map = map + e.value[i].format(context) + " ";
+        if (i==0)
+          map = map + "- ";
+      }
+      map = map + '\n';
+    }
+    return map;
   }
 
   @override
@@ -80,7 +98,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
         child: Column(
           children: [
             Center(
-              child: widget.image != "" ? Image.asset(widget.image) : null,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  image: new DecorationImage(
+                      fit: BoxFit.cover, image: widget.image!),
+                ),
+              ),
             ),
             ListTile(
               title: Text(
@@ -102,7 +127,13 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               ),
               title: Text("Open Now"),
               onTap: () {
-                //open change language
+                showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text('Opening hours'),
+                      content: Text(mapAsString()),
+                    )
+                );
               },
             ),
             ListTile(
@@ -134,14 +165,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Icons.phone,
                 color: Colors.grey,
               ),
-              title: Text("+44 345 3366"),
+              title: Text(widget.phoneNumber),
               onTap: () {
                 //open change language
               },
             ),
             ListTile(
               title: Text(
-                "Products",
+                "Products:",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () {

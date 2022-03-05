@@ -3,6 +3,7 @@ import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/product.dart';
 import 'package:final_project_yroz/providers/stores.dart';
+import 'package:final_project_yroz/screens/add_product_screen.dart';
 import 'package:final_project_yroz/screens/edit_product_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
@@ -203,7 +204,7 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
     if(OpenOnlineStoreScreen._products.length<5){
       final Product? result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => EditProductScreen()),
+        MaterialPageRoute(builder: (context) => AddProductScreen()),
       );
 
       // Update UI
@@ -488,11 +489,11 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                 onPressed: _showAddProduct,
               ),
               Wrap(
-                children: OpenOnlineStoreScreen._selectedItems
+                children: OpenOnlineStoreScreen._products
                     .map((e) => Chip(
                   deleteIcon: Icon( Icons.close, ),
-                  onDeleted: () {setState(() {OpenOnlineStoreScreen._selectedItems.remove(e);}); },
-                  label: Text(e),
+                  onDeleted: () {setState(() {OpenOnlineStoreScreen._products.remove(e);}); },
+                  label: Text(e.title),
                 ))
                     .toList(),
               ),

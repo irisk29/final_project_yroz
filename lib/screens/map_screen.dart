@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../blocs/application_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../dummy_data.dart';
 
@@ -44,6 +45,16 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
+    () async {
+      if (await Permission.location
+          .request()
+          .isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+        print("Location Permission is granted");
+      } else {
+        print("Location Permission is denied.");
+      }
+    };
     final applicationBloc =
         Provider.of<ApplicationBloc>(context, listen: false);
 
