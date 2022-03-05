@@ -11,6 +11,8 @@ class PhysicalStoreScreen extends StatefulWidget {
   String title = "";
   String address = "";
   MemoryImage? image = null;
+  String phoneNumber = "";
+  Map<String, List<TimeOfDay>> operationHours = {};
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
@@ -38,13 +40,29 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
     final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>?;
-    if (routeArgs != null) {
-      widget.title = routeArgs['title'] as String;
-      widget.address = routeArgs['address'] as String;
-      widget.image = routeArgs['image'] as MemoryImage;
-    }
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
+    widget.title = routeArgs['title'] as String;
+    widget.address = routeArgs['address'] as String;
+    widget.image = routeArgs['image'] as MemoryImage;
+    widget.phoneNumber = routeArgs['phoneNumber'] as String;
+    Object? abc = routeArgs['operationHours'];
+    if(abc!=null)
+      widget.operationHours = abc as Map<String,List<TimeOfDay>>;
     super.didChangeDependencies();
+  }
+
+  String mapAsString(){
+    String map = "";
+    for(MapEntry<String,List<TimeOfDay>> e in widget.operationHours.entries){
+      map = map + e.key + ": ";
+      for(int i = 0; i<e.value.length; i++){
+        map = map + e.value[i].format(context) + " ";
+        if (i==0)
+          map = map + "- ";
+      }
+      map = map + '\n';
+    }
+    return map;
   }
 
   @override
@@ -104,7 +122,13 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               ),
               title: Text("Open Now"),
               onTap: () {
-                //open change language
+                showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text('Opening hours'),
+                      content: Text(mapAsString()),
+                    )
+                );
               },
             ),
             ListTile(
@@ -136,7 +160,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 Icons.phone,
                 color: Colors.grey,
               ),
-              title: Text("+44 345 3366"),
+              title: Text(widget.phoneNumber),
               onTap: () {
                 //open change language
               },

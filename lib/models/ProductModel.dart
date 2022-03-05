@@ -106,8 +106,17 @@ class ProductModel extends Model {
     }
   }
   
-  String? get shoppingbagmodelID {
-    return _shoppingbagmodelID;
+  String get shoppingbagmodelID {
+    try {
+      return _shoppingbagmodelID!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   TemporalDateTime? get createdAt {
@@ -118,9 +127,9 @@ class ProductModel extends Model {
     return _updatedAt;
   }
   
-  const ProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required onlinestoremodelID, shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _onlinestoremodelID = onlinestoremodelID, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const ProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required onlinestoremodelID, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _onlinestoremodelID = onlinestoremodelID, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory ProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required String onlinestoremodelID, String? shoppingbagmodelID}) {
+  factory ProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required String onlinestoremodelID, required String shoppingbagmodelID}) {
     return ProductModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -264,7 +273,7 @@ class ProductModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: ProductModel.SHOPPINGBAGMODELID,
-      isRequired: false,
+      isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     

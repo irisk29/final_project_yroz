@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/settings_screen.dart';
 import '../screens/splash_screen.dart';
@@ -39,7 +40,7 @@ class _TabsScreenState extends State<TabsScreen> {
         'title': 'Locations',
       },
       {
-        'page': SplashScreen(),
+        'page': WalletScreen(),
         'title': 'Wallet',
       },
     ];
@@ -84,22 +85,22 @@ class _TabsScreenState extends State<TabsScreen> {
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).primaryColor,
             icon: Icon(Icons.home_outlined),
-            title: Text('Home'),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).primaryColor,
             icon: Icon(Icons.favorite_border),
-            title: Text('Favorites'),
+            label: 'Favorites',
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).primaryColor,
             icon: Icon(Icons.location_on_outlined),
-            title: Text('Nearby'),
+            label: 'Nearby',
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).primaryColor,
             icon: Icon(Icons.account_balance_wallet_outlined),
-            title: Text('Wallet'),
+            label: 'Wallet',
           ),
         ],
       ),

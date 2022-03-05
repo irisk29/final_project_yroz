@@ -2,7 +2,7 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "yrozproject",
+  "projectName": "finalprojectYROZ",
   "version": "3.1",
   "frontend": "flutter",
   "flutter": {

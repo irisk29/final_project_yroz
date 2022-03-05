@@ -85,8 +85,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             child: GridView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.all(25),
-              children: DUMMY_STORES == null
-                  ? [SplashScreen()]
+              children: DUMMY_STORES.isEmpty
+                  ? []
                   : [
                       DUMMY_STORES
                           .map(
@@ -94,6 +94,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               storeData.imageFile,
                               storeData.name,
                               storeData.address,
+                              storeData.phoneNumber,
+                              Map<String,List<TimeOfDay>>.from(storeData.operationHours)
                             ),
                           )
                           .toList(),
@@ -101,8 +103,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 200,
                 childAspectRatio: 2 / 3,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
+                crossAxisSpacing: 40,
               ),
             ),
           ),

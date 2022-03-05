@@ -5,8 +5,12 @@ class StoreItem extends StatelessWidget {
   final MemoryImage? image;
   final String title;
   final String address;
+  final String phoneNumber;
+  late final Map<String, List<TimeOfDay>> operationHours;
 
-  StoreItem(this.image, this.title, this.address);
+  StoreItem(this.image, this.title, this.address, this.phoneNumber, operationHours){
+    this.operationHours = Map<String,List<TimeOfDay>>.from(operationHours);
+  }
 
   void selectStore(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
@@ -15,6 +19,8 @@ class StoreItem extends StatelessWidget {
         'title': title,
         'address': address,
         'image': image,
+        'phoneNumber': phoneNumber,
+        'operationHours': Map<String,List<TimeOfDay>>.from(operationHours)
       },
     );
   }
@@ -27,7 +33,7 @@ class StoreItem extends StatelessWidget {
         Positioned(
             child: Container(
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: Colors.white,
             image: this.image != null
                 ? DecorationImage(image: this.image!, fit: BoxFit.cover)
                 : null,
@@ -36,37 +42,32 @@ class StoreItem extends StatelessWidget {
         )),
         Positioned(
             top: 110,
-            left: -5,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-                color: Color.fromRGBO(255, 255, 255, 1),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 88, vertical: 10),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    this.title,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Color.fromRGBO(20, 19, 42, 1),
-                      fontSize: 14,
+              child: Container(
+                width: 250,
+                    height: 110,
+                    color: Colors.white,
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          this.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color.fromRGBO(20, 19, 42, 1),
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          this.address,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    this.address,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
               ),
-            )),
+        ),
       ])),
       onTap: () => selectStore(context),
     );

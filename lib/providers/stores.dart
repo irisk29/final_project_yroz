@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
@@ -13,7 +14,7 @@ class Stores with ChangeNotifier {
 
   Stores(this.user, this._onlineStores, this._physicalStores);
 
-  Stores.withNull(): user = User.withNull(){}
+  Stores.withNull() : user = User.withNull() {}
 
   List<OnlineStore> get onlineStores {
     // if (_showFavoritesOnly) {
@@ -43,8 +44,8 @@ class Stores with ChangeNotifier {
 
   Future<void> addOnlineStore(OnlineStore store) async {
     try {
-      StoreDTO dto = StoreDTO(store.name, store.phoneNumber, store.address,
-          store.categories, store.operationHours, "");
+      StoreDTO dto =
+      StoreDTO(store.id, store.name, store.phoneNumber, store.address, store.categories, store.operationHours, "");
       ResultInterface res = await user.openOnlineStore(dto);
       if (!res.getTag()) {
         print(res.getMessage());
@@ -59,8 +60,8 @@ class Stores with ChangeNotifier {
 
   Future<void> addPhysicalStore(PhysicalStore store) async {
     try {
-      StoreDTO dto = StoreDTO(store.name, store.phoneNumber, store.address,
-          store.categories, store.operationHours, store.image);
+      StoreDTO dto = StoreDTO(
+          store.id, store.name, store.phoneNumber, store.address, store.categories, store.operationHours, store.image);
       ResultInterface res = await user.openPhysicalStore(dto);
       if (!res.getTag()) {
         print(res.getMessage());
@@ -76,22 +77,43 @@ class Stores with ChangeNotifier {
   Future<void> updateOnlineStore(String id, OnlineStore newStore) async {
     final storeIndex = _onlineStores.indexWhere((prod) => prod.id == id);
     if (storeIndex >= 0) {
-      //TODO: update store
+      user.updateOnlineStore(newStore.createDTO());
+      _onlineStores.removeAt(storeIndex);
+      _onlineStores.add(user.storeOwnerState!.onlineStore!);
       notifyListeners();
     } else {
-      print('...');
+      print('store with ${id} not found');
     }
   }
 
   Future<void> updatePhysicalStore(String id, PhysicalStore newStore) async {
     final storeIndex = _physicalStores.indexWhere((prod) => prod.id == id);
     if (storeIndex >= 0) {
-      //TODO: update store
+      user.updatePhysicalStore(newStore.createDTO());
+      _physicalStores.removeAt(storeIndex);
+      _physicalStores.add(user.storeOwnerState!.physicalStore!);
       notifyListeners();
     } else {
-      print('...');
+      print('store with ${id} not found');
     }
   }
 
-  Future<void> deleteStore(String id) async {}
+  Future<void> deleteStore(String id, bool isOnline) async {
+    var storeIndex = isOnline
+        ? _onlineStores.indexWhere((prod) => prod.id == id)
+        : _physicalStores.indexWhere((prod) => prod.id == id);
+
+    if (storeIndex >= 0) {
+      ResultInterface res = await user.deleteStore(id, isOnline);
+      if (!res.getTag()) {
+        //TODO: print to log
+        print(res.getMessage());
+        return;
+      }
+      isOnline ? _onlineStores.removeAt(storeIndex) : _physicalStores.removeAt(storeIndex);
+      notifyListeners();
+    } else {
+      print('store with ${id} not found');
+    }
+  }
 }

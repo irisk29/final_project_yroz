@@ -13,7 +13,6 @@ enum FilterOptions {
 
 class CategoryScreen extends StatefulWidget {
   static const routeName = '/category';
-
   String? title;
 
   @override
@@ -21,41 +20,36 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  var _isInit = true;
-  var _isLoading = false;
-  late List<PhysicalStoreDTO> DUMMY_STORES;
+  var _isLoading = true;
+  List<PhysicalStoreDTO> DUMMY_STORES = [];
 
   @override
   void initState() {
-    // Provider.of<Products>(context).fetchAndSetProducts(); // WON'T WORK!
-    // Future.delayed(Duration.zero).then((_) {
-    //   Provider.of<Products>(context).fetchAndSetProducts();
-    // });
     super.initState();
     () async {
       DUMMY_STORES = await StoreStorageProxy().fetchAllPhysicalStores();
+      if(DUMMY_STORES.length==0) {
+        _isLoading = false;
+      }
+      List<PhysicalStoreDTO> toRemove = [];
+      if(DUMMY_STORES.length>0) {
+        for (PhysicalStoreDTO store in DUMMY_STORES) {
+          if (!store.categories.contains(widget.title!))
+              toRemove.add(store);
+        }
+        DUMMY_STORES.removeWhere((element) => toRemove.contains(element));
+        _isLoading = false;
+      }
       setState(() {
-        // Update your UI with the desired changes.
+
       });
     }();
   }
 
   @override
   void didChangeDependencies() {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
     widget.title = routeArgs['title'];
-    if (_isInit) {
-      setState(() {
-        _isLoading = false;
-      });
-      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    }
-    _isInit = false;
     super.didChangeDependencies();
   }
 
@@ -68,9 +62,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         ),
       ),
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Center(child: CircularProgressIndicator(),)
           : GridView(
               scrollDirection: Axis.vertical,
               padding: const EdgeInsets.all(25),
@@ -81,6 +73,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         storeData.imageFile,
                         storeData.name,
                         storeData.address,
+                        storeData.phoneNumber,
+                        Map<String,List<TimeOfDay>>.from(storeData.operationHours)
                       ),
                     )
                     .toList(),

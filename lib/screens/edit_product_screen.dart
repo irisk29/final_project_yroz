@@ -130,7 +130,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               FlatButton(
                 child: Text('Okay'),
                 onPressed: () {
-                  Navigator.of(ctx).pop();
+                  Navigator.of(ctx).pop(_editedProduct);
                 },
               )
             ],

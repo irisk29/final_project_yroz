@@ -35,9 +35,9 @@ class UserModel extends Model {
   final String? _imageUrl;
   final String? _creditCards;
   final String? _bankAccount;
-  final List<ShoppingBagModel>? _shoppingBagModel;
   final StoreOwnerModel? _storeOwnerModel;
   final DigitalWalletModel? _digitalWalletModel;
+  final List<ShoppingBagModel>? _shoppingBagModels;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _userModelStoreOwnerModelId;
@@ -89,25 +89,16 @@ class UserModel extends Model {
     return _bankAccount;
   }
   
-  List<ShoppingBagModel>? get shoppingBagModel {
-    return _shoppingBagModel;
-  }
-  
   StoreOwnerModel? get storeOwnerModel {
     return _storeOwnerModel;
   }
   
-  DigitalWalletModel get digitalWalletModel {
-    try {
-      return _digitalWalletModel!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  DigitalWalletModel? get digitalWalletModel {
+    return _digitalWalletModel;
+  }
+  
+  List<ShoppingBagModel>? get shoppingBagModels {
+    return _shoppingBagModels;
   }
   
   TemporalDateTime? get createdAt {
@@ -122,22 +113,13 @@ class UserModel extends Model {
     return _userModelStoreOwnerModelId;
   }
   
-  String get userModelDigitalWalletModelId {
-    try {
-      return _userModelDigitalWalletModelId!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get userModelDigitalWalletModelId {
+    return _userModelDigitalWalletModelId;
   }
   
-  const UserModel._internal({required this.id, required email, required name, imageUrl, creditCards, bankAccount, shoppingBagModel, storeOwnerModel, required digitalWalletModel, createdAt, updatedAt, userModelStoreOwnerModelId, required userModelDigitalWalletModelId}): _email = email, _name = name, _imageUrl = imageUrl, _creditCards = creditCards, _bankAccount = bankAccount, _shoppingBagModel = shoppingBagModel, _storeOwnerModel = storeOwnerModel, _digitalWalletModel = digitalWalletModel, _createdAt = createdAt, _updatedAt = updatedAt, _userModelStoreOwnerModelId = userModelStoreOwnerModelId, _userModelDigitalWalletModelId = userModelDigitalWalletModelId;
+  const UserModel._internal({required this.id, required email, required name, imageUrl, creditCards, bankAccount, storeOwnerModel, digitalWalletModel, shoppingBagModels, createdAt, updatedAt, userModelStoreOwnerModelId, userModelDigitalWalletModelId}): _email = email, _name = name, _imageUrl = imageUrl, _creditCards = creditCards, _bankAccount = bankAccount, _storeOwnerModel = storeOwnerModel, _digitalWalletModel = digitalWalletModel, _shoppingBagModels = shoppingBagModels, _createdAt = createdAt, _updatedAt = updatedAt, _userModelStoreOwnerModelId = userModelStoreOwnerModelId, _userModelDigitalWalletModelId = userModelDigitalWalletModelId;
   
-  factory UserModel({String? id, required String email, required String name, String? imageUrl, String? creditCards, String? bankAccount, List<ShoppingBagModel>? shoppingBagModel, StoreOwnerModel? storeOwnerModel, required DigitalWalletModel digitalWalletModel, String? userModelStoreOwnerModelId, required String userModelDigitalWalletModelId}) {
+  factory UserModel({String? id, required String email, required String name, String? imageUrl, String? creditCards, String? bankAccount, StoreOwnerModel? storeOwnerModel, DigitalWalletModel? digitalWalletModel, List<ShoppingBagModel>? shoppingBagModels, String? userModelStoreOwnerModelId, String? userModelDigitalWalletModelId}) {
     return UserModel._internal(
       id: id == null ? UUID.getUUID() : id,
       email: email,
@@ -145,9 +127,9 @@ class UserModel extends Model {
       imageUrl: imageUrl,
       creditCards: creditCards,
       bankAccount: bankAccount,
-      shoppingBagModel: shoppingBagModel != null ? List<ShoppingBagModel>.unmodifiable(shoppingBagModel) : shoppingBagModel,
       storeOwnerModel: storeOwnerModel,
       digitalWalletModel: digitalWalletModel,
+      shoppingBagModels: shoppingBagModels != null ? List<ShoppingBagModel>.unmodifiable(shoppingBagModels) : shoppingBagModels,
       userModelStoreOwnerModelId: userModelStoreOwnerModelId,
       userModelDigitalWalletModelId: userModelDigitalWalletModelId);
   }
@@ -166,9 +148,9 @@ class UserModel extends Model {
       _imageUrl == other._imageUrl &&
       _creditCards == other._creditCards &&
       _bankAccount == other._bankAccount &&
-      DeepCollectionEquality().equals(_shoppingBagModel, other._shoppingBagModel) &&
       _storeOwnerModel == other._storeOwnerModel &&
       _digitalWalletModel == other._digitalWalletModel &&
+      DeepCollectionEquality().equals(_shoppingBagModels, other._shoppingBagModels) &&
       _userModelStoreOwnerModelId == other._userModelStoreOwnerModelId &&
       _userModelDigitalWalletModelId == other._userModelDigitalWalletModelId;
   }
@@ -196,7 +178,7 @@ class UserModel extends Model {
     return buffer.toString();
   }
   
-  UserModel copyWith({String? id, String? email, String? name, String? imageUrl, String? creditCards, String? bankAccount, List<ShoppingBagModel>? shoppingBagModel, StoreOwnerModel? storeOwnerModel, DigitalWalletModel? digitalWalletModel, String? userModelStoreOwnerModelId, String? userModelDigitalWalletModelId}) {
+  UserModel copyWith({String? id, String? email, String? name, String? imageUrl, String? creditCards, String? bankAccount, StoreOwnerModel? storeOwnerModel, DigitalWalletModel? digitalWalletModel, List<ShoppingBagModel>? shoppingBagModels, String? userModelStoreOwnerModelId, String? userModelDigitalWalletModelId}) {
     return UserModel._internal(
       id: id ?? this.id,
       email: email ?? this.email,
@@ -204,9 +186,9 @@ class UserModel extends Model {
       imageUrl: imageUrl ?? this.imageUrl,
       creditCards: creditCards ?? this.creditCards,
       bankAccount: bankAccount ?? this.bankAccount,
-      shoppingBagModel: shoppingBagModel ?? this.shoppingBagModel,
       storeOwnerModel: storeOwnerModel ?? this.storeOwnerModel,
       digitalWalletModel: digitalWalletModel ?? this.digitalWalletModel,
+      shoppingBagModels: shoppingBagModels ?? this.shoppingBagModels,
       userModelStoreOwnerModelId: userModelStoreOwnerModelId ?? this.userModelStoreOwnerModelId,
       userModelDigitalWalletModelId: userModelDigitalWalletModelId ?? this.userModelDigitalWalletModelId);
   }
@@ -218,17 +200,17 @@ class UserModel extends Model {
       _imageUrl = json['imageUrl'],
       _creditCards = json['creditCards'],
       _bankAccount = json['bankAccount'],
-      _shoppingBagModel = json['shoppingBagModel'] is List
-        ? (json['shoppingBagModel'] as List)
-          .where((e) => e?['serializedData'] != null)
-          .map((e) => ShoppingBagModel.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
-          .toList()
-        : null,
       _storeOwnerModel = json['storeOwnerModel']?['serializedData'] != null
         ? StoreOwnerModel.fromJson(new Map<String, dynamic>.from(json['storeOwnerModel']['serializedData']))
         : null,
       _digitalWalletModel = json['digitalWalletModel']?['serializedData'] != null
         ? DigitalWalletModel.fromJson(new Map<String, dynamic>.from(json['digitalWalletModel']['serializedData']))
+        : null,
+      _shoppingBagModels = json['shoppingBagModels'] is List
+        ? (json['shoppingBagModels'] as List)
+          .where((e) => e?['serializedData'] != null)
+          .map((e) => ShoppingBagModel.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .toList()
         : null,
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
@@ -236,7 +218,7 @@ class UserModel extends Model {
       _userModelDigitalWalletModelId = json['userModelDigitalWalletModelId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'email': _email, 'name': _name, 'imageUrl': _imageUrl, 'creditCards': _creditCards, 'bankAccount': _bankAccount, 'shoppingBagModel': _shoppingBagModel?.map((ShoppingBagModel? e) => e?.toJson()).toList(), 'storeOwnerModel': _storeOwnerModel?.toJson(), 'digitalWalletModel': _digitalWalletModel?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userModelStoreOwnerModelId': _userModelStoreOwnerModelId, 'userModelDigitalWalletModelId': _userModelDigitalWalletModelId
+    'id': id, 'email': _email, 'name': _name, 'imageUrl': _imageUrl, 'creditCards': _creditCards, 'bankAccount': _bankAccount, 'storeOwnerModel': _storeOwnerModel?.toJson(), 'digitalWalletModel': _digitalWalletModel?.toJson(), 'shoppingBagModels': _shoppingBagModels?.map((ShoppingBagModel? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userModelStoreOwnerModelId': _userModelStoreOwnerModelId, 'userModelDigitalWalletModelId': _userModelDigitalWalletModelId
   };
 
   static final QueryField ID = QueryField(fieldName: "userModel.id");
@@ -245,15 +227,15 @@ class UserModel extends Model {
   static final QueryField IMAGEURL = QueryField(fieldName: "imageUrl");
   static final QueryField CREDITCARDS = QueryField(fieldName: "creditCards");
   static final QueryField BANKACCOUNT = QueryField(fieldName: "bankAccount");
-  static final QueryField SHOPPINGBAGMODEL = QueryField(
-    fieldName: "shoppingBagModel",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (ShoppingBagModel).toString()));
   static final QueryField STOREOWNERMODEL = QueryField(
     fieldName: "storeOwnerModel",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (StoreOwnerModel).toString()));
   static final QueryField DIGITALWALLETMODEL = QueryField(
     fieldName: "digitalWalletModel",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (DigitalWalletModel).toString()));
+  static final QueryField SHOPPINGBAGMODELS = QueryField(
+    fieldName: "shoppingBagModels",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (ShoppingBagModel).toString()));
   static final QueryField USERMODELSTOREOWNERMODELID = QueryField(fieldName: "userModelStoreOwnerModelId");
   static final QueryField USERMODELDIGITALWALLETMODELID = QueryField(fieldName: "userModelDigitalWalletModelId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
@@ -303,13 +285,6 @@ class UserModel extends Model {
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: UserModel.SHOPPINGBAGMODEL,
-      isRequired: false,
-      ofModelName: (ShoppingBagModel).toString(),
-      associatedKey: ShoppingBagModel.USERMODELID
-    ));
-    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
       key: UserModel.STOREOWNERMODEL,
       isRequired: false,
@@ -319,9 +294,16 @@ class UserModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
       key: UserModel.DIGITALWALLETMODEL,
-      isRequired: true,
+      isRequired: false,
       ofModelName: (DigitalWalletModel).toString(),
       associatedKey: DigitalWalletModel.ID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
+      key: UserModel.SHOPPINGBAGMODELS,
+      isRequired: false,
+      ofModelName: (ShoppingBagModel).toString(),
+      associatedKey: ShoppingBagModel.USERMODELID
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -346,7 +328,7 @@ class UserModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: UserModel.USERMODELDIGITALWALLETMODELID,
-      isRequired: true,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
   });

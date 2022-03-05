@@ -8,6 +8,7 @@ class PhysicalStoreDTO extends StoreDTO {
   MemoryImage? imageFile;
 
   PhysicalStoreDTO(
+      String id,
       String name,
       String address,
       String phoneNumber,
@@ -17,7 +18,7 @@ class PhysicalStoreDTO extends StoreDTO {
       String qrCode)
       : this.qrCode = qrCode,
         this.imageFile = null,
-        super(name, phoneNumber, address, categories, operationHours, image) {}
+        super(id, name, phoneNumber, address, categories, operationHours, image) {}
 
   Future<void> initImageFile() async {
     if (this.image != null) {
