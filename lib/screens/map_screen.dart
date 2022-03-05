@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../blocs/application_bloc.dart';
 import 'package:provider/provider.dart';
 
+import '../dummy_data.dart';
+
 class MapScreen extends StatefulWidget {
   final PlaceLocation initialLocation;
   final bool isSelecting;
@@ -120,48 +122,15 @@ class _MapScreenState extends State<MapScreen> {
                           child: Wrap(
                             spacing: 8.0,
                             children: [
-                              FilterChip(
-                                label: Text('Campground'),
-                                onSelected: (val) => applicationBloc
-                                    .togglePlaceType('campground', val),
-                                selected:
-                                    applicationBloc.placeType == 'campground',
-                                selectedColor: Colors.blue,
+                              ...DUMMY_CATEGORIES.map((e) => FilterChip(
+                                  label: Text(e.title),
+                                  onSelected: (val) => applicationBloc
+                                      .togglePlaceType(e.title, val),
+                                  selected:
+                                  applicationBloc.placeType == e.title,
+                                  selectedColor: Colors.blue,
+                                ),
                               ),
-                              FilterChip(
-                                  label: Text('Locksmith'),
-                                  onSelected: (val) => applicationBloc
-                                      .togglePlaceType('locksmith', val),
-                                  selected:
-                                      applicationBloc.placeType == 'locksmith',
-                                  selectedColor: Colors.blue),
-                              FilterChip(
-                                  label: Text('Pharmacy'),
-                                  onSelected: (val) => applicationBloc
-                                      .togglePlaceType('pharmacy', val),
-                                  selected:
-                                      applicationBloc.placeType == 'pharmacy',
-                                  selectedColor: Colors.blue),
-                              FilterChip(
-                                  label: Text('Pet Store'),
-                                  onSelected: (val) => applicationBloc
-                                      .togglePlaceType('pet_store', val),
-                                  selected:
-                                      applicationBloc.placeType == 'pet_store',
-                                  selectedColor: Colors.blue),
-                              FilterChip(
-                                  label: Text('Lawyer'),
-                                  onSelected: (val) => applicationBloc
-                                      .togglePlaceType('lawyer', val),
-                                  selected:
-                                      applicationBloc.placeType == 'lawyer',
-                                  selectedColor: Colors.blue),
-                              FilterChip(
-                                  label: Text('Bank'),
-                                  onSelected: (val) => applicationBloc
-                                      .togglePlaceType('bank', val),
-                                  selected: applicationBloc.placeType == 'bank',
-                                  selectedColor: Colors.blue),
                             ],
                           ),
                         ),
@@ -211,4 +180,5 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
+
 }

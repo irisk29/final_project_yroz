@@ -1,3 +1,4 @@
+import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/stores.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
@@ -26,6 +27,7 @@ class OpenPhysicalStoreScreen extends StatefulWidget {
   static TimeOfDay _friday_close = TimeOfDay(hour: 7, minute: 15);
   static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 15);
   static TimeOfDay _saturday_close = TimeOfDay(hour: 7, minute: 15);
+  static TextEditingController _controller = TextEditingController();
 
   @override
   _OpenPhysicalStoreScreenState createState() =>
@@ -33,11 +35,22 @@ class OpenPhysicalStoreScreen extends StatefulWidget {
 }
 
 class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
-  final _priceFocusNode = FocusNode();
-  final _descriptionFocusNode = FocusNode();
+  final destCtrl = TextEditingController();
   final _imageUrlController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+
+  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(geoMethods: GeoMethods(
+    googleApiKey: 'AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg',
+    language: 'en',
+    countryCode: 'il',
+    ),
+      controller: OpenPhysicalStoreScreen._controller,
+      builder: AddressDialogBuilder(),
+      onDone: (Address address) => address
+  );
   XFile? _pickedImage;
   PhysicalStore? _editedStore = PhysicalStore(
       id: "",
@@ -92,8 +105,6 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   @override
   void dispose() {
     _imageUrlFocusNode.removeListener(_updateImageUrl);
-    _priceFocusNode.dispose();
-    _descriptionFocusNode.dispose();
     _imageUrlController.dispose();
     _imageUrlFocusNode.dispose();
     super.dispose();
@@ -127,7 +138,7 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedStore!.id != null) {
+    if (_editedStore!.id.isNotEmpty) {
       await Provider.of<Stores>(context, listen: false)
           .updatePhysicalStore(_editedStore!.id, _editedStore!);
     } else {
@@ -224,12 +235,9 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                 child: ListView(
                   children: <Widget>[
                     TextFormField(
-                      initialValue: _initValues['name'],
+                      controller: _nameController,
                       decoration: InputDecoration(labelText: 'Store Name'),
                       textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_priceFocusNode);
-                      },
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please provide a value.';
@@ -251,15 +259,10 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues['phoneNumber'],
                       decoration: InputDecoration(labelText: 'phoneNumber'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.phone,
-                      focusNode: _priceFocusNode,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context)
-                            .requestFocus(_descriptionFocusNode);
-                      },
+                      controller: _phoneNumberController,
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter a phone Number.';
@@ -278,17 +281,12 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues['address'],
                       decoration: InputDecoration(labelText: 'Address'),
-                      maxLines: 3,
-                      keyboardType: TextInputType.multiline,
-                      focusNode: _descriptionFocusNode,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter an address.';
-                        }
-                        return null;
-                      },
+                      controller: OpenPhysicalStoreScreen._controller,
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (context) => destinationBuilder
+                      ),
                       onSaved: (value) {
                         _editedStore = PhysicalStore(
                             name: _editedStore!.name,
@@ -307,6 +305,8 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                     Wrap(
                       children: OpenPhysicalStoreScreen._selectedItems
                           .map((e) => Chip(
+                        deleteIcon: Icon( Icons.close, ),
+                        onDeleted: () {setState(() {OpenPhysicalStoreScreen._selectedItems.remove(e);}); },
                         label: Text(e),
                       ))
                           .toList(),
@@ -436,10 +436,6 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
                                   keyboardType: TextInputType.url,
                                   textInputAction: TextInputAction.done,
                                   controller: _imageUrlController,
-                                  focusNode: _imageUrlFocusNode,
-                                  onFieldSubmitted: (_) {
-                                    _saveForm();
-                                  },
                                   validator: (value) {
                                     if (value!.isEmpty) {
                                       return 'Please enter an image URL.';

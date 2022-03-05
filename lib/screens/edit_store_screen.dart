@@ -34,7 +34,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
     title: '',
     price: 0,
     description: '',
-    imageUrl: '', category: '',
+    imageUrl: '',
+    category: '',
   );
   var _initValues = {
     'title': '',
@@ -57,7 +58,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
       final productId = ModalRoute.of(context)!.settings.arguments as String;
       if (productId != null) {
         _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId)!;
+        Provider.of<Products>(context, listen: false).findById(productId)!;
         _initValues = {
           'name': _editedProduct.title,
           'description': _editedProduct.description,
@@ -139,7 +140,9 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Store',),
+        title: Text(
+          'Edit Store',
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.save),
@@ -177,7 +180,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       description: _editedProduct.description,
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id,
-                      isFavorite: _editedProduct.isFavorite, category: '');
+                      isFavorite: _editedProduct.isFavorite,
+                      category: '');
                 },
               ),
               TextFormField(
@@ -203,7 +207,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                       description: _editedProduct.description,
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id,
-                      isFavorite: _editedProduct.isFavorite, category: '');
+                      isFavorite: _editedProduct.isFavorite,
+                      category: '');
                 },
               ),
               TextFormField(
@@ -216,7 +221,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                   if (value!.isEmpty) {
                     return 'Please enter a description.';
                   }
-                  if (value!.length < 10) {
+                  if (value.length < 10) {
                     return 'Should be at least 10 characters long.';
                   }
                   return null;
@@ -228,7 +233,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                     description: value!,
                     imageUrl: _editedProduct.imageUrl,
                     id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite, category: '',
+                    isFavorite: _editedProduct.isFavorite,
+                    category: '',
                   );
                 },
               ),
@@ -271,13 +277,13 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                         if (value!.isEmpty) {
                           return 'Please enter an image URL.';
                         }
-                        if (!value!.startsWith('http') &&
-                            !value!.startsWith('https')) {
+                        if (!value.startsWith('http') &&
+                            !value.startsWith('https')) {
                           return 'Please enter a valid URL.';
                         }
-                        if (!value!.endsWith('.png') &&
-                            !value!.endsWith('.jpg') &&
-                            !value!.endsWith('.jpeg')) {
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpg') &&
+                            !value.endsWith('.jpeg')) {
                           return 'Please enter a valid image URL.';
                         }
                         return null;
@@ -289,7 +295,8 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                           description: _editedProduct.description,
                           imageUrl: value!,
                           id: _editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite, category: '',
+                          isFavorite: _editedProduct.isFavorite,
+                          category: '',
                         );
                       },
                     ),
@@ -300,7 +307,7 @@ class _EditStoreScreenState extends State<EditStoreScreen> {
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.black,
                 child: Text("View Products"),
-                onPressed: (){},
+                onPressed: () {},
               ),
             ],
           ),
