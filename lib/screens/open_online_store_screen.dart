@@ -200,16 +200,18 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
   }
 
   void _showAddProduct() async {
-    final Product? result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => EditProductScreen()),
-    );
+    if(OpenOnlineStoreScreen._products.length<5){
+      final Product? result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EditProductScreen()),
+      );
 
-    // Update UI
-    if (result != null) {
-      setState(() {
-        OpenOnlineStoreScreen._products.add(result);
-      });
+      // Update UI
+      if (result != null) {
+        setState(() {
+          OpenOnlineStoreScreen._products.add(result);
+        });
+      }
     }
   }
 
@@ -483,7 +485,7 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
               const SizedBox(height: 50.0),
               ElevatedButton(
                 child: const Text('Add Product'),
-                onPressed: _showMultiSelect,
+                onPressed: _showAddProduct,
               ),
               Wrap(
                 children: OpenOnlineStoreScreen._selectedItems
