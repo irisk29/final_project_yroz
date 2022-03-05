@@ -67,9 +67,9 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
   }
 
   bool lessthanfifteen(TimeOfDay a, TimeOfDay b){
-    if(a.hour == b.hour && (a.minute - b.minute).abs()<15)
+    if(a.hour == b.hour && (a.minute - b.minute)<15)
       return true;
-    if((a.hour - b.hour).abs() == 1 && ((a.minute - b.minute).abs()<15 || (60 + a.minute - b.minute).abs()<15))
+    if(a.hour - b.hour == 1 && (60 + a.minute - b.minute)<15)
       return true;
     return false;
   }
@@ -81,7 +81,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
       if(e.key == day){
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
         if(time>e.value[0] && time<e.value[1]){
-          if(lessthanfifteen(time, e.value[1])){
+          if(lessthanfifteen(e.value[1], time)){
             return 1;
           }
           return 0;
