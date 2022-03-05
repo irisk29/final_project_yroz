@@ -72,10 +72,7 @@ class ApplicationBloc with ChangeNotifier {
     }
 
     if (placeType != null) {
-      var places = await placesService.getPlaces(
-          selectedLocationStatic!.geometry.location.lat,
-          selectedLocationStatic!.geometry.location.lng,
-          placeType!);
+      var places = await placesService.getPlacesFromList(placeType!);
       markers = [];
       if (places.length > 0) {
         var newMarker = markerService.createMarkerFromPlace(places[0], false);

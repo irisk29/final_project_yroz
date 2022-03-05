@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:google_geocoding/google_geocoding.dart' as geo;
+
 import 'geometry.dart';
 
 class PlaceLocation {
@@ -39,6 +41,14 @@ class Place {
       geometry: Geometry.fromJson(json['geometry']),
       name: json['formatted_address'],
       vicinity: json['vicinity'],
+    );
+  }
+
+  factory Place.fromStore(String name, geo.GeocodingResponse address, String add) {
+    return Place(
+      geometry: Geometry.fromLocation(address.results!.first.geometry!.location!),
+      name: name,
+      vicinity: add,
     );
   }
 }

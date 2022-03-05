@@ -54,6 +54,7 @@ dependencies:
   address_search_field: ^4.0.1
   location: ^4.3.0
   permission_handler: ^9.0.0
+  google_geocoding: ^0.2.0
 
 dev_dependencies:
   flutter_test:
