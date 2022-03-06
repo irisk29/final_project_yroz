@@ -93,12 +93,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               height: (MediaQuery.of(context).size.height -
                       MediaQuery.of(context).padding.top) *
                   0.25,
-              child: GridView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(25),
-                children: DUMMY_STORES.isEmpty
-                    ? []
-                    : [
+              child: DUMMY_STORES.isEmpty
+                  ? Container()
+                  : GridView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.all(25),
+                      children: [
                         DUMMY_STORES
                             .map(
                               (storeData) => StoreItem(
@@ -111,17 +111,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             )
                             .toList(),
                       ].expand((i) => i).toList(),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-              ),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                      ),
+                    ),
             ),
           ],
         ),
-        SearchBar(),
+        Padding(
+            padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).padding.top) *
+                0.01,
+            child: SearchBar()),
       ],
     );
   }

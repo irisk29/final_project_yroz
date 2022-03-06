@@ -6,6 +6,7 @@ import 'package:final_project_yroz/providers/stores.dart';
 import 'package:final_project_yroz/screens/add_product_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
+import 'package:final_project_yroz/screens/open_store_pipeline_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -142,8 +143,8 @@ class _MyAppState extends State<MyApp> {
             CategoryScreen.routeName: (ctx) => CategoryScreen(),
             SettingsScreen.routeName: (ctx) => SettingsScreen(),
             PaymentScreen.routeName: (ctx) => PaymentScreen(),
-            OpenPhysicalStoreScreen.routeName: (ctx) =>
-                OpenPhysicalStoreScreen(),
+            OpenPhysicalStorePipeline.routeName: (ctx) =>
+                OpenPhysicalStorePipeline(),
             OpenOnlineStoreScreen.routeName: (ctx) => OpenOnlineStoreScreen(),
             ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
             PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
