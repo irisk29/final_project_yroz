@@ -19,49 +19,51 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Container(
-          child: Stack(
-              children: <Widget>[
-                Positioned(
-                    child: Container(
-                        decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  image: DecorationImage(
-                                      image: this.title == 'Food' ? AssetImage("assets/images/food.png") : AssetImage("assets/images/home.png"),
-                                      fit: BoxFit.cover
-                                  ),
-                                  borderRadius: BorderRadius.circular(15),
-                              ),
-                    )
-                ),Positioned(
-                    top: 90,
-                    left: -5,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius : BorderRadius.only(
-                          bottomLeft: Radius.circular(40),
-                          bottomRight: Radius.circular(40),
-                        ),
-                        color : Color.fromRGBO(255, 255, 255, 1),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                      child: Column(
-                        children: <Widget>[
-                          Text(this.title, textAlign: TextAlign.start, style: TextStyle(
-                            color: Color.fromRGBO(20, 19, 42, 1),
-                            fontSize: 14,
-                          ),
-                        ),
-                        ],
-                      ),
-                    )
+    return LayoutBuilder(
+      builder: (context, constraints) => GestureDetector(
+        child: Container(
+            child: Stack(children: <Widget>[
+          Positioned(
+              child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              image: DecorationImage(
+                  image: this.title == 'Food'
+                      ? AssetImage("assets/images/food.png")
+                      : AssetImage("assets/images/home.png"),
+                  fit: BoxFit.cover),
+              borderRadius: BorderRadius.circular(15),
+            ),
+          )),
+          Positioned(
+              top: constraints.maxHeight * 0.75,
+              child: Container(
+                height: constraints.maxHeight * 0.25,
+                width: constraints.maxWidth,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                  ),
+                  color: Color.fromRGBO(255, 255, 255, 1),
                 ),
-              ]
-          )
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      this.title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color.fromRGBO(20, 19, 42, 1),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+        ])),
+        onTap: () => selectCategory(context),
       ),
-      onTap:() => selectCategory(context),
-
     );
   }
 }
