@@ -44,7 +44,8 @@ class User extends ChangeNotifier {
     this.email = model.email;
     this.name = model.name;
     this.imageUrl = model.imageUrl;
-    this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
+    this.digitalWallet =
+        DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
@@ -78,7 +79,8 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openOnlineStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openOnlineStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
+    var tuple =
+        (res.getValue() as Tuple2); //<online store model, store owner id>
     if (storeOwnerState == null) {
       //we might alredy have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -90,7 +92,8 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openPhysicalStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
+    var tuple =
+        (res.getValue() as Tuple2); //<physical store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -124,6 +127,10 @@ class User extends ChangeNotifier {
     else
       this.storeOwnerState!.physicalStore = null;
     return res;
+  }
+
+  Future<List<PhysicalStoreDTO>> getStoresByKeywords(String keywords) async {
+    return await StoreStorageProxy().fetchStoresByKeywords(keywords);
   }
 
   Future<ResultInterface> changeName(String name) async {
