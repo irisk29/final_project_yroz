@@ -2,10 +2,12 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/LogicModels/category.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
@@ -261,6 +263,37 @@ class StoreStorageProxy {
     }
   }
 
+  Future<List<OnlineStoreDTO>> fetchAllOnlineStores() async {
+    try {
+      List<OnlineStoreModel> onlineStores =
+        await Amplify.DataStore.query(OnlineStoreModel.classType);
+      return convertOnlineStoreModelToDTO(
+          onlineStores); //only one online store per user
+    } on Exception catch (e) {
+      // TODO: write to log
+      throw e;
+    }
+  }
+
+  Future<List<StoreDTO>> fetchAllStores() async {
+    try {
+      List<OnlineStoreModel> onlineStores =
+        await Amplify.DataStore.query(OnlineStoreModel.classType);
+      List<PhysicalStoreModel> physicalStores =
+        await Amplify.DataStore.query(PhysicalStoreModel.classType);
+      List<OnlineStoreDTO> onlineDtos = await convertOnlineStoreModelToDTO(
+          onlineStores);
+      List<PhysicalStoreDTO> physicalDtos = await convertPhysicalStoreModelToDTO(
+          physicalStores);
+      List<StoreDTO> allDtos = onlineDtos;
+      allDtos.addAll(physicalDtos);
+      return allDtos;
+    } on Exception catch (e) {
+      // TODO: write to log
+      throw e;
+    }
+  }
+
   Future<List<PhysicalStoreDTO>> fetchStoresByKeywords(String keywords) async {
     try {
       List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
@@ -310,6 +343,41 @@ class StoreStorageProxy {
     return lst;
   }
 
+  Future<List<OnlineStoreDTO>> convertOnlineStoreModelToDTO(
+      List<OnlineStoreModel> onlineStores) async {
+    List<OnlineStoreDTO> lst = [];
+    for (OnlineStoreModel model in onlineStores) {
+      String url = await getDownloadUrl(model.id);
+      OnlineStoreDTO dto = OnlineStoreDTO(
+          model.id,
+          model.name,
+          model.address,
+          model.phoneNumber,
+          jsonDecode(model.categories).cast<String>(),
+          opHours(jsonDecode(model.operationHours)),
+          url,
+          convertProductModelToDTO(model.productModel!));
+      lst.add(dto);
+    }
+    return lst;
+  }
+
+  List<ProductDTO> convertProductModelToDTO(
+      List<ProductModel> products) {
+    List<ProductDTO> lst = [];
+    for (ProductModel model in products) {
+      ProductDTO dto = ProductDTO(
+          model.name,
+          model.price,
+          jsonDecode(model.categories).cast<List<Category>>(),
+          model.imageUrl!,
+          model.description!
+          );
+      lst.add(dto);
+    }
+    return lst;
+  }
+
   Map<String, List<TimeOfDay>> opHours(Map<String, dynamic> oper) {
     Map<String, List<TimeOfDay>> map = {};
     for (MapEntry e in oper.entries) {
@@ -320,18 +388,6 @@ class StoreStorageProxy {
       map.addEntries([MapEntry(e.key, l)]);
     }
     return map;
-  }
-
-  Future<List<OnlineStoreModel>?> fetchAllOnlineStores() async {
-    try {
-      List<OnlineStoreModel> onlineStores =
-          await Amplify.DataStore.query(OnlineStoreModel.classType);
-      if (onlineStores.isEmpty) return null;
-      return onlineStores; //only one physical store per user
-    } on Exception catch (e) {
-      // TODO: write to log
-    }
-    return null;
   }
 
   Future<ResultInterface> createProductForOnlineStore(
