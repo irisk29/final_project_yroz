@@ -74,13 +74,21 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
     return false;
   }
 
+  bool opBigger(TimeOfDay me, TimeOfDay other) {
+    return other.hour<me.hour || other.hour==me.hour && other.minute<me.minute;
+  }
+
+  bool opSmaller(TimeOfDay me, TimeOfDay other) {
+    return other.hour>me.hour || other.hour==me.hour && other.minute>me.minute;
+  }
+
   int isStoreOpen(){
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
     //String hour = DateFormat('Hm').format(DateTime.now());
     for(MapEntry<String,List<TimeOfDay>> e in widget.operationHours.entries){
       if(e.key == day){
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if(time>e.value[0] && time<e.value[1]){
+        if(opBigger(time,e.value[0]) && opSmaller(time,e.value[1])){
           if(lessthanfifteen(e.value[1], time)){
             return 1;
           }
