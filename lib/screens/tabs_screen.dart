@@ -12,7 +12,7 @@ class TabsScreen extends StatefulWidget {
   static const routeName = '/tabs-screen';
   User? user;
 
-  TabsScreen(User? user){
+  TabsScreen(User? user) {
     this.user = user;
   }
 
@@ -56,6 +56,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           _pages[_selectedPageIndex]['title'] as String,
@@ -66,7 +67,8 @@ class _TabsScreenState extends State<TabsScreen> {
               Icons.settings_outlined,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed(SettingsScreen.routeName, arguments: widget.user);
+              Navigator.of(context)
+                  .pushNamed(SettingsScreen.routeName, arguments: widget.user);
             },
           ),
         ],
