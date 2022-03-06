@@ -41,7 +41,8 @@ class _SettingsPageState extends State<SettingsScreen> {
       final user = ModalRoute.of(context)!.settings.arguments as User?;
       if (user != null) {
         _user = user;
-        }
+        _storeOwner = (user.storeOwnerState) != null;
+      }
     }
     _isInit = false;
     super.didChangeDependencies();

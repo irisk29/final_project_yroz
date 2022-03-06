@@ -53,6 +53,8 @@ dependencies:
   url_launcher: ^6.0.0-nullsafety
   address_search_field: ^4.0.1
   location: ^4.3.0
+  permission_handler: ^9.0.0
+  google_geocoding: ^0.2.0
   material_floating_search_bar: ^0.3.7
 
 dev_dependencies:

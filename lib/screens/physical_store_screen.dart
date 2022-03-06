@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/badge.dart';
@@ -65,6 +66,32 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
     return map;
   }
 
+  bool lessthanfifteen(TimeOfDay a, TimeOfDay b){
+    if(a.hour == b.hour && (a.minute - b.minute)<15)
+      return true;
+    if(a.hour - b.hour == 1 && (60 + a.minute - b.minute)<15)
+      return true;
+    return false;
+  }
+
+  int isStoreOpen(){
+    String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
+    //String hour = DateFormat('Hm').format(DateTime.now());
+    for(MapEntry<String,List<TimeOfDay>> e in widget.operationHours.entries){
+      if(e.key == day){
+        TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
+        if(time>e.value[0] && time<e.value[1]){
+          if(lessthanfifteen(e.value[1], time)){
+            return 1;
+          }
+          return 0;
+        }
+        return 2;
+      }
+    }
+    return 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,9 +145,9 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
             ListTile(
               leading: Icon(
                 Icons.circle,
-                color: Colors.green,
+                color: isStoreOpen() == 0 ? Colors.green : isStoreOpen() == 1 ? Colors.orange : Colors.red,
               ),
-              title: Text("Open Now"),
+              title:  isStoreOpen() == 0 ? Text("Open Now") : isStoreOpen() == 1 ? Text("Closing Soon") : Text("Closed"),
               onTap: () {
                 showDialog(
                     context: context,
