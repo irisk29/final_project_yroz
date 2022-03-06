@@ -20,11 +20,9 @@ class _ImageInputState extends State<ImageInput> {
   XFile? _storedImage;
   late String imagePath;
 
-  Future<void> _takePicture() async {
-    final imageFile = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      maxWidth: 600,
-    );
+  Future<void> _choosePicture() async {
+    final imageFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (imageFile == null) {
       return;
     }
@@ -70,13 +68,13 @@ class _ImageInputState extends State<ImageInput> {
           children: [
             FlatButton.icon(
               icon: Icon(Icons.camera),
-              label: Text('Take Picture'),
+              label: Text('Choose Image'),
               textColor: Theme.of(context).primaryColor,
-              onPressed: _takePicture,
+              onPressed: _choosePicture,
             ),
             FlatButton.icon(
               icon: Icon(Icons.cancel),
-              label: Text('Cancel Picture'),
+              label: Text('Cancel Image'),
               textColor: Theme.of(context).primaryColor,
               onPressed: _cancelPicture,
             ),
