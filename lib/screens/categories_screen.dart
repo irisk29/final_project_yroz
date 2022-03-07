@@ -1,5 +1,6 @@
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/search_bar.dart';
 import 'package:flutter/material.dart';
 import '../widgets/store_item.dart';
@@ -8,6 +9,8 @@ import '../dummy_data.dart';
 import '../widgets/category_item.dart';
 
 class CategoriesScreen extends StatefulWidget {
+  User? user;
+
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
@@ -28,6 +31,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         // Update your UI with the desired changes.
       });
     }();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final user = ModalRoute.of(context)!.settings.arguments as User?;
+    if(user!=null)
+      widget.user = user;
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
   }
 
   @override
@@ -88,7 +100,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
+            ), DUMMY_STORES.isEmpty
+            ? CircularProgressIndicator() :
             SizedBox(
               height: (MediaQuery.of(context).size.height -
                       MediaQuery.of(context).padding.top) *
@@ -96,9 +109,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               child: GridView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.all(25),
-                children: DUMMY_STORES.isEmpty
-                    ? []
-                    : [
+                children:
+                     [
                         DUMMY_STORES
                             .map(
                               (storeData) => StoreItem(

@@ -140,8 +140,7 @@ class _MyAppState extends State<MyApp> {
             CategoryScreen.routeName: (ctx) => CategoryScreen(),
             SettingsScreen.routeName: (ctx) => SettingsScreen(),
             PaymentScreen.routeName: (ctx) => PaymentScreen(),
-            OpenPhysicalStoreScreen.routeName: (ctx) =>
-                OpenPhysicalStoreScreen(),
+            OpenPhysicalStoreScreen.routeName: (ctx) => OpenPhysicalStoreScreen(),
             OpenOnlineStoreScreen.routeName: (ctx) => OpenOnlineStoreScreen(),
             ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
             PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),

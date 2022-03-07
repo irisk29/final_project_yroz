@@ -181,7 +181,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         Navigator.of(context)
-                            .pushNamed(OpenPhysicalStoreScreen.routeName);
+                            .pushNamed(OpenPhysicalStoreScreen.routeName, arguments: _user);
                       },
                     ),
                   ]),

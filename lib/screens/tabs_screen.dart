@@ -26,6 +26,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   void initState() {
+
     _pages = [
       {
         'page': CategoriesScreen(),
@@ -45,6 +46,14 @@ class _TabsScreenState extends State<TabsScreen> {
       },
     ];
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final user = ModalRoute.of(context)!.settings.arguments as User?;
+    if(user!=null)
+      widget.user = user;
+    super.didChangeDependencies();
   }
 
   void _selectPage(int index) {

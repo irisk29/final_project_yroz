@@ -1,4 +1,5 @@
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/stores.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
@@ -28,6 +29,8 @@ class OpenPhysicalStoreScreen extends StatefulWidget {
   static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 15);
   static TimeOfDay _saturday_close = TimeOfDay(hour: 7, minute: 15);
   static TextEditingController _controller = TextEditingController();
+
+  User? user;
 
   @override
   _OpenPhysicalStoreScreenState createState() =>
@@ -84,19 +87,9 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final storeId = ModalRoute.of(context)!.settings.arguments as String?;
-      if (storeId != null) {
-        _editedStore = Provider.of<Stores>(context, listen: false)
-            .findPhysicalStoreById(storeId);
-        if (_editedStore != null) {
-          _initValues = {
-            'name': _editedStore!.name,
-            'phoneNumber': _editedStore!.phoneNumber,
-            'address': _editedStore!.address,
-          };
-          _imageUrlController.text = _editedStore!.image.toString();
-        }
-      }
+      final user = ModalRoute.of(context)!.settings.arguments as User?;
+      widget.user = user;
+      _imageUrlController.text = _editedStore!.image.toString();
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -166,7 +159,7 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
   }
 
   void _showMultiSelect() async {
