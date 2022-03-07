@@ -1,7 +1,6 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../screens/open_physical_store_screen.dart';
 import 'open_online_store_screen.dart';
 import 'open_store_pipeline_screen.dart';
 

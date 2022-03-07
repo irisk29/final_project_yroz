@@ -26,7 +26,6 @@ import 'screens/settings_screen.dart';
 import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
-import 'screens/open_physical_store_screen.dart';
 import 'screens/product_detail_screen.dart';
 import 'screens/products_overview_screen.dart';
 import 'screens/splash_screen.dart';
@@ -91,9 +90,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProvider.value(
-          value: Products.withNull()
-        ),
+        ChangeNotifierProvider.value(value: Products.withNull()),
         ChangeNotifierProvider.value(
           value: Cart(),
         ),
