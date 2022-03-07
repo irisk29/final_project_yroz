@@ -90,10 +90,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProxyProvider<Auth, Products>(
-          create: (context) => Products.withNull(),
-          update: (con, val, old) =>
-              Products(val.token!, val.userId!, old == null ? [] : old.items),
+        ChangeNotifierProvider.value(
+          value: Products.withNull()
         ),
         ChangeNotifierProvider.value(
           value: Cart(),

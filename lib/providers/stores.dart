@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -44,8 +45,9 @@ class Stores with ChangeNotifier {
 
   Future<void> addOnlineStore(OnlineStore store) async {
     try {
-      StoreDTO dto =
-      StoreDTO(store.id, store.name, store.phoneNumber, store.address, store.categories, store.operationHours, "");
+      OnlineStoreDTO dto = OnlineStoreDTO(
+          store.id, store.name, store.address, store.phoneNumber, store.categories, store.operationHours, store.image,
+          store.products.map((e) => e.createDTO()).toList());
       ResultInterface res = await user.openOnlineStore(dto);
       if (!res.getTag()) {
         print(res.getMessage());
