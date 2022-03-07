@@ -44,7 +44,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
         ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
     widget.title = routeArgs['title'] as String;
     widget.address = routeArgs['address'] as String;
-    widget.image = routeArgs['image'] as MemoryImage;
+    widget.image = routeArgs['image'] as MemoryImage?;
     widget.phoneNumber = routeArgs['phoneNumber'] as String;
     Object? abc = routeArgs['operationHours'];
     if (abc != null)

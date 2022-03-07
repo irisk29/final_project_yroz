@@ -50,6 +50,9 @@ class User extends ChangeNotifier {
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
+    this.storeOwnerState = model.storeOwnerModel == null
+        ? null
+        : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
   }
 
   void signIn(AuthProvider authProvider, BuildContext context) async {

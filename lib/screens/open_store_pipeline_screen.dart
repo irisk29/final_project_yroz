@@ -6,7 +6,6 @@ import 'package:final_project_yroz/providers/stores.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
-import 'package:final_project_yroz/widgets/multi_select.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,7 +45,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   final _imageUrlController = TextEditingController();
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
-  final _imageUrlFocusNode = FocusNode();
   final _detailsform = GlobalKey<FormState>();
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
@@ -107,12 +105,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   var _isLoading = false;
 
   @override
-  void initState() {
-    _imageUrlFocusNode.addListener(_updateImageUrl);
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     if (_isInit) {
       final storeId = ModalRoute.of(context)!.settings.arguments as String?;
@@ -131,27 +123,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     }
     _isInit = false;
     super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    _imageUrlFocusNode.removeListener(_updateImageUrl);
-    _imageUrlController.dispose();
-    _imageUrlFocusNode.dispose();
-    super.dispose();
-  }
-
-  void _updateImageUrl() {
-    if (!_imageUrlFocusNode.hasFocus) {
-      if ((!_imageUrlController.text.startsWith('http') &&
-              !_imageUrlController.text.startsWith('https')) ||
-          (!_imageUrlController.text.endsWith('.png') &&
-              !_imageUrlController.text.endsWith('.jpg') &&
-              !_imageUrlController.text.endsWith('.jpeg'))) {
-        return;
-      }
-      setState(() {});
-    }
   }
 
   void _selectImage(XFile pickedImage) {
