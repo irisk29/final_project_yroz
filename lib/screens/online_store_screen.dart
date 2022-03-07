@@ -1,3 +1,5 @@
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/products_grid.dart';
@@ -14,6 +16,7 @@ class OnlineStoreScreen extends StatefulWidget {
   MemoryImage? image = null;
   String phoneNumber = "";
   Map<String, List<TimeOfDay>> operationHours = {};
+  List<ProductDTO> products = [];
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
@@ -52,6 +55,9 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     Object? abc = routeArgs['operationHours'];
     if(abc!=null)
       widget.operationHours = abc as Map<String,List<TimeOfDay>>;
+    Object? def = routeArgs['products'];
+    if(def!=null)
+      widget.products = def as List<ProductDTO>;
     super.didChangeDependencies();
   }
 
@@ -101,10 +107,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               child: Container(
                 width: 150,
                 height: 150,
-                decoration: BoxDecoration(
+                decoration: widget.image != null ? BoxDecoration(
                   image: new DecorationImage(
                       fit: BoxFit.cover, image: widget.image!),
-                ),
+                ) : BoxDecoration(),
               ),
             ),
             ListTile(
@@ -179,7 +185,28 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            ProductsGrid(false),
+            SizedBox(
+              height: (MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top) *
+                  0.5,
+              child: GridView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(5),
+                children:
+                [
+                  widget.products
+                      .map(
+                        (storeData) => ProductItem(storeData.name, storeData.imageUrl),
+                  ).toList(),
+                ].expand((i) => i).toList(),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/product.dart';
@@ -11,6 +12,7 @@ import 'package:final_project_yroz/widgets/multi_select.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import '../dummy_data.dart';
 
@@ -33,6 +35,8 @@ class OpenOnlineStoreScreen extends StatefulWidget {
   static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 15);
   static TimeOfDay _saturday_close = TimeOfDay(hour: 7, minute: 15);
   static TextEditingController _controller = TextEditingController();
+
+  User? user;
 
   @override
   _OpenOnlineStoreScreenState createState() => _OpenOnlineStoreScreenState();
@@ -89,18 +93,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final storeId = ModalRoute.of(context)!.settings.arguments as String?;
-      if (storeId != null) {
-        _editedStore = Provider.of<Stores>(context, listen: false).findOnlineStoreById(storeId);
-        if (_editedStore != null) {
-          _initValues = {
-            'name': _editedStore!.name,
-            'phoneNumber': _editedStore!.phoneNumber,
-            'address': _editedStore!.address,
-          };
-          _imageUrlController.text = _editedStore!.image.toString();
-        }
-      }
+      final user = ModalRoute.of(context)!.settings.arguments as User?;
+      widget.user = user;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -168,7 +162,7 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
   }
 
   void _showMultiSelect() async {
@@ -201,15 +195,16 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
 
   void _showAddProduct() async {
     if (OpenOnlineStoreScreen._products.length < 5) {
-      final Product? result = await Navigator.push(
+      final Tuple2<Product?, OnlineStore?> result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddProductScreen()),
+        MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
 
       // Update UI
-      if (result != null) {
+      if (result.item1 != null) {
         setState(() {
-          OpenOnlineStoreScreen._products.add(result);
+          _editedStore = result.item2;
+          OpenOnlineStoreScreen._products.add(result.item1!);
         });
       }
     }
@@ -267,6 +262,16 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                         }
                         return null;
                       },
+                      onChanged: (value) {
+                        _editedStore = OnlineStore(
+                            name: value,
+                            phoneNumber: _editedStore!.phoneNumber,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            image: _editedStore!.image,
+                            id: '', products: _editedStore!.products);
+                      },
                       onSaved: (value) {
                         _editedStore = OnlineStore(
                             name: value!,
@@ -289,6 +294,16 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                         }
                         return null;
                       },
+                      onChanged: (value) {
+                        _editedStore = OnlineStore(
+                            name: _editedStore!.name,
+                            phoneNumber: value,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            image: _editedStore!.image,
+                            id: '', products: _editedStore!.products);
+                      },
                       onSaved: (value) {
                         _editedStore = OnlineStore(
                             name: _editedStore!.name,
@@ -304,6 +319,16 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                       decoration: InputDecoration(labelText: 'Address'),
                       controller: OpenOnlineStoreScreen._controller,
                       onTap: () => showDialog(context: context, builder: (context) => destinationBuilder),
+                      onChanged: (value) {
+                        _editedStore = OnlineStore(
+                            name: _editedStore!.name,
+                            phoneNumber: _editedStore!.phoneNumber,
+                            address: value,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            image: _editedStore!.image,
+                            id: '', products: _editedStore!.products);
+                      },
                       onSaved: (value) {
                         _editedStore = OnlineStore(
                             name: _editedStore!.name,
@@ -502,6 +527,16 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                                       return 'Please enter a valid image URL.';
                                     }
                                     return null;
+                                  },
+                                  onChanged: (value) {
+                                    _editedStore = OnlineStore(
+                                        name: _editedStore!.name,
+                                        phoneNumber: _editedStore!.phoneNumber,
+                                        address: _editedStore!.address,
+                                        categories: _editedStore!.categories,
+                                        operationHours: _editedStore!.operationHours,
+                                        image: value,
+                                        id: '', products: _editedStore!.products);
                                   },
                                   onSaved: (value) {
                                     _editedStore = OnlineStore(

@@ -55,20 +55,17 @@ class StoreStorageProxy {
     if (store.image != null && store.image!.isNotEmpty) {
       await uploadPicture(store.image!, onlineStoreModel.id); // uploading the picture to s3
     }
-    await Amplify.DataStore.save(onlineStoreModel);
-    /*List<ProductModel> productsModel = store.products
-        .map((e) => ProductModel(
+    //await Amplify.DataStore.save(onlineStoreModel);
+    List<ProductModel> productsModel = store.products
+        .map((e) { e.categories = ["Food"]; return ProductModel(
             name: e.name,
             categories: e.categories[0].isEmpty ? "" : JsonEncoder.withIndent('  ').convert(e.categories),
             price: e.price,
             imageUrl: e.imageUrl,
             description: e.description,
             onlinestoremodelID: onlineStoreModel.id,
-            shoppingbagmodelID: ""))
+            shoppingbagmodelID: "");})
         .toList();
-    for (ProductModel prod in productsModel) {
-      await Amplify.DataStore.save(prod);
-    }
     var onlineWithProducts = onlineStoreModel.copyWith(
         id: onlineStoreModel.id,
         name: onlineStoreModel.name,
@@ -76,13 +73,13 @@ class StoreStorageProxy {
         address: onlineStoreModel.address,
         operationHours: onlineStoreModel.operationHours,
         categories: onlineStoreModel.categories,
-        productModel: productsModel);*/
+        productModel: productsModel);
     ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState();
     StoreOwnerModel? storeOwner = null;
     if (!storeOwnerRes.getTag()) {
       //the user will now have a store owner state
       storeOwner = StoreOwnerModel(
-          onlineStoreModel: onlineStoreModel, storeOwnerModelOnlineStoreModelId: onlineStoreModel.id);
+          onlineStoreModel: onlineWithProducts, storeOwnerModelOnlineStoreModelId: onlineStoreModel.id);
       UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
         return new Failure("no such user exists in the system!", null);
@@ -99,9 +96,12 @@ class StoreStorageProxy {
           digitalWalletModel: oldUserModel.digitalWalletModel,
           userModelDigitalWalletModelId: oldUserModel.userModelDigitalWalletModelId,
           userModelStoreOwnerModelId: storeOwner.id);
-      await Amplify.DataStore.save(onlineStoreModel);
+      await Amplify.DataStore.save(onlineWithProducts);
       await Amplify.DataStore.save(storeOwner);
       await Amplify.DataStore.save(newUserModel);
+      for (ProductModel prod in productsModel) {
+        await Amplify.DataStore.save(prod);
+      }
     } else if (!storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId!.isEmpty) // already have an online store
     {
       //TODO: write the exception to log
@@ -110,7 +110,7 @@ class StoreStorageProxy {
     {
       UsersStorageProxy().addOnlineStoreToStoreOwnerState(onlineStoreModel);
     }
-    return new Ok("open online store succsseded", Tuple2<OnlineStoreModel, String>(onlineStoreModel, storeOwner!.id));
+    return new Ok("open online store succsseded", Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner!.id));
   }
 
   //for physical stores only
@@ -263,6 +263,19 @@ class StoreStorageProxy {
   Future<List<OnlineStoreDTO>> fetchAllOnlineStores() async {
     try {
       List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(OnlineStoreModel.classType);
+      List<ProductModel> products = await Amplify.DataStore.query(ProductModel.classType);
+      for(OnlineStoreModel store in onlineStores){
+        for(ProductModel prod in products){
+          if(prod.onlinestoremodelID == store.id)
+            if(store.productModel!=null)
+              store.productModel!.add(prod);
+            else{
+              List<ProductModel> prods = [prod];
+              OnlineStoreModel s = store.copyWith(id: store.id, address: store.address, name: store.name, categories: store.categories, operationHours: store.operationHours, phoneNumber: store.phoneNumber, productModel: prods);
+              onlineStores.replaceRange(0,1,[s]);
+            }
+        }
+      }
       return convertOnlineStoreModelToDTO(onlineStores); //only one online store per user
     } on Exception catch (e) {
       // TODO: write to log
@@ -354,7 +367,7 @@ class StoreStorageProxy {
   List<ProductDTO> convertProductModelToDTO(List<ProductModel> products) {
     List<ProductDTO> lst = [];
     for (ProductModel model in products) {
-      ProductDTO dto = ProductDTO(model.name, model.price, jsonDecode(model.categories).cast<List<String>>(),
+      ProductDTO dto = ProductDTO(model.name, model.price, [jsonDecode(model.categories)[0]],
           model.imageUrl!, model.description!);
       lst.add(dto);
     }

@@ -74,7 +74,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         storeData.name,
                         storeData.address,
                         storeData.phoneNumber,
-                        Map<String,List<TimeOfDay>>.from(storeData.operationHours)
+                        Map<String,List<TimeOfDay>>.from(storeData.operationHours),
+                        null
                       ),
                     )
                     .toList(),

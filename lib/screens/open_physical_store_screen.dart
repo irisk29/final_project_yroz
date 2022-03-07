@@ -89,7 +89,6 @@ class _OpenPhysicalStoreScreenState extends State<OpenPhysicalStoreScreen> {
     if (_isInit) {
       final user = ModalRoute.of(context)!.settings.arguments as User?;
       widget.user = user;
-      _imageUrlController.text = _editedStore!.image.toString();
     }
     _isInit = false;
     super.didChangeDependencies();

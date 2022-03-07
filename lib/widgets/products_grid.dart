@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,9 +23,8 @@ class ProductsGrid extends StatelessWidget {
             // builder: (c) => products[i],
             value: products[i],
             child: ProductItem(
-                // products[i].id,
-                // products[i].title,
-                // products[i].imageUrl,
+                 products[i].title,
+                 products[i].imageUrl,
                 ),
           ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/search_bar.dart';
@@ -16,7 +20,7 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<PhysicalStoreDTO> DUMMY_STORES = [];
+  List<OnlineStoreDTO> DUMMY_STORES = [];
 
   @override
   void initState() {
@@ -26,7 +30,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     // });
     super.initState();
     () async {
-      DUMMY_STORES = await StoreStorageProxy().fetchAllPhysicalStores();
+      DUMMY_STORES = await StoreStorageProxy().fetchAllOnlineStores();
       setState(() {
         // Update your UI with the desired changes.
       });
@@ -114,12 +118,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         DUMMY_STORES
                             .map(
                               (storeData) => StoreItem(
-                                  storeData.imageFile,
+                                  MemoryImage(Uint8List.fromList([0, 0]), scale: 0.5),
                                   storeData.name,
                                   storeData.address,
                                   storeData.phoneNumber,
-                                  Map<String, List<TimeOfDay>>.from(
-                                      storeData.operationHours)),
+                                  Map<String, List<TimeOfDay>>.from(storeData.operationHours),
+                                  List<ProductDTO>.from(storeData.products)),
                             )
                             .toList(),
                       ].expand((i) => i).toList(),

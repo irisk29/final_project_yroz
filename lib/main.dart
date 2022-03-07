@@ -146,7 +146,6 @@ class _MyAppState extends State<MyApp> {
             PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
             OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
             LandingScreen.routeName: (ctx) => LandingScreen(),
-            AddProductScreen.routeName: (ctx) => AddProductScreen(),
           },
         ),
       ),
