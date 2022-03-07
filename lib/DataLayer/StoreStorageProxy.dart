@@ -7,7 +7,6 @@ import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
-import 'package:final_project_yroz/LogicModels/category.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
@@ -36,7 +35,7 @@ class StoreStorageProxy {
 
   StoreStorageProxy._internal();
 
-  Future<ResultInterface> openOnlineStore(StoreDTO store) async {
+  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
     OnlineStoreModel onlineStoreModel = OnlineStoreModel(
         name: store.name,
         phoneNumber: store.phoneNumber,
@@ -52,7 +51,34 @@ class StoreStorageProxy {
           } else {
             return value.toJson();
           }
-        }).convert(store.operationHours));
+        }).convert(store.operationHours),
+        productModel: []);
+    if (store.image != null && store.image!.isNotEmpty) {
+      await uploadPicture(
+          store.image!, onlineStoreModel.id); // uploading the picture to s3
+    }
+    await Amplify.DataStore.save(onlineStoreModel);
+    /*List<ProductModel> productsModel = store.products
+        .map((e) => ProductModel(
+            name: e.name,
+            categories: e.categories[0].isEmpty ? "" : JsonEncoder.withIndent('  ').convert(e.categories),
+            price: e.price,
+            imageUrl: e.imageUrl,
+            description: e.description,
+            onlinestoremodelID: onlineStoreModel.id,
+            shoppingbagmodelID: ""))
+        .toList();
+    for (ProductModel prod in productsModel) {
+      await Amplify.DataStore.save(prod);
+    }
+    var onlineWithProducts = onlineStoreModel.copyWith(
+        id: onlineStoreModel.id,
+        name: onlineStoreModel.name,
+        phoneNumber: onlineStoreModel.phoneNumber,
+        address: onlineStoreModel.address,
+        operationHours: onlineStoreModel.operationHours,
+        categories: onlineStoreModel.categories,
+        productModel: productsModel);*/
     ResultInterface storeOwnerRes =
         await UsersStorageProxy().getStoreOwnerState();
     StoreOwnerModel? storeOwner = null;
@@ -223,7 +249,7 @@ class StoreStorageProxy {
   Future<OnlineStoreModel?> fetchOnlineStore() async {
     ResultInterface storeOwnerRes =
         await UsersStorageProxy().getStoreOwnerState();
-    if (!storeOwnerRes.getTag()) {
+    if (storeOwnerRes.getTag()) {
       List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
           OnlineStoreModel.classType,
           where: OnlineStoreModel.ID
@@ -231,13 +257,14 @@ class StoreStorageProxy {
       if (onlineStores.isEmpty) return null;
       return onlineStores.first; //only one online store per user
     }
+    return null;
   }
 
   Future<PhysicalStoreModel?> fetchPhysicalStore() async {
     try {
       ResultInterface storeOwnerRes =
           await UsersStorageProxy().getStoreOwnerState();
-      if (!storeOwnerRes.getTag()) {
+      if (storeOwnerRes.getTag()) {
         List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
             PhysicalStoreModel.classType,
             where: PhysicalStoreModel.ID.eq(
@@ -249,6 +276,7 @@ class StoreStorageProxy {
     } on Exception {
       // TODO: write to log
     }
+    return null;
   }
 
   Future<List<PhysicalStoreDTO>> fetchAllPhysicalStores() async {
@@ -266,7 +294,7 @@ class StoreStorageProxy {
   Future<List<OnlineStoreDTO>> fetchAllOnlineStores() async {
     try {
       List<OnlineStoreModel> onlineStores =
-        await Amplify.DataStore.query(OnlineStoreModel.classType);
+          await Amplify.DataStore.query(OnlineStoreModel.classType);
       return convertOnlineStoreModelToDTO(
           onlineStores); //only one online store per user
     } on Exception catch (e) {
@@ -278,13 +306,13 @@ class StoreStorageProxy {
   Future<List<StoreDTO>> fetchAllStores() async {
     try {
       List<OnlineStoreModel> onlineStores =
-        await Amplify.DataStore.query(OnlineStoreModel.classType);
+          await Amplify.DataStore.query(OnlineStoreModel.classType);
       List<PhysicalStoreModel> physicalStores =
-        await Amplify.DataStore.query(PhysicalStoreModel.classType);
-      List<OnlineStoreDTO> onlineDtos = await convertOnlineStoreModelToDTO(
-          onlineStores);
-      List<PhysicalStoreDTO> physicalDtos = await convertPhysicalStoreModelToDTO(
-          physicalStores);
+          await Amplify.DataStore.query(PhysicalStoreModel.classType);
+      List<OnlineStoreDTO> onlineDtos =
+          await convertOnlineStoreModelToDTO(onlineStores);
+      List<PhysicalStoreDTO> physicalDtos =
+          await convertPhysicalStoreModelToDTO(physicalStores);
       List<StoreDTO> allDtos = onlineDtos;
       allDtos.addAll(physicalDtos);
       return allDtos;
@@ -292,6 +320,20 @@ class StoreStorageProxy {
       // TODO: write to log
       throw e;
     }
+  }
+
+  Future<List<ProductDTO>> fetchStoreProducts(String storeId) async {
+    List<ProductModel> products = await Amplify.DataStore.query(
+        ProductModel.classType,
+        where: ProductModel.ONLINESTOREMODELID.eq(storeId));
+    return products
+        .map((e) => ProductDTO(
+            e.name,
+            e.price,
+            jsonDecode(e.categories).cast<String>(),
+            e.imageUrl!,
+            e.description!))
+        .toList();
   }
 
   Future<List<PhysicalStoreDTO>> fetchStoresByKeywords(String keywords) async {
@@ -311,8 +353,12 @@ class StoreStorageProxy {
     }
   }
 
-  Future<String> getDownloadUrl(String keyName) async {
+  Future<String?> getDownloadUrl(String keyName) async {
     try {
+      final ListResult storageItems = await Amplify.Storage.list();
+      final item =
+          storageItems.items.where((element) => element.key == keyName);
+      if (item.isEmpty) return null;
       final GetUrlResult result = await Amplify.Storage.getUrl(key: keyName);
       print('Got URL: ${result.url}');
       return result.url;
@@ -327,7 +373,7 @@ class StoreStorageProxy {
       List<PhysicalStoreModel> physicalStores) async {
     List<PhysicalStoreDTO> lst = [];
     for (PhysicalStoreModel model in physicalStores) {
-      String url = await getDownloadUrl(model.id);
+      String? url = await getDownloadUrl(model.id);
       PhysicalStoreDTO dto = PhysicalStoreDTO(
           model.id,
           model.name,
@@ -347,7 +393,7 @@ class StoreStorageProxy {
       List<OnlineStoreModel> onlineStores) async {
     List<OnlineStoreDTO> lst = [];
     for (OnlineStoreModel model in onlineStores) {
-      String url = await getDownloadUrl(model.id);
+      String? url = await getDownloadUrl(model.id);
       OnlineStoreDTO dto = OnlineStoreDTO(
           model.id,
           model.name,
@@ -362,17 +408,15 @@ class StoreStorageProxy {
     return lst;
   }
 
-  List<ProductDTO> convertProductModelToDTO(
-      List<ProductModel> products) {
+  List<ProductDTO> convertProductModelToDTO(List<ProductModel> products) {
     List<ProductDTO> lst = [];
     for (ProductModel model in products) {
       ProductDTO dto = ProductDTO(
           model.name,
           model.price,
-          jsonDecode(model.categories).cast<List<Category>>(),
+          jsonDecode(model.categories).cast<List<String>>(),
           model.imageUrl!,
-          model.description!
-          );
+          model.description!);
       lst.add(dto);
     }
     return lst;
@@ -420,7 +464,7 @@ class StoreStorageProxy {
       await Amplify.DataStore.save(productModel);
       await Amplify.DataStore.save(updatedOnlineStore);
       return new Ok(
-          "created product with ID: ${productModel.id} andd added it to the online store: ${onlineStoreModel.id}",
+          "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModel.id}",
           productModel);
     } on Exception catch (e) {
       // TODO: write to log
@@ -442,12 +486,21 @@ class StoreStorageProxy {
           phoneNumber: newStore.phoneNumber,
           address: newStore.address,
           categories: JsonEncoder.withIndent('  ').convert(newStore.categories),
-          operationHours:
-              JsonEncoder.withIndent('  ').convert(newStore.operationHours),
+          operationHours: JsonEncoder.withIndent('  ', (value) {
+            if (value is TimeOfDay) {
+              final now = new DateTime.now();
+              final dt = DateTime(
+                  now.year, now.month, now.day, value.hour, value.minute);
+              final format = DateFormat.jm();
+              return format.format(dt);
+            } else {
+              return value.toJson();
+            }
+          }).convert(newStore.operationHours),
           qrCode: await generateUniqueQRCode());
       if (newStore.image != null &&
-          newStore.image!.compareTo(await getDownloadUrl(newStore.id)) ==
-              0) //changed the picture
+          newStore.image! !=
+              await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }
@@ -473,11 +526,20 @@ class StoreStorageProxy {
           phoneNumber: newStore.phoneNumber,
           address: newStore.address,
           categories: JsonEncoder.withIndent('  ').convert(newStore.categories),
-          operationHours:
-              JsonEncoder.withIndent('  ').convert(newStore.operationHours));
+          operationHours: JsonEncoder.withIndent('  ', (value) {
+            if (value is TimeOfDay) {
+              final now = new DateTime.now();
+              final dt = DateTime(
+                  now.year, now.month, now.day, value.hour, value.minute);
+              final format = DateFormat.jm();
+              return format.format(dt);
+            } else {
+              return value.toJson();
+            }
+          }).convert(newStore.operationHours));
       if (newStore.image != null &&
-          newStore.image!.compareTo(await getDownloadUrl(newStore.id)) ==
-              0) //changed the picture
+          newStore.image! !=
+              await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }

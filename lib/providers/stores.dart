@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -44,8 +45,15 @@ class Stores with ChangeNotifier {
 
   Future<void> addOnlineStore(OnlineStore store) async {
     try {
-      StoreDTO dto =
-      StoreDTO(store.id, store.name, store.phoneNumber, store.address, store.categories, store.operationHours, "");
+      OnlineStoreDTO dto = OnlineStoreDTO(
+          store.id,
+          store.name,
+          store.address,
+          store.phoneNumber,
+          store.categories,
+          store.operationHours,
+          store.image,
+          store.products.map((e) => e.createDTO()).toList());
       ResultInterface res = await user.openOnlineStore(dto);
       if (!res.getTag()) {
         print(res.getMessage());
@@ -60,11 +68,11 @@ class Stores with ChangeNotifier {
 
   Future<void> addPhysicalStore(PhysicalStore store) async {
     try {
-      StoreDTO dto = StoreDTO(
-          store.id, store.name, store.phoneNumber, store.address, store.categories, store.operationHours, store.image);
+      StoreDTO dto = StoreDTO(store.id, store.name, store.phoneNumber,
+          store.address, store.categories, store.operationHours, store.image);
       ResultInterface res = await user.openPhysicalStore(dto);
       if (!res.getTag()) {
-        print(res.getMessage());
+        throw Exception(res.getMessage());
       }
       _physicalStores.add(user.storeOwnerState!.physicalStore!);
       notifyListeners();
@@ -110,7 +118,9 @@ class Stores with ChangeNotifier {
         print(res.getMessage());
         return;
       }
-      isOnline ? _onlineStores.removeAt(storeIndex) : _physicalStores.removeAt(storeIndex);
+      isOnline
+          ? _onlineStores.removeAt(storeIndex)
+          : _physicalStores.removeAt(storeIndex);
       notifyListeners();
     } else {
       print('store with ${id} not found');

@@ -1,5 +1,3 @@
-// Multi Select widget
-// This widget is reusable
 import 'package:flutter/material.dart';
 
 class MultiSelect extends StatefulWidget {
@@ -25,40 +23,41 @@ class _MultiSelectState extends State<MultiSelect> {
     });
   }
 
-  // this function is called when the Cancel button is pressed
-  void _cancel() {
-    Navigator.pop(context);
-  }
-
-// this function is called when the Submit button is tapped
-  void _submit() {
-    Navigator.pop(context, _selectedItems);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Select Categories'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: widget.items
-              .map((item) => CheckboxListTile(
-            value: _selectedItems.contains(item),
-            title: Text(item),
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (isChecked) => _itemChange(item, isChecked!),
-          ))
+    return Column(
+      children: [
+        const Text(
+          'Select Store Categories',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Divider(),
+        SingleChildScrollView(
+          child: ListBody(
+            children: widget.items
+                .map((item) => CheckboxListTile(
+                      value: _selectedItems.contains(item),
+                      title: Text(item),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (isChecked) => _itemChange(item, isChecked!),
+                    ))
+                .toList(),
+          ),
+        ),
+        Wrap(
+          children: _selectedItems
+              .map((e) => Chip(
+                    deleteIcon: Icon(
+                      Icons.close,
+                    ),
+                    onDeleted: () {
+                      setState(() {
+                        _selectedItems.remove(e);
+                      });
+                    },
+                    label: Text(e),
+                  ))
               .toList(),
-        ),
-      ),
-      actions: [
-        TextButton(
-          child: const Text('Cancel'),
-          onPressed: _cancel,
-        ),
-        ElevatedButton(
-          child: const Text('Submit'),
-          onPressed: _submit,
         ),
       ],
     );

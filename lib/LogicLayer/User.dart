@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
@@ -49,6 +50,9 @@ class User extends ChangeNotifier {
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
+    this.storeOwnerState = model.storeOwnerModel == null
+        ? null
+        : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
   }
 
   void signIn(AuthProvider authProvider, BuildContext context) async {
@@ -76,7 +80,7 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<ResultInterface> openOnlineStore(StoreDTO store) async {
+  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
     var res = await StoreStorageProxy().openOnlineStore(store);
     if (!res.getTag()) return res; //failure
     var tuple =

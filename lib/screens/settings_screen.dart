@@ -1,8 +1,8 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../screens/open_physical_store_screen.dart';
 import 'open_online_store_screen.dart';
+import 'open_store_pipeline_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = '/settings';
@@ -11,23 +11,23 @@ class SettingsScreen extends StatefulWidget {
   _SettingsPageState createState() => _SettingsPageState();
 
   Widget wrapWithMaterial() => MaterialApp(
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User("", ""),
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User("", ""),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-  );
+      );
 }
 
 class _SettingsPageState extends State<SettingsScreen> {
   late bool _storeOwner;
   var _isInit = true;
-  User? _user = User("","");
+  User? _user = User("", "");
 
   @override
   void initState() {
@@ -181,7 +181,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         Navigator.of(context)
-                            .pushNamed(OpenPhysicalStoreScreen.routeName);
+                            .pushNamed(OpenPhysicalStorePipeline.routeName);
                       },
                     ),
                   ]),

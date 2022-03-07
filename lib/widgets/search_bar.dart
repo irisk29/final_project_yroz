@@ -27,11 +27,9 @@ class _SearchBarState extends State<SearchBar> {
       automaticallyImplyDrawerHamburger: false,
       automaticallyImplyBackButton: false,
       scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
-      transitionDuration: const Duration(milliseconds: 600),
       transitionCurve: Curves.easeInOut,
       physics: const BouncingScrollPhysics(),
       openAxisAlignment: 0.0,
-      debounceDelay: const Duration(milliseconds: 500),
       onQueryChanged: (query) {
         Provider.of<User>(context, listen: false)
             .getStoresByKeywords(query)
