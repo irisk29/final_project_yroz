@@ -2,7 +2,7 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'open_online_store_screen.dart';
-import 'open_store_pipeline_screen.dart';
+import 'open_physical_store_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const routeName = '/settings';
@@ -158,7 +158,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         Navigator.of(context)
-                            .pushNamed(OpenOnlineStoreScreen.routeName);
+                            .pushNamed(OpenOnlineStorePipeline.routeName);
                       },
                     ),
                   ]),
