@@ -58,7 +58,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       controller: OpenPhysicalStorePipeline._controller,
       builder: AddressDialogBuilder(),
       onDone: (Address address) => address);
-  XFile? _pickedImage;
+  XFile? _pickedImage = null;
   PhysicalStore? _editedStore = PhysicalStore(
       id: "",
       name: "",
@@ -155,9 +155,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   }
 
   void _selectImage(XFile pickedImage) {
-    print('select');
     _pickedImage = pickedImage;
-    print(_pickedImage);
     setState(() {});
   }
 
@@ -246,7 +244,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                 key: _detailsform,
                 child: Column(
                   children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage),
+                    ImageInput(_selectImage, _unselectImage, _pickedImage),
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(labelText: 'Store Name'),
@@ -562,7 +560,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           ],
         );
       case 3:
-        print(_pickedImage);
         return StorePreview(
             _editedStore!.name,
             _editedStore!.address,
@@ -591,7 +588,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                   IconStepper(
                     icons: [
                       Icon(Icons.info),
-                      Icon(Icons.category_outlined),
+                      Icon(Icons.tag),
                       Icon(Icons.access_time),
                       Icon(Icons.store),
                     ],

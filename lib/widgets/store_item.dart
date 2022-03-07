@@ -38,7 +38,9 @@ class StoreItem extends StatelessWidget {
               color: Colors.white,
               image: this.image != null
                   ? DecorationImage(image: this.image!, fit: BoxFit.cover)
-                  : null,
+                  : DecorationImage(
+                      image: AssetImage('assets/images/default-store.png'),
+                      fit: BoxFit.cover),
               borderRadius: BorderRadius.circular(15),
             ),
           )),

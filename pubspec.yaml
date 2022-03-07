@@ -105,6 +105,7 @@ flutter:
      - assets/images/nfc1.png
      - assets/images/visa.png
      - assets/images/visa1.png
+     - assets/images/default-store.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

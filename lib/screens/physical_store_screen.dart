@@ -131,8 +131,11 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: new DecorationImage(
-                      fit: BoxFit.cover, image: widget.image!),
+                  image: widget.image != null
+                      ? DecorationImage(fit: BoxFit.cover, image: widget.image!)
+                      : DecorationImage(
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
                 ),
               ),
             ),
