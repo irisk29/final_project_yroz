@@ -1,8 +1,8 @@
-import 'package:final_project_yroz/LogicLayer/Categories.dart';
+import 'package:final_project_yroz/LogicLayer/Category.dart';
 
 class ProductDTO {
   String name;
-  List<Categories> categories;
+  List<String> categories;
   double price;
   String imageUrl;
   String description;

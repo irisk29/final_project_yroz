@@ -92,7 +92,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
           OpenOnlineStoreScreen._saturday_close
         ]
       },
-      image: null);
+      image: null,
+      products: []);
   var _initValues = {
     'name': '',
     'phoneNumber': '',
@@ -168,6 +169,7 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
       await Provider.of<Stores>(context, listen: false)
           .updateOnlineStore(_editedStore!.id, _editedStore!);
     } else {
+      _editedStore!.products = OpenOnlineStoreScreen._products;
       try {
         await Provider.of<Stores>(context, listen: false)
             .addOnlineStore(_editedStore!);
@@ -218,7 +220,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
             categories: results,
             operationHours: _editedStore!.operationHours,
             image: _editedStore!.image,
-            id: '');
+            id: '',
+            products: _editedStore!.products);
       });
     }
   }
@@ -302,7 +305,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            products: _editedStore!.products);
                       },
                     ),
                     TextFormField(
@@ -324,7 +328,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            products: _editedStore!.products);
                       },
                     ),
                     TextFormField(
@@ -341,7 +346,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            products: _editedStore!.products);
                       },
                     ),
                     ElevatedButton(
@@ -566,7 +572,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                                         operationHours:
                                             _editedStore!.operationHours,
                                         image: value,
-                                        id: '');
+                                        id: '',
+                                        products: _editedStore!.products);
                                   },
                                 ),
                               ),

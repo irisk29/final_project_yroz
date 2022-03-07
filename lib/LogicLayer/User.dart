@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
@@ -76,7 +77,7 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<ResultInterface> openOnlineStore(StoreDTO store) async {
+  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
     var res = await StoreStorageProxy().openOnlineStore(store);
     if (!res.getTag()) return res; //failure
     var tuple =

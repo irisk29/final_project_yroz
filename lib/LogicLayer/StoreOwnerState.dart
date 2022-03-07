@@ -4,7 +4,9 @@ import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
+import 'package:final_project_yroz/providers/product.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class StoreOwnerState {
   String _storeOwnerID;
@@ -18,27 +20,51 @@ class StoreOwnerState {
 
   void setOnlineStore(OnlineStoreModel onlineStoreModel) {
     var categories = jsonDecode(onlineStoreModel.categories);
-    var operationHours = jsonDecode(onlineStoreModel.operationHours);
+    Map<String, dynamic> operationHours = jsonDecode(onlineStoreModel.operationHours);
+    var op = parseOperationHours(operationHours);
     onlineStore = new OnlineStore(
         id: onlineStoreModel.id,
         name: onlineStoreModel.name,
         phoneNumber: onlineStoreModel.phoneNumber,
         address: onlineStoreModel.address,
         categories: List<String>.from(categories),
-        operationHours: Map<String, List<TimeOfDay>>.from(operationHours));
+        operationHours: op,
+        products: onlineStoreModel.productModel == null
+            ? []
+            : onlineStoreModel.productModel!
+                .map((e) => Product(
+                    id: e.id,
+                    title: e.name,
+                    description: e.description!,
+                    category: e.categories,
+                    price: e.price,
+                    imageUrl: e.imageUrl!))
+                .toList());
   }
 
   void setPhysicalStore(PhysicalStoreModel physicalStoreModel) {
     var categories = jsonDecode(physicalStoreModel.categories);
-    var operationHours = jsonDecode(physicalStoreModel.operationHours);
+    Map<String, dynamic> operationHours = jsonDecode(physicalStoreModel.operationHours);
+    var op = parseOperationHours(operationHours);
     physicalStore = new PhysicalStore(
       id: physicalStoreModel.id,
       name: physicalStoreModel.name,
       phoneNumber: physicalStoreModel.phoneNumber,
       address: physicalStoreModel.address,
       categories: List<String>.from(categories),
-      operationHours: Map<String, List<TimeOfDay>>.from(operationHours),
+      operationHours:op,
       qrCode: physicalStoreModel.qrCode,
     );
+  }
+
+  Map<String, List<TimeOfDay>> parseOperationHours(Map<String, dynamic> operationHours) {
+    Map<String, List<TimeOfDay>> opH = {};
+    operationHours.forEach((key, value) {
+      List<dynamic> op = List.from(value);
+      DateFormat inputFormat = DateFormat('hh:mm a');
+      List<TimeOfDay> lst = op.map((e) => TimeOfDay.fromDateTime(inputFormat.parse(e as String))).toList();
+      opH[key] = lst;
+    });
+    return opH;
   }
 }

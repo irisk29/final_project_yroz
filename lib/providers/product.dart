@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,8 +32,7 @@ class Product with ChangeNotifier {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
-    final url = Uri.https('flutter4-390b1-default-rtdb.firebaseio.com',
-        '/userFavorites/$userId/$id.json?auth=$token');
+    final url = Uri.https('flutter4-390b1-default-rtdb.firebaseio.com', '/userFavorites/$userId/$id.json?auth=$token');
     try {
       final response = await http.put(
         url,
@@ -44,5 +44,9 @@ class Product with ChangeNotifier {
     } catch (error) {
       _setFavValue(oldStatus);
     }
+  }
+
+  ProductDTO createDTO() {
+    return ProductDTO(title, price, [category], imageUrl, description);
   }
 }
