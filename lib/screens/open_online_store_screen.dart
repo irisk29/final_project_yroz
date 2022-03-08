@@ -135,7 +135,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     setState(() {});
   }
 
-  Future<void> _saveForm() async {
+Future<void> _saveForm() async {
     setState(() {
       _isLoading = true;
     });

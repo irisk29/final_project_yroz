@@ -40,9 +40,9 @@ class StoreOwnerState {
         address: onlineStoreModel.address,
         categories: List<String>.from(categories),
         operationHours: op,
-        products: onlineStoreModel.productModel == null
+        products: onlineStoreModel.storeProductModels == null
             ? []
-            : onlineStoreModel.productModel!
+            : onlineStoreModel.storeProductModels!
                 .map((e) => Product(
                     id: e.id,
                     title: e.name,

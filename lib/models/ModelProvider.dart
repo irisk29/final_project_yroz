@@ -20,29 +20,31 @@
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
 import 'package:amplify_core/amplify_core.dart';
+import 'CartProductModel.dart';
 import 'DigitalWalletModel.dart';
 import 'OnlineStoreModel.dart';
 import 'PhysicalStoreModel.dart';
-import 'ProductModel.dart';
 import 'PurchaseHistoryModel.dart';
 import 'ShoppingBagModel.dart';
 import 'StoreOwnerModel.dart';
+import 'StoreProductModel.dart';
 import 'UserModel.dart';
 
+export 'CartProductModel.dart';
 export 'DigitalWalletModel.dart';
 export 'OnlineStoreModel.dart';
 export 'PhysicalStoreModel.dart';
-export 'ProductModel.dart';
 export 'PurchaseHistoryModel.dart';
 export 'ShoppingBagModel.dart';
 export 'StoreOwnerModel.dart';
+export 'StoreProductModel.dart';
 export 'UserModel.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "8047cf70c33cf036fab9787b820a03a1";
+  String version = "8b7e014a4b47464468c044b6a247d07c";
   @override
-  List<ModelSchema> modelSchemas = [DigitalWalletModel.schema, OnlineStoreModel.schema, PhysicalStoreModel.schema, ProductModel.schema, PurchaseHistoryModel.schema, ShoppingBagModel.schema, StoreOwnerModel.schema, UserModel.schema];
+  List<ModelSchema> modelSchemas = [CartProductModel.schema, DigitalWalletModel.schema, OnlineStoreModel.schema, PhysicalStoreModel.schema, PurchaseHistoryModel.schema, ShoppingBagModel.schema, StoreOwnerModel.schema, StoreProductModel.schema, UserModel.schema];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -51,20 +53,22 @@ class ModelProvider implements ModelProviderInterface {
   
   ModelType getModelTypeByModelName(String modelName) {
     switch(modelName) {
+      case "CartProductModel":
+        return CartProductModel.classType;
       case "DigitalWalletModel":
         return DigitalWalletModel.classType;
       case "OnlineStoreModel":
         return OnlineStoreModel.classType;
       case "PhysicalStoreModel":
         return PhysicalStoreModel.classType;
-      case "ProductModel":
-        return ProductModel.classType;
       case "PurchaseHistoryModel":
         return PurchaseHistoryModel.classType;
       case "ShoppingBagModel":
         return ShoppingBagModel.classType;
       case "StoreOwnerModel":
         return StoreOwnerModel.classType;
+      case "StoreProductModel":
+        return StoreProductModel.classType;
       case "UserModel":
         return UserModel.classType;
       default:
