@@ -1,54 +1,54 @@
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
-import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/product.dart';
 import 'package:final_project_yroz/providers/stores.dart';
-import 'package:final_project_yroz/screens/add_product_screen.dart';
-import 'package:final_project_yroz/screens/edit_product_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
-import 'package:final_project_yroz/widgets/multi_select.dart';
+import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
+import 'package:im_stepper/stepper.dart';
 
 import '../dummy_data.dart';
+import 'add_product_screen.dart';
 
-class OpenOnlineStoreScreen extends StatefulWidget {
+class OpenOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/open-online-store';
   static List<String> _selectedItems = [];
   static List<Product> _products = [];
-  static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _sunday_close = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _monday_close = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _tuesday_open = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _tuesday_close = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _wednesday_open = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _wednesday_close = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _thursday_open = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _thursday_close = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _friday_open = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _friday_close = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 15);
-  static TimeOfDay _saturday_close = TimeOfDay(hour: 7, minute: 15);
+  static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
+  static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
+  static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
+  static TimeOfDay _monday_close = TimeOfDay(hour: 23, minute: 59);
+  static TimeOfDay _tuesday_open = TimeOfDay(hour: 7, minute: 0);
+  static TimeOfDay _tuesday_close = TimeOfDay(hour: 23, minute: 59);
+  static TimeOfDay _wednesday_open = TimeOfDay(hour: 7, minute: 0);
+  static TimeOfDay _wednesday_close = TimeOfDay(hour: 23, minute: 59);
+  static TimeOfDay _thursday_open = TimeOfDay(hour: 7, minute: 0);
+  static TimeOfDay _thursday_close = TimeOfDay(hour: 23, minute: 59);
+  static TimeOfDay _friday_open = TimeOfDay(hour: 7, minute: 0);
+  static TimeOfDay _friday_close = TimeOfDay(hour: 23, minute: 59);
+  static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 0);
+  static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
   User? user;
 
   @override
-  _OpenOnlineStoreScreenState createState() => _OpenOnlineStoreScreenState();
+  _OpenOnlineStorePipelineState createState() =>
+      _OpenOnlineStorePipelineState();
 }
 
-class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
+class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
+  int _currentStep = 0;
+
   final destCtrl = TextEditingController();
   final _imageUrlController = TextEditingController();
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
-  final _imageUrlFocusNode = FocusNode();
-  final _form = GlobalKey<FormState>();
+  final _detailsform = GlobalKey<FormState>();
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
       geoMethods: GeoMethods(
@@ -56,68 +56,76 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
         language: 'en',
         countryCode: 'il',
       ),
-      controller: OpenOnlineStoreScreen._controller,
+      controller: OpenOnlineStorePipeline._controller,
       builder: AddressDialogBuilder(),
       onDone: (Address address) => address);
-  XFile? _pickedImage;
+  XFile? _pickedImage = null;
   OnlineStore? _editedStore = OnlineStore(
       id: "",
       name: "",
       phoneNumber: "",
       address: "",
-      categories: OpenOnlineStoreScreen._selectedItems,
+      categories: OpenOnlineStorePipeline._selectedItems,
       operationHours: {
-        'sunday': [OpenOnlineStoreScreen._sunday_open, OpenOnlineStoreScreen._sunday_close],
-        'monday': [OpenOnlineStoreScreen._monday_open, OpenOnlineStoreScreen._monday_close],
-        'tuesday': [OpenOnlineStoreScreen._tuesday_open, OpenOnlineStoreScreen._tuesday_close],
-        'wednesday': [OpenOnlineStoreScreen._wednesday_open, OpenOnlineStoreScreen._wednesday_close],
-        'thursday': [OpenOnlineStoreScreen._thursday_open, OpenOnlineStoreScreen._thursday_close],
-        'friday': [OpenOnlineStoreScreen._friday_open, OpenOnlineStoreScreen._friday_close],
-        'saturday': [OpenOnlineStoreScreen._saturday_open, OpenOnlineStoreScreen._saturday_close]
+        'sunday': [
+          OpenOnlineStorePipeline._sunday_open,
+          OpenOnlineStorePipeline._sunday_close
+        ],
+        'monday': [
+          OpenOnlineStorePipeline._monday_open,
+          OpenOnlineStorePipeline._monday_close
+        ],
+        'tuesday': [
+          OpenOnlineStorePipeline._tuesday_open,
+          OpenOnlineStorePipeline._tuesday_close
+        ],
+        'wednesday': [
+          OpenOnlineStorePipeline._wednesday_open,
+          OpenOnlineStorePipeline._wednesday_close
+        ],
+        'thursday': [
+          OpenOnlineStorePipeline._thursday_open,
+          OpenOnlineStorePipeline._thursday_close
+        ],
+        'friday': [
+          OpenOnlineStorePipeline._friday_open,
+          OpenOnlineStorePipeline._friday_close
+        ],
+        'saturday': [
+          OpenOnlineStorePipeline._saturday_open,
+          OpenOnlineStorePipeline._saturday_close
+        ]
       },
-      image: null, products: []);
+      image: null,
+      products: []);
   var _initValues = {
     'name': '',
     'phoneNumber': '',
     'address': '',
   };
+  final List<String> _selectedItems = [];
   var _isInit = true;
   var _isLoading = false;
 
   @override
-  void initState() {
-    _imageUrlFocusNode.addListener(_updateImageUrl);
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     if (_isInit) {
-      final user = ModalRoute.of(context)!.settings.arguments as User?;
-      widget.user = user;
+      final storeId = ModalRoute.of(context)!.settings.arguments as String?;
+      if (storeId != null) {
+        _editedStore = Provider.of<Stores>(context, listen: false)
+            .findOnlineStoreById(storeId);
+        if (_editedStore != null) {
+          _initValues = {
+            'name': _editedStore!.name,
+            'phoneNumber': _editedStore!.phoneNumber,
+            'address': _editedStore!.address,
+          };
+          _imageUrlController.text = _editedStore!.image.toString();
+        }
+      }
     }
     _isInit = false;
     super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    _imageUrlFocusNode.removeListener(_updateImageUrl);
-    _imageUrlController.dispose();
-    _imageUrlFocusNode.dispose();
-    super.dispose();
-  }
-
-  void _updateImageUrl() {
-    if (!_imageUrlFocusNode.hasFocus) {
-      if ((!_imageUrlController.text.startsWith('http') && !_imageUrlController.text.startsWith('https')) ||
-          (!_imageUrlController.text.endsWith('.png') &&
-              !_imageUrlController.text.endsWith('.jpg') &&
-              !_imageUrlController.text.endsWith('.jpeg'))) {
-        return;
-      }
-      setState(() {});
-    }
   }
 
   void _selectImage(XFile pickedImage) {
@@ -131,16 +139,17 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
   }
 
   Future<void> _saveForm() async {
-    _form.currentState!.save();
     setState(() {
       _isLoading = true;
     });
     if (_editedStore!.id.isNotEmpty) {
-      await Provider.of<Stores>(context, listen: false).updateOnlineStore(_editedStore!.id, _editedStore!);
+      await Provider.of<Stores>(context, listen: false)
+          .updateOnlineStore(_editedStore!.id, _editedStore!);
     } else {
-      _editedStore!.products = OpenOnlineStoreScreen._products;
+      _editedStore!.products = OpenOnlineStorePipeline._products;
       try {
-        await Provider.of<Stores>(context, listen: false).addOnlineStore(_editedStore!);
+        await Provider.of<Stores>(context, listen: false)
+            .addOnlineStore(_editedStore!);
       } catch (error) {
         await showDialog(
           context: context,
@@ -158,97 +167,75 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
           ),
         );
       }
-    }
-    setState(() {
-      _isLoading = false;
-    });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
-  }
-
-  void _showMultiSelect() async {
-    // a list of selectable items
-    // these items can be hard-coded or dynamically fetched from a database/API
-    final List<String> _items = DUMMY_CATEGORIES.map((e) => e.title).toList();
-
-    final List<String> results = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return MultiSelect(items: _items);
-      },
-    );
-
-    // Update UI
-    if (results != null) {
       setState(() {
-        OpenOnlineStoreScreen._selectedItems = results;
-        _editedStore = OnlineStore(
-            name: _editedStore!.name,
-            phoneNumber: _editedStore!.phoneNumber,
-            address: _editedStore!.address,
-            categories: results,
-            operationHours: _editedStore!.operationHours,
-            image: _editedStore!.image,
-            id: '', products: _editedStore!.products);
+        _isLoading = false;
       });
+      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
     }
   }
 
-  void _showAddProduct() async {
-    if (OpenOnlineStoreScreen._products.length < 5) {
-      final Tuple2<Product?, OnlineStore?> result = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
-      );
-
-      // Update UI
-      if (result.item1 != null) {
-        setState(() {
-          _editedStore = result.item2;
-          OpenOnlineStoreScreen._products.add(result.item1!);
-        });
+  // This function is triggered when a checkbox is checked or unchecked
+  void _itemChange(String itemValue, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        _selectedItems.add(itemValue);
+      } else {
+        _selectedItems.remove(itemValue);
       }
-    }
+    });
   }
 
   void _selectTime(String time) async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
-      initialTime: _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
+      initialTime: _editedStore!
+              .operationHours[time.substring(0, time.indexOf('['))]![
           int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
       initialEntryMode: TimePickerEntryMode.input,
     );
     if (newTime != null) {
       setState(() {
         _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
-            int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))] = newTime;
+                int.parse(
+                    time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
+            newTime;
       });
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Open Store',
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _saveForm,
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
+  void _showAddProduct() async {
+    if (OpenOnlineStorePipeline._products.length < 5) {
+      final Product? result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
+      );
+
+      // Update UI
+      if (result != null) {
+        setState(() {
+          OpenOnlineStorePipeline._products.add(result);
+        });
+      }
+    }
+  }
+
+  Widget? currentStepWidget() {
+    switch (_currentStep) {
+      case 0:
+        return Column(
+          children: [
+            const Text(
+              'Enter Store Details',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.all(20),
               child: Form(
-                key: _form,
-                child: ListView(
+                key: _detailsform,
+                child: Column(
                   children: <Widget>[
+                    ImageInput(_selectImage, _unselectImage, _pickedImage),
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(labelText: 'Store Name'),
@@ -270,7 +257,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '', products: _editedStore!.products);
+                            id: '',
+                            products: _editedStore!.products);
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStore(
@@ -280,7 +268,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '', products: _editedStore!.products);
+                            id: '',
+                            products: _editedStore!.products);
                       },
                     ),
                     TextFormField(
@@ -302,7 +291,8 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '', products: _editedStore!.products);
+                            id: '',
+                            products: _editedStore!.products);
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStore(
@@ -312,23 +302,16 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '', products: _editedStore!.products);
+                            id: '',
+                            products: _editedStore!.products);
                       },
                     ),
                     TextFormField(
                       decoration: InputDecoration(labelText: 'Address'),
-                      controller: OpenOnlineStoreScreen._controller,
-                      onTap: () => showDialog(context: context, builder: (context) => destinationBuilder),
-                      onChanged: (value) {
-                        _editedStore = OnlineStore(
-                            name: _editedStore!.name,
-                            phoneNumber: _editedStore!.phoneNumber,
-                            address: value,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            image: _editedStore!.image,
-                            id: '', products: _editedStore!.products);
-                      },
+                      controller: OpenOnlineStorePipeline._controller,
+                      onTap: () => showDialog(
+                          context: context,
+                          builder: (context) => destinationBuilder),
                       onSaved: (value) {
                         _editedStore = OnlineStore(
                             name: _editedStore!.name,
@@ -337,247 +320,383 @@ class _OpenOnlineStoreScreenState extends State<OpenOnlineStoreScreen> {
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
                             image: _editedStore!.image,
-                            id: '', products: _editedStore!.products);
+                            id: '',
+                            products: _editedStore!.products);
                       },
-                    ),
-                    ElevatedButton(
-                      child: const Text('Select Categories'),
-                      onPressed: _showMultiSelect,
-                    ),
-                    Wrap(
-                      children: OpenOnlineStoreScreen._selectedItems
-                          .map((e) => Chip(
-                                deleteIcon: Icon(
-                                  Icons.close,
-                                ),
-                                onDeleted: () {
-                                  setState(() {
-                                    OpenOnlineStoreScreen._selectedItems.remove(e);
-                                  });
-                                },
-                                label: Text(e),
-                              ))
-                          .toList(),
-                    ),
-                    Text('Opening hours:'),
-                    Row(
-                      children: [
-                        Text('Sunday'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('sunday[0]');
-                          },
-                          child: Text(_editedStore!.operationHours['sunday']![0].format(context)),
-                        ),
-                        Text('-'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('sunday[1]');
-                          },
-                          child: Text(_editedStore!.operationHours['sunday']![1].format(context)),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Monday'),
-                        ElevatedButton(
-                          onPressed: () => _selectTime('monday[0]'),
-                          child: Text(_editedStore!.operationHours['monday']![0].format(context)),
-                        ),
-                        Text('-'),
-                        ElevatedButton(
-                          onPressed: () => _selectTime('monday[1]'),
-                          child: Text(_editedStore!.operationHours['monday']![1].format(context)),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Tuesday'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('tuesday[0]');
-                          },
-                          child: Text(_editedStore!.operationHours['tuesday']![0].format(context)),
-                        ),
-                        Text('-'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('tuesday[1]');
-                          },
-                          child: Text(_editedStore!.operationHours['tuesday']![1].format(context)),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Wednesday'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('wednesday[0]');
-                          },
-                          child: Text(_editedStore!.operationHours['wednesday']![0].format(context)),
-                        ),
-                        Text('-'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('wednesday[1]');
-                          },
-                          child: Text(_editedStore!.operationHours['wednesday']![1].format(context)),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Thursday'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('thursday[1]');
-                          },
-                          child: Text(_editedStore!.operationHours['thursday']![0].format(context)),
-                        ),
-                        Text('-'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('thursday[1]');
-                          },
-                          child: Text(_editedStore!.operationHours['thursday']![1].format(context)),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Friday'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('friday[0]');
-                          },
-                          child: Text(_editedStore!.operationHours['friday']![0].format(context)),
-                        ),
-                        Text('-'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('friday[1]');
-                          },
-                          child: Text(_editedStore!.operationHours['friday']![1].format(context)),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text('Saturday'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('saturday[0]');
-                          },
-                          child: Text(_editedStore!.operationHours['saturday']![0].format(context)),
-                        ),
-                        Text('-'),
-                        ElevatedButton(
-                          onPressed: () {
-                            _selectTime('saturday[1]');
-                          },
-                          child: Text(_editedStore!.operationHours['saturday']![1].format(context)),
-                        ),
-                      ],
-                    ),
-                    _pickedImage == null
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Container(
-                                width: 100,
-                                height: 100,
-                                margin: EdgeInsets.only(
-                                  top: 8,
-                                  right: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                child: _imageUrlController.text.isEmpty
-                                    ? Text('Enter a URL')
-                                    : FittedBox(
-                                        child: Image.network(
-                                          _imageUrlController.text,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                              ),
-                              Expanded(
-                                child: TextFormField(
-                                  decoration: InputDecoration(labelText: 'Image URL'),
-                                  keyboardType: TextInputType.url,
-                                  textInputAction: TextInputAction.done,
-                                  controller: _imageUrlController,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Please enter an image URL.';
-                                    }
-                                    if (!value.startsWith('http') && !value.startsWith('https')) {
-                                      return 'Please enter a valid URL.';
-                                    }
-                                    if (!value.endsWith('.png') &&
-                                        !value.endsWith('.jpg') &&
-                                        !value.endsWith('.jpeg')) {
-                                      return 'Please enter a valid image URL.';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    _editedStore = OnlineStore(
-                                        name: _editedStore!.name,
-                                        phoneNumber: _editedStore!.phoneNumber,
-                                        address: _editedStore!.address,
-                                        categories: _editedStore!.categories,
-                                        operationHours: _editedStore!.operationHours,
-                                        image: value,
-                                        id: '', products: _editedStore!.products);
-                                  },
-                                  onSaved: (value) {
-                                    _editedStore = OnlineStore(
-                                        name: _editedStore!.name,
-                                        phoneNumber: _editedStore!.phoneNumber,
-                                        address: _editedStore!.address,
-                                        categories: _editedStore!.categories,
-                                        operationHours: _editedStore!.operationHours,
-                                        image: value,
-                                        id: '', products: _editedStore!.products);
-                                  },
-                                ),
-                              ),
-                            ],
-                          )
-                        : const SizedBox(height: 1.0),
-                    ImageInput(_selectImage, _unselectImage),
-                    const SizedBox(height: 50.0),
-                    ElevatedButton(
-                      child: const Text('Add Product'),
-                      onPressed: _showAddProduct,
-                    ),
-                    Wrap(
-                      children: OpenOnlineStoreScreen._products
-                          .map((e) => Chip(
-                                deleteIcon: Icon(
-                                  Icons.close,
-                                ),
-                                onDeleted: () {
-                                  setState(() {
-                                    OpenOnlineStoreScreen._products.remove(e);
-                                  });
-                                },
-                                label: Text(e.title),
-                              ))
-                          .toList(),
                     ),
                   ],
                 ),
               ),
             ),
+          ],
+        );
+      case 1:
+        return Column(
+          children: [
+            const Text(
+              'Select Store Categories',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            SingleChildScrollView(
+              child: ListBody(
+                children: DUMMY_CATEGORIES
+                    .map((e) => e.title)
+                    .toList()
+                    .map((item) => CheckboxListTile(
+                          value: _selectedItems.contains(item),
+                          title: Text(item),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          onChanged: (isChecked) =>
+                              _itemChange(item, isChecked!),
+                        ))
+                    .toList(),
+              ),
+            ),
+            Wrap(
+              children: _selectedItems
+                  .map((e) => Chip(
+                        deleteIcon: Icon(
+                          Icons.close,
+                        ),
+                        onDeleted: () {
+                          setState(() {
+                            _selectedItems.remove(e);
+                          });
+                        },
+                        label: Text(e),
+                      ))
+                  .toList(),
+            ),
+          ],
+        );
+      case 2:
+        return Column(
+          children: [
+            const Text(
+              'Select Store Opening Hours',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Sunday'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('sunday[0]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['sunday']![0]
+                                .format(context)),
+                          ),
+                          Text('-'),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('sunday[1]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['sunday']![1]
+                                .format(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Monday'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () => _selectTime('monday[0]'),
+                            child: Text(_editedStore!
+                                .operationHours['monday']![0]
+                                .format(context)),
+                          ),
+                          Text('-'),
+                          ElevatedButton(
+                            onPressed: () => _selectTime('monday[1]'),
+                            child: Text(_editedStore!
+                                .operationHours['monday']![1]
+                                .format(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Tuesday'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('tuesday[0]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['tuesday']![0]
+                                .format(context)),
+                          ),
+                          Text('-'),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('tuesday[1]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['tuesday']![1]
+                                .format(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Wednesday'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('wednesday[0]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['wednesday']![0]
+                                .format(context)),
+                          ),
+                          Text('-'),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('wednesday[1]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['wednesday']![1]
+                                .format(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Thursday'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('thursday[1]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['thursday']![0]
+                                .format(context)),
+                          ),
+                          Text('-'),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('thursday[1]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['thursday']![1]
+                                .format(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Friday'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('friday[0]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['friday']![0]
+                                .format(context)),
+                          ),
+                          Text('-'),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('friday[1]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['friday']![1]
+                                .format(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Saturday'),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('saturday[0]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['saturday']![0]
+                                .format(context)),
+                          ),
+                          Text('-'),
+                          ElevatedButton(
+                            onPressed: () {
+                              _selectTime('saturday[1]');
+                            },
+                            child: Text(_editedStore!
+                                .operationHours['saturday']![1]
+                                .format(context)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      case 3:
+        return Column(
+          children: [
+            ElevatedButton(
+              child: const Text('Add Product'),
+              onPressed: _showAddProduct,
+            ),
+            Wrap(
+              children: OpenOnlineStorePipeline._products
+                  .map((e) => Chip(
+                        deleteIcon: Icon(
+                          Icons.close,
+                        ),
+                        onDeleted: () {
+                          setState(() {
+                            OpenOnlineStorePipeline._products.remove(e);
+                          });
+                        },
+                        label: Text(e.title),
+                      ))
+                  .toList(),
+            ),
+          ],
+        );
+      case 4:
+        return StorePreview(
+            _editedStore!.name,
+            _editedStore!.address,
+            _pickedImage,
+            _editedStore!.phoneNumber,
+            _editedStore!.operationHours);
+      default:
+        return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Open Store',
+        ),
+      ),
+      resizeToAvoidBottomInset: false,
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Container(
+              child: Column(
+                children: [
+                  IconStepper(
+                    icons: [
+                      Icon(Icons.info),
+                      Icon(Icons.tag),
+                      Icon(Icons.access_time),
+                      Icon(Icons.add_shopping_cart_rounded),
+                      Icon(Icons.store),
+                    ],
+                    // activeStep property set to activeStep variable defined above.
+                    activeStep: _currentStep,
+                    steppingEnabled: false,
+                    enableStepTapping: false,
+                    enableNextPreviousButtons: false,
+                    activeStepColor: Theme.of(context).primaryColor,
+                    // This ensures step-tapping updates the activeStep.
+                    onStepReached: (index) {
+                      setState(() {
+                        _currentStep = index;
+                      });
+                    },
+                  ),
+                  currentStepWidget()!,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: cancel,
+                              child: Text('Prev'),
+                            ),
+                            ElevatedButton(
+                              onPressed: continued,
+                              child: Text('Next'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
+  }
+
+  continued() {
+    switch (_currentStep) {
+      case 0:
+        if (_detailsform.currentState!.validate()) {
+          _detailsform.currentState!.save();
+          setState(() => _currentStep += 1);
+        }
+        break;
+      case 1:
+        if (_selectedItems.isNotEmpty) {
+          setState(() => _currentStep += 1);
+        }
+        break;
+      case 2:
+        setState(() => _currentStep += 1);
+        break;
+      case 3:
+        setState(() => _currentStep += 1);
+        break;
+      case 4:
+        _saveForm();
+        break;
+    }
+  }
+
+  cancel() {
+    _currentStep > 0 ? setState(() => _currentStep -= 1) : null;
   }
 }

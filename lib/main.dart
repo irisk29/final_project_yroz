@@ -3,9 +3,9 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:final_project_yroz/providers/stores.dart';
-import 'package:final_project_yroz/screens/add_product_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
+import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,6 @@ import 'screens/settings_screen.dart';
 import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
-import 'screens/open_physical_store_screen.dart';
 import 'screens/product_detail_screen.dart';
 import 'screens/products_overview_screen.dart';
 import 'screens/splash_screen.dart';
@@ -90,9 +89,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProvider.value(
-          value: Products.withNull()
-        ),
+        ChangeNotifierProvider.value(value: Products.withNull()),
         ChangeNotifierProvider.value(
           value: Cart(),
         ),
@@ -140,8 +137,10 @@ class _MyAppState extends State<MyApp> {
             CategoryScreen.routeName: (ctx) => CategoryScreen(),
             SettingsScreen.routeName: (ctx) => SettingsScreen(),
             PaymentScreen.routeName: (ctx) => PaymentScreen(),
-            OpenPhysicalStoreScreen.routeName: (ctx) => OpenPhysicalStoreScreen(),
-            OpenOnlineStoreScreen.routeName: (ctx) => OpenOnlineStoreScreen(),
+            OpenPhysicalStorePipeline.routeName: (ctx) =>
+                OpenPhysicalStorePipeline(),
+            OpenOnlineStorePipeline.routeName: (ctx) =>
+                OpenOnlineStorePipeline(),
             ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
             PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
             OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),

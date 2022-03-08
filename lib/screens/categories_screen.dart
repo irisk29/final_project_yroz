@@ -184,7 +184,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
           ],
         ),
-        SearchBar(),
+        Padding(
+            padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height -
+                        MediaQuery.of(context).padding.top) *
+                0.01,
+            child: SearchBar()),
       ],
     );
   }

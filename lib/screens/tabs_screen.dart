@@ -76,8 +76,7 @@ class _TabsScreenState extends State<TabsScreen> {
               Icons.settings_outlined,
             ),
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(SettingsScreen.routeName, arguments: widget.user);
+              Navigator.of(context).pushNamed(SettingsScreen.routeName, arguments: widget.user);
             },
           ),
         ],
