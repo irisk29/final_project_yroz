@@ -143,6 +143,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       await Provider.of<Stores>(context, listen: false)
           .updateOnlineStore(_editedStore!.id, _editedStore!);
     } else {
+      _editedStore!.products = OpenOnlineStorePipeline._products;
       try {
         await Provider.of<Stores>(context, listen: false)
             .addOnlineStore(_editedStore!);
@@ -163,11 +164,11 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ),
         );
       }
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
     }
-    setState(() {
-      _isLoading = false;
-    });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked
