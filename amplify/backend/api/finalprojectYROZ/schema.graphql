@@ -1,8 +1,5 @@
-type PurchaseHistoryModel @model @auth(rules: [{allow: public}]) {
+type StoreOwnerModel @model @auth(rules: [{allow: public}]) {
   id: ID!
-  date: AWSDate!
-  amount: Float!
-  userModel: UserModel @hasOne
   onlineStoreModel: OnlineStoreModel @hasOne
   physicalStoreModel: PhysicalStoreModel @hasOne
 }
@@ -19,18 +16,13 @@ type UserModel @model @auth(rules: [{allow: public}]) {
   shoppingBagModels: [ShoppingBagModel] @hasMany(indexName: "byUserModel", fields: ["id"])
 }
 
-type StoreOwnerModel @model @auth(rules: [{allow: public}]) {
+type PurchaseHistoryModel @model @auth(rules: [{allow: public}]) {
   id: ID!
+  date: AWSDate!
+  amount: Float!
+  userModel: UserModel @hasOne
   onlineStoreModel: OnlineStoreModel @hasOne
   physicalStoreModel: PhysicalStoreModel @hasOne
-}
-
-type ShoppingBagModel @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  productsAndQuantity: AWSJSON
-  productModels: [ProductModel] @hasMany(indexName: "byShoppingBagModel", fields: ["id"])
-  onlineStoreModel: OnlineStoreModel @hasOne
-  usermodelID: ID! @index(name: "byUserModel")
 }
 
 type OnlineStoreModel @model @auth(rules: [{allow: public}]) {
@@ -40,7 +32,7 @@ type OnlineStoreModel @model @auth(rules: [{allow: public}]) {
   address: String!
   operationHours: AWSJSON!
   categories: AWSJSON!
-  productModel: [ProductModel] @hasMany(indexName: "byOnlineStoreModel", fields: ["id"])
+  storeProductModels: [StoreProductModel] @hasMany(indexName: "byOnlineStoreModel", fields: ["id"])
 }
 
 type PhysicalStoreModel @model @auth(rules: [{allow: public}]) {
@@ -53,7 +45,26 @@ type PhysicalStoreModel @model @auth(rules: [{allow: public}]) {
   qrCode: String!
 }
 
-type ProductModel @model @auth(rules: [{allow: public}]) {
+type ShoppingBagModel @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  productsAndQuantity: AWSJSON
+  onlineStoreModel: OnlineStoreModel @hasOne
+  usermodelID: ID! @index(name: "byUserModel")
+  CartProductModels: [CartProductModel] @hasMany(indexName: "byShoppingBagModel", fields: ["id"])
+}
+
+type CartProductModel @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  categories: AWSJSON!
+  price: Float!
+  imageUrl: String
+  description: String
+  amount: Int
+  shoppingbagmodelID: ID! @index(name: "byShoppingBagModel")
+}
+
+type StoreProductModel @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
   categories: AWSJSON!
@@ -61,7 +72,6 @@ type ProductModel @model @auth(rules: [{allow: public}]) {
   imageUrl: String
   description: String
   onlinestoremodelID: ID! @index(name: "byOnlineStoreModel")
-  shoppingbagmodelID: ID! @index(name: "byShoppingBagModel")
 }
 
 type DigitalWalletModel @model @auth(rules: [{allow: public}]) {

@@ -23,10 +23,10 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the ProductModel type in your schema. */
+/** This is an auto generated class representing the StoreProductModel type in your schema. */
 @immutable
-class ProductModel extends Model {
-  static const classType = const _ProductModelModelType();
+class StoreProductModel extends Model {
+  static const classType = const _StoreProductModelModelType();
   final String id;
   final String? _name;
   final String? _categories;
@@ -34,7 +34,6 @@ class ProductModel extends Model {
   final String? _imageUrl;
   final String? _description;
   final String? _onlinestoremodelID;
-  final String? _shoppingbagmodelID;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -106,19 +105,6 @@ class ProductModel extends Model {
     }
   }
   
-  String get shoppingbagmodelID {
-    try {
-      return _shoppingbagmodelID!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
-  }
-  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -127,18 +113,17 @@ class ProductModel extends Model {
     return _updatedAt;
   }
   
-  const ProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required onlinestoremodelID, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _onlinestoremodelID = onlinestoremodelID, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const StoreProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required onlinestoremodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _onlinestoremodelID = onlinestoremodelID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory ProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required String onlinestoremodelID, required String shoppingbagmodelID}) {
-    return ProductModel._internal(
+  factory StoreProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required String onlinestoremodelID}) {
+    return StoreProductModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
       categories: categories,
       price: price,
       imageUrl: imageUrl,
       description: description,
-      onlinestoremodelID: onlinestoremodelID,
-      shoppingbagmodelID: shoppingbagmodelID);
+      onlinestoremodelID: onlinestoremodelID);
   }
   
   bool equals(Object other) {
@@ -148,15 +133,14 @@ class ProductModel extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is ProductModel &&
+    return other is StoreProductModel &&
       id == other.id &&
       _name == other._name &&
       _categories == other._categories &&
       _price == other._price &&
       _imageUrl == other._imageUrl &&
       _description == other._description &&
-      _onlinestoremodelID == other._onlinestoremodelID &&
-      _shoppingbagmodelID == other._shoppingbagmodelID;
+      _onlinestoremodelID == other._onlinestoremodelID;
   }
   
   @override
@@ -166,7 +150,7 @@ class ProductModel extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("ProductModel {");
+    buffer.write("StoreProductModel {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
     buffer.write("categories=" + "$_categories" + ", ");
@@ -174,7 +158,6 @@ class ProductModel extends Model {
     buffer.write("imageUrl=" + "$_imageUrl" + ", ");
     buffer.write("description=" + "$_description" + ", ");
     buffer.write("onlinestoremodelID=" + "$_onlinestoremodelID" + ", ");
-    buffer.write("shoppingbagmodelID=" + "$_shoppingbagmodelID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -182,19 +165,18 @@ class ProductModel extends Model {
     return buffer.toString();
   }
   
-  ProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, String? onlinestoremodelID, String? shoppingbagmodelID}) {
-    return ProductModel._internal(
+  StoreProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, String? onlinestoremodelID}) {
+    return StoreProductModel._internal(
       id: id ?? this.id,
       name: name ?? this.name,
       categories: categories ?? this.categories,
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
-      onlinestoremodelID: onlinestoremodelID ?? this.onlinestoremodelID,
-      shoppingbagmodelID: shoppingbagmodelID ?? this.shoppingbagmodelID);
+      onlinestoremodelID: onlinestoremodelID ?? this.onlinestoremodelID);
   }
   
-  ProductModel.fromJson(Map<String, dynamic> json)  
+  StoreProductModel.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _name = json['name'],
       _categories = json['categories'],
@@ -202,25 +184,23 @@ class ProductModel extends Model {
       _imageUrl = json['imageUrl'],
       _description = json['description'],
       _onlinestoremodelID = json['onlinestoremodelID'],
-      _shoppingbagmodelID = json['shoppingbagmodelID'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'categories': _categories, 'price': _price, 'imageUrl': _imageUrl, 'description': _description, 'onlinestoremodelID': _onlinestoremodelID, 'shoppingbagmodelID': _shoppingbagmodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'categories': _categories, 'price': _price, 'imageUrl': _imageUrl, 'description': _description, 'onlinestoremodelID': _onlinestoremodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
-  static final QueryField ID = QueryField(fieldName: "productModel.id");
+  static final QueryField ID = QueryField(fieldName: "storeProductModel.id");
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField CATEGORIES = QueryField(fieldName: "categories");
   static final QueryField PRICE = QueryField(fieldName: "price");
   static final QueryField IMAGEURL = QueryField(fieldName: "imageUrl");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
   static final QueryField ONLINESTOREMODELID = QueryField(fieldName: "onlinestoremodelID");
-  static final QueryField SHOPPINGBAGMODELID = QueryField(fieldName: "shoppingbagmodelID");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "ProductModel";
-    modelSchemaDefinition.pluralName = "ProductModels";
+    modelSchemaDefinition.name = "StoreProductModel";
+    modelSchemaDefinition.pluralName = "StoreProductModels";
     
     modelSchemaDefinition.authRules = [
       AuthRule(
@@ -236,43 +216,37 @@ class ProductModel extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ProductModel.NAME,
+      key: StoreProductModel.NAME,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ProductModel.CATEGORIES,
+      key: StoreProductModel.CATEGORIES,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ProductModel.PRICE,
+      key: StoreProductModel.PRICE,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ProductModel.IMAGEURL,
+      key: StoreProductModel.IMAGEURL,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ProductModel.DESCRIPTION,
+      key: StoreProductModel.DESCRIPTION,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ProductModel.ONLINESTOREMODELID,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ProductModel.SHOPPINGBAGMODELID,
+      key: StoreProductModel.ONLINESTOREMODELID,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
@@ -293,11 +267,11 @@ class ProductModel extends Model {
   });
 }
 
-class _ProductModelModelType extends ModelType<ProductModel> {
-  const _ProductModelModelType();
+class _StoreProductModelModelType extends ModelType<StoreProductModel> {
+  const _StoreProductModelModelType();
   
   @override
-  ProductModel fromJson(Map<String, dynamic> jsonData) {
-    return ProductModel.fromJson(jsonData);
+  StoreProductModel fromJson(Map<String, dynamic> jsonData) {
+    return StoreProductModel.fromJson(jsonData);
   }
 }

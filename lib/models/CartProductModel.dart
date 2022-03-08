@@ -19,23 +19,22 @@
 
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
-import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the OnlineStoreModel type in your schema. */
+/** This is an auto generated class representing the CartProductModel type in your schema. */
 @immutable
-class OnlineStoreModel extends Model {
-  static const classType = const _OnlineStoreModelModelType();
+class CartProductModel extends Model {
+  static const classType = const _CartProductModelModelType();
   final String id;
   final String? _name;
-  final String? _phoneNumber;
-  final String? _address;
-  final String? _operationHours;
   final String? _categories;
-  final List<StoreProductModel>? _storeProductModels;
+  final double? _price;
+  final String? _imageUrl;
+  final String? _description;
+  final int? _amount;
+  final String? _shoppingbagmodelID;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -60,45 +59,6 @@ class OnlineStoreModel extends Model {
     }
   }
   
-  String get phoneNumber {
-    try {
-      return _phoneNumber!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
-  }
-  
-  String get address {
-    try {
-      return _address!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
-  }
-  
-  String get operationHours {
-    try {
-      return _operationHours!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
-  }
-  
   String get categories {
     try {
       return _categories!;
@@ -112,8 +72,42 @@ class OnlineStoreModel extends Model {
     }
   }
   
-  List<StoreProductModel>? get storeProductModels {
-    return _storeProductModels;
+  double get price {
+    try {
+      return _price!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  String? get imageUrl {
+    return _imageUrl;
+  }
+  
+  String? get description {
+    return _description;
+  }
+  
+  int? get amount {
+    return _amount;
+  }
+  
+  String get shoppingbagmodelID {
+    try {
+      return _shoppingbagmodelID!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   TemporalDateTime? get createdAt {
@@ -124,17 +118,18 @@ class OnlineStoreModel extends Model {
     return _updatedAt;
   }
   
-  const OnlineStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, storeProductModels, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _storeProductModels = storeProductModels, _createdAt = createdAt, _updatedAt = updatedAt;
+  const CartProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, amount, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _amount = amount, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory OnlineStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, List<StoreProductModel>? storeProductModels}) {
-    return OnlineStoreModel._internal(
+  factory CartProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, int? amount, required String shoppingbagmodelID}) {
+    return CartProductModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
-      phoneNumber: phoneNumber,
-      address: address,
-      operationHours: operationHours,
       categories: categories,
-      storeProductModels: storeProductModels != null ? List<StoreProductModel>.unmodifiable(storeProductModels) : storeProductModels);
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+      amount: amount,
+      shoppingbagmodelID: shoppingbagmodelID);
   }
   
   bool equals(Object other) {
@@ -144,14 +139,15 @@ class OnlineStoreModel extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is OnlineStoreModel &&
+    return other is CartProductModel &&
       id == other.id &&
       _name == other._name &&
-      _phoneNumber == other._phoneNumber &&
-      _address == other._address &&
-      _operationHours == other._operationHours &&
       _categories == other._categories &&
-      DeepCollectionEquality().equals(_storeProductModels, other._storeProductModels);
+      _price == other._price &&
+      _imageUrl == other._imageUrl &&
+      _description == other._description &&
+      _amount == other._amount &&
+      _shoppingbagmodelID == other._shoppingbagmodelID;
   }
   
   @override
@@ -161,13 +157,15 @@ class OnlineStoreModel extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("OnlineStoreModel {");
+    buffer.write("CartProductModel {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
-    buffer.write("phoneNumber=" + "$_phoneNumber" + ", ");
-    buffer.write("address=" + "$_address" + ", ");
-    buffer.write("operationHours=" + "$_operationHours" + ", ");
     buffer.write("categories=" + "$_categories" + ", ");
+    buffer.write("price=" + (_price != null ? _price!.toString() : "null") + ", ");
+    buffer.write("imageUrl=" + "$_imageUrl" + ", ");
+    buffer.write("description=" + "$_description" + ", ");
+    buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
+    buffer.write("shoppingbagmodelID=" + "$_shoppingbagmodelID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -175,49 +173,45 @@ class OnlineStoreModel extends Model {
     return buffer.toString();
   }
   
-  OnlineStoreModel copyWith({String? id, String? name, String? phoneNumber, String? address, String? operationHours, String? categories, List<StoreProductModel>? storeProductModels}) {
-    return OnlineStoreModel._internal(
+  CartProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, int? amount, String? shoppingbagmodelID}) {
+    return CartProductModel._internal(
       id: id ?? this.id,
       name: name ?? this.name,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      address: address ?? this.address,
-      operationHours: operationHours ?? this.operationHours,
       categories: categories ?? this.categories,
-      storeProductModels: storeProductModels ?? this.storeProductModels);
+      price: price ?? this.price,
+      imageUrl: imageUrl ?? this.imageUrl,
+      description: description ?? this.description,
+      amount: amount ?? this.amount,
+      shoppingbagmodelID: shoppingbagmodelID ?? this.shoppingbagmodelID);
   }
   
-  OnlineStoreModel.fromJson(Map<String, dynamic> json)  
+  CartProductModel.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _name = json['name'],
-      _phoneNumber = json['phoneNumber'],
-      _address = json['address'],
-      _operationHours = json['operationHours'],
       _categories = json['categories'],
-      _storeProductModels = json['storeProductModels'] is List
-        ? (json['storeProductModels'] as List)
-          .where((e) => e?['serializedData'] != null)
-          .map((e) => StoreProductModel.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
-          .toList()
-        : null,
+      _price = (json['price'] as num?)?.toDouble(),
+      _imageUrl = json['imageUrl'],
+      _description = json['description'],
+      _amount = (json['amount'] as num?)?.toInt(),
+      _shoppingbagmodelID = json['shoppingbagmodelID'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'phoneNumber': _phoneNumber, 'address': _address, 'operationHours': _operationHours, 'categories': _categories, 'storeProductModels': _storeProductModels?.map((StoreProductModel? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'categories': _categories, 'price': _price, 'imageUrl': _imageUrl, 'description': _description, 'amount': _amount, 'shoppingbagmodelID': _shoppingbagmodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
-  static final QueryField ID = QueryField(fieldName: "onlineStoreModel.id");
+  static final QueryField ID = QueryField(fieldName: "cartProductModel.id");
   static final QueryField NAME = QueryField(fieldName: "name");
-  static final QueryField PHONENUMBER = QueryField(fieldName: "phoneNumber");
-  static final QueryField ADDRESS = QueryField(fieldName: "address");
-  static final QueryField OPERATIONHOURS = QueryField(fieldName: "operationHours");
   static final QueryField CATEGORIES = QueryField(fieldName: "categories");
-  static final QueryField STOREPRODUCTMODELS = QueryField(
-    fieldName: "storeProductModels",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (StoreProductModel).toString()));
+  static final QueryField PRICE = QueryField(fieldName: "price");
+  static final QueryField IMAGEURL = QueryField(fieldName: "imageUrl");
+  static final QueryField DESCRIPTION = QueryField(fieldName: "description");
+  static final QueryField AMOUNT = QueryField(fieldName: "amount");
+  static final QueryField SHOPPINGBAGMODELID = QueryField(fieldName: "shoppingbagmodelID");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "OnlineStoreModel";
-    modelSchemaDefinition.pluralName = "OnlineStoreModels";
+    modelSchemaDefinition.name = "CartProductModel";
+    modelSchemaDefinition.pluralName = "CartProductModels";
     
     modelSchemaDefinition.authRules = [
       AuthRule(
@@ -233,40 +227,45 @@ class OnlineStoreModel extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: OnlineStoreModel.NAME,
+      key: CartProductModel.NAME,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: OnlineStoreModel.PHONENUMBER,
+      key: CartProductModel.CATEGORIES,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: OnlineStoreModel.ADDRESS,
+      key: CartProductModel.PRICE,
       isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: OnlineStoreModel.OPERATIONHOURS,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: OnlineStoreModel.CATEGORIES,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: OnlineStoreModel.STOREPRODUCTMODELS,
+      key: CartProductModel.IMAGEURL,
       isRequired: false,
-      ofModelName: (StoreProductModel).toString(),
-      associatedKey: StoreProductModel.ONLINESTOREMODELID
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: CartProductModel.DESCRIPTION,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: CartProductModel.AMOUNT,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: CartProductModel.SHOPPINGBAGMODELID,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -285,11 +284,11 @@ class OnlineStoreModel extends Model {
   });
 }
 
-class _OnlineStoreModelModelType extends ModelType<OnlineStoreModel> {
-  const _OnlineStoreModelModelType();
+class _CartProductModelModelType extends ModelType<CartProductModel> {
+  const _CartProductModelModelType();
   
   @override
-  OnlineStoreModel fromJson(Map<String, dynamic> jsonData) {
-    return OnlineStoreModel.fromJson(jsonData);
+  CartProductModel fromJson(Map<String, dynamic> jsonData) {
+    return CartProductModel.fromJson(jsonData);
   }
 }
