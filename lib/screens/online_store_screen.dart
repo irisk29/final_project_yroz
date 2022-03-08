@@ -1,3 +1,5 @@
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/products_grid.dart';
@@ -14,6 +16,7 @@ class OnlineStoreScreen extends StatefulWidget {
   MemoryImage? image = null;
   String phoneNumber = "";
   Map<String, List<TimeOfDay>> operationHours = {};
+  List<ProductDTO> products = [];
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
@@ -44,25 +47,26 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   @override
   void didChangeDependencies() {
     final routeArgs =
-    ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
     widget.title = routeArgs['title'] as String;
     widget.address = routeArgs['address'] as String;
-    widget.image = routeArgs['image'] as MemoryImage;
+    widget.image = routeArgs['image'] as MemoryImage?;
     widget.phoneNumber = routeArgs['phoneNumber'] as String;
     Object? abc = routeArgs['operationHours'];
-    if(abc!=null)
-      widget.operationHours = abc as Map<String,List<TimeOfDay>>;
+    if (abc != null)
+      widget.operationHours = abc as Map<String, List<TimeOfDay>>;
+    Object? def = routeArgs['products'];
+    if (def != null) widget.products = def as List<ProductDTO>;
     super.didChangeDependencies();
   }
 
-  String mapAsString(){
+  String mapAsString() {
     String map = "";
-    for(MapEntry<String,List<TimeOfDay>> e in widget.operationHours.entries){
+    for (MapEntry<String, List<TimeOfDay>> e in widget.operationHours.entries) {
       map = map + e.key + ": ";
-      for(int i = 0; i<e.value.length; i++){
+      for (int i = 0; i < e.value.length; i++) {
         map = map + e.value[i].format(context) + " ";
-        if (i==0)
-          map = map + "- ";
+        if (i == 0) map = map + "- ";
       }
       map = map + '\n';
     }
@@ -102,8 +106,11 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: new DecorationImage(
-                      fit: BoxFit.cover, image: widget.image!),
+                  image: widget.image != null
+                      ? DecorationImage(fit: BoxFit.cover, image: widget.image!)
+                      : DecorationImage(
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -130,10 +137,9 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 showDialog(
                     context: context,
                     builder: (_) => AlertDialog(
-                      title: Text('Opening hours'),
-                      content: Text(mapAsString()),
-                    )
-                );
+                          title: Text('Opening hours'),
+                          content: Text(mapAsString()),
+                        ));
               },
             ),
             ListTile(
@@ -179,7 +185,29 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            ProductsGrid(false),
+            SizedBox(
+              height: (MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.5,
+              child: GridView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(5),
+                children: [
+                  widget.products
+                      .map(
+                        (storeData) =>
+                            ProductItem(storeData.name, storeData.imageUrl),
+                      )
+                      .toList(),
+                ].expand((i) => i).toList(),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
+                  childAspectRatio: 1,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/search_bar.dart';
 import 'package:flutter/material.dart';
 import '../widgets/store_item.dart';
@@ -8,12 +13,15 @@ import '../dummy_data.dart';
 import '../widgets/category_item.dart';
 
 class CategoriesScreen extends StatefulWidget {
+  User? user;
+
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<PhysicalStoreDTO> DUMMY_STORES = [];
+  List<PhysicalStoreDTO> physicalStores = [];
+  List<OnlineStoreDTO> onlineStores = [];
 
   @override
   void initState() {
@@ -23,7 +31,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     // });
     super.initState();
     () async {
-      DUMMY_STORES = await StoreStorageProxy().fetchAllPhysicalStores();
+      onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
+      physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
       setState(() {
         // Update your UI with the desired changes.
       });
@@ -31,103 +40,155 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    final user = ModalRoute.of(context)!.settings.arguments as User?;
+    if (user != null) widget.user = user;
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Column(
+    var height = MediaQuery.of(context).size.height;
+
+    return SingleChildScrollView(
+      child: Container(
+        height: height,
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            Container(
-              height: (MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.09,
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 10.0),
-                child: Text(
-                  "Categories",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Column(
+              children: [
+                Container(
+                  height: height * 0.1,
                 ),
-              ),
-            ),
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.25,
-              child: GridView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(25),
-                children: [
-                  DUMMY_CATEGORIES
-                      .map(
-                        (catData) => CategoryItem(
-                          catData.id,
-                          catData.title,
-                          catData.color,
-                        ),
-                      )
-                      .toList(),
-                ].expand((i) => i).toList(),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-              ),
-            ),
-            Divider(),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "Near You",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.25,
-              child: DUMMY_STORES.isEmpty
-                  ? Container()
-                  : GridView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.all(25),
-                      children: [
-                        DUMMY_STORES
-                            .map(
-                              (storeData) => StoreItem(
-                                  storeData.imageFile,
-                                  storeData.name,
-                                  storeData.address,
-                                  storeData.phoneNumber,
-                                  Map<String, List<TimeOfDay>>.from(
-                                      storeData.operationHours)),
-                            )
-                            .toList(),
-                      ].expand((i) => i).toList(),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
-                      ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      "Categories",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
+                  ),
+                ),
+                SizedBox(
+                  height: height * 0.23,
+                  child: GridView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.all(height * 0.025),
+                    children: [
+                      DUMMY_CATEGORIES
+                          .map(
+                            (catData) => CategoryItem(
+                              catData.id,
+                              catData.title,
+                              catData.color,
+                            ),
+                          )
+                          .toList(),
+                    ].expand((i) => i).toList(),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 1,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                    ),
+                  ),
+                ),
+                Divider(),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      "Physical Stores",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                physicalStores.isEmpty
+                    ? SizedBox(height: height * 0.23)
+                    : SizedBox(
+                        height: height * 0.23,
+                        child: GridView(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.all(height * 0.025),
+                          children: [
+                            physicalStores
+                                .map(
+                                  (storeData) => StoreItem(
+                                    storeData.imageFile,
+                                    storeData.name,
+                                    storeData.address,
+                                    storeData.phoneNumber,
+                                    Map<String, List<TimeOfDay>>.from(
+                                        storeData.operationHours),
+                                    null,
+                                  ),
+                                )
+                                .toList(),
+                          ].expand((i) => i).toList(),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 200,
+                            childAspectRatio: 1,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
+                        ),
+                      ),
+                Divider(),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      "Online Stores",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                onlineStores.isEmpty
+                    ? SizedBox(height: height * 0.23)
+                    : SizedBox(
+                        height: height * 0.23,
+                        child: GridView(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.all(height * 0.025),
+                          children: [
+                            onlineStores
+                                .map(
+                                  (storeData) => StoreItem(
+                                      storeData.imageFile,
+                                      storeData.name,
+                                      storeData.address,
+                                      storeData.phoneNumber,
+                                      Map<String, List<TimeOfDay>>.from(
+                                          storeData.operationHours),
+                                      List<ProductDTO>.from(
+                                          storeData.products)),
+                                )
+                                .toList(),
+                          ].expand((i) => i).toList(),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 200,
+                            childAspectRatio: 1,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
+                        ),
+                      ),
+              ],
             ),
+            SearchBar(),
           ],
         ),
-        Padding(
-            padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height -
-                        MediaQuery.of(context).padding.top) *
-                0.01,
-            child: SearchBar()),
-      ],
+      ),
     );
   }
 }

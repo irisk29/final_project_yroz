@@ -3,7 +3,6 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:final_project_yroz/providers/stores.dart';
-import 'package:final_project_yroz/screens/add_product_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
@@ -146,7 +145,6 @@ class _MyAppState extends State<MyApp> {
             PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
             OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
             LandingScreen.routeName: (ctx) => LandingScreen(),
-            AddProductScreen.routeName: (ctx) => AddProductScreen(),
           },
         ),
       ),

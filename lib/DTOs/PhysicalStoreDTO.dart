@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'StoreDTO.dart';
 
 class PhysicalStoreDTO extends StoreDTO {
   String qrCode;
-  MemoryImage? imageFile;
 
   PhysicalStoreDTO(
       String id,
@@ -17,13 +15,6 @@ class PhysicalStoreDTO extends StoreDTO {
       String? image,
       String qrCode)
       : this.qrCode = qrCode,
-        this.imageFile = null,
-        super(id, name, phoneNumber, address, categories, operationHours, image) {}
-
-  Future<void> initImageFile() async {
-    if (this.image != null) {
-      var res = await http.get(Uri.parse(this.image!));
-      imageFile = MemoryImage(res.bodyBytes, scale: 0.5);
-    }
-  }
+        super(id, name, phoneNumber, address, categories, operationHours,
+            image) {}
 }

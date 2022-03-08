@@ -1,4 +1,5 @@
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:final_project_yroz/providers/product.dart';
 import 'package:final_project_yroz/providers/stores.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
+import 'package:tuple/tuple.dart';
 
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
@@ -32,6 +34,8 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
+
+  User? user;
 
   @override
   _OpenOnlineStorePipelineState createState() =>
@@ -135,7 +139,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     setState(() {});
   }
 
-Future<void> _saveForm() async {
+  Future<void> _saveForm() async {
     setState(() {
       _isLoading = true;
     });
@@ -202,15 +206,16 @@ Future<void> _saveForm() async {
 
   void _showAddProduct() async {
     if (OpenOnlineStorePipeline._products.length < 5) {
-      final Product? result = await Navigator.push(
+      final Tuple2<Product?, OnlineStore?> result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddProductScreen()),
+        MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
 
       // Update UI
-      if (result != null) {
+      if (result.item1 != null) {
         setState(() {
-          OpenOnlineStorePipeline._products.add(result);
+          _editedStore = result.item2;
+          OpenOnlineStorePipeline._products.add(result.item1!);
         });
       }
     }
@@ -246,6 +251,17 @@ Future<void> _saveForm() async {
                         }
                         return null;
                       },
+                      onChanged: (value) {
+                        _editedStore = OnlineStore(
+                            name: value,
+                            phoneNumber: _editedStore!.phoneNumber,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            image: _editedStore!.image,
+                            id: '',
+                            products: _editedStore!.products);
+                      },
                       onSaved: (value) {
                         _editedStore = OnlineStore(
                             name: value!,
@@ -268,6 +284,17 @@ Future<void> _saveForm() async {
                           return 'Please enter a phone Number.';
                         }
                         return null;
+                      },
+                      onChanged: (value) {
+                        _editedStore = OnlineStore(
+                            name: _editedStore!.name,
+                            phoneNumber: value,
+                            address: _editedStore!.address,
+                            categories: _editedStore!.categories,
+                            operationHours: _editedStore!.operationHours,
+                            image: _editedStore!.image,
+                            id: '',
+                            products: _editedStore!.products);
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStore(

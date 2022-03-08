@@ -1,11 +1,19 @@
+import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import '../providers/product.dart';
 import '../providers/products.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const routeName = '/add-product';
+
+  OnlineStore? _editedStore;
+
+  AddProductScreen(OnlineStore? editedStore) {
+    this._editedStore = editedStore;
+  }
 
   @override
   _AddProductScreenState createState() => _AddProductScreenState();
@@ -141,7 +149,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop(_editedProduct);
+    Navigator.of(context).pop(Tuple2<Product?, OnlineStore?>(_editedProduct, widget._editedStore));
   }
 
   @override
