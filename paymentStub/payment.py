@@ -1,18 +1,82 @@
+import uuid
+
+import botocore
+from botocore.exceptions import ClientError
 from flask import Flask, render_template
 from flask import jsonify
 from flask import request
-from uuid import uuid4
+from uuid import uuid5, uuid4
 import random
+import boto3
 
 # creating of object of flask app
 app = Flask(__name__)
+# creating dynamodb access
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+table = dynamodb.Table('PaymentStub')
 
 
-# registering handler for handling exceptions
-# once we get bad get request, we will present html page we created in /templates/exception.html
-@app.errorhandler(Exception)
-def handle_exception(e):
-    return render_template('exception.html', error=e)
+@app.route('/create_user_e_wallet/<string:userId>', methods=['POST'])
+def create_user_e_wallet(userId):
+    try:
+        e_wallet_token = str(uuid5(uuid.NAMESPACE_URL, userId))
+        item = {"userId": userId, "creditCards": [],  "e_wallet": {e_wallet_token: 0}}
+        table.put_item(Item=item, ConditionExpression='attribute_not_exists(userId)')
+        result = {"token": e_wallet_token, "msg": "created user e_wallet successfully"}
+        return jsonify(result), 200
+    except ClientError as e:
+        if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
+            result = {"token": None, "msg": "user e_wallet already exists"}
+            return jsonify(result), 403
+        else:
+            result = {"token": None, "msg": e.response['Error']['Message']}
+            return jsonify(result), 403
+
+
+@app.route('/add_user_credit_card/<string:userId>', methods=['UPDATE'])
+def add_user_credit_card(userId):
+    try:
+        data = request.get_json()
+        cardNumber = data["cardNumber"]
+        expiryDate = data["expiryDate"]
+        cvv = data["cvv"]
+        # TODO: checks for valid credit data
+        credit_card_token = str(uuid5(uuid.NAMESPACE_URL, cardNumber))
+        table.update_item(
+            Key={"userId": userId},
+            UpdateExpression="SET creditCards = list_append(creditCards, :c_lst)",
+            ConditionExpression='not(contains(creditCards, :c))',
+            ExpressionAttributeValues={
+                ':c_lst': [credit_card_token],
+                ':c': credit_card_token,
+            }
+        )
+        result = {"token": credit_card_token, "msg": "added user credit card successfully"}
+        return jsonify(result), 200
+    except botocore.exceptions.ClientError as e:
+        result = {"token": None, "msg": e.response['Error']['Message']}
+        return jsonify(result), 403
+
+
+@app.route('/remove_user_credit_card/<string:userId>', methods=['UPDATE'])
+def remove_user_credit_card(userId):
+    try:
+        data = request.get_json()
+        credit_card_token = data["creditToken"]
+        table.update_item(
+            Key={"userId": userId},
+            UpdateExpression="DELETE creditCards :c_lst",
+            ConditionExpression='contains(creditCards, :c))',
+            ExpressionAttributeValues={
+                ':c_lst': [credit_card_token],
+                ':c': credit_card_token,
+            }
+        )
+        result = {"msg": "removed user credit card successfully"}
+        return jsonify(result), 200
+    except botocore.exceptions.ClientError as e:
+        result = {"token": None, "msg": e.response['Error']['Message']}
+        return jsonify(result), 403
 
 
 @app.route('/make_web_payment', methods=['POST'])
