@@ -349,8 +349,12 @@ class StoreStorageProxy {
     }
   }
 
-  Future<String> getDownloadUrl(String keyName) async {
+  Future<String?> getDownloadUrl(String keyName) async {
     try {
+      final ListResult storageItems = await Amplify.Storage.list();
+      final item =
+          storageItems.items.where((element) => element.key == keyName);
+      if (item.isEmpty) return null;
       final GetUrlResult result = await Amplify.Storage.getUrl(key: keyName);
       print('Got URL: ${result.url}');
       return result.url;
@@ -365,16 +369,9 @@ class StoreStorageProxy {
       List<PhysicalStoreModel> physicalStores) async {
     List<PhysicalStoreDTO> lst = [];
     for (PhysicalStoreModel model in physicalStores) {
-      String url = await getDownloadUrl(model.id);
-      PhysicalStoreDTO dto = PhysicalStoreDTO(
-          model.id,
-          model.name,
-          model.address,
-          model.phoneNumber,
-          jsonDecode(model.categories).cast<String>(),
-          opHours(jsonDecode(model.operationHours)),
-          url,
-          model.qrCode);
+      String? url = await getDownloadUrl(model.id);
+      PhysicalStoreDTO dto = PhysicalStoreDTO(model.id, model.name, model.address, model.phoneNumber,
+          jsonDecode(model.categories).cast<String>(), opHours(jsonDecode(model.operationHours)), url, model.qrCode);
       await dto.initImageFile();
       lst.add(dto);
     }
@@ -385,7 +382,7 @@ class StoreStorageProxy {
       List<OnlineStoreModel> onlineStores) async {
     List<OnlineStoreDTO> lst = [];
     for (OnlineStoreModel model in onlineStores) {
-      String url = await getDownloadUrl(model.id);
+      String? url = await getDownloadUrl(model.id);
       OnlineStoreDTO dto = OnlineStoreDTO(
           model.id,
           model.name,
@@ -479,8 +476,7 @@ class StoreStorageProxy {
           }).convert(newStore.operationHours),
           qrCode: await generateUniqueQRCode());
       if (newStore.image != null &&
-          newStore.image!.compareTo(await getDownloadUrl(newStore.id)) ==
-              0) //changed the picture
+          newStore.image! != await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }
@@ -518,8 +514,7 @@ class StoreStorageProxy {
             }
           }).convert(newStore.operationHours));
       if (newStore.image != null &&
-          newStore.image!.compareTo(await getDownloadUrl(newStore.id)) ==
-              0) //changed the picture
+          newStore.image! != await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }
