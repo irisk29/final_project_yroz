@@ -1,6 +1,5 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'StoreDTO.dart';
 
@@ -17,6 +16,6 @@ class OnlineStoreDTO extends StoreDTO {
       String? image,
       List<ProductDTO> products)
       : this.products = products,
-        super(id, name, phoneNumber, address, categories, operationHours, image) {}
-
+        super(id, name, phoneNumber, address, categories, operationHours,
+            image) {}
 }

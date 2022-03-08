@@ -49,143 +49,146 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.passthrough,
-      children: [
-        Column(
+    var height = MediaQuery.of(context).size.height;
+
+    return SingleChildScrollView(
+      child: Container(
+        height: height,
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            Container(
-              height: (MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.09,
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 10.0),
-                child: Text(
-                  "Categories",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Column(
+              children: [
+                Container(
+                  height: height * 0.1,
                 ),
-              ),
-            ),
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.25,
-              child: GridView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(25),
-                children: [
-                  DUMMY_CATEGORIES
-                      .map(
-                        (catData) => CategoryItem(
-                          catData.id,
-                          catData.title,
-                          catData.color,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      "Categories",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: height * 0.23,
+                  child: GridView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.all(height * 0.025),
+                    children: [
+                      DUMMY_CATEGORIES
+                          .map(
+                            (catData) => CategoryItem(
+                              catData.id,
+                              catData.title,
+                              catData.color,
+                            ),
+                          )
+                          .toList(),
+                    ].expand((i) => i).toList(),
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 1,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                    ),
+                  ),
+                ),
+                Divider(),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      "Physical Stores",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                physicalStores.isEmpty
+                    ? SizedBox(height: height * 0.23)
+                    : SizedBox(
+                        height: height * 0.23,
+                        child: GridView(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.all(height * 0.025),
+                          children: [
+                            physicalStores
+                                .map(
+                                  (storeData) => StoreItem(
+                                    storeData.imageFile,
+                                    storeData.name,
+                                    storeData.address,
+                                    storeData.phoneNumber,
+                                    Map<String, List<TimeOfDay>>.from(
+                                        storeData.operationHours),
+                                    null,
+                                  ),
+                                )
+                                .toList(),
+                          ].expand((i) => i).toList(),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 200,
+                            childAspectRatio: 1,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
                         ),
-                      )
-                      .toList(),
-                ].expand((i) => i).toList(),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-              ),
-            ),
-            Divider(),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "Physical Stores",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            physicalStores.isEmpty
-                ? CircularProgressIndicator()
-                : SizedBox(
-                    height: (MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.25,
-                    child: GridView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.all(25),
-                      children: [
-                        physicalStores
-                            .map(
-                              (storeData) => StoreItem(
-                                MemoryImage(Uint8List.fromList([0, 0]),
-                                    scale: 0.5),
-                                storeData.name,
-                                storeData.address,
-                                storeData.phoneNumber,
-                                Map<String, List<TimeOfDay>>.from(
-                                    storeData.operationHours),
-                                null,
-                              ),
-                            )
-                            .toList(),
-                      ].expand((i) => i).toList(),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
                       ),
+                Divider(),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      "Online Stores",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ),
-            Divider(),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "Online Stores",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-              ),
-            ),
-            onlineStores.isEmpty
-                ? CircularProgressIndicator()
-                : SizedBox(
-                    height: (MediaQuery.of(context).size.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.25,
-                    child: GridView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.all(25),
-                      children: [
-                        onlineStores
-                            .map(
-                              (storeData) => StoreItem(
-                                  MemoryImage(Uint8List.fromList([0, 0]),
-                                      scale: 0.5),
-                                  storeData.name,
-                                  storeData.address,
-                                  storeData.phoneNumber,
-                                  Map<String, List<TimeOfDay>>.from(
-                                      storeData.operationHours),
-                                  List<ProductDTO>.from(storeData.products)),
-                            )
-                            .toList(),
-                      ].expand((i) => i).toList(),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
+                onlineStores.isEmpty
+                    ? SizedBox(height: height * 0.23)
+                    : SizedBox(
+                        height: height * 0.23,
+                        child: GridView(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.all(height * 0.025),
+                          children: [
+                            onlineStores
+                                .map(
+                                  (storeData) => StoreItem(
+                                      storeData.imageFile,
+                                      storeData.name,
+                                      storeData.address,
+                                      storeData.phoneNumber,
+                                      Map<String, List<TimeOfDay>>.from(
+                                          storeData.operationHours),
+                                      List<ProductDTO>.from(
+                                          storeData.products)),
+                                )
+                                .toList(),
+                          ].expand((i) => i).toList(),
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 200,
+                            childAspectRatio: 1,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+              ],
+            ),
+            SearchBar(),
           ],
         ),
-        SearchBar(),
-      ],
+      ),
     );
   }
 }

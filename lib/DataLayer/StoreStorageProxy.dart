@@ -370,8 +370,15 @@ class StoreStorageProxy {
     List<PhysicalStoreDTO> lst = [];
     for (PhysicalStoreModel model in physicalStores) {
       String? url = await getDownloadUrl(model.id);
-      PhysicalStoreDTO dto = PhysicalStoreDTO(model.id, model.name, model.address, model.phoneNumber,
-          jsonDecode(model.categories).cast<String>(), opHours(jsonDecode(model.operationHours)), url, model.qrCode);
+      PhysicalStoreDTO dto = PhysicalStoreDTO(
+          model.id,
+          model.name,
+          model.address,
+          model.phoneNumber,
+          jsonDecode(model.categories).cast<String>(),
+          opHours(jsonDecode(model.operationHours)),
+          url,
+          model.qrCode);
       await dto.initImageFile();
       lst.add(dto);
     }
@@ -391,7 +398,10 @@ class StoreStorageProxy {
           jsonDecode(model.categories).cast<String>(),
           opHours(jsonDecode(model.operationHours)),
           url,
-          convertProductModelToDTO(model.storeProductModels!));
+          convertProductModelToDTO(model.storeProductModels == null
+              ? List.empty()
+              : model.storeProductModels!));
+      await dto.initImageFile();
       lst.add(dto);
     }
     return lst;
@@ -476,7 +486,8 @@ class StoreStorageProxy {
           }).convert(newStore.operationHours),
           qrCode: await generateUniqueQRCode());
       if (newStore.image != null &&
-          newStore.image! != await getDownloadUrl(newStore.id)) //changed the picture
+          newStore.image! !=
+              await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }
@@ -514,7 +525,8 @@ class StoreStorageProxy {
             }
           }).convert(newStore.operationHours));
       if (newStore.image != null &&
-          newStore.image! != await getDownloadUrl(newStore.id)) //changed the picture
+          newStore.image! !=
+              await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }

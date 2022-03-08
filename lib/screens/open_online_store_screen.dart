@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
+import 'package:tuple/tuple.dart';
 
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
@@ -205,15 +206,16 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   void _showAddProduct() async {
     if (OpenOnlineStorePipeline._products.length < 5) {
-      final Product? result = await Navigator.push(
+      final Tuple2<Product?, OnlineStore?> result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
 
       // Update UI
-      if (result != null) {
+      if (result.item1 != null) {
         setState(() {
-          OpenOnlineStorePipeline._products.add(result);
+          _editedStore = result.item2;
+          OpenOnlineStorePipeline._products.add(result.item1!);
         });
       }
     }
