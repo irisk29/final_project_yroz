@@ -50,7 +50,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      fit: StackFit.expand,
+      fit: StackFit.passthrough,
       children: [
         Column(
           children: [
@@ -184,12 +184,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   ),
           ],
         ),
-        Padding(
-            padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height -
-                        MediaQuery.of(context).padding.top) *
-                0.01,
-            child: SearchBar()),
+        SearchBar(),
       ],
     );
   }
