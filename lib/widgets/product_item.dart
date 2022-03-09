@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:flutter/material.dart';
 import '../providers/auth.dart';
 import 'package:provider/provider.dart';
@@ -8,10 +9,9 @@ import '../providers/cart.dart';
 
 class ProductItem extends StatelessWidget {
   //final String id;
-  final String title;
-  final String imageUrl;
+  final ProductDTO product;
 
-  ProductItem(this.title, this.imageUrl);
+  ProductItem(this.product);
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +22,11 @@ class ProductItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
-              //arguments: product.id,
+              arguments: product,
             );
           },
           child: Image.network(
-            imageUrl,
+            product.imageUrl,
             fit: BoxFit.cover,
           ),
         ),
@@ -42,7 +42,7 @@ class ProductItem extends StatelessWidget {
               },
           ),
           title: Text(
-            title,
+            product.name,
             textAlign: TextAlign.center,
           ),
           trailing: IconButton(
