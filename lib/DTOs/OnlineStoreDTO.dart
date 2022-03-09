@@ -14,10 +14,11 @@ class OnlineStoreDTO extends StoreDTO {
       required List<String> categories,
       required Map<String, List<TimeOfDay>> operationHours,
       String? image,
-      required List<ProductDTO> products})
+      required List<ProductDTO> products,
+      String? qrCode})
       : this.products = products,
-        super(id, name, phoneNumber, address, categories, operationHours,
-            image) {}
+        super(id: id, name: name, phoneNumber: phoneNumber, address: address, categories: categories, operationHours: operationHours,
+            image: image, qrCode: qrCode) {}
 
   void addProduct(ProductDTO product) {
     this.products.add(product);

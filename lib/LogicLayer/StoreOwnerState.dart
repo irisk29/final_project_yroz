@@ -1,18 +1,17 @@
 import 'dart:convert';
 
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
-import 'package:final_project_yroz/models/OnlineStoreModel.dart';
-import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
-import 'package:final_project_yroz/providers/online_store.dart';
-import 'package:final_project_yroz/providers/physical_store.dart';
-import 'package:final_project_yroz/providers/product.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class StoreOwnerState {
   String _storeOwnerID;
-  OnlineStore? onlineStore;
-  PhysicalStore? physicalStore;
+  OnlineStoreDTO? onlineStore;
+  StoreDTO? physicalStore;
 
   StoreOwnerState(this._storeOwnerID);
   StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model)
@@ -28,45 +27,42 @@ class StoreOwnerState {
   String get getStoreOwnerID => _storeOwnerID;
   void setStoreOwnerID(id) => _storeOwnerID = id;
 
-  void setOnlineStore(OnlineStoreModel onlineStoreModel) {
+  void setOnlineStore(OnlineStoreModel onlineStoreModel) async {
     var categories = jsonDecode(onlineStoreModel.categories);
     Map<String, dynamic> operationHours =
         jsonDecode(onlineStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
-    onlineStore = new OnlineStore(
+    String? imageUrl = await StoreStorageProxy().getDownloadUrl(onlineStoreModel.id);
+    onlineStore = new OnlineStoreDTO(
         id: onlineStoreModel.id,
         name: onlineStoreModel.name,
         phoneNumber: onlineStoreModel.phoneNumber,
         address: onlineStoreModel.address,
         categories: List<String>.from(categories),
         operationHours: op,
+        image: imageUrl,
         products: onlineStoreModel.storeProductModels == null
             ? []
             : onlineStoreModel.storeProductModels!
-                .map((e) => Product(
+                .map((e) => ProductDTO(
                     id: e.id,
-                    title: e.name,
+                    name: e.name,
                     description: e.description!,
                     category: e.categories,
                     price: e.price,
                     imageUrl: e.imageUrl!))
-                .toList());
+                .toList(),
+        qrCode: onlineStoreModel.qrCode);
   }
 
-  void setPhysicalStore(PhysicalStoreModel physicalStoreModel) {
+  void setPhysicalStore(PhysicalStoreModel physicalStoreModel) async{
     var categories = jsonDecode(physicalStoreModel.categories);
     Map<String, dynamic> operationHours =
         jsonDecode(physicalStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
-    physicalStore = new PhysicalStore(
-      id: physicalStoreModel.id,
-      name: physicalStoreModel.name,
-      phoneNumber: physicalStoreModel.phoneNumber,
-      address: physicalStoreModel.address,
-      categories: List<String>.from(categories),
-      operationHours: op,
-      qrCode: physicalStoreModel.qrCode!,
-    );
+    String? imageUrl = await StoreStorageProxy().getDownloadUrl(physicalStoreModel.id);
+    physicalStore = new StoreDTO(id: physicalStoreModel.id, name: physicalStoreModel.name, phoneNumber: physicalStoreModel.phoneNumber, 
+    address: physicalStoreModel.address, categories: List<String>.from(categories), operationHours: op, image: imageUrl, qrCode: physicalStoreModel.qrCode!);
   }
 
   Map<String, List<TimeOfDay>> parseOperationHours(

@@ -1,5 +1,4 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/search_bar_item.dart';
@@ -61,9 +60,9 @@ class _SearchBarState extends State<SearchBar> {
                       store.address,
                       store.phoneNumber,
                       store.operationHours,
-                      store is PhysicalStoreDTO
-                          ? null
-                          : (store as OnlineStoreDTO).products);
+                      store is OnlineStoreDTO
+                          ? store.products
+                          : null);
                 }),
           ),
         );

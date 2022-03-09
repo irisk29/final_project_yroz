@@ -1,10 +1,7 @@
-import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/widgets/store_item.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/products.dart';
 
 enum FilterOptions {
   Favorites,
@@ -21,7 +18,7 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   var _isLoading = true;
-  List<PhysicalStoreDTO> DUMMY_STORES = [];
+  List<StoreDTO> DUMMY_STORES = [];
 
   @override
   void initState() {
@@ -31,9 +28,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
       if(DUMMY_STORES.length==0) {
         _isLoading = false;
       }
-      List<PhysicalStoreDTO> toRemove = [];
+      List<StoreDTO> toRemove = [];
       if(DUMMY_STORES.length>0) {
-        for (PhysicalStoreDTO store in DUMMY_STORES) {
+        for (StoreDTO store in DUMMY_STORES) {
           if (!store.categories.contains(widget.title!))
               toRemove.add(store);
         }
