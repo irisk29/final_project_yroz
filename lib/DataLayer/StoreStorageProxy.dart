@@ -116,7 +116,7 @@ class StoreStorageProxy {
     {
       UsersStorageProxy().addOnlineStoreToStoreOwnerState(onlineStoreModel);
     }
-    return new Ok("open online store succsseded",
+    return new Ok("open online store succeeded",
         Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner!.id));
   }
 
@@ -318,11 +318,12 @@ class StoreStorageProxy {
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeId));
     return products
         .map((e) => ProductDTO(
-            e.name,
-            e.price,
-            jsonDecode(e.categories).cast<String>(),
-            e.imageUrl!,
-            e.description!))
+            id: e.id,
+            name: e.name,
+            price: e.price,
+            category: jsonDecode(e.categories).cast<String>(),
+            imageUrl: e.imageUrl!,
+            description: e.description!))
         .toList();
   }
 
@@ -379,14 +380,14 @@ class StoreStorageProxy {
     for (PhysicalStoreModel model in physicalStores) {
       String? url = await getDownloadUrl(model.id);
       PhysicalStoreDTO dto = PhysicalStoreDTO(
-          model.id,
-          model.name,
-          model.address,
-          model.phoneNumber,
-          jsonDecode(model.categories).cast<String>(),
-          opHours(jsonDecode(model.operationHours)),
-          url,
-          model.qrCode!);
+          id: model.id,
+          name: model.name,
+          address: model.address,
+          phoneNumber: model.phoneNumber,
+          categories: jsonDecode(model.categories).cast<String>(),
+          operationHours: opHours(jsonDecode(model.operationHours)),
+          image: url,
+          qrCode: model.qrCode);
       await dto.initImageFile();
       lst.add(dto);
     }
@@ -399,14 +400,14 @@ class StoreStorageProxy {
     for (OnlineStoreModel model in onlineStores) {
       String? url = await getDownloadUrl(model.id);
       OnlineStoreDTO dto = OnlineStoreDTO(
-        model.id,
-        model.name,
-        model.address,
-        model.phoneNumber,
-        jsonDecode(model.categories).cast<String>(),
-        opHours(jsonDecode(model.operationHours)),
-        url,
-        await fetchStoreProducts(model.id),
+        id: model.id,
+        name: model.name,
+        address: model.address,
+        phoneNumber: model.phoneNumber,
+        categories: jsonDecode(model.categories).cast<String>(),
+        operationHours: opHours(jsonDecode(model.operationHours)),
+        image: url,
+        products: await fetchStoreProducts(model.id),
       );
       await dto.initImageFile();
       lst.add(dto);
@@ -418,11 +419,12 @@ class StoreStorageProxy {
     List<ProductDTO> lst = [];
     for (StoreProductModel model in products) {
       ProductDTO dto = ProductDTO(
-          model.name,
-          model.price,
-          jsonDecode(model.categories).cast<List<String>>(),
-          model.imageUrl!,
-          model.description!);
+          id: model.id,
+          name: model.name,
+          price: model.price,
+          category: jsonDecode(model.categories).cast<List<String>>(),
+          imageUrl: model.imageUrl!,
+          description: model.description!);
       lst.add(dto);
     }
     return lst;
@@ -447,9 +449,7 @@ class StoreStorageProxy {
           name: productDTO.name,
           imageUrl: productDTO.imageUrl,
           price: productDTO.price,
-          categories: productDTO.categories[0].isEmpty
-              ? jsonEncode(["Default"])
-              : jsonEncode(productDTO.categories),
+          categories: productDTO.category,
           description: productDTO.description,
           onlinestoremodelID: onlineStoreModelID);
       if (productDTO.imageUrl.isNotEmpty) {

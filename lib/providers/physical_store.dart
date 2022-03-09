@@ -23,6 +23,6 @@ class PhysicalStore with ChangeNotifier {
         this.image});
 
   PhysicalStoreDTO createDTO() {
-    return PhysicalStoreDTO(id, name, address, phoneNumber, categories, operationHours, image, qrCode);
+    return PhysicalStoreDTO(id: id, name: name, address: address, phoneNumber: phoneNumber, categories: categories, operationHours: operationHours, image: image, qrCode: qrCode);
   }
 }

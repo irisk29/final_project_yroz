@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -41,45 +42,6 @@ class Stores with ChangeNotifier {
 
   PhysicalStore? findPhysicalStoreById(String id) {
     return _physicalStores.firstWhere((prod) => prod.id == id, orElse: null);
-  }
-
-  Future<void> addOnlineStore(OnlineStore store) async {
-    try {
-      OnlineStoreDTO dto = OnlineStoreDTO(
-          store.id,
-          store.name,
-          store.address,
-          store.phoneNumber,
-          store.categories,
-          store.operationHours,
-          store.image,
-          store.products.map((e) => e.createDTO()).toList());
-      ResultInterface res = await user.openOnlineStore(dto);
-      if (!res.getTag()) {
-        print(res.getMessage());
-      }
-      _onlineStores.add(user.storeOwnerState!.onlineStore!);
-      notifyListeners();
-    } catch (error) {
-      print(error);
-      throw error;
-    }
-  }
-
-  Future<void> addPhysicalStore(PhysicalStore store) async {
-    try {
-      StoreDTO dto = StoreDTO(store.id, store.name, store.phoneNumber,
-          store.address, store.categories, store.operationHours, store.image);
-      ResultInterface res = await user.openPhysicalStore(dto);
-      if (!res.getTag()) {
-        throw Exception(res.getMessage());
-      }
-      _physicalStores.add(user.storeOwnerState!.physicalStore!);
-      notifyListeners();
-    } catch (error) {
-      print(error);
-      throw error;
-    }
   }
 
   Future<void> updateOnlineStore(String id, OnlineStore newStore) async {

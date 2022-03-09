@@ -105,13 +105,6 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => User.withNull(),
         ),
-        ChangeNotifierProxyProvider<User, Stores>(
-          create: (context) => Stores.withNull(),
-          update: (con, val, old) => Stores(
-              val,
-              old == null ? [] : old.onlineStores,
-              old == null ? [] : old.physicalStores),
-        ),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(

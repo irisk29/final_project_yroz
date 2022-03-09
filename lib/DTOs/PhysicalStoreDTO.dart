@@ -6,14 +6,14 @@ class PhysicalStoreDTO extends StoreDTO {
   String qrCode;
 
   PhysicalStoreDTO(
-      String id,
-      String name,
-      String address,
-      String phoneNumber,
-      List<String> categories,
-      Map<String, List<TimeOfDay>> operationHours,
+  {required String id,
+      required String name,
+      required String address,
+      required String phoneNumber,
+      required List<String> categories,
+      required Map<String, List<TimeOfDay>> operationHours,
       String? image,
-      String qrCode)
+      required String qrCode})
       : this.qrCode = qrCode,
         super(id, name, phoneNumber, address, categories, operationHours,
             image) {}

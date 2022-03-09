@@ -1,4 +1,6 @@
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:final_project_yroz/providers/product.dart';
@@ -18,7 +20,7 @@ import 'add_product_screen.dart';
 class OpenOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/open-online-store';
   static List<String> _selectedItems = [];
-  static List<Product> _products = [];
+  static List<ProductDTO> _products = [];
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -61,7 +63,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       builder: AddressDialogBuilder(),
       onDone: (Address address) => address);
   XFile? _pickedImage = null;
-  OnlineStore? _editedStore = OnlineStore(
+  OnlineStoreDTO? _editedStore = OnlineStoreDTO(
       id: "",
       name: "",
       phoneNumber: "",
@@ -99,11 +101,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       },
       image: null,
       products: []);
-  var _initValues = {
-    'name': '',
-    'phoneNumber': '',
-    'address': '',
-  };
+
   final List<String> _selectedItems = [];
   var _isInit = true;
   var _isLoading = false;
@@ -133,13 +131,16 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       _isLoading = true;
     });
     if (_editedStore!.id.isNotEmpty) {
-      await Provider.of<Stores>(context, listen: false)
-          .updateOnlineStore(_editedStore!.id, _editedStore!);
+      _editedStore!.categories = _selectedItems;
+      _editedStore!.products = OpenOnlineStorePipeline._products;
+      await Provider.of<User>(context, listen: false)
+          .updateOnlineStore(_editedStore!);
     } else {
+      _editedStore!.categories = _selectedItems;
       _editedStore!.products = OpenOnlineStorePipeline._products;
       try {
-        await Provider.of<Stores>(context, listen: false)
-            .addOnlineStore(_editedStore!);
+        await Provider.of<User>(context, listen: false)
+            .openOnlineStore(_editedStore!);
       } catch (error) {
         await showDialog(
           context: context,
@@ -195,7 +196,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   void _showAddProduct() async {
     if (OpenOnlineStorePipeline._products.length < 5) {
-      final Tuple2<Product?, OnlineStore?> result = await Navigator.push(
+      final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
@@ -214,112 +215,112 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     switch (_currentStep) {
       case 0:
         return Column(
-          children: [
-            const Text(
-              'Enter Store Details',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _detailsform,
-                child: Column(
-                  children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage, _pickedImage),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(labelText: 'Store Name'),
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please provide a value.';
-                        }
-                        if (value.length < 8) {
-                          return 'Should be at least 8 characters long.';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        _editedStore = OnlineStore(
-                            name: value,
-                            phoneNumber: _editedStore!.phoneNumber,
-                            address: _editedStore!.address,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            image: _editedStore!.image,
-                            id: '',
-                            products: _editedStore!.products);
-                      },
-                      onSaved: (value) {
-                        _editedStore = OnlineStore(
-                            name: value!,
-                            phoneNumber: _editedStore!.phoneNumber,
-                            address: _editedStore!.address,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            image: _editedStore!.image,
-                            id: '',
-                            products: _editedStore!.products);
-                      },
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'phoneNumber'),
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.phone,
-                      controller: _phoneNumberController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a phone Number.';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        _editedStore = OnlineStore(
-                            name: _editedStore!.name,
-                            phoneNumber: value,
-                            address: _editedStore!.address,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            image: _editedStore!.image,
-                            id: '',
-                            products: _editedStore!.products);
-                      },
-                      onSaved: (value) {
-                        _editedStore = OnlineStore(
-                            name: _editedStore!.name,
-                            phoneNumber: value!,
-                            address: _editedStore!.address,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            image: _editedStore!.image,
-                            id: '',
-                            products: _editedStore!.products);
-                      },
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Address'),
-                      controller: OpenOnlineStorePipeline._controller,
-                      onTap: () => showDialog(
-                          context: context,
-                          builder: (context) => destinationBuilder),
-                      onSaved: (value) {
-                        _editedStore = OnlineStore(
-                            name: _editedStore!.name,
-                            phoneNumber: _editedStore!.phoneNumber,
-                            address: value!,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            image: _editedStore!.image,
-                            id: '',
-                            products: _editedStore!.products);
-                      },
-                    ),
-                  ],
+            children: [
+              const Text(
+                'Enter Store Details',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _detailsform,
+                  child: Column(
+                    children: <Widget>[
+                      ImageInput(_selectImage, _unselectImage, _pickedImage),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(labelText: 'Store Name'),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide a value.';
+                          }
+                          if (value.length < 8) {
+                            return 'Should be at least 8 characters long.';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          _editedStore = OnlineStoreDTO(
+                              name: value,
+                              phoneNumber: _editedStore!.phoneNumber,
+                              address: _editedStore!.address,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              image: _editedStore!.image,
+                              id: '',
+                              products: _editedStore!.products);
+                        },
+                        onSaved: (value) {
+                          _editedStore = OnlineStoreDTO(
+                              name: value!,
+                              phoneNumber: _editedStore!.phoneNumber,
+                              address: _editedStore!.address,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              image: _editedStore!.image,
+                              id: '',
+                              products: _editedStore!.products);
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: 'phoneNumber'),
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.phone,
+                        controller: _phoneNumberController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a phone Number.';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          _editedStore = OnlineStoreDTO(
+                              name: _editedStore!.name,
+                              phoneNumber: value,
+                              address: _editedStore!.address,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              image: _editedStore!.image,
+                              id: '',
+                              products: _editedStore!.products);
+                        },
+                        onSaved: (value) {
+                          _editedStore = OnlineStoreDTO(
+                              name: _editedStore!.name,
+                              phoneNumber: value!,
+                              address: _editedStore!.address,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              image: _editedStore!.image,
+                              id: '',
+                              products: _editedStore!.products);
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: 'Address'),
+                        controller: OpenOnlineStorePipeline._controller,
+                        onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => destinationBuilder),
+                        onSaved: (value) {
+                          _editedStore = OnlineStoreDTO(
+                              name: _editedStore!.name,
+                              phoneNumber: _editedStore!.phoneNumber,
+                              address: value!,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              image: _editedStore!.image,
+                              id: '',
+                              products: _editedStore!.products);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
         );
       case 1:
         return Column(
@@ -581,7 +582,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             OpenOnlineStorePipeline._products.remove(e);
                           });
                         },
-                        label: Text(e.title),
+                        label: Text(e.name),
                       ))
                   .toList(),
             ),
@@ -611,54 +612,54 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Container(
-              child: Column(
-                children: [
-                  IconStepper(
-                    icons: [
-                      Icon(Icons.info),
-                      Icon(Icons.tag),
-                      Icon(Icons.access_time),
-                      Icon(Icons.add_shopping_cart_rounded),
-                      Icon(Icons.store),
-                    ],
-                    // activeStep property set to activeStep variable defined above.
-                    activeStep: _currentStep,
-                    steppingEnabled: false,
-                    enableStepTapping: false,
-                    enableNextPreviousButtons: false,
-                    activeStepColor: Theme.of(context).primaryColor,
-                    // This ensures step-tapping updates the activeStep.
-                    onStepReached: (index) {
-                      setState(() {
-                        _currentStep = index;
-                      });
-                    },
-                  ),
-                  currentStepWidget()!,
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: cancel,
-                              child: Text('Prev'),
+                child: Column(
+                    children: [
+                      IconStepper(
+                        icons: [
+                          Icon(Icons.info),
+                          Icon(Icons.tag),
+                          Icon(Icons.access_time),
+                          Icon(Icons.add_shopping_cart_rounded),
+                          Icon(Icons.store),
+                        ],
+                        // activeStep property set to activeStep variable defined above.
+                        activeStep: _currentStep,
+                        steppingEnabled: false,
+                        enableStepTapping: false,
+                        enableNextPreviousButtons: false,
+                        activeStepColor: Theme.of(context).primaryColor,
+                        // This ensures step-tapping updates the activeStep.
+                        onStepReached: (index) {
+                          setState(() {
+                            _currentStep = index;
+                          });
+                        },
+                      ),
+                      currentStepWidget()!,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: cancel,
+                                  child: Text('Prev'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: continued,
+                                  child: Text('Next'),
+                                ),
+                              ],
                             ),
-                            ElevatedButton(
-                              onPressed: continued,
-                              child: Text('Next'),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
               ),
-            ),
     );
   }
 
