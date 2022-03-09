@@ -47,6 +47,6 @@ class Product with ChangeNotifier {
   }
 
   ProductDTO createDTO() {
-    return ProductDTO(id: '', name: title, price: price, category: category, imageUrl: imageUrl, description: description);
+    return ProductDTO(id: id, name: title, price: price, category: category, imageUrl: imageUrl, description: description);
   }
 }
