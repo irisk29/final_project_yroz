@@ -6,11 +6,9 @@ if __name__ == '__main__':
         "Content-Type": "application/json"
     }
 
-    url_payment_method = "http://127.0.0.1:5000/add_user_credit_card/<string:userId>"
+    url_payment_method = "http://127.0.0.1:5000/remove_user_credit_card/<string:userId>"
     payload_payment_method = {
-        "cardNumber": "33612345678",
-        "expiryDate": "11/11/24",
-        "cvv": "088",
+        "creditToken": "762b807a-0ff3-5a7d-868d-eb1616747af9",
     }
 
     response = requests.request("UPDATE", url_payment_method, json=payload_payment_method, headers=headers)

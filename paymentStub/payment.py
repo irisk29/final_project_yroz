@@ -1,6 +1,7 @@
 import uuid
 
 import botocore
+from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from flask import Flask, render_template
 from flask import jsonify
@@ -20,7 +21,7 @@ table = dynamodb.Table('PaymentStub')
 def create_user_e_wallet(userId):
     try:
         e_wallet_token = str(uuid5(uuid.NAMESPACE_URL, userId))
-        item = {"userId": userId, "creditCards": [],  "e_wallet": {e_wallet_token: 0}}
+        item = {"userId": userId, "creditCards": {},  "e_wallet": {e_wallet_token: 0}}
         table.put_item(Item=item, ConditionExpression='attribute_not_exists(userId)')
         result = {"token": e_wallet_token, "msg": "created user e_wallet successfully"}
         return jsonify(result), 200
@@ -44,12 +45,10 @@ def add_user_credit_card(userId):
         credit_card_token = str(uuid5(uuid.NAMESPACE_URL, cardNumber))
         table.update_item(
             Key={"userId": userId},
-            UpdateExpression="SET creditCards = list_append(creditCards, :c_lst)",
-            ConditionExpression='not(contains(creditCards, :c))',
-            ExpressionAttributeValues={
-                ':c_lst': [credit_card_token],
-                ':c': credit_card_token,
-            }
+            UpdateExpression="SET creditCards.#cardToken = :amount",
+            ExpressionAttributeNames={"#cardToken": credit_card_token},
+            ExpressionAttributeValues={":amount": 1000} ,  # 1000 Euro credit card balance (AT THE MOMENT!)
+            ConditionExpression="attribute_not_exists(creditCards.#cardToken)",
         )
         result = {"token": credit_card_token, "msg": "added user credit card successfully"}
         return jsonify(result), 200
@@ -65,14 +64,43 @@ def remove_user_credit_card(userId):
         credit_card_token = data["creditToken"]
         table.update_item(
             Key={"userId": userId},
-            UpdateExpression="DELETE creditCards :c_lst",
-            ConditionExpression='contains(creditCards, :c))',
-            ExpressionAttributeValues={
-                ':c_lst': [credit_card_token],
-                ':c': credit_card_token,
-            }
+            UpdateExpression="REMOVE creditCards.#cardToken",
+            ExpressionAttributeNames={"#cardToken": credit_card_token},
+            ConditionExpression='attribute_exists(creditCards.#cardToken)',
         )
         result = {"msg": "removed user credit card successfully"}
+        return jsonify(result), 200
+    except botocore.exceptions.ClientError as e:
+        result = {"token": None, "msg": e.response['Error']['Message']}
+        return jsonify(result), 403
+
+
+@app.route('/e_wallet_balance/<string:userId>', methods=['GET'])
+def e_wallet_balance(userId):
+    try:
+        data = request.get_json()
+        e_wallet_token = data["eWalletToken"]
+        table.query(
+            KeyConditionExpression=Key('userId').eq(userId)
+
+        )
+        result = {"msg": "removed user credit card successfully"}
+        return jsonify(result), 200
+    except botocore.exceptions.ClientError as e:
+        result = {"token": None, "msg": e.response['Error']['Message']}
+        return jsonify(result), 403
+
+
+def __update_e_wallet_balance__(userId, e_wallet_token, amount):
+    try:
+        table.update_item(
+            Key={"userId": userId},
+            UpdateExpression="SET e_wallet.#eWalletToken += :amount",
+            ExpressionAttributeNames={"#eWalletToken": e_wallet_token},
+            ExpressionAttributeValues={":amount": amount},
+            ConditionExpression="e_wallet.#eWalletToken + :amount >= 0",
+        )
+        result = {"msg": "updated e_wallet balance successfully"}
         return jsonify(result), 200
     except botocore.exceptions.ClientError as e:
         result = {"token": None, "msg": e.response['Error']['Message']}
@@ -117,20 +145,6 @@ def make_digital_payment():
 
     rand_token = uuid4()
     res = {"token": rand_token}
-    return jsonify(res)
-
-
-@app.route('/create_wallet', methods=['POST'])
-def create_wallet():
-    payload = request.json
-    walletId = payload["walletId"]
-    clientMail = payload["clientMail"]
-
-    print("create wallet request - wallet id " + walletId + " to client " + clientMail)
-    if walletId == str(100):
-        return render_template('exception.html', error="special sign"), 401
-
-    res = {"walletId": walletId}
     return jsonify(res)
 
 
