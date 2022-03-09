@@ -75,14 +75,16 @@ class StoreStorageProxy {
         storeProductModels: productsModel);
     await Amplify.DataStore.save(onlineWithProducts);
 
-    ResultInterface storeOwnerRes =
-        await UsersStorageProxy().getStoreOwnerState();
+    ResultInterface storeOwnerRes = await UsersStorageProxy()
+        .getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     StoreOwnerModel? storeOwner = null;
     if (!storeOwnerRes.getTag()) {
       //the user will now have a store owner state
       storeOwner = StoreOwnerModel(
-          onlineStoreModel: onlineWithProducts, storeOwnerModelOnlineStoreModelId: onlineWithProducts.id);
-      UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+          onlineStoreModel: onlineWithProducts,
+          storeOwnerModelOnlineStoreModelId: onlineWithProducts.id);
+      UserModel? oldUserModel = await UsersStorageProxy()
+          .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
         return new Failure("no such user exists in the system!", null);
       }
@@ -153,8 +155,8 @@ class StoreStorageProxy {
       await uploadPicture(
           store.image!, physicalModel.id); // uploading the picture to s3
     }
-    ResultInterface storeOwnerRes =
-        await UsersStorageProxy().getStoreOwnerState();
+    ResultInterface storeOwnerRes = await UsersStorageProxy()
+        .getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     StoreOwnerModel? storeOwner = null;
     if (!storeOwnerRes.getTag()) {
       //the user will now have a store owner state
@@ -241,11 +243,13 @@ class StoreStorageProxy {
   }
 
   Future<OnlineStoreModel?> fetchOnlineStore(String storeOwnerId) async {
-    List<OnlineStoreModel> onlineStores =
-        await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(storeOwnerId));
+    List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
+        where: OnlineStoreModel.ID.eq(storeOwnerId));
     if (onlineStores.isEmpty) return null;
     var onlinestore = onlineStores.first;
-    List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
+    List<StoreProductModel> products = await Amplify.DataStore.query(
+        StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(onlinestore.id));
 
     var fullStore = onlinestore.copyWith(storeProductModels: products);
@@ -253,8 +257,9 @@ class StoreStorageProxy {
   }
 
   Future<PhysicalStoreModel?> fetchPhysicalStore(String storeOwnerId) async {
-    List<PhysicalStoreModel> physicalStores =
-        await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(storeOwnerId));
+    List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
+        PhysicalStoreModel.classType,
+        where: PhysicalStoreModel.ID.eq(storeOwnerId));
 
     if (physicalStores.isEmpty) return null;
     return physicalStores.first; //only one physical store per user
@@ -337,7 +342,8 @@ class StoreStorageProxy {
   Future<String?> getDownloadUrl(String keyName) async {
     try {
       final ListResult storageItems = await Amplify.Storage.list();
-      final item = storageItems.items.where((element) => element.key == keyName);
+      final item =
+          storageItems.items.where((element) => element.key == keyName);
       if (item.isEmpty) return null;
       final GetUrlResult result = await Amplify.Storage.getUrl(key: keyName);
       print('Got URL: ${result.url}');
@@ -468,7 +474,9 @@ class StoreStorageProxy {
             }
           }).convert(newStore.operationHours),
           qrCode: await generateUniqueQRCode());
-      if (newStore.image != null && newStore.image! != await getDownloadUrl(newStore.id)) //changed the picture
+      if (newStore.image != null &&
+          newStore.image! !=
+              await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }
@@ -505,7 +513,9 @@ class StoreStorageProxy {
               return value.toJson();
             }
           }).convert(newStore.operationHours));
-      if (newStore.image != null && newStore.image! != await getDownloadUrl(newStore.id)) //changed the picture
+      if (newStore.image != null &&
+          newStore.image! !=
+              await getDownloadUrl(newStore.id)) //changed the picture
       {
         updatePicture(newStore.image!, newStore.id);
       }
