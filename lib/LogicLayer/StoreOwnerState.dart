@@ -65,7 +65,7 @@ class StoreOwnerState {
       address: physicalStoreModel.address,
       categories: List<String>.from(categories),
       operationHours: op,
-      qrCode: physicalStoreModel.qrCode,
+      qrCode: physicalStoreModel.qrCode!,
     );
   }
 
