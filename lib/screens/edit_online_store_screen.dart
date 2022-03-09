@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:address_search_field/address_search_field.dart';
-import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/physical_store_screen.dart';
+import 'package:final_project_yroz/providers/product.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -11,12 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
+import 'package:tuple/tuple.dart';
 
 import '../dummy_data.dart';
+import 'add_product_screen.dart';
 
-class OpenPhysicalStorePipeline extends StatefulWidget {
-  static const routeName = '/open-physical-store';
+class EditOnlineStorePipeline extends StatefulWidget {
+  static const routeName = '/edit-online-store';
   static List<String> _selectedItems = [];
+  static List<ProductDTO> _products = [];
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -36,11 +38,11 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   User? user;
 
   @override
-  _OpenPhysicalStorePipelineState createState() =>
-      _OpenPhysicalStorePipelineState();
+  _EditOnlineStorePipelineState createState() =>
+      _EditOnlineStorePipelineState();
 }
 
-class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
+class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
@@ -55,53 +57,49 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         language: 'en',
         countryCode: 'il',
       ),
-      controller: OpenPhysicalStorePipeline._controller,
+      controller: EditOnlineStorePipeline._controller,
       builder: AddressDialogBuilder(),
       onDone: (Address address) => address);
   XFile? _pickedImage = null;
-  StoreDTO? _editedStore = StoreDTO(
+  OnlineStoreDTO? _editedStore = OnlineStoreDTO(
       id: "",
       name: "",
       phoneNumber: "",
       address: "",
-      categories: OpenPhysicalStorePipeline._selectedItems,
+      categories: EditOnlineStorePipeline._selectedItems,
       operationHours: {
         'sunday': [
-          OpenPhysicalStorePipeline._sunday_open,
-          OpenPhysicalStorePipeline._sunday_close
+          EditOnlineStorePipeline._sunday_open,
+          EditOnlineStorePipeline._sunday_close
         ],
         'monday': [
-          OpenPhysicalStorePipeline._monday_open,
-          OpenPhysicalStorePipeline._monday_close
+          EditOnlineStorePipeline._monday_open,
+          EditOnlineStorePipeline._monday_close
         ],
         'tuesday': [
-          OpenPhysicalStorePipeline._tuesday_open,
-          OpenPhysicalStorePipeline._tuesday_close
+          EditOnlineStorePipeline._tuesday_open,
+          EditOnlineStorePipeline._tuesday_close
         ],
         'wednesday': [
-          OpenPhysicalStorePipeline._wednesday_open,
-          OpenPhysicalStorePipeline._wednesday_close
+          EditOnlineStorePipeline._wednesday_open,
+          EditOnlineStorePipeline._wednesday_close
         ],
         'thursday': [
-          OpenPhysicalStorePipeline._thursday_open,
-          OpenPhysicalStorePipeline._thursday_close
+          EditOnlineStorePipeline._thursday_open,
+          EditOnlineStorePipeline._thursday_close
         ],
         'friday': [
-          OpenPhysicalStorePipeline._friday_open,
-          OpenPhysicalStorePipeline._friday_close
+          EditOnlineStorePipeline._friday_open,
+          EditOnlineStorePipeline._friday_close
         ],
         'saturday': [
-          OpenPhysicalStorePipeline._saturday_open,
-          OpenPhysicalStorePipeline._saturday_close
+          EditOnlineStorePipeline._saturday_open,
+          EditOnlineStorePipeline._saturday_close
         ]
       },
-      qrCode: "",
-      image: null);
-  var _initValues = {
-    'name': '',
-    'phoneNumber': '',
-    'address': '',
-  };
+      image: null,
+      products: []);
+
   final List<String> _selectedItems = [];
   var _isInit = true;
   var _isLoading = false;
@@ -111,6 +109,9 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     if (_isInit) {
       final user = ModalRoute.of(context)!.settings.arguments as User?;
       widget.user = user;
+      _editedStore = user!.storeOwnerState!.onlineStore;
+      _selectedItems.addAll(_editedStore!.categories);
+      EditOnlineStorePipeline._products = _editedStore!.products;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -130,11 +131,13 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     setState(() {
       _isLoading = true;
     });
+    if (_editedStore!.id.isNotEmpty) {
       _editedStore!.categories = _selectedItems;
+      _editedStore!.products = EditOnlineStorePipeline._products;
       try {
         await Provider.of<User>(context, listen: false)
-            .openPhysicalStore(_editedStore!);
-      } catch (error) {
+            .updateOnlineStore(_editedStore!);
+    } catch (error) {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -151,10 +154,11 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           ),
         );
       }
-    setState(() {
-      _isLoading = false;
-    });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+    }
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -172,17 +176,34 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: _editedStore!
-              .operationHours[time.substring(0, time.indexOf('['))]![
-          int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
+          .operationHours[time.substring(0, time.indexOf('['))]![
+      int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
       initialEntryMode: TimePickerEntryMode.input,
     );
     if (newTime != null) {
       setState(() {
         _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
-                int.parse(
-                    time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
+        int.parse(
+            time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
       });
+    }
+  }
+
+  void _showAddProduct() async {
+    if (EditOnlineStorePipeline._products.length < 5) {
+      final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
+      );
+
+      // Update UI
+      if (result.item1 != null) {
+        setState(() {
+          _editedStore = result.item2;
+          EditOnlineStorePipeline._products.add(result.item1!);
+        });
+      }
     }
   }
 
@@ -204,7 +225,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                   children: <Widget>[
                     ImageInput(_selectImage, _unselectImage, _pickedImage),
                     TextFormField(
-                      controller: _nameController,
+                      initialValue: _editedStore!.name,
                       decoration: InputDecoration(labelText: 'Store Name'),
                       textInputAction: TextInputAction.next,
                       validator: (value) {
@@ -217,22 +238,22 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedStore = StoreDTO(
+                        _editedStore = OnlineStoreDTO(
                             name: value!,
                             phoneNumber: _editedStore!.phoneNumber,
                             address: _editedStore!.address,
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
-                            qrCode: _editedStore!.qrCode,
+                            products: _editedStore!.products,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                     TextFormField(
+                      initialValue: _editedStore!.phoneNumber,
                       decoration: InputDecoration(labelText: 'phoneNumber'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.phone,
-                      controller: _phoneNumberController,
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter a phone Number.';
@@ -240,33 +261,33 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedStore = StoreDTO(
+                        _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
                             phoneNumber: value!,
                             address: _editedStore!.address,
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
-                            qrCode: _editedStore!.qrCode,
+                            products: _editedStore!.products,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                     TextFormField(
+                      initialValue: _editedStore!.address,
                       decoration: InputDecoration(labelText: 'Address'),
-                      controller: OpenPhysicalStorePipeline._controller,
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) => destinationBuilder),
                       onSaved: (value) {
-                        _editedStore = StoreDTO(
+                        _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
                             phoneNumber: _editedStore!.phoneNumber,
                             address: value!,
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
-                            qrCode: _editedStore!.qrCode,
+                            products: _editedStore!.products,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                   ],
@@ -289,28 +310,28 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                     .map((e) => e.title)
                     .toList()
                     .map((item) => CheckboxListTile(
-                          value: _selectedItems.contains(item),
-                          title: Text(item),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (isChecked) =>
-                              _itemChange(item, isChecked!),
-                        ))
+                  value: _selectedItems.contains(item),
+                  title: Text(item),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (isChecked) =>
+                      _itemChange(item, isChecked!),
+                ))
                     .toList(),
               ),
             ),
             Wrap(
               children: _selectedItems
                   .map((e) => Chip(
-                        deleteIcon: Icon(
-                          Icons.close,
-                        ),
-                        onDeleted: () {
-                          setState(() {
-                            _selectedItems.remove(e);
-                          });
-                        },
-                        label: Text(e),
-                      ))
+                deleteIcon: Icon(
+                  Icons.close,
+                ),
+                onDeleted: () {
+                  setState(() {
+                    _selectedItems.remove(e);
+                  });
+                },
+                label: Text(e),
+              ))
                   .toList(),
             ),
           ],
@@ -518,6 +539,30 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           ],
         );
       case 3:
+        return Column(
+          children: [
+            ElevatedButton(
+              child: const Text('Add Product'),
+              onPressed: _showAddProduct,
+            ),
+            Wrap(
+              children: EditOnlineStorePipeline._products
+                  .map((e) => Chip(
+                deleteIcon: Icon(
+                  Icons.close,
+                ),
+                onDeleted: () {
+                  setState(() {
+                    EditOnlineStorePipeline._products.remove(e);
+                  });
+                },
+                label: Text(e.name),
+              ))
+                  .toList(),
+            ),
+          ],
+        );
+      case 4:
         return StorePreview(
             _editedStore!.name,
             _editedStore!.address,
@@ -534,60 +579,73 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Open Store',
+          'Edit Store',
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.delete,
+            ),
+            onPressed: () async {
+              await Provider.of<User>(context, listen: false)
+                  .deleteStore(_editedStore!.id, true);
+              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+            },
+          ),
+        ],
       ),
       resizeToAvoidBottomInset: false,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Container(
-              child: Column(
-                children: [
-                  IconStepper(
-                    icons: [
-                      Icon(Icons.info),
-                      Icon(Icons.tag),
-                      Icon(Icons.access_time),
-                      Icon(Icons.store),
-                    ],
-                    // activeStep property set to activeStep variable defined above.
-                    activeStep: _currentStep,
-                    steppingEnabled: false,
-                    enableStepTapping: false,
-                    enableNextPreviousButtons: false,
-                    activeStepColor: Theme.of(context).primaryColor,
-                    // This ensures step-tapping updates the activeStep.
-                    onStepReached: (index) {
-                      setState(() {
-                        _currentStep = index;
-                      });
-                    },
-                  ),
-                  currentStepWidget()!,
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: cancel,
-                              child: Text('Prev'),
-                            ),
-                            ElevatedButton(
-                              onPressed: continued,
-                              child: Text('Next'),
-                            ),
-                          ],
-                        ),
+        child: Column(
+          children: [
+            IconStepper(
+              icons: [
+                Icon(Icons.info),
+                Icon(Icons.tag),
+                Icon(Icons.access_time),
+                Icon(Icons.add_shopping_cart_rounded),
+                Icon(Icons.store),
+              ],
+              // activeStep property set to activeStep variable defined above.
+              activeStep: _currentStep,
+              steppingEnabled: false,
+              enableStepTapping: false,
+              enableNextPreviousButtons: false,
+              activeStepColor: Theme.of(context).primaryColor,
+              // This ensures step-tapping updates the activeStep.
+              onStepReached: (index) {
+                setState(() {
+                  _currentStep = index;
+                });
+              },
+            ),
+            currentStepWidget()!,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: cancel,
+                        child: Text('Prev'),
                       ),
-                    ),
+                      ElevatedButton(
+                        onPressed: continued,
+                        child: Text('Next'),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -596,18 +654,21 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       case 0:
         if (_detailsform.currentState!.validate()) {
           _detailsform.currentState!.save();
-          _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+          setState(() => _currentStep += 1);
         }
         break;
       case 1:
         if (_selectedItems.isNotEmpty) {
-          _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+          setState(() => _currentStep += 1);
         }
         break;
       case 2:
-        _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+        setState(() => _currentStep += 1);
         break;
       case 3:
+        setState(() => _currentStep += 1);
+        break;
+      case 4:
         _saveForm();
         break;
     }

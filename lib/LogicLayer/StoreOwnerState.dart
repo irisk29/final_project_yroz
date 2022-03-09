@@ -4,6 +4,9 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -61,7 +64,7 @@ class StoreOwnerState {
         jsonDecode(physicalStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
     String? imageUrl = await StoreStorageProxy().getDownloadUrl(physicalStoreModel.id);
-    physicalStore = new StoreDTO(id: physicalStoreModel.id, name: physicalStoreModel.name, phoneNumber: physicalStoreModel.phoneNumber, 
+    physicalStore = new StoreDTO(id: physicalStoreModel.id, name: physicalStoreModel.name, phoneNumber: physicalStoreModel.phoneNumber,
     address: physicalStoreModel.address, categories: List<String>.from(categories), operationHours: op, image: imageUrl, qrCode: physicalStoreModel.qrCode!);
   }
 

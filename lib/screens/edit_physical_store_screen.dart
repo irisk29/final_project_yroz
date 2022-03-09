@@ -14,8 +14,8 @@ import 'package:im_stepper/stepper.dart';
 
 import '../dummy_data.dart';
 
-class OpenPhysicalStorePipeline extends StatefulWidget {
-  static const routeName = '/open-physical-store';
+class EditPhysicalStorePipeline extends StatefulWidget {
+  static const routeName = '/edit-physical-store';
   static List<String> _selectedItems = [];
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
@@ -36,11 +36,11 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   User? user;
 
   @override
-  _OpenPhysicalStorePipelineState createState() =>
-      _OpenPhysicalStorePipelineState();
+  _EditPhysicalStorePipelineState createState() =>
+      _EditPhysicalStorePipelineState();
 }
 
-class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
+class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
@@ -55,7 +55,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         language: 'en',
         countryCode: 'il',
       ),
-      controller: OpenPhysicalStorePipeline._controller,
+      controller: EditPhysicalStorePipeline._controller,
       builder: AddressDialogBuilder(),
       onDone: (Address address) => address);
   XFile? _pickedImage = null;
@@ -64,35 +64,35 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       name: "",
       phoneNumber: "",
       address: "",
-      categories: OpenPhysicalStorePipeline._selectedItems,
+      categories: EditPhysicalStorePipeline._selectedItems,
       operationHours: {
         'sunday': [
-          OpenPhysicalStorePipeline._sunday_open,
-          OpenPhysicalStorePipeline._sunday_close
+          EditPhysicalStorePipeline._sunday_open,
+          EditPhysicalStorePipeline._sunday_close
         ],
         'monday': [
-          OpenPhysicalStorePipeline._monday_open,
-          OpenPhysicalStorePipeline._monday_close
+          EditPhysicalStorePipeline._monday_open,
+          EditPhysicalStorePipeline._monday_close
         ],
         'tuesday': [
-          OpenPhysicalStorePipeline._tuesday_open,
-          OpenPhysicalStorePipeline._tuesday_close
+          EditPhysicalStorePipeline._tuesday_open,
+          EditPhysicalStorePipeline._tuesday_close
         ],
         'wednesday': [
-          OpenPhysicalStorePipeline._wednesday_open,
-          OpenPhysicalStorePipeline._wednesday_close
+          EditPhysicalStorePipeline._wednesday_open,
+          EditPhysicalStorePipeline._wednesday_close
         ],
         'thursday': [
-          OpenPhysicalStorePipeline._thursday_open,
-          OpenPhysicalStorePipeline._thursday_close
+          EditPhysicalStorePipeline._thursday_open,
+          EditPhysicalStorePipeline._thursday_close
         ],
         'friday': [
-          OpenPhysicalStorePipeline._friday_open,
-          OpenPhysicalStorePipeline._friday_close
+          EditPhysicalStorePipeline._friday_open,
+          EditPhysicalStorePipeline._friday_close
         ],
         'saturday': [
-          OpenPhysicalStorePipeline._saturday_open,
-          OpenPhysicalStorePipeline._saturday_close
+          EditPhysicalStorePipeline._saturday_open,
+          EditPhysicalStorePipeline._saturday_close
         ]
       },
       qrCode: "",
@@ -111,6 +111,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     if (_isInit) {
       final user = ModalRoute.of(context)!.settings.arguments as User?;
       widget.user = user;
+      _editedStore = user!.storeOwnerState!.physicalStore;
+      _selectedItems.addAll(_editedStore!.categories);
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -130,11 +132,12 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     setState(() {
       _isLoading = true;
     });
+    if (_editedStore!.id.isNotEmpty) {
       _editedStore!.categories = _selectedItems;
       try {
-        await Provider.of<User>(context, listen: false)
-            .openPhysicalStore(_editedStore!);
-      } catch (error) {
+      await Provider.of<User>(context, listen: false)
+          .updatePhysicalStore(_editedStore!);
+    } catch (error) {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -151,6 +154,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           ),
         );
       }
+    }
     setState(() {
       _isLoading = false;
     });
@@ -172,15 +176,15 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: _editedStore!
-              .operationHours[time.substring(0, time.indexOf('['))]![
-          int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
+          .operationHours[time.substring(0, time.indexOf('['))]![
+      int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
       initialEntryMode: TimePickerEntryMode.input,
     );
     if (newTime != null) {
       setState(() {
         _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
-                int.parse(
-                    time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
+        int.parse(
+            time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
       });
     }
@@ -204,7 +208,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                   children: <Widget>[
                     ImageInput(_selectImage, _unselectImage, _pickedImage),
                     TextFormField(
-                      controller: _nameController,
+                      initialValue: _editedStore!.name,
                       decoration: InputDecoration(labelText: 'Store Name'),
                       textInputAction: TextInputAction.next,
                       validator: (value) {
@@ -225,14 +229,14 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                     TextFormField(
+                      initialValue: _editedStore!.phoneNumber,
                       decoration: InputDecoration(labelText: 'phoneNumber'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.phone,
-                      controller: _phoneNumberController,
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter a phone Number.';
@@ -248,12 +252,12 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                     TextFormField(
+                      initialValue: _editedStore!.address,
                       decoration: InputDecoration(labelText: 'Address'),
-                      controller: OpenPhysicalStorePipeline._controller,
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) => destinationBuilder),
@@ -266,7 +270,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                   ],
@@ -289,28 +293,28 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                     .map((e) => e.title)
                     .toList()
                     .map((item) => CheckboxListTile(
-                          value: _selectedItems.contains(item),
-                          title: Text(item),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (isChecked) =>
-                              _itemChange(item, isChecked!),
-                        ))
+                  value: _selectedItems.contains(item),
+                  title: Text(item),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (isChecked) =>
+                      _itemChange(item, isChecked!),
+                ))
                     .toList(),
               ),
             ),
             Wrap(
               children: _selectedItems
                   .map((e) => Chip(
-                        deleteIcon: Icon(
-                          Icons.close,
-                        ),
-                        onDeleted: () {
-                          setState(() {
-                            _selectedItems.remove(e);
-                          });
-                        },
-                        label: Text(e),
-                      ))
+                deleteIcon: Icon(
+                  Icons.close,
+                ),
+                onDeleted: () {
+                  setState(() {
+                    _selectedItems.remove(e);
+                  });
+                },
+                label: Text(e),
+              ))
                   .toList(),
             ),
           ],
@@ -534,60 +538,82 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Open Store',
+          'Edit Store',
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.upgrade,
+            ),
+            onPressed: () async {
+              await Provider.of<User>(context, listen: false)
+                  .deleteStore(_editedStore!.id, false);
+              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.delete,
+            ),
+            onPressed: () async {
+              await Provider.of<User>(context, listen: false)
+                  .deleteStore(_editedStore!.id, false);
+              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+            },
+          ),
+        ],
       ),
       resizeToAvoidBottomInset: false,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Container(
-              child: Column(
-                children: [
-                  IconStepper(
-                    icons: [
-                      Icon(Icons.info),
-                      Icon(Icons.tag),
-                      Icon(Icons.access_time),
-                      Icon(Icons.store),
-                    ],
-                    // activeStep property set to activeStep variable defined above.
-                    activeStep: _currentStep,
-                    steppingEnabled: false,
-                    enableStepTapping: false,
-                    enableNextPreviousButtons: false,
-                    activeStepColor: Theme.of(context).primaryColor,
-                    // This ensures step-tapping updates the activeStep.
-                    onStepReached: (index) {
-                      setState(() {
-                        _currentStep = index;
-                      });
-                    },
-                  ),
-                  currentStepWidget()!,
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: cancel,
-                              child: Text('Prev'),
-                            ),
-                            ElevatedButton(
-                              onPressed: continued,
-                              child: Text('Next'),
-                            ),
-                          ],
-                        ),
+        child: Column(
+          children: [
+            IconStepper(
+              icons: [
+                Icon(Icons.info),
+                Icon(Icons.tag),
+                Icon(Icons.access_time),
+                Icon(Icons.store),
+              ],
+              // activeStep property set to activeStep variable defined above.
+              activeStep: _currentStep,
+              steppingEnabled: false,
+              enableStepTapping: false,
+              enableNextPreviousButtons: false,
+              activeStepColor: Theme.of(context).primaryColor,
+              // This ensures step-tapping updates the activeStep.
+              onStepReached: (index) {
+                setState(() {
+                  _currentStep = index;
+                });
+              },
+            ),
+            currentStepWidget()!,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: cancel,
+                        child: Text('Prev'),
                       ),
-                    ),
+                      ElevatedButton(
+                        onPressed: continued,
+                        child: Text('Next'),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 

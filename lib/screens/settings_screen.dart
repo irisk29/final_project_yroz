@@ -1,6 +1,8 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'edit_online_store_screen.dart';
+import 'edit_physical_store_screen.dart';
 import 'open_online_store_screen.dart';
 import 'open_physical_store_screen.dart';
 
@@ -163,9 +165,14 @@ class _SettingsPageState extends State<SettingsScreen> {
                                 : Text("Edit Online Store"),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
-                              Navigator.of(context).pushNamed(
+                              !_onlineStoreOwner
+                                  ? Navigator.of(context).pushNamed(
                                   OpenOnlineStorePipeline.routeName,
-                                  arguments: _user);
+                                  arguments: _user)
+                              : Navigator.of(context).pushNamed(
+                                  EditOnlineStorePipeline.routeName,
+                                  arguments: _user)
+                              ;
                             },
                           )
                         : Container(),
@@ -189,9 +196,14 @@ class _SettingsPageState extends State<SettingsScreen> {
                                 : Text("Edit Physical Store"),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
-                              Navigator.of(context).pushNamed(
+                              !_physicalStoreOwner
+                                  ? Navigator.of(context).pushNamed(
                                   OpenPhysicalStorePipeline.routeName,
-                                  arguments: _user);
+                                  arguments: _user)
+                              : Navigator.of(context).pushNamed(
+                                  EditPhysicalStorePipeline.routeName,
+                                  arguments: _user)
+                              ;
                             },
                           )
                         : Container(),

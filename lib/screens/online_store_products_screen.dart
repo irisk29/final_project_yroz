@@ -98,7 +98,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                   widget.products
                       .map(
                         (storeData) =>
-                            ProductItem(storeData.name, storeData.imageUrl),
+                            ProductItem(storeData),
                       )
                       .toList(),
                 ].expand((i) => i).toList(),
