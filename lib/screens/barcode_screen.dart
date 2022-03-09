@@ -156,6 +156,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 }
 
+
 class _openUrl {
   final Barcode result;
 
