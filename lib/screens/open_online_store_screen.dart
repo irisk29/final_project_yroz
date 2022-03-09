@@ -111,19 +111,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final storeId = ModalRoute.of(context)!.settings.arguments as String?;
-      if (storeId != null) {
-        _editedStore = Provider.of<Stores>(context, listen: false)
-            .findOnlineStoreById(storeId);
-        if (_editedStore != null) {
-          _initValues = {
-            'name': _editedStore!.name,
-            'phoneNumber': _editedStore!.phoneNumber,
-            'address': _editedStore!.address,
-          };
-          _imageUrlController.text = _editedStore!.image.toString();
-        }
-      }
+      final user = ModalRoute.of(context)!.settings.arguments as User?;
+      widget.user = user;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -171,7 +160,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       setState(() {
         _isLoading = false;
       });
-      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
     }
   }
 

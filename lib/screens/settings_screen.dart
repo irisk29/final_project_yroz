@@ -158,7 +158,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         Navigator.of(context)
-                            .pushNamed(OpenOnlineStorePipeline.routeName);
+                            .pushNamed(OpenOnlineStorePipeline.routeName, arguments: _user);
                       },
                     ),
                   ]),
@@ -181,7 +181,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         Navigator.of(context)
-                            .pushNamed(OpenPhysicalStorePipeline.routeName);
+                            .pushNamed(OpenPhysicalStorePipeline.routeName, arguments: _user);
                       },
                     ),
                   ]),
