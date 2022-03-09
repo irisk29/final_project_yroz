@@ -18,7 +18,17 @@ class MapScreen extends StatefulWidget {
     this.initialLocation =
         const PlaceLocation(latitude: 31.262218, longitude: 34.801461),
     this.isSelecting = false,
-  });
+  }){
+        () async {
+      Permission.locationAlways.request();
+      if (await Permission.locationAlways.isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+        print("Location Permission is granted");
+      } else {
+        print("Location Permission is denied.");
+      }
+    }();
+  }
 
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -45,16 +55,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
-    () async {
-      if (await Permission.location
-          .request()
-          .isGranted) {
-        // Either the permission was already granted before or the user just granted it.
-        print("Location Permission is granted");
-      } else {
-        print("Location Permission is denied.");
-      }
-    };
+
     final applicationBloc =
         Provider.of<ApplicationBloc>(context, listen: false);
 

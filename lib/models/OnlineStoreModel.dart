@@ -36,6 +36,7 @@ class OnlineStoreModel extends Model {
   final String? _operationHours;
   final String? _categories;
   final List<StoreProductModel>? _storeProductModels;
+  final String? _qrCode;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -116,6 +117,10 @@ class OnlineStoreModel extends Model {
     return _storeProductModels;
   }
   
+  String? get qrCode {
+    return _qrCode;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -124,9 +129,9 @@ class OnlineStoreModel extends Model {
     return _updatedAt;
   }
   
-  const OnlineStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, storeProductModels, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _storeProductModels = storeProductModels, _createdAt = createdAt, _updatedAt = updatedAt;
+  const OnlineStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, storeProductModels, qrCode, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _storeProductModels = storeProductModels, _qrCode = qrCode, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory OnlineStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, List<StoreProductModel>? storeProductModels}) {
+  factory OnlineStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, List<StoreProductModel>? storeProductModels, String? qrCode}) {
     return OnlineStoreModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -134,7 +139,8 @@ class OnlineStoreModel extends Model {
       address: address,
       operationHours: operationHours,
       categories: categories,
-      storeProductModels: storeProductModels != null ? List<StoreProductModel>.unmodifiable(storeProductModels) : storeProductModels);
+      storeProductModels: storeProductModels != null ? List<StoreProductModel>.unmodifiable(storeProductModels) : storeProductModels,
+      qrCode: qrCode);
   }
   
   bool equals(Object other) {
@@ -151,7 +157,8 @@ class OnlineStoreModel extends Model {
       _address == other._address &&
       _operationHours == other._operationHours &&
       _categories == other._categories &&
-      DeepCollectionEquality().equals(_storeProductModels, other._storeProductModels);
+      DeepCollectionEquality().equals(_storeProductModels, other._storeProductModels) &&
+      _qrCode == other._qrCode;
   }
   
   @override
@@ -168,6 +175,7 @@ class OnlineStoreModel extends Model {
     buffer.write("address=" + "$_address" + ", ");
     buffer.write("operationHours=" + "$_operationHours" + ", ");
     buffer.write("categories=" + "$_categories" + ", ");
+    buffer.write("qrCode=" + "$_qrCode" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -175,7 +183,7 @@ class OnlineStoreModel extends Model {
     return buffer.toString();
   }
   
-  OnlineStoreModel copyWith({String? id, String? name, String? phoneNumber, String? address, String? operationHours, String? categories, List<StoreProductModel>? storeProductModels}) {
+  OnlineStoreModel copyWith({String? id, String? name, String? phoneNumber, String? address, String? operationHours, String? categories, List<StoreProductModel>? storeProductModels, String? qrCode}) {
     return OnlineStoreModel._internal(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -183,7 +191,8 @@ class OnlineStoreModel extends Model {
       address: address ?? this.address,
       operationHours: operationHours ?? this.operationHours,
       categories: categories ?? this.categories,
-      storeProductModels: storeProductModels ?? this.storeProductModels);
+      storeProductModels: storeProductModels ?? this.storeProductModels,
+      qrCode: qrCode ?? this.qrCode);
   }
   
   OnlineStoreModel.fromJson(Map<String, dynamic> json)  
@@ -199,11 +208,12 @@ class OnlineStoreModel extends Model {
           .map((e) => StoreProductModel.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
+      _qrCode = json['qrCode'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'phoneNumber': _phoneNumber, 'address': _address, 'operationHours': _operationHours, 'categories': _categories, 'storeProductModels': _storeProductModels?.map((StoreProductModel? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'phoneNumber': _phoneNumber, 'address': _address, 'operationHours': _operationHours, 'categories': _categories, 'storeProductModels': _storeProductModels?.map((StoreProductModel? e) => e?.toJson()).toList(), 'qrCode': _qrCode, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "onlineStoreModel.id");
@@ -215,6 +225,7 @@ class OnlineStoreModel extends Model {
   static final QueryField STOREPRODUCTMODELS = QueryField(
     fieldName: "storeProductModels",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (StoreProductModel).toString()));
+  static final QueryField QRCODE = QueryField(fieldName: "qrCode");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "OnlineStoreModel";
     modelSchemaDefinition.pluralName = "OnlineStoreModels";
@@ -267,6 +278,12 @@ class OnlineStoreModel extends Model {
       isRequired: false,
       ofModelName: (StoreProductModel).toString(),
       associatedKey: StoreProductModel.ONLINESTOREMODELID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: OnlineStoreModel.QRCODE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

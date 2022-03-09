@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/providers/physical_store.dart';
 import 'package:final_project_yroz/providers/stores.dart';
@@ -60,7 +61,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       builder: AddressDialogBuilder(),
       onDone: (Address address) => address);
   XFile? _pickedImage = null;
-  PhysicalStore? _editedStore = PhysicalStore(
+  PhysicalStoreDTO? _editedStore = PhysicalStoreDTO(
       id: "",
       name: "",
       phoneNumber: "",
@@ -132,12 +133,14 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       _isLoading = true;
     });
     if (_editedStore!.id.isNotEmpty) {
-      await Provider.of<Stores>(context, listen: false)
-          .updatePhysicalStore(_editedStore!.id, _editedStore!);
+      _editedStore!.categories = _selectedItems;
+      await Provider.of<User>(context, listen: false)
+          .updatePhysicalStore(_editedStore!);
     } else {
+      _editedStore!.categories = _selectedItems;
       try {
-        await Provider.of<Stores>(context, listen: false)
-            .addPhysicalStore(_editedStore!);
+        await Provider.of<User>(context, listen: false)
+            .openPhysicalStore(_editedStore!);
       } catch (error) {
         await showDialog(
           context: context,
@@ -222,7 +225,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedStore = PhysicalStore(
+                        _editedStore = PhysicalStoreDTO(
                             name: value!,
                             phoneNumber: _editedStore!.phoneNumber,
                             address: _editedStore!.address,
@@ -245,7 +248,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedStore = PhysicalStore(
+                        _editedStore = PhysicalStoreDTO(
                             name: _editedStore!.name,
                             phoneNumber: value!,
                             address: _editedStore!.address,
@@ -263,7 +266,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                           context: context,
                           builder: (context) => destinationBuilder),
                       onSaved: (value) {
-                        _editedStore = PhysicalStore(
+                        _editedStore = PhysicalStoreDTO(
                             name: _editedStore!.name,
                             phoneNumber: _editedStore!.phoneNumber,
                             address: value!,

@@ -110,17 +110,8 @@ class PhysicalStoreModel extends Model {
     }
   }
   
-  String get qrCode {
-    try {
-      return _qrCode!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get qrCode {
+    return _qrCode;
   }
   
   TemporalDateTime? get createdAt {
@@ -131,9 +122,9 @@ class PhysicalStoreModel extends Model {
     return _updatedAt;
   }
   
-  const PhysicalStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, required qrCode, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _qrCode = qrCode, _createdAt = createdAt, _updatedAt = updatedAt;
+  const PhysicalStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, qrCode, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _qrCode = qrCode, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory PhysicalStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, required String qrCode}) {
+  factory PhysicalStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, String? qrCode}) {
     return PhysicalStoreModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -265,7 +256,7 @@ class PhysicalStoreModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: PhysicalStoreModel.QRCODE,
-      isRequired: true,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     

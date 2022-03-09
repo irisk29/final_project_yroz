@@ -5,7 +5,7 @@ import 'package:final_project_yroz/providers/product.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class OnlineStore with ChangeNotifier {
+class OnlineStore {
   String id;
   String name;
   String phoneNumber;
