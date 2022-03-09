@@ -28,4 +28,10 @@ class StoreDTO {
       imageFile = MemoryImage(res.bodyBytes, scale: 0.5);
     }
   }
+
+  @override
+  bool operator ==(other) {
+    if (other is StoreDTO) return this.id == other.id;
+    return false;
+  }
 }

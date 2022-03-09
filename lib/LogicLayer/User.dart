@@ -1,9 +1,14 @@
+import 'package:final_project_yroz/DTOs/CartProductDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/models/CartProductModel.dart';
+import 'package:final_project_yroz/models/ShoppingBagModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +16,10 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:tuple/tuple.dart';
 
 import 'DigitalWallet.dart';
-import 'ShoppingBag.dart';
 import 'StoreOwnerState.dart';
 
 class User extends ChangeNotifier {
+  String? id;
   String? email;
   String? name;
   List<StoreDTO> favoriteStores;
@@ -23,34 +28,44 @@ class User extends ChangeNotifier {
   String? bankAccount;
   StoreOwnerState? storeOwnerState;
   DigitalWallet digitalWallet;
-  List<ShoppingBag> bagInStores;
+  List<ShoppingBagDTO> bagInStores;
 
   bool isSignedIn = false;
 
   User(this.email, this.name)
       : favoriteStores = <StoreDTO>[],
         creditCards = <String>[],
-        bagInStores = <ShoppingBag>[],
+        bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
 
   User.withNull()
       : favoriteStores = <StoreDTO>[],
         creditCards = <String>[],
-        bagInStores = <ShoppingBag>[],
+        bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
 
-  void userFromModel(UserModel model) {
+  void userFromModel(UserModel model) async {
+    this.id = model.id;
     this.email = model.email;
     this.name = model.name;
     this.imageUrl = model.imageUrl;
-    this.digitalWallet =
-        DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
+    this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
-    this.storeOwnerState = model.storeOwnerModel == null
-        ? null
-        : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
+    this.storeOwnerState =
+        model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
+    if (model.shoppingBagModels != null) {
+      for (ShoppingBagModel shoppingBagModel in model.shoppingBagModels!) {
+        var res = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBagModel);
+        if (!res.getTag()) {
+          print(res.getMessage());
+          continue;
+        }
+        this.bagInStores.add(res.getValue());
+      }
+    } else
+      this.bagInStores = [];
   }
 
   void signIn(AuthProvider authProvider, BuildContext context) async {
@@ -81,8 +96,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
     var res = await StoreStorageProxy().openOnlineStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<online store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -95,8 +109,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openPhysicalStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<physical store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -150,5 +163,70 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
     notifyListeners();
     return res;
+  }
+
+  Future<void> addProductToShoppingBag(ProductDTO productDTO, int quantity, String storeID) async {
+    var res = await UsersStorageProxy()
+        .addProductToShoppingBag(productDTO, storeID, quantity, this.id!); // <product, shopping bag>
+    if (!res.getTag()) {
+      print(res.getMessage());
+    }
+    updateShoppingBag(res.getValue());
+
+    notifyListeners();
+  }
+
+  Future<void> removeProductFromShoppingBag(ProductDTO productDTO, String storeID) async {
+    var res = await UsersStorageProxy().removeProductFromShoppingBag(productDTO, storeID, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+    }
+    updateShoppingBag(res.getValue());
+
+    notifyListeners();
+  }
+
+  Future<void> updateProductQuantityInBag(ProductDTO productDTO, String storeID, int newQuantity) async {
+    var res = await UsersStorageProxy().updateProductQuantityInBag(productDTO, storeID, newQuantity, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+    }
+
+    var shoppingBag = this
+        .bagInStores
+        .firstWhere((element) => element.onlineStoreID == storeID && element.userId == this.id, orElse: null);
+    if (shoppingBag == null) {
+      print("No such shopping bag in store $storeID for user ${this.id}");
+      return;
+    }
+
+    var cartDTO = UsersStorageProxy().convertStoreProductToCartProduct(productDTO, newQuantity);
+    shoppingBag.removeProduct(productDTO.id);
+    shoppingBag.addProduct(cartDTO);
+
+    notifyListeners();
+  }
+
+  Future<void> clearShoppingBagInStore(String storeID) async {
+    var res = await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+    }
+
+    this.bagInStores.removeWhere((element) => element.onlineStoreID == storeID && element.userId == this.id!);
+    notifyListeners();
+  }
+
+  Future<void> clearAllUserShoppingBags() async {
+    await UsersStorageProxy().clearAllShoppingBag(this.id!);
+  }
+
+  void updateShoppingBag(ShoppingBagModel shoppingBag) async {
+    var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
+    if (!convertRes.getTag()) {
+      print(convertRes.getMessage());
+    }
+    ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
+    if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
   }
 }
