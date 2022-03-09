@@ -50,7 +50,7 @@ class UsersStorageProxy {
     DigitalWalletModel? wallet = digitalWallet.isNotEmpty ? digitalWallet.first : null;
     List<ShoppingBagModel> shoppingBags =
         await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
-    //TODO: fetch products for shopping bag
+
     UserModel fullUser = user.copyWith(
         id: user.id,
         email: user.email,

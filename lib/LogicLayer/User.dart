@@ -44,7 +44,7 @@ class User extends ChangeNotifier {
         bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
 
-  void userFromModel(UserModel model) {
+  void userFromModel(UserModel model) async {
     this.id = model.id;
     this.email = model.email;
     this.name = model.name;
@@ -55,6 +55,17 @@ class User extends ChangeNotifier {
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
     this.storeOwnerState =
         model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
+    if (model.shoppingBagModels != null) {
+      for (ShoppingBagModel shoppingBagModel in model.shoppingBagModels!) {
+        var res = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBagModel);
+        if (!res.getTag()) {
+          print(res.getMessage());
+          continue;
+        }
+        this.bagInStores.add(res.getValue());
+      }
+    } else
+      this.bagInStores = [];
   }
 
   void signIn(AuthProvider authProvider, BuildContext context) async {
