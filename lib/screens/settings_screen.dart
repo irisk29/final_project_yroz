@@ -25,14 +25,16 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsScreen> {
-  late bool _storeOwner;
+  late bool _physicalStoreOwner;
+  late bool _onlineStoreOwner;
   var _isInit = true;
   User? _user = User("", "");
 
   @override
   void initState() {
     super.initState();
-    _storeOwner = false;
+    _physicalStoreOwner = false;
+    _onlineStoreOwner = false;
   }
 
   @override
@@ -41,7 +43,10 @@ class _SettingsPageState extends State<SettingsScreen> {
       final user = ModalRoute.of(context)!.settings.arguments as User?;
       if (user != null) {
         _user = user;
-        _storeOwner = (user.storeOwnerState) != null;
+        if (user.storeOwnerState != null) {
+          _physicalStoreOwner = user.storeOwnerState!.physicalStore != null;
+          _onlineStoreOwner = user.storeOwnerState!.onlineStore != null;
+        }
       }
     }
     _isInit = false;
@@ -147,20 +152,22 @@ class _SettingsPageState extends State<SettingsScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Column(children: <Widget>[
-                    ListTile(
-                      leading: Icon(
-                        Icons.store,
-                        color: Colors.purple,
-                      ),
-                      title: !_storeOwner
-                          ? Text("Open Online Store")
-                          : Text("Edit Online Store"),
-                      trailing: Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(OpenOnlineStorePipeline.routeName);
-                      },
-                    ),
+                    !_physicalStoreOwner
+                        ? ListTile(
+                            leading: Icon(
+                              Icons.store,
+                              color: Colors.purple,
+                            ),
+                            title: !_onlineStoreOwner
+                                ? Text("Open Online Store")
+                                : Text("Edit Online Store"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(OpenOnlineStorePipeline.routeName);
+                            },
+                          )
+                        : Container(),
                   ]),
                 ),
                 const SizedBox(height: 20.0),
@@ -170,20 +177,22 @@ class _SettingsPageState extends State<SettingsScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Column(children: <Widget>[
-                    ListTile(
-                      leading: Icon(
-                        Icons.store,
-                        color: Colors.purple,
-                      ),
-                      title: !_storeOwner
-                          ? Text("Open Physical Store")
-                          : Text("Edit Physical Store"),
-                      trailing: Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(OpenPhysicalStorePipeline.routeName);
-                      },
-                    ),
+                    !_onlineStoreOwner
+                        ? ListTile(
+                            leading: Icon(
+                              Icons.store,
+                              color: Colors.purple,
+                            ),
+                            title: !_physicalStoreOwner
+                                ? Text("Open Physical Store")
+                                : Text("Edit Physical Store"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                  OpenPhysicalStorePipeline.routeName);
+                            },
+                          )
+                        : Container(),
                   ]),
                 ),
                 const SizedBox(height: 20.0),

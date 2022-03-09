@@ -1,11 +1,8 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
-import 'package:final_project_yroz/widgets/product_item.dart';
+import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/products_grid.dart';
-import '../widgets/badge.dart';
 import '../providers/cart.dart';
-import './cart_screen.dart';
 import '../providers/products.dart';
 
 class OnlineStoreScreen extends StatefulWidget {
@@ -73,30 +70,20 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     return map;
   }
 
+  void routeToOnlineStoreProducts(BuildContext ctx) {
+    Navigator.of(ctx).pushNamed(
+      OnlineStoreProductsScreen.routeName,
+      arguments: {'title': widget.title, 'products': widget.products},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "" + widget.title,
+          widget.title,
         ),
-        actions: [
-          Consumer<Cart>(
-            builder: (_, cart, ch) => Badge(
-              child: ch!,
-              value: cart.itemCount.toString(),
-            ),
-            child: IconButton(
-              //color: Colors.black,
-              icon: Icon(
-                Icons.shopping_cart,
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName);
-              },
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -176,37 +163,9 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            ListTile(
-              title: Text(
-                "Products:",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              onTap: () {
-                //open change language
-              },
-            ),
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.5,
-              child: GridView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(5),
-                children: [
-                  widget.products
-                      .map(
-                        (storeData) =>
-                            ProductItem(storeData.name, storeData.imageUrl),
-                      )
-                      .toList(),
-                ].expand((i) => i).toList(),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-              ),
+            ElevatedButton(
+              onPressed: () => routeToOnlineStoreProducts(context),
+              child: Text('Online Store Shop'),
             ),
           ],
         ),

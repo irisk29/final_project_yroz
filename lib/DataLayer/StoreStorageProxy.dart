@@ -391,16 +391,15 @@ class StoreStorageProxy {
     for (OnlineStoreModel model in onlineStores) {
       String? url = await getDownloadUrl(model.id);
       OnlineStoreDTO dto = OnlineStoreDTO(
-          model.id,
-          model.name,
-          model.address,
-          model.phoneNumber,
-          jsonDecode(model.categories).cast<String>(),
-          opHours(jsonDecode(model.operationHours)),
-          url,
-          convertProductModelToDTO(model.storeProductModels == null
-              ? List.empty()
-              : model.storeProductModels!));
+        model.id,
+        model.name,
+        model.address,
+        model.phoneNumber,
+        jsonDecode(model.categories).cast<String>(),
+        opHours(jsonDecode(model.operationHours)),
+        url,
+        await fetchStoreProducts(model.id),
+      );
       await dto.initImageFile();
       lst.add(dto);
     }
