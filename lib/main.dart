@@ -68,6 +68,18 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       print(e);
     }
+    //get fresh information from cloud everytime the app starts
+    try {
+      await Amplify.DataStore.clear();
+    } catch(error) {
+      print('Error stopping DataStore: $error');
+    }
+
+    try {
+      await Amplify.DataStore.start();
+    } catch(error) {
+      print('Error starting DataStore: $error');
+    }
   }
 
   Map<int, Color> color = {
