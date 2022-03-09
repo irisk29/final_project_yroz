@@ -42,7 +42,7 @@ export 'UserModel.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "8b7e014a4b47464468c044b6a247d07c";
+  String version = "85766b34189803e399096eb78b43893d";
   @override
   List<ModelSchema> modelSchemas = [CartProductModel.schema, DigitalWalletModel.schema, OnlineStoreModel.schema, PhysicalStoreModel.schema, PurchaseHistoryModel.schema, ShoppingBagModel.schema, StoreOwnerModel.schema, StoreProductModel.schema, UserModel.schema];
   static final ModelProvider _instance = ModelProvider();

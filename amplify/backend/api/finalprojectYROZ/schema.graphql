@@ -14,6 +14,8 @@ type UserModel @model @auth(rules: [{allow: public}]) {
   storeOwnerModel: StoreOwnerModel @hasOne
   digitalWalletModel: DigitalWalletModel @hasOne
   shoppingBagModels: [ShoppingBagModel] @hasMany(indexName: "byUserModel", fields: ["id"])
+  favoriteStores: AWSJSON
+  favoriteProducts: AWSJSON
 }
 
 type PurchaseHistoryModel @model @auth(rules: [{allow: public}]) {
@@ -33,6 +35,7 @@ type OnlineStoreModel @model @auth(rules: [{allow: public}]) {
   operationHours: AWSJSON!
   categories: AWSJSON!
   storeProductModels: [StoreProductModel] @hasMany(indexName: "byOnlineStoreModel", fields: ["id"])
+  qrCode: String
 }
 
 type PhysicalStoreModel @model @auth(rules: [{allow: public}]) {
@@ -42,7 +45,7 @@ type PhysicalStoreModel @model @auth(rules: [{allow: public}]) {
   address: String!
   operationHours: AWSJSON!
   categories: AWSJSON!
-  qrCode: String!
+  qrCode: String
 }
 
 type ShoppingBagModel @model @auth(rules: [{allow: public}]) {

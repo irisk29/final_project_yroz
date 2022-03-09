@@ -386,7 +386,7 @@ class StoreStorageProxy {
           jsonDecode(model.categories).cast<String>(),
           opHours(jsonDecode(model.operationHours)),
           url,
-          model.qrCode);
+          model.qrCode!);
       await dto.initImageFile();
       lst.add(dto);
     }
