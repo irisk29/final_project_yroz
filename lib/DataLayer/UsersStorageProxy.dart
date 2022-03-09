@@ -102,9 +102,10 @@ class UsersStorageProxy {
     if (storeOwners.isEmpty)
       return new Failure("There is no store owner state", null);
     var storeOwner = storeOwners.first;
-    var onlinestore = await StoreStorageProxy().fetchOnlineStore(storeOwner.id);
-    var physicalstore =
-        await StoreStorageProxy().fetchPhysicalStore(storeOwner.id);
+    var onlinestore = await StoreStorageProxy()
+        .fetchOnlineStore(storeOwner.storeOwnerModelOnlineStoreModelId);
+    var physicalstore = await StoreStorageProxy()
+        .fetchPhysicalStore(storeOwner.storeOwnerModelPhysicalStoreModelId);
 
     var fullStoreOwner = storeOwner.copyWith(
       onlineStoreModel: onlinestore,

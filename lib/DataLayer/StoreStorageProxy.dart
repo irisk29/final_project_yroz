@@ -242,10 +242,12 @@ class StoreStorageProxy {
     return res.getTag() ? await uploadPicture(url, storeId) : res;
   }
 
-  Future<OnlineStoreModel?> fetchOnlineStore(String storeOwnerId) async {
+  Future<OnlineStoreModel?> fetchOnlineStore(
+      String? storeOwnerOnlineStoreId) async {
+    if (storeOwnerOnlineStoreId == null) return null;
     List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
         OnlineStoreModel.classType,
-        where: OnlineStoreModel.ID.eq(storeOwnerId));
+        where: OnlineStoreModel.ID.eq(storeOwnerOnlineStoreId));
     if (onlineStores.isEmpty) return null;
     var onlinestore = onlineStores.first;
     List<StoreProductModel> products = await Amplify.DataStore.query(
@@ -256,10 +258,12 @@ class StoreStorageProxy {
     return fullStore; //only one online store per user
   }
 
-  Future<PhysicalStoreModel?> fetchPhysicalStore(String storeOwnerId) async {
+  Future<PhysicalStoreModel?> fetchPhysicalStore(
+      String? storeOwnerPhysicalStoreId) async {
+    if (storeOwnerPhysicalStoreId == null) return null;
     List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
         PhysicalStoreModel.classType,
-        where: PhysicalStoreModel.ID.eq(storeOwnerId));
+        where: PhysicalStoreModel.ID.eq(storeOwnerPhysicalStoreId));
 
     if (physicalStores.isEmpty) return null;
     return physicalStores.first; //only one physical store per user
