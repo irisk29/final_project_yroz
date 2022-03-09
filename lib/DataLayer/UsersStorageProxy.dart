@@ -20,12 +20,15 @@ class UsersStorageProxy {
 
   UsersStorageProxy._internal();
 
-  Future<UserModel> createUser(String email, String name, String imageUrl) async {
-    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
+  Future<UserModel> createUser(
+      String email, String name, String imageUrl) async {
+    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType,
+        where: UserModel.EMAIL.eq(email));
 
     if (users.isEmpty) //no such user in the DB
     {
-      DigitalWalletModel digitalWalletModel = DigitalWalletModel(cashBackAmount: 0);
+      DigitalWalletModel digitalWalletModel =
+          DigitalWalletModel(cashBackAmount: 0);
       UserModel userModel = UserModel(
           email: email,
           name: name,
@@ -41,15 +44,20 @@ class UsersStorageProxy {
     return createFullUser(user, user.name, user.imageUrl);
   }
 
-  Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
-    List<DigitalWalletModel> digitalWallet = await Amplify.DataStore.query(DigitalWalletModel.classType,
+  Future<UserModel> createFullUser(
+      UserModel user, String name, String? imageUrl) async {
+    List<DigitalWalletModel> digitalWallet = await Amplify.DataStore.query(
+        DigitalWalletModel.classType,
         where: DigitalWalletModel.ID.eq(user.userModelDigitalWalletModelId));
 
-    var resStoreOwner = await getStoreOwnerState();
-    StoreOwnerModel? storeOwner = resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
-    DigitalWalletModel? wallet = digitalWallet.isNotEmpty ? digitalWallet.first : null;
-    List<ShoppingBagModel> shoppingBags =
-        await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
+    var resStoreOwner = await getStoreOwnerState(user.email);
+    StoreOwnerModel? storeOwner =
+        resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
+    DigitalWalletModel? wallet =
+        digitalWallet.isNotEmpty ? digitalWallet.first : null;
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID.eq(user.id));
     //TODO: fetch products for shopping bag
     UserModel fullUser = user.copyWith(
         id: user.id,
@@ -67,7 +75,8 @@ class UsersStorageProxy {
   }
 
   Future<UserModel?> getUser(String email) async {
-    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
+    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType,
+        where: UserModel.EMAIL.eq(email));
 
     return users.isEmpty ? null : users.first;
   }
@@ -76,29 +85,35 @@ class UsersStorageProxy {
     String emailCurrUser = UserAuthenticator().getCurrentUserId();
     UserModel? currUser = await getUser(emailCurrUser);
     if (currUser == null) {
-      throw Exception("current user model is null, user's email: " + emailCurrUser);
+      throw Exception(
+          "current user model is null, user's email: " + emailCurrUser);
     }
     return currUser.userModelStoreOwnerModelId;
   }
 
-  Future<ResultInterface> getStoreOwnerState() async {
-    String emailCurrUser = UserAuthenticator().getCurrentUserId();
+  Future<ResultInterface> getStoreOwnerState(String emailCurrUser) async {
     UserModel? currUser = await getUser(emailCurrUser);
     if (currUser == null) {
       return new Failure("current user model is null", emailCurrUser);
     }
-    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(StoreOwnerModel.classType,
+    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
+        StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
-    if (storeOwners.isEmpty) return new Failure("There is no store owner state", null);
+    if (storeOwners.isEmpty)
+      return new Failure("There is no store owner state", null);
     var storeOwner = storeOwners.first;
-    var onlinestore = await StoreStorageProxy().fetchOnlineStore(storeOwner.storeOwnerModelOnlineStoreModelId);
-    var physicalstore = await StoreStorageProxy().fetchPhysicalStore(storeOwner.storeOwnerModelPhysicalStoreModelId);
+    var onlinestore = await StoreStorageProxy()
+        .fetchOnlineStore(storeOwner.storeOwnerModelOnlineStoreModelId);
+    var physicalstore = await StoreStorageProxy()
+        .fetchPhysicalStore(storeOwner.storeOwnerModelPhysicalStoreModelId);
 
     var fullStoreOwner = storeOwner.copyWith(
       onlineStoreModel: onlinestore,
       physicalStoreModel: physicalstore,
-      storeOwnerModelPhysicalStoreModelId: physicalstore == null ? null : physicalstore.id,
-      storeOwnerModelOnlineStoreModelId: onlinestore == null ? null : onlinestore.id,
+      storeOwnerModelPhysicalStoreModelId:
+          physicalstore == null ? null : physicalstore.id,
+      storeOwnerModelOnlineStoreModelId:
+          onlinestore == null ? null : onlinestore.id,
     );
     return new Ok("Got store owner succssefully", fullStoreOwner);
   }
@@ -109,10 +124,12 @@ class UsersStorageProxy {
     if (currUser == null) {
       return new Failure("current user model is null ", emailCurrUser);
     }
-    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(StoreOwnerModel.classType,
+    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
+        StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
     var storeOwner = storeOwners.isEmpty ? null : storeOwners.first;
-    if (storeOwner == null) return new Failure("No store owner state", emailCurrUser);
+    if (storeOwner == null)
+      return new Failure("No store owner state", emailCurrUser);
     if (storeOwner.storeOwnerModelOnlineStoreModelId != null &&
         storeOwner.storeOwnerModelPhysicalStoreModelId != null) {
       return new Ok("No need to delete - there were 2 stores open", null);
@@ -122,7 +139,8 @@ class UsersStorageProxy {
   }
 
   void addOnlineStoreToStoreOwnerState(OnlineStoreModel onlineStore) async {
-    ResultInterface oldStoreOwnerRes = await getStoreOwnerState();
+    ResultInterface oldStoreOwnerRes =
+        await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     if (!oldStoreOwnerRes.getTag()) {
       //TODO: write to log
       print(oldStoreOwnerRes.getMessage());
@@ -133,12 +151,15 @@ class UsersStorageProxy {
         onlineStoreModel: onlineStore,
         physicalStoreModel: oldStoreOwner.physicalStoreModel,
         storeOwnerModelOnlineStoreModelId: onlineStore.id,
-        storeOwnerModelPhysicalStoreModelId: oldStoreOwner.storeOwnerModelPhysicalStoreModelId);
+        storeOwnerModelPhysicalStoreModelId:
+            oldStoreOwner.storeOwnerModelPhysicalStoreModelId);
     await Amplify.DataStore.save(updatedStoreOwner);
   }
 
-  void addPhysicalStoreToStoreOwnerState(PhysicalStoreModel physicalStore) async {
-    ResultInterface oldStoreOwnerRes = await getStoreOwnerState();
+  void addPhysicalStoreToStoreOwnerState(
+      PhysicalStoreModel physicalStore) async {
+    ResultInterface oldStoreOwnerRes =
+        await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     if (!oldStoreOwnerRes.getTag()) {
       //TODO: write to log
       print(oldStoreOwnerRes.getMessage());
@@ -148,12 +169,14 @@ class UsersStorageProxy {
         id: oldStoreOwner.id,
         onlineStoreModel: oldStoreOwner.onlineStoreModel,
         physicalStoreModel: physicalStore,
-        storeOwnerModelOnlineStoreModelId: oldStoreOwner.storeOwnerModelOnlineStoreModelId,
+        storeOwnerModelOnlineStoreModelId:
+            oldStoreOwner.storeOwnerModelOnlineStoreModelId,
         storeOwnerModelPhysicalStoreModelId: physicalStore.id);
     await Amplify.DataStore.save(updatedStoreOwner);
   }
 
-  Future<ResultInterface> updateUserNameOrUrl(String newName, String newImageUrl) async {
+  Future<ResultInterface> updateUserNameOrUrl(
+      String newName, String newImageUrl) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
       //TODO: write to log
@@ -163,6 +186,7 @@ class UsersStorageProxy {
     var urlUpdate = newImageUrl.isEmpty ? user.imageUrl : newImageUrl;
     var fullUser = await createFullUser(user, nameUpdate, urlUpdate);
     await Amplify.DataStore.save(fullUser);
-    return new Ok("new name $newName or new image url $newImageUrl was updated", user.id);
+    return new Ok(
+        "new name $newName or new image url $newImageUrl was updated", user.id);
   }
 }
