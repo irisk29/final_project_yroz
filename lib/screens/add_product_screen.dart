@@ -1,3 +1,5 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,9 +11,9 @@ import '../providers/products.dart';
 class AddProductScreen extends StatefulWidget {
   static const routeName = '/add-product';
 
-  OnlineStore? _editedStore;
+  OnlineStoreDTO? _editedStore;
 
-  AddProductScreen(OnlineStore? editedStore) {
+  AddProductScreen(OnlineStoreDTO? editedStore) {
     this._editedStore = editedStore;
   }
 
@@ -43,9 +45,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  Product? _editedProduct = Product(
+  ProductDTO? _editedProduct = ProductDTO(
     id: '',
-    title: '',
+    name: '',
     price: 0,
     description: '',
     imageUrl: '',
@@ -69,21 +71,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context)!.settings.arguments as String?;
-      if (productId != null) {
-        _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
-        if (_editedProduct != null) {
-          _initValues = {
-            'title': _editedProduct!.title,
-            'description': _editedProduct!.description,
-            'price': _editedProduct!.price.toString(),
-            // 'imageUrl': _editedProduct.imageUrl,
-            'imageUrl': '',
-          };
-          _imageUrlController.text = _editedProduct!.imageUrl;
-        }
-      }
+      // final productId = ModalRoute.of(context)!.settings.arguments as String?;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -121,35 +109,35 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedProduct!.id != "") {
-      await Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct!.id, _editedProduct!);
-    } else {
-      try {
-        await Provider.of<Products>(context, listen: false)
-            .addProduct(_editedProduct!);
-      } catch (error) {
-        await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text(error.toString()),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Okay'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              )
-            ],
-          ),
-        );
-      }
-    }
+    // if (_editedProduct!.id != "") {
+    //   await Provider.of<Products>(context, listen: false)
+    //       .updateProduct(_editedProduct!.id, _editedProduct!);
+    // } else {
+    //   try {
+    //     await Provider.of<Products>(context, listen: false)
+    //         .addProduct(_editedProduct!);
+    //   } catch (error) {
+    //     await showDialog(
+    //       context: context,
+    //       builder: (ctx) => AlertDialog(
+    //         title: Text('An error occurred!'),
+    //         content: Text(error.toString()),
+    //         actions: <Widget>[
+    //           FlatButton(
+    //             child: Text('Okay'),
+    //             onPressed: () {
+    //               Navigator.of(ctx).pop();
+    //             },
+    //           )
+    //         ],
+    //       ),
+    //     );
+    //   }
+    // }
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop(Tuple2<Product?, OnlineStore?>(_editedProduct, widget._editedStore));
+    Navigator.of(context).pop(Tuple2<ProductDTO?, OnlineStoreDTO?>(_editedProduct, widget._editedStore));
   }
 
   @override
@@ -190,13 +178,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  _editedProduct = Product(
-                      title: value!,
+                  _editedProduct = ProductDTO(
+                      name: value!,
                       price: _editedProduct!.price,
                       description: _editedProduct!.description,
                       imageUrl: _editedProduct!.imageUrl,
                       id: _editedProduct!.id,
-                      isFavorite: _editedProduct!.isFavorite, category: '');
+                      category: '');
                 },
               ),
               TextFormField(
@@ -222,13 +210,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  _editedProduct = Product(
-                      title: _editedProduct!.title,
+                  _editedProduct = ProductDTO(
+                      name: _editedProduct!.name,
                       price: double.parse(value!),
                       description: _editedProduct!.description,
                       imageUrl: _editedProduct!.imageUrl,
                       id: _editedProduct!.id,
-                      isFavorite: _editedProduct!.isFavorite, category: '');
+                      category: '');
                 },
               ),
               TextFormField(
@@ -247,13 +235,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  _editedProduct = Product(
-                    title: _editedProduct!.title,
+                  _editedProduct = ProductDTO(
+                    name: _editedProduct!.name,
                     price: _editedProduct!.price,
                     description: value!,
                     imageUrl: _editedProduct!.imageUrl,
                     id: _editedProduct!.id,
-                    isFavorite: _editedProduct!.isFavorite, category: '',
+                    category: '',
                   );
                 },
               ),
@@ -308,13 +296,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedProduct = Product(
-                          title: _editedProduct!.title,
+                        _editedProduct = ProductDTO(
+                          name: _editedProduct!.name,
                           price: _editedProduct!.price,
                           description: _editedProduct!.description,
                           imageUrl: value!,
                           id: _editedProduct!.id,
-                          isFavorite: _editedProduct!.isFavorite, category: '',
+                          category: '',
                         );
                       },
                     ),

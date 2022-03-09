@@ -86,14 +86,15 @@ class User extends ChangeNotifier {
     var tuple =
         (res.getValue() as Tuple2); //<online store model, store owner id>
     if (storeOwnerState == null) {
-      //we might alredy have a store, hence it won't be null
+      //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
     }
     this.storeOwnerState!.setOnlineStore(tuple.item1);
+    notifyListeners();
     return res;
   }
 
-  Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
+  Future<ResultInterface> openPhysicalStore(PhysicalStoreDTO store) async {
     var res = await StoreStorageProxy().openPhysicalStore(store);
     if (!res.getTag()) return res; //failure
     var tuple =
@@ -103,6 +104,7 @@ class User extends ChangeNotifier {
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
     }
     this.storeOwnerState!.setPhysicalStore(tuple.item1);
+    notifyListeners();
     return res;
   }
 
@@ -111,6 +113,7 @@ class User extends ChangeNotifier {
     if (!res.getTag()) return res; //failure
 
     this.storeOwnerState!.setPhysicalStore(res.getValue());
+    notifyListeners();
     return res;
   }
 
@@ -119,6 +122,7 @@ class User extends ChangeNotifier {
     if (!res.getTag()) return res; //failure
 
     this.storeOwnerState!.setOnlineStore(res.getValue());
+    notifyListeners();
     return res;
   }
 
@@ -130,6 +134,7 @@ class User extends ChangeNotifier {
       this.storeOwnerState!.onlineStore = null;
     else
       this.storeOwnerState!.physicalStore = null;
+    notifyListeners();
     return res;
   }
 
