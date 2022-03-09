@@ -1,4 +1,6 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/search_bar_item.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,7 @@ class SearchBar extends StatefulWidget {
 }
 
 class _SearchBarState extends State<SearchBar> {
-  late List<PhysicalStoreDTO> relevantStores;
+  late List<StoreDTO> relevantStores;
 
   @override
   void initState() {
@@ -53,8 +55,15 @@ class _SearchBarState extends State<SearchBar> {
                 shrinkWrap: true,
                 itemBuilder: (_, index) {
                   var store = relevantStores[index];
-                  return SearchBarItem(store.imageFile, store.name,
-                      store.address, store.phoneNumber, store.operationHours);
+                  return SearchBarItem(
+                      store.imageFile,
+                      store.name,
+                      store.address,
+                      store.phoneNumber,
+                      store.operationHours,
+                      store is PhysicalStoreDTO
+                          ? null
+                          : (store as OnlineStoreDTO).products);
                 }),
           ),
         );

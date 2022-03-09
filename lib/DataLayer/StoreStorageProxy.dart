@@ -326,7 +326,7 @@ class StoreStorageProxy {
         .toList();
   }
 
-  Future<List<PhysicalStoreDTO>> fetchStoresByKeywords(String keywords) async {
+  Future<List<StoreDTO>> fetchStoresByKeywords(String keywords) async {
     try {
       List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
         PhysicalStoreModel.classType,
@@ -335,8 +335,22 @@ class StoreStorageProxy {
             .or(PhysicalStoreModel.ADDRESS.contains(keywords))
             .or(PhysicalStoreModel.CATEGORIES.contains(keywords)),
       );
-      return convertPhysicalStoreModelToDTO(
-          physicalStores); //only one physical store per user
+      List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
+        where: OnlineStoreModel.NAME
+            .contains(keywords)
+            .or(OnlineStoreModel.ADDRESS.contains(keywords))
+            .or(OnlineStoreModel.CATEGORIES.contains(keywords)),
+      );
+      List<PhysicalStoreDTO> physicalDtos =
+          await convertPhysicalStoreModelToDTO(physicalStores);
+      List<OnlineStoreDTO> onlineDtos =
+          await convertOnlineStoreModelToDTO(onlineStores);
+
+      List<StoreDTO> allDtos =
+          List.generate(onlineDtos.length, (index) => onlineDtos[index]);
+      allDtos.addAll(physicalDtos);
+      return allDtos;
     } on Exception catch (e) {
       // TODO: write to log
       throw e;

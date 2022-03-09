@@ -133,7 +133,7 @@ class User extends ChangeNotifier {
     return res;
   }
 
-  Future<List<PhysicalStoreDTO>> getStoresByKeywords(String keywords) async {
+  Future<List<StoreDTO>> getStoresByKeywords(String keywords) async {
     return await StoreStorageProxy().fetchStoresByKeywords(keywords);
   }
 
