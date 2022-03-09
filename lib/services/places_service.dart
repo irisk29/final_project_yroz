@@ -1,5 +1,5 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicModels/place.dart';
 import 'package:final_project_yroz/LogicModels/place_search.dart';
@@ -39,7 +39,7 @@ class PlacesService {
   }
 
   Future<List<Place>> getPlacesFromList(String placeType) async {
-    List<PhysicalStoreDTO> physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
+    List<StoreDTO> physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
     List<OnlineStoreDTO> onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
     if(placeType!=""){
       physicalStores = physicalStores.where((element) => element.categories.contains(placeType)).toList();
@@ -47,7 +47,7 @@ class PlacesService {
     }
     var googleGeocoding = GoogleGeocoding("AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg");
     List<Place> places = [];
-    for(PhysicalStoreDTO store in physicalStores){
+    for(StoreDTO store in physicalStores){
       GeocodingResponse? address = await googleGeocoding.geocoding.get(store.address, []);
       if(address!=null)
         places.add(Place.fromStore(store.name, address, store.address));

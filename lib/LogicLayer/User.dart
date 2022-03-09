@@ -1,12 +1,10 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
-import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -19,7 +17,7 @@ import 'StoreOwnerState.dart';
 class User extends ChangeNotifier {
   String? email;
   String? name;
-  List<OnlineStore> favoriteStores;
+  List<StoreDTO> favoriteStores;
   List<String> creditCards;
   String? imageUrl;
   String? bankAccount;
@@ -30,13 +28,13 @@ class User extends ChangeNotifier {
   bool isSignedIn = false;
 
   User(this.email, this.name)
-      : favoriteStores = <OnlineStore>[],
+      : favoriteStores = <StoreDTO>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBag>[],
         digitalWallet = new DigitalWallet(0) {}
 
   User.withNull()
-      : favoriteStores = <OnlineStore>[],
+      : favoriteStores = <StoreDTO>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBag>[],
         digitalWallet = new DigitalWallet(0) {}
@@ -94,7 +92,7 @@ class User extends ChangeNotifier {
     return res;
   }
 
-  Future<ResultInterface> openPhysicalStore(PhysicalStoreDTO store) async {
+  Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openPhysicalStore(store);
     if (!res.getTag()) return res; //failure
     var tuple =
@@ -108,7 +106,7 @@ class User extends ChangeNotifier {
     return res;
   }
 
-  Future<ResultInterface> updatePhysicalStore(PhysicalStoreDTO store) async {
+  Future<ResultInterface> updatePhysicalStore(StoreDTO store) async {
     var res = await StoreStorageProxy().updatePhysicalStore(store);
     if (!res.getTag()) return res; //failure
 

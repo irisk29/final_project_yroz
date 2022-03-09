@@ -10,9 +10,17 @@ class StoreDTO {
   Map<String, List<TimeOfDay>> operationHours;
   String? image;
   MemoryImage? imageFile;
+  String? qrCode;
 
-  StoreDTO(this.id, this.name, this.phoneNumber, this.address, this.categories,
-      this.operationHours, this.image);
+  StoreDTO(
+      {required this.id,
+      required this.name,
+      required this.phoneNumber,
+      required this.address,
+      required this.categories,
+      required this.operationHours,
+      this.image,
+      this.qrCode});
 
   Future<void> initImageFile() async {
     if (this.image != null) {

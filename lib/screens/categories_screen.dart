@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/PhysicalStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/search_bar.dart';
@@ -20,7 +20,7 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  List<PhysicalStoreDTO> physicalStores = [];
+  List<StoreDTO> physicalStores = [];
   List<OnlineStoreDTO> onlineStores = [];
 
   @override

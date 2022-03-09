@@ -1,6 +1,5 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
-import 'package:final_project_yroz/providers/online_store.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
