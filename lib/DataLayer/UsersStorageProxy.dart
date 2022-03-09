@@ -1,4 +1,5 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
@@ -23,7 +24,7 @@ class UsersStorageProxy {
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
 
     if (users.isEmpty) //no such user in the DB
-        {
+    {
       DigitalWalletModel digitalWalletModel = DigitalWalletModel(cashBackAmount: 0);
       UserModel userModel = UserModel(
           email: email,
@@ -41,16 +42,15 @@ class UsersStorageProxy {
   }
 
   Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
-    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(StoreOwnerModel.classType,
-        where: StoreOwnerModel.ID.eq(user.userModelStoreOwnerModelId));
     List<DigitalWalletModel> digitalWallet = await Amplify.DataStore.query(DigitalWalletModel.classType,
         where: DigitalWalletModel.ID.eq(user.userModelDigitalWalletModelId));
 
-    StoreOwnerModel? storeOwner = storeOwners.isNotEmpty ? storeOwners.first : null;
+    var resStoreOwner = await getStoreOwnerState();
+    StoreOwnerModel? storeOwner = resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
     DigitalWalletModel? wallet = digitalWallet.isNotEmpty ? digitalWallet.first : null;
     List<ShoppingBagModel> shoppingBags =
-    await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
-
+        await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
+    //TODO: fetch products for shopping bag
     UserModel fullUser = user.copyWith(
         id: user.id,
         email: user.email,
@@ -89,7 +89,18 @@ class UsersStorageProxy {
     }
     List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
-    return storeOwners.isEmpty ? new Failure("There is no store owner state", null) : new Ok("ok", storeOwners.first);
+    if (storeOwners.isEmpty) return new Failure("There is no store owner state", null);
+    var storeOwner = storeOwners.first;
+    var onlinestore = await StoreStorageProxy().fetchOnlineStore(storeOwner.storeOwnerModelOnlineStoreModelId);
+    var physicalstore = await StoreStorageProxy().fetchPhysicalStore(storeOwner.storeOwnerModelPhysicalStoreModelId);
+
+    var fullStoreOwner = storeOwner.copyWith(
+      onlineStoreModel: onlinestore,
+      physicalStoreModel: physicalstore,
+      storeOwnerModelPhysicalStoreModelId: physicalstore == null ? null : physicalstore.id,
+      storeOwnerModelOnlineStoreModelId: onlinestore == null ? null : onlinestore.id,
+    );
+    return new Ok("Got store owner succssefully", fullStoreOwner);
   }
 
   Future<ResultInterface> deleteStoreOwnerState() async {
