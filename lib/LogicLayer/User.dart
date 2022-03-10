@@ -195,7 +195,7 @@ class User extends ChangeNotifier {
   }
 
   Future<void> addFavoriteStore(String storeID, bool isOnline) async {
-    var res = await UsersStorageProxy().addFavoriteStore(storeID);
+    var res = await UsersStorageProxy().addFavoriteStore(storeID, isOnline);
     if (!res.getTag()) {
       print(res.getMessage());
       return;
@@ -205,7 +205,7 @@ class User extends ChangeNotifier {
   }
 
   Future<void> removeFavoriteStore(String storeID, bool isOnline) async {
-    var res = await UsersStorageProxy().removeFavoriteStore(storeID);
+    var res = await UsersStorageProxy().removeFavoriteStore(storeID, isOnline);
     if (!res.getTag()) {
       print(res.getMessage());
       return;
