@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
@@ -17,7 +19,8 @@ import 'StoreOwnerState.dart';
 class User extends ChangeNotifier {
   String? email;
   String? name;
-  List<StoreDTO> favoriteStores;
+  List<String> favoriteStores; //IDs of favorite stores
+  List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
   String? bankAccount;
@@ -28,13 +31,15 @@ class User extends ChangeNotifier {
   bool isSignedIn = false;
 
   User(this.email, this.name)
-      : favoriteStores = <StoreDTO>[],
+      : favoriteStores = <String>[],
+        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBag>[],
         digitalWallet = new DigitalWallet(0) {}
 
   User.withNull()
-      : favoriteStores = <StoreDTO>[],
+      : favoriteStores = <String>[],
+        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBag>[],
         digitalWallet = new DigitalWallet(0) {}
@@ -43,14 +48,16 @@ class User extends ChangeNotifier {
     this.email = model.email;
     this.name = model.name;
     this.imageUrl = model.imageUrl;
-    this.digitalWallet =
-        DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
+    this.favoriteProducts =
+        model.favoriteProducts == null ? [] : (jsonDecode(model.favoriteProducts!) as List<dynamic>).cast<String>();
+    this.favoriteStores =
+        model.favoriteStores == null ? [] : (jsonDecode(model.favoriteStores!) as List<dynamic>).cast<String>();
+    this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
-    this.storeOwnerState = model.storeOwnerModel == null
-        ? null
-        : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
+    this.storeOwnerState =
+        model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
   }
 
   void signIn(AuthProvider authProvider, BuildContext context) async {
@@ -81,8 +88,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
     var res = await StoreStorageProxy().openOnlineStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<online store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -95,8 +101,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openPhysicalStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<physical store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -150,5 +155,45 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
     notifyListeners();
     return res;
+  }
+
+  Future<void> addFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().addFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> addFavoriteStore(String storeID) async {
+    var res = await UsersStorageProxy().addFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteStore(String storeID) async {
+    var res = await UsersStorageProxy().removeFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
   }
 }
