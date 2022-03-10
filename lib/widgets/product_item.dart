@@ -8,15 +8,21 @@ import '../screens/product_detail_screen.dart';
 import '../providers/product.dart';
 import '../providers/cart.dart';
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
   //final String id;
   final ProductDTO product;
   final User user;
   final String storeID;
 
-  final myController = TextEditingController();
 
   ProductItem(this.product, this.user, this.storeID);
+
+  @override
+  State<ProductItem> createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
+  final myController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,31 +33,34 @@ class ProductItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
-              arguments: product,
+              arguments: widget.product,
             );
           },
           child: Image.network(
-            product.imageUrl,
+            widget.product.imageUrl,
             fit: BoxFit.cover,
           ),
         ),
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           leading: IconButton(
-              icon: user.favoriteProducts.contains(product.id) ? Icon(
+              icon: widget.user.favoriteProducts.contains(widget.product.id) ? Icon(
                 Icons.favorite,
               ) : Icon(
                 Icons.favorite_border,
               ),
               color: Theme.of(context).accentColor,
               onPressed: () async {
-                user.favoriteProducts.contains(product.id) ? await user.removeFavoriteProduct(product.id)
-                : await user.addFavoriteProduct(product.id);
+                widget.user.favoriteProducts.contains(widget.product.id) ? await widget.user.removeFavoriteProduct(widget.product.id)
+                : await widget.user.addFavoriteProduct(widget.product.id);
+                setState(() {
+
+                });
                 //product.toggleFavoriteStatus(auth.token!, auth.userId!);
               },
           ),
           title: Text(
-            product.name,
+            widget.product.name,
             textAlign: TextAlign.center,
           ),
           trailing: IconButton(
@@ -74,7 +83,7 @@ class ProductItem extends StatelessWidget {
                         onPressed: () {
                           quantity = double.parse(myController.text);
                           Navigator.of(context).pop();
-                          user.addProductToShoppingBag(product, quantity, storeID);
+                          widget.user.addProductToShoppingBag(widget.product, quantity, widget.storeID);
                           //cart.addItem(product.id, product.price, product.title);
                           Scaffold.of(context).hideCurrentSnackBar();
                           Scaffold.of(context).showSnackBar(
@@ -86,7 +95,7 @@ class ProductItem extends StatelessWidget {
                               action: SnackBarAction(
                                 label: 'UNDO',
                                 onPressed: () {
-                                  user.removeProductFromShoppingBag(product, storeID);
+                                  widget.user.removeProductFromShoppingBag(widget.product, widget.storeID);
                                   //cart.removeSingleItem(product.id);
                                 },
                               ),

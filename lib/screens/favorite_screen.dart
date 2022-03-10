@@ -5,6 +5,8 @@ import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:final_project_yroz/widgets/search_bar.dart';
 import 'package:flutter/material.dart';
 import '../widgets/store_item.dart';
@@ -29,8 +31,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     // Future.delayed(Duration.zero).then((_) {
     //   Provider.of<Products>(context).fetchAndSetProducts();
     // });
-    super.initState();
 
+    super.initState();
   }
 
   @override
@@ -40,6 +42,18 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     for(String store in user!.favoriteStores){
       //StoreStorageProxy().ge
     }
+    () async {
+      favoriteProducts = [];
+      for(String product in user.favoriteProducts){
+        ResultInterface res = await StoreStorageProxy().getOnlineStoreProduct(product);
+        if(res.getTag()){
+          favoriteProducts.add(res.getValue() as ProductDTO);
+        }
+      }
+      setState(() {
+        // Update your UI with the desired changes.
+      });
+    }();
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -104,7 +118,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     ),
                   ),
                 ),
-                favoriteStores.isEmpty
+                favoriteProducts.isEmpty
                     ? SizedBox(height: height * 0.23)
                     : SizedBox(
                   height: height * 0.23,
@@ -112,13 +126,12 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     scrollDirection: Axis.horizontal,
                     padding: EdgeInsets.all(height * 0.025),
                     children: [
-                      favoriteStores
+                      favoriteProducts
                           .map(
-                            (storeData) => StoreItem(
-                              storeData, widget.user!
+                            (storeData) => ProductItem(
+                              storeData, widget.user!, ""
                             ),
-                      )
-                          .toList(),
+                      ).toList(),
                     ].expand((i) => i).toList(),
                     gridDelegate:
                     SliverGridDelegateWithMaxCrossAxisExtent(

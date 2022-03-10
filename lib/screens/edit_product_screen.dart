@@ -42,9 +42,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  Product? _editedProduct = Product(
+  ProductDTO? _editedProduct = ProductDTO(
     id: '',
-    title: '',
+    name: '',
     price: 0,
     description: '',
     imageUrl: '',
@@ -68,7 +68,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      _editedProduct = widget.product;
     }
+
     _isInit = false;
     super.didChangeDependencies();
   }
@@ -105,6 +107,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     setState(() {
       _isLoading = true;
     });
+
     setState(() {
       _isLoading = false;
     });
@@ -144,7 +147,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 child: ListView(
                   children: <Widget>[
                     TextFormField(
-                      initialValue: _initValues['title'],
+                      initialValue: _editedProduct!.name,
                       decoration: InputDecoration(labelText: 'Title'),
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) {
@@ -157,17 +160,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedProduct = Product(
-                            title: value!,
+                        _editedProduct = ProductDTO(
+                            name: value!,
                             price: _editedProduct!.price,
                             description: _editedProduct!.description,
                             imageUrl: _editedProduct!.imageUrl,
                             id: _editedProduct!.id,
-                            isFavorite: _editedProduct!.isFavorite, category: '');
+                            category: '');
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues['price'],
+                      initialValue: _editedProduct!.price.toString(),
                       decoration: InputDecoration(labelText: 'Price'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
@@ -189,17 +192,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedProduct = Product(
-                            title: _editedProduct!.title,
+                        _editedProduct = ProductDTO(
+                            name: _editedProduct!.name,
                             price: double.parse(value!),
                             description: _editedProduct!.description,
                             imageUrl: _editedProduct!.imageUrl,
                             id: _editedProduct!.id,
-                            isFavorite: _editedProduct!.isFavorite, category: '');
+                            category: '');
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues['description'],
+                      initialValue: _editedProduct!.description,
                       decoration: InputDecoration(labelText: 'Description'),
                       maxLines: 3,
                       keyboardType: TextInputType.multiline,
@@ -214,13 +217,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        _editedProduct = Product(
-                          title: _editedProduct!.title,
+                        _editedProduct = ProductDTO(
+                          name: _editedProduct!.name,
                           price: _editedProduct!.price,
                           description: value!,
                           imageUrl: _editedProduct!.imageUrl,
                           id: _editedProduct!.id,
-                          isFavorite: _editedProduct!.isFavorite, category: '',
+                          category: '',
                         );
                       },
                     ),
@@ -254,7 +257,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             decoration: InputDecoration(labelText: 'Image URL'),
                             keyboardType: TextInputType.url,
                             textInputAction: TextInputAction.done,
-                            controller: _imageUrlController,
+                            initialValue: _editedProduct!.imageUrl,
                             focusNode: _imageUrlFocusNode,
                             onFieldSubmitted: (_) {
                               _saveForm();
@@ -275,13 +278,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              _editedProduct = Product(
-                                title: _editedProduct!.title,
+                              _editedProduct = ProductDTO(
+                                name: _editedProduct!.name,
                                 price: _editedProduct!.price,
                                 description: _editedProduct!.description,
                                 imageUrl: value!,
                                 id: _editedProduct!.id,
-                                isFavorite: _editedProduct!.isFavorite, category: '',
+                                category: '',
                               );
                             },
                           ),
