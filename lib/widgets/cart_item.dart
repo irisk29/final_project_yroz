@@ -1,5 +1,7 @@
 import 'package:final_project_yroz/DTOs/CartProductDTO.dart';
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,7 +9,7 @@ import '../providers/cart.dart';
 
 class CartItem extends StatelessWidget {
   final CartProductDTO product;
-  final String storeID;
+  final OnlineStoreDTO store;
   final User user;
 
   late double price;
@@ -16,7 +18,7 @@ class CartItem extends StatelessWidget {
 
   CartItem(
     this.product,
-    this.storeID,
+    this.store,
     this.user
   ){
     price = product.price;
@@ -68,8 +70,9 @@ class CartItem extends StatelessWidget {
               ),
         );
       },
-      onDismissed: (direction) {
-        user.removeProductFromShoppingBag(product, storeID);
+      onDismissed: (direction) async {
+        await user.removeProductFromShoppingBag(product, store.id);
+        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': store, 'user': user});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
