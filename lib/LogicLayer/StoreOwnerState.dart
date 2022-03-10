@@ -45,6 +45,7 @@ class StoreOwnerState {
         operationHours: op,
         image: imageUrl,
         products: onlineStoreModel.storeProductModels == null
+        || onlineStoreModel.storeProductModels!.isEmpty
             ? []
             : onlineStoreModel.storeProductModels!
                 .map((e) => ProductDTO(
