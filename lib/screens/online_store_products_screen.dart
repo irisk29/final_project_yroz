@@ -37,6 +37,9 @@ class OnlineStoreProductsScreen extends StatefulWidget {
 }
 
 class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
+
+  String cartSize = "0";
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +50,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
     widget.user = routeArgs['user'] as User;
+    cartSize = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString();
     super.didChangeDependencies();
   }
 
@@ -67,7 +71,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
               },
             ),
-            value: widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
+            value: cartSize,
           ),
         ],
       ),

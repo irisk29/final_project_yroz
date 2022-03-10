@@ -67,10 +67,9 @@ class _CartScreenState extends State<CartScreen> {
             child: ListView.builder(
               itemCount: widget.cart!.products.length,
               itemBuilder: (ctx, i) => CartItem(
-                widget.cart!.products.toList()[i].id,
-                widget.cart!.products.toList()[i].price,
-                widget.cart!.products.toList()[i].amount,
-                widget.cart!.products.toList()[i].name,
+                widget.cart!.products.toList()[i],
+                widget.store.id,
+                widget.user
               ),
             ),
           )

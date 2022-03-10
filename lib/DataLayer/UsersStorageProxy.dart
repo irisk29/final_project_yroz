@@ -215,11 +215,12 @@ class UsersStorageProxy {
   }
 
   Future<ResultInterface> convertShoppingBagModelToDTO(ShoppingBagModel shoppingBagModel) async {
-    var res = await getProductsOfShoppingBag(shoppingBagModel.id);
+    ResultInterface res = await getProductsOfShoppingBag(shoppingBagModel.id);
     if (!res.getTag()) return res;
+    List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
     ShoppingBagDTO shoppingBag =
         ShoppingBagDTO(shoppingBagModel.usermodelID, shoppingBagModel.shoppingBagModelOnlineStoreModelId!);
-    List<CartProductDTO> shoppingBagProductsDTO = res.getValue().map((e) => convertCartProductModelToDTO(e)).toList();
+    List<CartProductDTO> shoppingBagProductsDTO = vals.map((e) => convertCartProductModelToDTO(e)).toList();
     shoppingBag.products = shoppingBagProductsDTO;
     return new Ok("convert was succsseful", shoppingBag);
   }
@@ -244,10 +245,12 @@ class UsersStorageProxy {
     if (shoppingBags.isEmpty) return new Failure("No shopping bag was found for store $storeID and user $userID", null);
 
     var shoppingBag = shoppingBags.first; //one shopping bag per user per store
-    List<CartProductModel> productsInBag = (await getProductsOfShoppingBag(shoppingBag.id)) as List<CartProductModel>;
-    productsInBag.removeWhere((element) => element.id == productDTO.id);
+    ResultInterface res = await getProductsOfShoppingBag(shoppingBag.id);
+    if (!res.getTag()) return res;
+    List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
+    vals.removeWhere((element) => element.id == productDTO.id);
 
-    var newShoppingBag = shoppingBag.copyWith(CartProductModels: productsInBag);
+    var newShoppingBag = shoppingBag.copyWith(CartProductModels: vals);
     await Amplify.DataStore.save(newShoppingBag);
     return new Ok("Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}", newShoppingBag);
   }
