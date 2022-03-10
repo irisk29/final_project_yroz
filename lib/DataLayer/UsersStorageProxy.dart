@@ -50,11 +50,6 @@ class UsersStorageProxy {
     DigitalWalletModel? wallet = digitalWallet.isNotEmpty ? digitalWallet.first : null;
     List<ShoppingBagModel> shoppingBags =
         await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
-    //TODO: fetch products for shopping bag
-    StoreOwnerModel? storeOwner = resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
-    DigitalWalletModel? wallet = digitalWallet.isNotEmpty ? digitalWallet.first : null;
-    List<ShoppingBagModel> shoppingBags =
-        await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
 
     UserModel fullUser = user.copyWith(
         id: user.id,
@@ -171,7 +166,7 @@ class UsersStorageProxy {
   }
 
   Future<ResultInterface> addProductToShoppingBag(
-      ProductDTO productDTO, String storeID, int quantity, String userID) async {
+      ProductDTO productDTO, String storeID, double quantity, String userID) async {
     var shoppingBagRes = await getOrCreateUserShoppingBagPerStore(storeID, userID);
     if (!shoppingBagRes.getTag()) return shoppingBagRes;
     ShoppingBagModel shoppingBag = shoppingBagRes.getValue();
@@ -191,7 +186,7 @@ class UsersStorageProxy {
     return new Ok("Saved shopping bag product(id - ${item.id}) succssesfully", shoppingBagWithNewItem);
   }
 
-  CartProductDTO convertStoreProductToCartProduct(ProductDTO productDTO, int quantity) {
+  CartProductDTO convertStoreProductToCartProduct(ProductDTO productDTO, double quantity) {
     return CartProductDTO(productDTO.id, productDTO.name, productDTO.price, productDTO.category, productDTO.imageUrl,
         productDTO.description, quantity);
   }
@@ -237,7 +232,7 @@ class UsersStorageProxy {
         jsonDecode(cartProductModel.categories).cast<String>(),
         cartProductModel.imageUrl == null ? "" : cartProductModel.imageUrl!,
         cartProductModel.description == null ? "" : cartProductModel.description!,
-        cartProductModel.amount!);
+        cartProductModel.amount);
   }
 
   Future<ResultInterface> removeProductFromShoppingBag(ProductDTO productDTO, String storeID, String userID) async {
@@ -258,7 +253,7 @@ class UsersStorageProxy {
   }
 
   Future<ResultInterface> updateProductQuantityInBag(
-      ProductDTO productDTO, String storeID, int quantity, String userID) async {
+      ProductDTO productDTO, String storeID, double quantity, String userID) async {
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID
             .eq(userID)
