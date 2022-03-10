@@ -1,3 +1,4 @@
+import json
 import uuid
 from decimal import Decimal
 from uuid import uuid5
@@ -36,10 +37,10 @@ def create_user_e_wallet(userId):
             return jsonify(result), 403
 
 
-@app.route('/add_user_credit_card/<string:userId>', methods=['UPDATE'])
+@app.route('/add_user_credit_card/<string:userId>', methods=['PATCH'])
 def add_user_credit_card(userId):
     try:
-        data = request.get_json()
+        data = json.loads(request.get_data())
         try:
             cardNumber = data["cardNumber"]
             expiryDate = data["expiryDate"]
@@ -64,10 +65,10 @@ def add_user_credit_card(userId):
         return jsonify(result), 403
 
 
-@app.route('/remove_user_credit_card/<string:userId>', methods=['UPDATE'])
+@app.route('/remove_user_credit_card/<string:userId>', methods=['PATCH'])
 def remove_user_credit_card(userId):
     try:
-        data = request.get_json()
+        data = json.loads(request.get_data())
         try:
             credit_card_token = data["creditToken"]
         except KeyError:
@@ -90,7 +91,7 @@ def remove_user_credit_card(userId):
 @app.route('/e_wallet_balance/<string:userId>', methods=['GET'])
 def e_wallet_balance(userId):
     try:
-        data = request.get_json()
+        data = json.loads(request.get_data())
         try:
             e_wallet_token = data["eWalletToken"]
         except KeyError:
@@ -118,7 +119,7 @@ def e_wallet_balance(userId):
 @app.route('/save_store_bank_account/<string:storeId>', methods=['POST'])
 def save_store_bank_account(storeId):
     try:
-        data = request.get_json()
+        data = json.loads(request.get_data())
         try:
             bank_account = data["bankAccount"]
         except KeyError:
@@ -142,7 +143,7 @@ def save_store_bank_account(storeId):
 @app.route('/delete_store_bank_account/<string:storeId>', methods=['DELETE'])
 def delete_store_bank_account(storeId):
     try:
-        data = request.get_json()
+        data = json.loads(request.get_data())
         try:
             bank_account_token = data["bankAccountToken"]
         except KeyError:
@@ -164,10 +165,10 @@ def delete_store_bank_account(storeId):
         return jsonify(result), 403
 
 
-@app.route('/make_payment', methods=['UPDATE'])
+@app.route('/make_payment', methods=['PATCH'])
 def make_payment():
     try:
-        data = request.get_json()
+        data = json.loads(request.get_data())
         try:
             userId = data["userId"]
             storeId = data["storeId"]
@@ -197,7 +198,7 @@ def make_payment():
                                 " e_wallet.#eWalletToken >= :cashBackAmount",
         )
 
-        total_amount = credit_amount + cash_back_amount if cash_back_amount is not None else 0
+        total_amount = credit_amount + cash_back_amount
         cash_back_percentage = 0.1
         consumersTable.update_item(
             Key={"userId": userId},
