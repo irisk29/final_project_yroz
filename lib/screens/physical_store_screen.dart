@@ -102,6 +102,19 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
         title: Text(
           "" + widget.store.name,
         ),
+        actions: [
+          Badge(
+              child: IconButton(
+                    icon: Icon(
+                      Icons.shopping_cart,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(CartScreen.routeName);
+                    },
+                  ),
+              value: widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString(),
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
