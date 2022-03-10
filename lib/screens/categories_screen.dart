@@ -43,6 +43,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void didChangeDependencies() {
     final user = ModalRoute.of(context)!.settings.arguments as User?;
     if (user != null) widget.user = user;
+    () async {
+      onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
+      physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
+      setState(() {
+        // Update your UI with the desired changes.
+      });
+    }();
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
