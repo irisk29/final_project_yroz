@@ -137,7 +137,7 @@ class User extends ChangeNotifier {
     return res;
   }
 
-  Future<ResultInterface> updateOnlineStore(StoreDTO store) async {
+  Future<ResultInterface> updateOnlineStore(OnlineStoreDTO store) async {
     var res = await StoreStorageProxy().updateOnlineStore(store);
     if (!res.getTag()) return res; //failure
 
