@@ -36,7 +36,7 @@ class StoreStorageProxy {
   StoreStorageProxy._internal();
 
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
-    OnlineStoreModel onlineStoreModelWithoutQR = OnlineStoreModel(
+    OnlineStoreModel onlineStoreModel = OnlineStoreModel(
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
@@ -52,9 +52,11 @@ class StoreStorageProxy {
           }
         }).convert(store.operationHours));
 
-    String qrCode = await generateUniqueQRCode(onlineStoreModelWithoutQR.id);
-    var onlineStoreModel = onlineStoreModelWithoutQR.copyWith(qrCode: qrCode);
-
+    String? qrCode = store.qrCode;
+    if (store.qrCode == null || store.qrCode!.isEmpty) {
+      qrCode = await generateUniqueQRCode(onlineStoreModel.id);
+      onlineStoreModel = onlineStoreModel.copyWith(qrCode: qrCode);
+    }
     if (store.image != null && store.image!.isNotEmpty) {
       await uploadPicture(store.image!, onlineStoreModel.id); // uploading the picture to s3
     }
@@ -524,16 +526,6 @@ class StoreStorageProxy {
     return new Ok("Updated products in store $storeID", updatedProd);
   }
 
-  OnlineStoreModel convertPhysicalModelToOnlineModel(PhysicalStoreModel physicalStoreModel) {
-    return OnlineStoreModel(
-        name: physicalStoreModel.name,
-        phoneNumber: physicalStoreModel.phoneNumber,
-        address: physicalStoreModel.address,
-        operationHours: physicalStoreModel.operationHours,
-        categories: physicalStoreModel.categories,
-        qrCode: physicalStoreModel.qrCode);
-  }
-
   Future<ResultInterface> deleteStore(String id, bool isOnline) async {
     try {
       var res = isOnline ? await deleteOnlineStore(id) : await deletePhysicalStore(id);
@@ -556,6 +548,8 @@ class StoreStorageProxy {
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
+      var res = await deleteStoreOwnerStateIfNeeded(true);
+      if (!res.getTag()) return res;
       return new Ok("Deleted online store succssefully", id);
     } on Exception catch (e) {
       // TODO: write to log
@@ -571,10 +565,66 @@ class StoreStorageProxy {
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
+      var res = await deleteStoreOwnerStateIfNeeded(false);
+      if (!res.getTag()) return res;
       return new Ok("Deleted physical store succssefully", id);
     } on Exception catch (e) {
       // TODO: write to log
       return new Failure(e.toString(), id);
     }
+  }
+
+  Future<ResultInterface> deleteStoreOwnerStateIfNeeded(bool deletedOnlineStore) async {
+    String? storeOwnerID = await UsersStorageProxy().getStoreOwnerStateId();
+    if (storeOwnerID == null) return new Failure("No store owner to delete", null);
+    List<StoreOwnerModel> storeOwners =
+        await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
+    StoreOwnerModel storeOwnerModel = storeOwners.first;
+    if (deletedOnlineStore) {
+      if (storeOwnerModel.storeOwnerModelPhysicalStoreModelId == null) {
+        await Amplify.DataStore.delete(storeOwnerModel); //no store left
+        UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+        if (currUser == null) return Failure("No such user", null);
+        UserModel userWithoutStoreOwnerState =
+            currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
+        await Amplify.DataStore.save(userWithoutStoreOwnerState);
+        return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
+      }
+      StoreOwnerModel updatedStoreModel =
+          storeOwnerModel.copyWith(onlineStoreModel: null, storeOwnerModelOnlineStoreModelId: null);
+      await Amplify.DataStore.save(updatedStoreModel);
+      return new Ok("Deleted online store from Store Owner State", updatedStoreModel);
+    }
+
+    if (storeOwnerModel.storeOwnerModelOnlineStoreModelId == null) {
+      await Amplify.DataStore.delete(storeOwnerModel); //no store left
+      UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+      if (currUser == null) return Failure("No such user", null);
+      UserModel userWithoutStoreOwnerState = currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
+      await Amplify.DataStore.save(userWithoutStoreOwnerState);
+      return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
+    }
+    StoreOwnerModel updatedStoreModel =
+        storeOwnerModel.copyWith(physicalStoreModel: null, storeOwnerModelPhysicalStoreModelId: null);
+    await Amplify.DataStore.save(updatedStoreModel);
+    return new Ok("Deleted online store from Store Owner State", updatedStoreModel);
+  }
+
+  Future<ResultInterface> convertPhysicalStoreToOnlineStore(StoreDTO physicalStore) async {
+    ResultInterface deletePhysicalRes = await deletePhysicalStore(physicalStore.id);
+    if (!deletePhysicalRes.getTag()) return deletePhysicalRes;
+    OnlineStoreDTO onlineStoreDTO = OnlineStoreDTO(
+        id: physicalStore.id,
+        name: physicalStore.name,
+        address: physicalStore.address,
+        phoneNumber: physicalStore.phoneNumber,
+        categories: physicalStore.categories,
+        operationHours: physicalStore.operationHours,
+        products: [],
+        qrCode: physicalStore.qrCode,
+        image: physicalStore.image);
+    ResultInterface openOnlineStoreRes = await openOnlineStore(onlineStoreDTO);
+    return openOnlineStoreRes;
+    //Tuple2<OnlineStoreModel, String>
   }
 }

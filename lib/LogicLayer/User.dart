@@ -4,6 +4,7 @@ import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
@@ -43,14 +44,12 @@ class User extends ChangeNotifier {
     this.email = model.email;
     this.name = model.name;
     this.imageUrl = model.imageUrl;
-    this.digitalWallet =
-        DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
+    this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
-    this.storeOwnerState = model.storeOwnerModel == null
-        ? null
-        : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
+    this.storeOwnerState =
+        model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
   }
 
   void signIn(AuthProvider authProvider, BuildContext context) async {
@@ -81,8 +80,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
     var res = await StoreStorageProxy().openOnlineStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<online store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -95,8 +93,7 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
     var res = await StoreStorageProxy().openPhysicalStore(store);
     if (!res.getTag()) return res; //failure
-    var tuple =
-        (res.getValue() as Tuple2); //<physical store model, store owner id>
+    var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
     if (storeOwnerState == null) {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
@@ -150,5 +147,19 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
     notifyListeners();
     return res;
+  }
+
+  Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
+    var res = await StoreStorageProxy().convertPhysicalStoreToOnlineStore(physicalStore);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    Tuple2<OnlineStoreModel, String> retVal = res.getValue();
+    this.storeOwnerState = new StoreOwnerState(retVal.item2);
+    this.storeOwnerState!.setOnlineStore(retVal.item1);
+    this.storeOwnerState!.physicalStore = null;
+
+    notifyListeners();
   }
 }
