@@ -140,7 +140,7 @@ class _MyAppState extends State<MyApp> {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),
             TabsScreen.routeName: (ctx) => TabsScreen(null),
-            EditProductScreen.routeName: (ctx) => EditProductScreen(),
+            EditProductScreen.routeName: (ctx) => EditProductScreen(null),
             CategoryScreen.routeName: (ctx) => CategoryScreen(),
             SettingsScreen.routeName: (ctx) => SettingsScreen(),
             PaymentScreen.routeName: (ctx) => PaymentScreen(),

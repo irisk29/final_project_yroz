@@ -3,6 +3,7 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/providers/product.dart';
+import 'package:final_project_yroz/screens/edit_product_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -549,12 +550,22 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
               children: EditOnlineStorePipeline._products
                   .map((e) => Chip(
                 deleteIcon: Icon(
-                  Icons.close,
+                  Icons.edit,
                 ),
-                onDeleted: () {
-                  setState(() {
+                onDeleted: () async {
+                  final ProductDTO? result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditProductScreen(e)),
+                  );
+                  if (result != null) {
+                    setState(() {
+                      EditOnlineStorePipeline._products.remove(e);
+                      EditOnlineStorePipeline._products.add(result);
+                    });
+                  }
+                  else{
                     EditOnlineStorePipeline._products.remove(e);
-                  });
+                  }
                 },
                 label: Text(e.name),
               ))
