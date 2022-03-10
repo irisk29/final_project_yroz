@@ -1,14 +1,9 @@
-import 'package:final_project_yroz/DTOs/CartProductDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/ProductDTO.dart';
-import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
-import 'package:final_project_yroz/models/CartProductModel.dart';
-import 'package:final_project_yroz/models/ShoppingBagModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +11,15 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:tuple/tuple.dart';
 
 import 'DigitalWallet.dart';
+import 'ShoppingBag.dart';
 import 'StoreOwnerState.dart';
 
 class User extends ChangeNotifier {
   String? id;
   String? email;
   String? name;
-  List<StoreDTO> favoriteStores;
+  List<String> favoriteStores; //IDs of favorite stores
+  List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
   String? bankAccount;
@@ -33,13 +30,15 @@ class User extends ChangeNotifier {
   bool isSignedIn = false;
 
   User(this.email, this.name)
-      : favoriteStores = <StoreDTO>[],
+      : favoriteStores = <String>[],
+        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
 
   User.withNull()
-      : favoriteStores = <StoreDTO>[],
+      : favoriteStores = <String>[],
+        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
@@ -49,10 +48,16 @@ class User extends ChangeNotifier {
     this.email = model.email;
     this.name = model.name;
     this.imageUrl = model.imageUrl;
+    this.favoriteProducts =
+        model.favoriteProducts == null ? [] : (jsonDecode(model.favoriteProducts!) as List<dynamic>).cast<String>();
+    this.favoriteStores =
+        model.favoriteStores == null ? [] : (jsonDecode(model.favoriteStores!) as List<dynamic>).cast<String>();
     this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
+    this.storeOwnerState =
+        model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
     this.storeOwnerState =
         model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
     if (model.shoppingBagModels != null) {
@@ -163,6 +168,46 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
     notifyListeners();
     return res;
+  }
+
+  Future<void> addFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().addFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> addFavoriteStore(String storeID) async {
+    var res = await UsersStorageProxy().addFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteStore(String storeID) async {
+    var res = await UsersStorageProxy().removeFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
   }
 
   Future<void> addProductToShoppingBag(ProductDTO productDTO, double quantity, String storeID) async {
