@@ -615,4 +615,14 @@ class StoreStorageProxy {
             qrCode: store.qrCode,
             image: await getDownloadUrl(storeID)));
   }
+
+  Future<ResultInterface> getOnlineStoreProduct(String prodId) async {
+    List<StoreProductModel> prods =
+        await Amplify.DataStore.query(StoreProductModel.classType, where: StoreProductModel.ID.eq(prodId));
+    if (prods.isEmpty) return new Failure("No such products $prodId exists", prodId);
+    var prod = prods.first;
+    return new Ok(
+        "Found product $prodId",
+        ProductDTO(id: prod.id, name: prod.name, price: prod.price, category: prod.categories, imageUrl: prod.imageUrl!, description: prod.description!));
+  }
 }
