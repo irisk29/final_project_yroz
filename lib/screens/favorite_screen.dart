@@ -37,7 +37,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   void didChangeDependencies() {
     final user = ModalRoute.of(context)!.settings.arguments as User?;
     if (user != null) widget.user = user;
-    //favoriteStores = user!.favoriteStores;
+    for(String store in user!.favoriteStores){
+      //StoreStorageProxy().ge
+    }
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }

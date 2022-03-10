@@ -137,10 +137,15 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 "About the store",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
-              onTap: () {
+              onTap: () async {
+                widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id)
+                    : await widget.user.removeFavoriteStore(widget.store.id);
                 //open change language
               },
-              trailing: Icon(
+              trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(
+                Icons.favorite,
+                color: Colors.black,
+              ) : Icon(
                 Icons.favorite_border,
                 color: Colors.black,
               ),

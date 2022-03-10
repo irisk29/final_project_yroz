@@ -38,11 +38,15 @@ class ProductItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           leading: IconButton(
-              icon: Icon(
+              icon: user.favoriteProducts.contains(product.id) ? Icon(
                 Icons.favorite,
+              ) : Icon(
+                Icons.favorite_border,
               ),
               color: Theme.of(context).accentColor,
-              onPressed: () {
+              onPressed: () async {
+                user.favoriteProducts.contains(product.id) ? await user.addFavoriteProduct(product.id)
+                : await user.removeFavoriteProduct(product.id);
                 //product.toggleFavoriteStatus(auth.token!, auth.userId!);
               },
           ),
