@@ -1,9 +1,9 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 
 class CartProductDTO extends ProductDTO {
-  int amount;
+  double amount;
 
-  CartProductDTO(String id, String name, double price, String category, String imageUrl, String description, int amount)
+  CartProductDTO(String id, String name, double price, String category, String imageUrl, String description, double amount)
       : this.amount = amount,
         super(id: id, name: name, price: price, category: category, imageUrl: imageUrl, description: description);
 

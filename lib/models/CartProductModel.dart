@@ -33,7 +33,7 @@ class CartProductModel extends Model {
   final double? _price;
   final String? _imageUrl;
   final String? _description;
-  final int? _amount;
+  final double? _amount;
   final String? _shoppingbagmodelID;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
@@ -93,8 +93,17 @@ class CartProductModel extends Model {
     return _description;
   }
   
-  int? get amount {
-    return _amount;
+  double get amount {
+    try {
+      return _amount!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   String get shoppingbagmodelID {
@@ -118,9 +127,9 @@ class CartProductModel extends Model {
     return _updatedAt;
   }
   
-  const CartProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, amount, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _amount = amount, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const CartProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required amount, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _amount = amount, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory CartProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, int? amount, required String shoppingbagmodelID}) {
+  factory CartProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required double amount, required String shoppingbagmodelID}) {
     return CartProductModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -173,7 +182,7 @@ class CartProductModel extends Model {
     return buffer.toString();
   }
   
-  CartProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, int? amount, String? shoppingbagmodelID}) {
+  CartProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, double? amount, String? shoppingbagmodelID}) {
     return CartProductModel._internal(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -192,7 +201,7 @@ class CartProductModel extends Model {
       _price = (json['price'] as num?)?.toDouble(),
       _imageUrl = json['imageUrl'],
       _description = json['description'],
-      _amount = (json['amount'] as num?)?.toInt(),
+      _amount = (json['amount'] as num?)?.toDouble(),
       _shoppingbagmodelID = json['shoppingbagmodelID'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
@@ -258,8 +267,8 @@ class CartProductModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: CartProductModel.AMOUNT,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.int)
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
