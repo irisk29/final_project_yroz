@@ -85,7 +85,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               catData.id,
                               catData.title,
                               catData.color,
-                              widget.user!
+                              widget.user
                             ),
                           )
                           .toList(),

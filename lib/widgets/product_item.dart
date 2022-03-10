@@ -63,6 +63,14 @@ class ProductItem extends StatelessWidget {
                       controller: myController,
                       keyboardType: TextInputType.number,
                     ),
+                    actions: [
+                      FlatButton(
+                        child: Text('Okay'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
                   ));
               double quantity = double.parse(myController.text);
               user.addProductToShoppingBag(product, quantity, storeID);

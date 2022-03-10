@@ -58,20 +58,16 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
           "" + widget.store.name,
         ),
         actions: [
-          Consumer<Cart>(
-            builder: (_, cart, ch) => Badge(
-              child: ch!,
-              value: cart.itemCount.toString(),
-            ),
+          Badge(
             child: IconButton(
-              //color: Colors.black,
               icon: Icon(
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
+                Navigator.of(context).pushNamed(CartScreen.routeName);
               },
             ),
+            value: widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString(),
           ),
         ],
       ),
