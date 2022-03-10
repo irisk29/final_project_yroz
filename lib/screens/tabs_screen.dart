@@ -6,6 +6,7 @@ import '../screens/splash_screen.dart';
 import '../widgets/app_drawer.dart';
 
 import '../screens/categories_screen.dart';
+import 'favorite_screen.dart';
 import 'map_screen.dart';
 
 class TabsScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _TabsScreenState extends State<TabsScreen> {
         'title': 'Home',
       },
       {
-        'page': SplashScreen(),
+        'page': FavoriteScreen(),
         'title': 'Your Favorites',
       },
       {

@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/models/ShoppingBagModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +16,6 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:tuple/tuple.dart';
 
 import 'DigitalWallet.dart';
-import 'ShoppingBag.dart';
 import 'StoreOwnerState.dart';
 
 class User extends ChangeNotifier {

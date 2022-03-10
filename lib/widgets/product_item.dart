@@ -54,8 +54,9 @@ class ProductItem extends StatelessWidget {
             icon: Icon(
               Icons.shopping_cart,
             ),
-            onPressed: () {
-              showDialog(
+            onPressed: () async {
+              double quantity = 0;
+              await showDialog(
                   context: context,
                   builder: (_) => AlertDialog(
                     title: Text('Select quantity'),
@@ -67,30 +68,36 @@ class ProductItem extends StatelessWidget {
                       FlatButton(
                         child: Text('Okay'),
                         onPressed: () {
+                          quantity = double.parse(myController.text);
+                          Navigator.of(context).pop();
+                          user.addProductToShoppingBag(product, quantity, storeID);
+                          //cart.addItem(product.id, product.price, product.title);
+                          Scaffold.of(context).hideCurrentSnackBar();
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Added item to cart!',
+                              ),
+                              duration: Duration(seconds: 2),
+                              action: SnackBarAction(
+                                label: 'UNDO',
+                                onPressed: () {
+                                  user.removeProductFromShoppingBag(product, storeID);
+                                  //cart.removeSingleItem(product.id);
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
                           Navigator.of(context).pop();
                         },
                       )
                     ],
                   ));
-              double quantity = double.parse(myController.text);
-              user.addProductToShoppingBag(product, quantity, storeID);
-              //cart.addItem(product.id, product.price, product.title);
-              Scaffold.of(context).hideCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Added item to cart!',
-                  ),
-                  duration: Duration(seconds: 2),
-                  action: SnackBarAction(
-                    label: 'UNDO',
-                    onPressed: () {
-                      user.removeProductFromShoppingBag(product, storeID);
-                      //cart.removeSingleItem(product.id);
-                    },
-                  ),
-                ),
-              );
             },
             color: Theme.of(context).accentColor,
           ),
