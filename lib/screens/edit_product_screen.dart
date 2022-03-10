@@ -1,11 +1,18 @@
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import '../providers/product.dart';
 import '../providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
+
+  ProductDTO? product;
+
+  EditProductScreen(this.product);
 
   @override
   _EditProductScreenState createState() => _EditProductScreenState();
@@ -61,21 +68,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context)!.settings.arguments as String?;
-      if (productId != null) {
-        _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
-        if (_editedProduct != null) {
-          _initValues = {
-            'title': _editedProduct!.title,
-            'description': _editedProduct!.description,
-            'price': _editedProduct!.price.toString(),
-            // 'imageUrl': _editedProduct.imageUrl,
-            'imageUrl': '',
-          };
-          _imageUrlController.text = _editedProduct!.imageUrl;
-        }
-      }
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -113,35 +105,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedProduct!.id != null) {
-      await Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct!.id, _editedProduct!);
-    } else {
-      try {
-        await Provider.of<Products>(context, listen: false)
-            .addProduct(_editedProduct!);
-      } catch (error) {
-        await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text('Something went wrong.'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Okay'),
-                onPressed: () {
-                  Navigator.of(ctx).pop(_editedProduct);
-                },
-              )
-            ],
-          ),
-        );
-      }
-    }
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(_editedProduct);
   }
 
   @override
@@ -152,6 +119,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'Edit Product',
         ),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.delete,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(null);
+            },
+          ),
           IconButton(
             icon: Icon(Icons.save),
             onPressed: _saveForm,

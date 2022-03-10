@@ -547,7 +547,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             ),
             onPressed: () async {
 
-            }, tooltip: "make the store online"
+            },
+              tooltip: "make the store online"
           ),
           IconButton(
             icon: Icon(
