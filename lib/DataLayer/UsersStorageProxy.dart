@@ -10,6 +10,7 @@ import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
+import 'package:tuple/tuple.dart';
 
 class UsersStorageProxy {
   static final UsersStorageProxy _singleton = UsersStorageProxy._internal();
@@ -163,6 +164,102 @@ class UsersStorageProxy {
     var fullUser = await createFullUser(user, nameUpdate, urlUpdate);
     await Amplify.DataStore.save(fullUser);
     return new Ok("new name $newName or new image url $newImageUrl was updated", user.id);
+  }
+
+  Future<ResultInterface> addFavoriteProduct(String prodID) async {
+    var user = await getUser(UserAuthenticator().getCurrentUserId());
+    if (user == null) {
+      //TODO: write to log
+      return new Failure("No user was found", null);
+    }
+    var favoriteProd = user.favoriteProducts;
+    if (favoriteProd != null) {
+      List<String> fav = (jsonDecode(user.favoriteProducts!) as List<dynamic>).cast<String>();
+      if (fav.contains(prodID)) {
+        return new Failure("The product $prodID is already a favorite", prodID);
+      }
+      fav.add(prodID);
+      var updatedUser = user.copyWith(
+        favoriteProducts: JsonEncoder.withIndent('  ').convert(fav),
+      );
+      await Amplify.DataStore.save(updatedUser);
+      return new Ok("Added succssefully product $prodID to user's favorite", fav);
+    }
+    var updatedUser = user.copyWith(
+      favoriteProducts: JsonEncoder.withIndent('  ').convert([prodID]),
+    );
+    await Amplify.DataStore.save(updatedUser);
+    return new Ok("Added succssefully product $prodID to user's favorite", [prodID]);
+  }
+
+  Future<ResultInterface> addFavoriteStore(String storeID, bool isOnline) async {
+    var user = await getUser(UserAuthenticator().getCurrentUserId());
+    if (user == null) {
+      //TODO: write to log
+      return new Failure("No user was found", null);
+    }
+    var favoriteStores = user.favoriteStores;
+    if (favoriteStores != null) {
+      List<Tuple2<String, bool>> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<Tuple2<String, bool>>();
+      if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) != null) {
+        return new Failure("The store $storeID is already a favorite", storeID);
+      }
+      fav.add(Tuple2<String, bool>(storeID, isOnline));
+      var updatedUser = user.copyWith(
+        favoriteStores: JsonEncoder.withIndent('  ').convert(fav),
+      );
+      await Amplify.DataStore.save(updatedUser);
+      return new Ok("Added succssefully store $storeID to user's favorite", fav);
+    }
+    var updatedUser = user.copyWith(
+      favoriteStores: JsonEncoder.withIndent('  ').convert([Tuple2<String, bool>(storeID, isOnline)]),
+    );
+    await Amplify.DataStore.save(updatedUser);
+    return new Ok("Added succssefully store $storeID to user's favorite", [Tuple2<String, bool>(storeID, isOnline)]);
+  }
+
+  Future<ResultInterface> removeFavoriteProduct(String prodID) async {
+    var user = await getUser(UserAuthenticator().getCurrentUserId());
+    if (user == null) {
+      //TODO: write to log
+      return new Failure("No user was found", null);
+    }
+    var favoriteProd = user.favoriteProducts;
+    if (favoriteProd != null) {
+      List<String> fav = (jsonDecode(user.favoriteProducts!) as List<dynamic>).cast<String>();
+      if (!fav.contains(prodID)) {
+        return new Failure("The product $prodID is not a favorite", prodID);
+      }
+      fav.remove(prodID);
+      var updatedUser = user.copyWith(
+        favoriteProducts: JsonEncoder.withIndent('  ').convert(fav),
+      );
+      await Amplify.DataStore.save(updatedUser);
+      return new Ok("Removed succssefully product $prodID from user's favorite", fav);
+    }
+    return new Failure("There is no favorite products list from current user ${user.id}", null);
+  }
+
+  Future<ResultInterface> removeFavoriteStore(String storeID, bool isOnline) async {
+    var user = await getUser(UserAuthenticator().getCurrentUserId());
+    if (user == null) {
+      //TODO: write to log
+      return new Failure("No user was found", null);
+    }
+    var favoriteStores = user.favoriteStores;
+    if (favoriteStores != null) {
+      List<Tuple2<String, bool>> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<Tuple2<String, bool>>();
+      if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) == null) {
+        return new Failure("The store $storeID is not a favorite", storeID);
+      }
+      fav.removeWhere((element) => element.item1 == storeID);
+      var updatedUser = user.copyWith(
+        favoriteStores: JsonEncoder.withIndent('  ').convert(fav),
+      );
+      await Amplify.DataStore.save(updatedUser);
+      return new Ok("Removed succssefully store $storeID from user's favorite", fav);
+    }
+    return Failure("There is no favorite stores list from current user ${user.id}", null);
   }
 
   Future<ResultInterface> addProductToShoppingBag(

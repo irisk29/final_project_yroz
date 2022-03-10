@@ -173,6 +173,46 @@ class User extends ChangeNotifier {
     return res;
   }
 
+  Future<void> addFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().addFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> addFavoriteStore(String storeID, bool isOnline) async {
+    var res = await UsersStorageProxy().addFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteStore(String storeID, bool isOnline) async {
+    var res = await UsersStorageProxy().removeFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
+  }
+
   Future<void> addProductToShoppingBag(ProductDTO productDTO, double quantity, String storeID) async {
     var res = await UsersStorageProxy()
         .addProductToShoppingBag(productDTO, storeID, quantity, this.id!); // <product, shopping bag>
