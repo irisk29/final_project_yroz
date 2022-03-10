@@ -14,6 +14,7 @@ class OnlineStoreScreen extends StatefulWidget {
   String phoneNumber = "";
   Map<String, List<TimeOfDay>> operationHours = {};
   List<ProductDTO> products = [];
+  String barcode = "";
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
@@ -49,6 +50,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     widget.address = routeArgs['address'] as String;
     widget.image = routeArgs['image'] as MemoryImage?;
     widget.phoneNumber = routeArgs['phoneNumber'] as String;
+    widget.barcode = routeArgs['barcode'] as String;
     Object? abc = routeArgs['operationHours'];
     if (abc != null)
       widget.operationHours = abc as Map<String, List<TimeOfDay>>;
@@ -163,6 +165,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
+            Text(widget.barcode),
             ElevatedButton(
               onPressed: () => routeToOnlineStoreProducts(context),
               child: Text('Online Store Shop'),

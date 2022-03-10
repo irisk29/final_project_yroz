@@ -2,6 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
@@ -156,6 +157,7 @@ class _MyAppState extends State<MyApp> {
             LandingScreen.routeName: (ctx) => LandingScreen(),
             EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
             EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
+            QRViewExample.routeName: (ctx) => QRViewExample()
           },
         ),
       ),
