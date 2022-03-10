@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/cart.dart';
 
-class CartItem extends StatelessWidget {
+class CartItem extends StatefulWidget {
   final CartProductDTO product;
   final OnlineStoreDTO store;
   final User user;
@@ -27,9 +27,16 @@ class CartItem extends StatelessWidget {
   }
 
   @override
+  State<CartItem> createState() => _CartItemState();
+}
+
+class _CartItemState extends State<CartItem> {
+  final myController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(product.id),
+      key: ValueKey(widget.product.id),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -71,8 +78,8 @@ class CartItem extends StatelessWidget {
         );
       },
       onDismissed: (direction) async {
-        await user.removeProductFromShoppingBag(product, store.id);
-        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': store, 'user': user});
+        await widget.user.removeProductFromShoppingBag(widget.product, widget.store.id);
+        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -82,18 +89,49 @@ class CartItem extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(8),
           child: ListTile(
-            leading: CircleAvatar(
-              child: Padding(
-                padding: EdgeInsets.all(5),
-                child: FittedBox(
-                  child: Text('\$$price'),
+              leading: CircleAvatar(
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: FittedBox(
+                    child: Text('\$${widget.price}'),
+                  ),
                 ),
               ),
+              title: Text(widget.title),
+              subtitle: Text('Total: \$${(widget.price * widget.quantity)}'),
+              trailing: Text('${widget.quantity} x'),
+              onLongPress: () async {
+                double quantity = 0;
+                await showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text('Select quantity'),
+                      content: TextField(
+                        controller: myController,
+                        keyboardType: TextInputType.number,
+                      ),
+                      actions: [
+                        FlatButton(
+                          child: Text('Okay'),
+                          onPressed: () {
+                            quantity = double.parse(myController.text);
+                            Navigator.of(context).pop();
+                            widget.user.updateProductQuantityInBag(widget.product, widget.store.id, quantity);
+                            setState(() {
+                              widget.quantity = quantity;
+                            });
+                            },
+                        ),
+                        FlatButton(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    ));
+              },
             ),
-            title: Text(title),
-            subtitle: Text('Total: \$${(price * quantity)}'),
-            trailing: Text('$quantity x'),
-          ),
         ),
       ),
     );
