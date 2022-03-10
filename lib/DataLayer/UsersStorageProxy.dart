@@ -10,6 +10,7 @@ import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
+import 'package:tuple/tuple.dart';
 
 class UsersStorageProxy {
   static final UsersStorageProxy _singleton = UsersStorageProxy._internal();
@@ -191,7 +192,7 @@ class UsersStorageProxy {
     return new Ok("Added succssefully product $prodID to user's favorite", [prodID]);
   }
 
-  Future<ResultInterface> addFavoriteStore(String storeID) async {
+  Future<ResultInterface> addFavoriteStore(String storeID, bool isOnline) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
       //TODO: write to log
@@ -199,11 +200,11 @@ class UsersStorageProxy {
     }
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
-      List<String> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<String>();
-      if (fav.contains(storeID)) {
+      List<Tuple2<String, bool>> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<Tuple2<String, bool>>();
+      if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) != null) {
         return new Failure("The store $storeID is already a favorite", storeID);
       }
-      fav.add(storeID);
+      fav.add(Tuple2<String, bool>(storeID, isOnline));
       var updatedUser = user.copyWith(
         favoriteStores: JsonEncoder.withIndent('  ').convert(fav),
       );
@@ -211,10 +212,10 @@ class UsersStorageProxy {
       return new Ok("Added succssefully store $storeID to user's favorite", fav);
     }
     var updatedUser = user.copyWith(
-      favoriteStores: JsonEncoder.withIndent('  ').convert([storeID]),
+      favoriteStores: JsonEncoder.withIndent('  ').convert([Tuple2<String, bool>(storeID, isOnline)]),
     );
     await Amplify.DataStore.save(updatedUser);
-    return new Ok("Added succssefully store $storeID to user's favorite", [storeID]);
+    return new Ok("Added succssefully store $storeID to user's favorite", [Tuple2<String, bool>(storeID, isOnline)]);
   }
 
   Future<ResultInterface> removeFavoriteProduct(String prodID) async {
@@ -239,7 +240,7 @@ class UsersStorageProxy {
     return new Failure("There is no favorite products list from current user ${user.id}", null);
   }
 
-  Future<ResultInterface> removeFavoriteStore(String storeID) async {
+  Future<ResultInterface> removeFavoriteStore(String storeID, bool isOnline) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
       //TODO: write to log
@@ -247,11 +248,11 @@ class UsersStorageProxy {
     }
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
-      List<String> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<String>();
-      if (!fav.contains(storeID)) {
+      List<Tuple2<String, bool>> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<Tuple2<String, bool>>();
+      if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) == null) {
         return new Failure("The store $storeID is not a favorite", storeID);
       }
-      fav.remove(storeID);
+      fav.removeWhere((element) => element.item1 == storeID);
       var updatedUser = user.copyWith(
         favoriteStores: JsonEncoder.withIndent('  ').convert(fav),
       );
