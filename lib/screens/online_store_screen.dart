@@ -148,7 +148,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id, true)
+                !widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id, true)
                     : await widget.user.removeFavoriteStore(widget.store.id, true);
                 //open change language
               },

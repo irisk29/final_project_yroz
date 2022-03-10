@@ -45,8 +45,8 @@ class ProductItem extends StatelessWidget {
               ),
               color: Theme.of(context).accentColor,
               onPressed: () async {
-                user.favoriteProducts.contains(product.id) ? await user.addFavoriteProduct(product.id)
-                : await user.removeFavoriteProduct(product.id);
+                user.favoriteProducts.contains(product.id) ? await user.removeFavoriteProduct(product.id)
+                : await user.addFavoriteProduct(product.id);
                 //product.toggleFavoriteStatus(auth.token!, auth.userId!);
               },
           ),

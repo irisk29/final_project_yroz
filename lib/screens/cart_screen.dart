@@ -29,6 +29,7 @@ class _CartScreenState extends State<CartScreen> {
     widget.user = routeArgs['user'] as User;
     widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +69,7 @@ class _CartScreenState extends State<CartScreen> {
               itemCount: widget.cart!.products.length,
               itemBuilder: (ctx, i) => CartItem(
                 widget.cart!.products.toList()[i],
-                widget.store.id,
+                widget.store,
                 widget.user
               ),
             ),
