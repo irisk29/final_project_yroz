@@ -165,7 +165,7 @@ class User extends ChangeNotifier {
     return res;
   }
 
-  Future<void> addProductToShoppingBag(ProductDTO productDTO, int quantity, String storeID) async {
+  Future<void> addProductToShoppingBag(ProductDTO productDTO, double quantity, String storeID) async {
     var res = await UsersStorageProxy()
         .addProductToShoppingBag(productDTO, storeID, quantity, this.id!); // <product, shopping bag>
     if (!res.getTag()) {
@@ -186,7 +186,7 @@ class User extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateProductQuantityInBag(ProductDTO productDTO, String storeID, int newQuantity) async {
+  Future<void> updateProductQuantityInBag(ProductDTO productDTO, String storeID, double newQuantity) async {
     var res = await UsersStorageProxy().updateProductQuantityInBag(productDTO, storeID, newQuantity, this.id!);
     if (!res.getTag()) {
       print(res.getMessage());
