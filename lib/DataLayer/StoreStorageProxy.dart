@@ -466,7 +466,7 @@ class StoreStorageProxy {
     }
   }
 
-  Future<ResultInterface> updateOnlineStore(StoreDTO newStore) async {
+  Future<ResultInterface> updateOnlineStore(OnlineStoreDTO newStore) async {
     try {
       List<OnlineStoreModel> onlineStores =
           await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(newStore.id));
@@ -495,6 +495,8 @@ class StoreStorageProxy {
         updatePicture(newStore.image!, newStore.id);
       }
       await Amplify.DataStore.save(updatedStore);
+      ResultInterface prodRes = await updateOnlineStoreProducts(newStore.products, newStore.id);
+      if (!prodRes.getTag()) return prodRes;
       return new Ok("updated online store succssefully", updatedStore);
     } on Exception catch (e) {
       // TODO: write to log
@@ -503,17 +505,17 @@ class StoreStorageProxy {
   }
 
   Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
-    List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
+    List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     if (products.isEmpty) return new Failure("No products were found in store $storeID", storeID);
-    for (StoreProductModel prod in products) {
+    for (StoreProductModel prod in productsModels) {
       await Amplify.DataStore.delete(prod);
     }
 
     List<StoreProductModel> updatedProd = products
         .map((e) => StoreProductModel(
             name: e.name,
-            categories: e.categories,
+            categories: e.category,
             price: e.price,
             onlinestoremodelID: storeID,
             imageUrl: e.imageUrl,
@@ -673,6 +675,12 @@ class StoreStorageProxy {
     var prod = prods.first;
     return new Ok(
         "Found product $prodId",
-        ProductDTO(id: prod.id, name: prod.name, price: prod.price, category: prod.categories, imageUrl: prod.imageUrl!, description: prod.description!));
+        ProductDTO(
+            id: prod.id,
+            name: prod.name,
+            price: prod.price,
+            category: prod.categories,
+            imageUrl: prod.imageUrl!,
+            description: prod.description!));
   }
 }
