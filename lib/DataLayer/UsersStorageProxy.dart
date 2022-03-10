@@ -77,7 +77,8 @@ class UsersStorageProxy {
     String emailCurrUser = UserAuthenticator().getCurrentUserId();
     UserModel? currUser = await getUser(emailCurrUser);
     if (currUser == null) {
-      throw Exception("current user model is null, user's email: " + emailCurrUser);
+      print("current user model is null, user's email: " + emailCurrUser);
+      return null;
     }
     return currUser.userModelStoreOwnerModelId;
   }

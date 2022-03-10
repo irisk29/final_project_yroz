@@ -8,7 +8,7 @@ import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
-import 'package:final_project_yroz/models/ShoppingBagModel.dart';
+import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
@@ -172,6 +172,20 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
     notifyListeners();
     return res;
+  }
+
+  Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
+    var res = await StoreStorageProxy().convertPhysicalStoreToOnlineStore(physicalStore);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    Tuple2<OnlineStoreModel, String> retVal = res.getValue();
+    this.storeOwnerState = new StoreOwnerState(retVal.item2);
+    this.storeOwnerState!.setOnlineStore(retVal.item1);
+    this.storeOwnerState!.physicalStore = null;
+
+    notifyListeners();
   }
 
   Future<void> addFavoriteProduct(String prodID) async {
