@@ -344,10 +344,14 @@ class UsersStorageProxy {
     ResultInterface res = await getProductsOfShoppingBag(shoppingBag.id);
     if (!res.getTag()) return res;
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
+    CartProductModel? prodToRemove = vals.firstWhere((element) => element.id == productDTO.id, orElse: null);
     vals.removeWhere((element) => element.id == productDTO.id);
 
     var newShoppingBag = shoppingBag.copyWith(CartProductModels: vals);
     await Amplify.DataStore.save(newShoppingBag);
+    if (prodToRemove != null) {
+      await Amplify.DataStore.delete(prodToRemove);
+    }
     return new Ok("Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}", newShoppingBag);
   }
 
