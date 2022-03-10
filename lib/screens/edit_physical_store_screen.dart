@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
@@ -546,7 +547,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               Icons.arrow_circle_up,
             ),
             onPressed: () async {
-
+              await Provider.of<User>(context, listen: false)
+                  .convertPhysicalStoreToOnline(_editedStore!);
+              Navigator.of(context).pushReplacementNamed(EditOnlineStorePipeline.routeName, arguments: widget.user);
             },
               tooltip: "make the store online"
           ),
