@@ -9,6 +9,7 @@ import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/models/CartProductModel.dart';
 import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
 import 'package:final_project_yroz/models/StoreOwnerModel.dart';
@@ -363,16 +364,15 @@ class StoreStorageProxy {
     for (OnlineStoreModel model in onlineStores) {
       String? url = await getDownloadUrl(model.id);
       OnlineStoreDTO dto = OnlineStoreDTO(
-        id: model.id,
-        name: model.name,
-        address: model.address,
-        phoneNumber: model.phoneNumber,
-        categories: jsonDecode(model.categories).cast<String>(),
-        operationHours: opHours(jsonDecode(model.operationHours)),
-        image: url,
-        products: await fetchStoreProducts(model.id),
-        qrCode: model.qrCode
-      );
+          id: model.id,
+          name: model.name,
+          address: model.address,
+          phoneNumber: model.phoneNumber,
+          categories: jsonDecode(model.categories).cast<String>(),
+          operationHours: opHours(jsonDecode(model.operationHours)),
+          image: url,
+          products: await fetchStoreProducts(model.id),
+          qrCode: model.qrCode);
       await dto.initImageFile();
       lst.add(dto);
     }
@@ -498,6 +498,40 @@ class StoreStorageProxy {
       // TODO: write to log
       throw e;
     }
+  }
+
+  Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
+    List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
+        where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
+    if (products.isEmpty) return new Failure("No products were found in store $storeID", storeID);
+    for (StoreProductModel prod in products) {
+      await Amplify.DataStore.delete(prod);
+    }
+
+    List<StoreProductModel> updatedProd = products
+        .map((e) => StoreProductModel(
+            name: e.name,
+            categories: e.categories,
+            price: e.price,
+            onlinestoremodelID: storeID,
+            imageUrl: e.imageUrl,
+            description: e.description))
+        .toList();
+
+    for (StoreProductModel p in updatedProd) {
+      await Amplify.DataStore.save(p);
+    }
+    return new Ok("Updated products in store $storeID", updatedProd);
+  }
+
+  OnlineStoreModel convertPhysicalModelToOnlineModel(PhysicalStoreModel physicalStoreModel) {
+    return OnlineStoreModel(
+        name: physicalStoreModel.name,
+        phoneNumber: physicalStoreModel.phoneNumber,
+        address: physicalStoreModel.address,
+        operationHours: physicalStoreModel.operationHours,
+        categories: physicalStoreModel.categories,
+        qrCode: physicalStoreModel.qrCode);
   }
 
   Future<ResultInterface> deleteStore(String id, bool isOnline) async {
