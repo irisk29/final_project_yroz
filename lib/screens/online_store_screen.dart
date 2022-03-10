@@ -119,10 +119,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName);
+                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
               },
             ),
-            value: widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString(),
+            value: widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
           ),
         ],
       ),

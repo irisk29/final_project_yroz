@@ -12,14 +12,14 @@ import '../widgets/store_item.dart';
 import '../dummy_data.dart';
 import '../widgets/category_item.dart';
 
-class CategoriesScreen extends StatefulWidget {
+class FavoriteScreen extends StatefulWidget {
   User? user;
 
   @override
-  State<CategoriesScreen> createState() => _CategoriesScreenState();
+  State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
+class _FavoriteScreenState extends State<FavoriteScreen> {
   List<StoreDTO> favoriteStores = [];
   List<ProductDTO> favoriteProducts = [];
 
@@ -37,7 +37,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void didChangeDependencies() {
     final user = ModalRoute.of(context)!.settings.arguments as User?;
     if (user != null) widget.user = user;
-    favoriteStores = user!.favoriteStores;
+    //favoriteStores = user!.favoriteStores;
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -52,7 +52,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         child: Column(
               children: [
                 Container(
-                  height: height * 0.1,
+                  height: height * 0.01,
                 ),
                 Align(
                   alignment: Alignment.topLeft,

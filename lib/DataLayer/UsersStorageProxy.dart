@@ -219,8 +219,8 @@ class UsersStorageProxy {
     if (!res.getTag()) return res;
     ShoppingBagDTO shoppingBag =
         ShoppingBagDTO(shoppingBagModel.usermodelID, shoppingBagModel.shoppingBagModelOnlineStoreModelId!);
-    var shoppingBagProductsDTO = res.getValue().map((e) => convertCartProductModelToDTO(e)).toList();
-    shoppingBag.products = shoppingBagProductsDTO!;
+    List<CartProductDTO> shoppingBagProductsDTO = res.getValue().map((e) => convertCartProductModelToDTO(e)).toList();
+    shoppingBag.products = shoppingBagProductsDTO;
     return new Ok("convert was succsseful", shoppingBag);
   }
 
@@ -229,7 +229,7 @@ class UsersStorageProxy {
         cartProductModel.id,
         cartProductModel.name,
         cartProductModel.price,
-        jsonDecode(cartProductModel.categories).cast<String>(),
+        jsonDecode(cartProductModel.categories).toString(),
         cartProductModel.imageUrl == null ? "" : cartProductModel.imageUrl!,
         cartProductModel.description == null ? "" : cartProductModel.description!,
         cartProductModel.amount);
