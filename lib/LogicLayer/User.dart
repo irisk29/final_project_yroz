@@ -178,6 +178,7 @@ class User extends ChangeNotifier {
         .addProductToShoppingBag(productDTO, storeID, quantity, this.id!); // <product, shopping bag>
     if (!res.getTag()) {
       print(res.getMessage());
+      return;
     }
     updateShoppingBag(res.getValue());
 
@@ -188,6 +189,7 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().removeProductFromShoppingBag(productDTO, storeID, this.id!);
     if (!res.getTag()) {
       print(res.getMessage());
+      return;
     }
     updateShoppingBag(res.getValue());
 
@@ -198,6 +200,7 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().updateProductQuantityInBag(productDTO, storeID, newQuantity, this.id!);
     if (!res.getTag()) {
       print(res.getMessage());
+      return;
     }
 
     var shoppingBag = this
@@ -219,6 +222,7 @@ class User extends ChangeNotifier {
     var res = await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
     if (!res.getTag()) {
       print(res.getMessage());
+      return;
     }
 
     this.bagInStores.removeWhere((element) => element.onlineStoreID == storeID && element.userId == this.id!);
@@ -233,6 +237,7 @@ class User extends ChangeNotifier {
     var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
     if (!convertRes.getTag()) {
       print(convertRes.getMessage());
+      return;
     }
     ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
     if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
