@@ -2,11 +2,13 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
+import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
 import '../providers/products.dart';
+import 'cart_screen.dart';
 
 class OnlineStoreScreen extends StatefulWidget {
   static const routeName = '/online-store';
@@ -110,6 +112,19 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
         title: Text(
           widget.store.name,
         ),
+        actions: [
+          Badge(
+            child: IconButton(
+              icon: Icon(
+                Icons.shopping_cart,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
+            ),
+            value: widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString(),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
