@@ -89,18 +89,7 @@ class CartItem extends StatelessWidget {
             ),
             title: Text(title),
             subtitle: Text('Total: \$${(price * quantity)}'),
-            trailing: Row(
-              children: [
-                Text('$quantity x'),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-
-                  },
-                  color: Theme.of(context).primaryColor,
-                ),
-              ],
-            ),
+            trailing: Text('$quantity x'),
           ),
         ),
       ),
