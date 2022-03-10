@@ -76,7 +76,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       favoriteStores
                           .map(
                             (storeData) => StoreItem(
-                              storeData
+                              storeData, widget.user!
                             ),
                       )
                           .toList(),
@@ -113,7 +113,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       favoriteStores
                           .map(
                             (storeData) => StoreItem(
-                            storeData
+                              storeData, widget.user!
                             ),
                       )
                           .toList(),

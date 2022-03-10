@@ -1,14 +1,16 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 
 class StoreItem extends StatelessWidget {
   final StoreDTO store;
+  final User user;
 
-  StoreItem(this.store) {
+  StoreItem(this.store, this.user) {
 
   }
 
@@ -16,11 +18,17 @@ class StoreItem extends StatelessWidget {
     this.store is OnlineStoreDTO
         ? Navigator.of(ctx).pushNamed(
             OnlineStoreScreen.routeName,
-            arguments: store,
+            arguments: {
+              'store': store,
+              'user': user
+            },
           )
         : Navigator.of(ctx).pushNamed(
             PhysicalStoreScreen.routeName,
-            arguments: store,
+            arguments: {
+              'store': store,
+              'user': user
+            },
           );
   }
 

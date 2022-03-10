@@ -85,6 +85,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               catData.id,
                               catData.title,
                               catData.color,
+                              widget.user!
                             ),
                           )
                           .toList(),
@@ -120,7 +121,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             physicalStores
                                 .map(
                                   (storeData) => StoreItem(
-                                    storeData
+                                    storeData, widget.user!
                                   ),
                                 )
                                 .toList(),
@@ -157,7 +158,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             onlineStores
                                 .map(
                                   (storeData) => StoreItem(
-                                      storeData
+                                      storeData, widget.user!
                                   ),
                                 )
                                 .toList(),

@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import '../providers/auth.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +11,12 @@ import '../providers/cart.dart';
 class ProductItem extends StatelessWidget {
   //final String id;
   final ProductDTO product;
+  final User user;
+  final String storeID;
 
-  ProductItem(this.product);
+  final myController = TextEditingController();
+
+  ProductItem(this.product, this.user, this.storeID);
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +55,17 @@ class ProductItem extends StatelessWidget {
               Icons.shopping_cart,
             ),
             onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: Text('Select quantity'),
+                    content: TextField(
+                      controller: myController,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ));
+              double quantity = double.parse(myController.text);
+              user.addProductToShoppingBag(product, quantity, storeID);
               //cart.addItem(product.id, product.price, product.title);
               Scaffold.of(context).hideCurrentSnackBar();
               Scaffold.of(context).showSnackBar(
@@ -61,6 +77,7 @@ class ProductItem extends StatelessWidget {
                   action: SnackBarAction(
                     label: 'UNDO',
                     onPressed: () {
+                      user.removeProductFromShoppingBag(product, storeID);
                       //cart.removeSingleItem(product.id);
                     },
                   ),

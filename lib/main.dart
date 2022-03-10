@@ -29,7 +29,6 @@ import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/product_detail_screen.dart';
-import 'screens/products_overview_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/tabs_screen.dart';
 
@@ -149,7 +148,6 @@ class _MyAppState extends State<MyApp> {
                 OpenPhysicalStorePipeline(),
             OpenOnlineStorePipeline.routeName: (ctx) =>
                 OpenOnlineStorePipeline(),
-            ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
             PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
             OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
             OnlineStoreProductsScreen.routeName: (ctx) =>
