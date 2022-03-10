@@ -1,4 +1,6 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +12,8 @@ import '../providers/products.dart';
 class OnlineStoreProductsScreen extends StatefulWidget {
   static const routeName = '/online-store-products';
 
-  String title = "";
-  List<ProductDTO> products = [];
+  late OnlineStoreDTO store;
+  late User user;
 
   @override
   _OnlineStoreProductsScreenState createState() =>
@@ -42,11 +44,9 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
-    widget.title = routeArgs['title'] as String;
-    Object? def = routeArgs['products'];
-    if (def != null) widget.products = def as List<ProductDTO>;
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    widget.store = routeArgs['store'] as OnlineStoreDTO;
+    widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -55,7 +55,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "" + widget.title,
+          "" + widget.store.name,
         ),
         actions: [
           Consumer<Cart>(
@@ -95,10 +95,10 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.all(5),
                 children: [
-                  widget.products
+                  widget.store.products
                       .map(
                         (storeData) =>
-                            ProductItem(storeData),
+                            ProductItem(storeData, widget.user, widget.store.id),
                       )
                       .toList(),
                 ].expand((i) => i).toList(),
