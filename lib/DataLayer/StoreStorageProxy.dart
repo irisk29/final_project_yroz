@@ -577,4 +577,42 @@ class StoreStorageProxy {
       return new Failure(e.toString(), id);
     }
   }
+
+  Future<ResultInterface> getPhysicalStore(String storeID) async {
+    List<PhysicalStoreModel> stores =
+        await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(storeID));
+    if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
+    var store = stores.first;
+    return new Ok(
+        "Found store $storeID",
+        StoreDTO(
+            id: store.id,
+            name: store.name,
+            phoneNumber: store.phoneNumber,
+            address: store.address,
+            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            operationHours: opHours(jsonDecode(store.operationHours)),
+            qrCode: store.qrCode,
+            image: await getDownloadUrl(storeID)));
+  }
+
+  Future<ResultInterface> getOnlineStore(String storeID) async {
+    List<OnlineStoreModel> stores =
+        await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(storeID));
+    if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
+    var store = stores.first;
+    var products = await fetchStoreProducts(store.id);
+    return new Ok(
+        "Found store $storeID",
+        OnlineStoreDTO(
+            id: store.id,
+            name: store.name,
+            phoneNumber: store.phoneNumber,
+            address: store.address,
+            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            operationHours: opHours(jsonDecode(store.operationHours)),
+            products: products,
+            qrCode: store.qrCode,
+            image: await getDownloadUrl(storeID)));
+  }
 }
