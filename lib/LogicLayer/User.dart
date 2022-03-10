@@ -289,8 +289,11 @@ class User extends ChangeNotifier {
   }
 
   void updateShoppingBag(ShoppingBagModel? shoppingBag) async {
-    if (shoppingBag == null) this.bagInStores = [];
-    var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag!);
+    if (shoppingBag == null) {
+      this.bagInStores = [];
+      return;
+    }
+    var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
     if (!convertRes.getTag()) {
       print(convertRes.getMessage());
       return;
