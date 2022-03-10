@@ -120,13 +120,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             physicalStores
                                 .map(
                                   (storeData) => StoreItem(
-                                    storeData.imageFile,
-                                    storeData.name,
-                                    storeData.address,
-                                    storeData.phoneNumber,
-                                    Map<String, List<TimeOfDay>>.from(
-                                        storeData.operationHours),
-                                    null,
+                                    storeData
                                   ),
                                 )
                                 .toList(),
@@ -163,14 +157,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             onlineStores
                                 .map(
                                   (storeData) => StoreItem(
-                                      storeData.imageFile,
-                                      storeData.name,
-                                      storeData.address,
-                                      storeData.phoneNumber,
-                                      Map<String, List<TimeOfDay>>.from(
-                                          storeData.operationHours),
-                                      List<ProductDTO>.from(
-                                          storeData.products)),
+                                      storeData
+                                  ),
                                 )
                                 .toList(),
                           ].expand((i) => i).toList(),

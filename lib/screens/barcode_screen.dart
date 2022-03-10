@@ -8,6 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class QRViewExample extends StatefulWidget {
+  static const routeName = '/barcode-screen';
+
   @override
   State<StatefulWidget> createState() => _QRViewExampleState();
 }

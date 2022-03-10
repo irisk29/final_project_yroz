@@ -543,13 +543,11 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.upgrade,
+              Icons.arrow_circle_up,
             ),
             onPressed: () async {
-              await Provider.of<User>(context, listen: false)
-                  .deleteStore(_editedStore!.id, false);
-              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
-            },
+
+            }, tooltip: "make the store online"
           ),
           IconButton(
             icon: Icon(

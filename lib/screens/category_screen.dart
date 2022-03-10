@@ -67,12 +67,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 DUMMY_STORES
                     .map(
                       (storeData) => StoreItem(
-                        storeData.imageFile,
-                        storeData.name,
-                        storeData.address,
-                        storeData.phoneNumber,
-                        Map<String,List<TimeOfDay>>.from(storeData.operationHours),
-                        null
+                        storeData
                       ),
                     )
                     .toList(),

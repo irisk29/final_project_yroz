@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../widgets/badge.dart';
 import '../providers/cart.dart';
@@ -14,6 +17,7 @@ class PhysicalStoreScreen extends StatefulWidget {
   MemoryImage? image = null;
   String phoneNumber = "";
   Map<String, List<TimeOfDay>> operationHours = {};
+  String barcode = "";
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
@@ -46,6 +50,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
     widget.address = routeArgs['address'] as String;
     widget.image = routeArgs['image'] as MemoryImage?;
     widget.phoneNumber = routeArgs['phoneNumber'] as String;
+    widget.barcode = routeArgs['barcode'] as String;
     Object? abc = routeArgs['operationHours'];
     if (abc != null)
       widget.operationHours = abc as Map<String, List<TimeOfDay>>;
@@ -209,6 +214,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 //open change language
               },
             ),
+            QrImage.withQr(qr: QrCode.fromData(data: widget.barcode, errorCorrectLevel: QrErrorCorrectLevel.M)),
           ],
         ),
       ),

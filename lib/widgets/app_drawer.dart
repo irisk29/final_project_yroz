@@ -1,5 +1,6 @@
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/tabs_screen.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,14 @@ class AppDrawer extends StatelessWidget {
             title: Text('Orders'),
             onTap: () {
 
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.qr_code_scanner),
+            title: Text('Scan Barcode'),
+            onTap: () {
+              Navigator.pushNamed(context, QRViewExample.routeName);
             },
           ),
           Divider(),
