@@ -250,12 +250,17 @@ class UsersStorageProxy {
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
     CartProductModel? prodToRemove = vals.firstWhere((element) => element.id == productDTO.id, orElse: null);
     vals.removeWhere((element) => element.id == productDTO.id);
-
-    var newShoppingBag = shoppingBag.copyWith(CartProductModels: vals);
-    await Amplify.DataStore.save(newShoppingBag);
     if (prodToRemove != null) {
       await Amplify.DataStore.delete(prodToRemove);
     }
+
+    if (vals.isEmpty) // no more products in bag - need to remove bag
+    {
+      await Amplify.DataStore.delete(shoppingBag);
+      return Ok("Removed product ${productDTO.id} and shopping bag ${shoppingBag.id}", null);
+    }
+    var newShoppingBag = shoppingBag.copyWith(CartProductModels: vals);
+    await Amplify.DataStore.save(newShoppingBag);
     return new Ok("Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}", newShoppingBag);
   }
 
