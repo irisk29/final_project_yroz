@@ -1,25 +1,33 @@
+import 'package:final_project_yroz/DTOs/CartProductDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/cart.dart';
 
 class CartItem extends StatelessWidget {
-  final String id;
-  final double price;
-  final double quantity;
-  final String title;
+  final CartProductDTO product;
+  final String storeID;
+  final User user;
+
+  late double price;
+  late String title;
+  late double quantity;
 
   CartItem(
-    this.id,
-    this.price,
-    this.quantity,
-    this.title,
-  );
+    this.product,
+    this.storeID,
+    this.user
+  ){
+    price = product.price;
+    quantity = product.amount;
+    title = product.name;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(id),
+      key: ValueKey(product.id),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -61,7 +69,7 @@ class CartItem extends StatelessWidget {
         );
       },
       onDismissed: (direction) {
-        Provider.of<Cart>(context, listen: false).removeItem(id);
+        user.removeProductFromShoppingBag(product, storeID);
       },
       child: Card(
         margin: EdgeInsets.symmetric(
