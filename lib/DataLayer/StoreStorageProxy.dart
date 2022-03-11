@@ -9,7 +9,6 @@ import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
-import 'package:final_project_yroz/models/CartProductModel.dart';
 import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
 import 'package:final_project_yroz/models/StoreOwnerModel.dart';
@@ -295,7 +294,8 @@ class StoreStorageProxy {
             price: e.price,
             category: e.categories.isEmpty ? "" : jsonDecode(e.categories).cast<String>(),
             imageUrl: e.imageUrl!,
-            description: e.description!))
+            description: e.description!,
+            storeID: e.onlinestoremodelID))
         .toList();
   }
 
@@ -390,7 +390,8 @@ class StoreStorageProxy {
           price: model.price,
           category: jsonDecode(model.categories).cast<List<String>>(),
           imageUrl: model.imageUrl!,
-          description: model.description!);
+          description: model.description!,
+          storeID: model.onlinestoremodelID);
       lst.add(dto);
     }
     return lst;
@@ -671,7 +672,7 @@ class StoreStorageProxy {
   Future<ResultInterface> getOnlineStoreProduct(String prodId) async {
     List<StoreProductModel> prods =
         await Amplify.DataStore.query(StoreProductModel.classType, where: StoreProductModel.ID.eq(prodId));
-    if (prods.isEmpty) return new Failure("No such products $prodId exists", prodId);
+    if (prods.isEmpty) return new Failure("No such product $prodId exists", prodId);
     var prod = prods.first;
     return new Ok(
         "Found product $prodId",
@@ -681,6 +682,7 @@ class StoreStorageProxy {
             price: prod.price,
             category: prod.categories,
             imageUrl: prod.imageUrl!,
-            description: prod.description!));
+            description: prod.description!,
+            storeID: prod.onlinestoremodelID));
   }
 }

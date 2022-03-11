@@ -28,7 +28,8 @@ class AddProductScreen extends StatefulWidget {
               description: "",
               category: "",
               price: 0,
-              imageUrl: ""),
+              imageUrl: "",
+              storeID: ""),
         ),
       ],
       child: Scaffold(
@@ -51,6 +52,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     description: '',
     imageUrl: '',
     category: '',
+    storeID: ''
   );
   var _initValues = {
     'title': '',
@@ -183,7 +185,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       description: _editedProduct!.description,
                       imageUrl: _editedProduct!.imageUrl,
                       id: _editedProduct!.id,
-                      category: '');
+                      category: '',
+                      storeID: '');
                 },
               ),
               TextFormField(
@@ -215,7 +218,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       description: _editedProduct!.description,
                       imageUrl: _editedProduct!.imageUrl,
                       id: _editedProduct!.id,
-                      category: '');
+                      category: '',
+                      storeID: '');
                 },
               ),
               TextFormField(
@@ -241,6 +245,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     imageUrl: _editedProduct!.imageUrl,
                     id: _editedProduct!.id,
                     category: '',
+                    storeID: ''
                   );
                 },
               ),
@@ -302,6 +307,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           imageUrl: value!,
                           id: _editedProduct!.id,
                           category: '',
+                          storeID: ''
                         );
                       },
                     ),

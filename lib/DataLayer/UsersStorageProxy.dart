@@ -286,7 +286,7 @@ class UsersStorageProxy {
 
   CartProductDTO convertStoreProductToCartProduct(ProductDTO productDTO, double quantity) {
     return CartProductDTO(productDTO.id, productDTO.name, productDTO.price, productDTO.category, productDTO.imageUrl,
-        productDTO.description, quantity);
+        productDTO.description, quantity, productDTO.storeID);
   }
 
   Future<ResultInterface> getOrCreateUserShoppingBagPerStore(String storeID, String userID) async {
@@ -318,12 +318,12 @@ class UsersStorageProxy {
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
     ShoppingBagDTO shoppingBag =
         ShoppingBagDTO(shoppingBagModel.usermodelID, shoppingBagModel.shoppingBagModelOnlineStoreModelId!);
-    List<CartProductDTO> shoppingBagProductsDTO = vals.map((e) => convertCartProductModelToDTO(e)).toList();
+    List<CartProductDTO> shoppingBagProductsDTO = vals.map((e) => convertCartProductModelToDTO(e, shoppingBagModel.shoppingBagModelOnlineStoreModelId!)).toList();
     shoppingBag.products = shoppingBagProductsDTO;
     return new Ok("convert was succsseful", shoppingBag);
   }
 
-  CartProductDTO convertCartProductModelToDTO(CartProductModel cartProductModel) {
+  CartProductDTO convertCartProductModelToDTO(CartProductModel cartProductModel, String storeID) {
     return CartProductDTO(
         cartProductModel.id,
         cartProductModel.name,
@@ -331,7 +331,8 @@ class UsersStorageProxy {
         jsonDecode(cartProductModel.categories).toString(),
         cartProductModel.imageUrl == null ? "" : cartProductModel.imageUrl!,
         cartProductModel.description == null ? "" : cartProductModel.description!,
-        cartProductModel.amount);
+        cartProductModel.amount,
+        storeID);
   }
 
   Future<ResultInterface> removeProductFromShoppingBag(ProductDTO productDTO, String storeID, String userID) async {

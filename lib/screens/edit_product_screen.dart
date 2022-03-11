@@ -26,7 +26,8 @@ class EditProductScreen extends StatefulWidget {
                   description: "",
                   category: "",
                   price: 0,
-                  imageUrl: ""),
+                  imageUrl: "",
+                  storeID: ""),
             ),
           ],
           child: Scaffold(
@@ -49,6 +50,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     description: '',
     imageUrl: '',
     category: '',
+    storeID: ''
   );
   var _initValues = {
     'title': '',
@@ -166,7 +168,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             description: _editedProduct!.description,
                             imageUrl: _editedProduct!.imageUrl,
                             id: _editedProduct!.id,
-                            category: '');
+                            category: '',
+                            storeID: '');
                       },
                     ),
                     TextFormField(
@@ -198,7 +201,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             description: _editedProduct!.description,
                             imageUrl: _editedProduct!.imageUrl,
                             id: _editedProduct!.id,
-                            category: '');
+                            category: '',
+                            storeID: '');
                       },
                     ),
                     TextFormField(
@@ -224,6 +228,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           imageUrl: _editedProduct!.imageUrl,
                           id: _editedProduct!.id,
                           category: '',
+                          storeID: ''
                         );
                       },
                     ),
@@ -285,6 +290,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                 imageUrl: value!,
                                 id: _editedProduct!.id,
                                 category: '',
+                                storeID: ''
                               );
                             },
                           ),
