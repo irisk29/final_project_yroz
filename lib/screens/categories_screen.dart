@@ -43,6 +43,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void didChangeDependencies() {
     final user = ModalRoute.of(context)!.settings.arguments as User?;
     if (user != null) widget.user = user;
+    () async {
+      onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
+      physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
+      setState(() {
+        // Update your UI with the desired changes.
+      });
+    }();
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -85,6 +92,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               catData.id,
                               catData.title,
                               catData.color,
+                              widget.user
                             ),
                           )
                           .toList(),
@@ -120,13 +128,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             physicalStores
                                 .map(
                                   (storeData) => StoreItem(
-                                    storeData.imageFile,
-                                    storeData.name,
-                                    storeData.address,
-                                    storeData.phoneNumber,
-                                    Map<String, List<TimeOfDay>>.from(
-                                        storeData.operationHours),
-                                    null,
+                                    storeData, widget.user!
                                   ),
                                 )
                                 .toList(),
@@ -163,14 +165,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             onlineStores
                                 .map(
                                   (storeData) => StoreItem(
-                                      storeData.imageFile,
-                                      storeData.name,
-                                      storeData.address,
-                                      storeData.phoneNumber,
-                                      Map<String, List<TimeOfDay>>.from(
-                                          storeData.operationHours),
-                                      List<ProductDTO>.from(
-                                          storeData.products)),
+                                      storeData, widget.user!
+                                  ),
                                 )
                                 .toList(),
                           ].expand((i) => i).toList(),

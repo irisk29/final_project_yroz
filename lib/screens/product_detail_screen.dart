@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,16 +14,11 @@ class ProductDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productId =
-        ModalRoute.of(context)!.settings.arguments as String; // is the id!
-    final loadedProduct = Provider.of<Products>(
-      context,
-      listen: false,
-    ).findById(productId);
-    return loadedProduct != null
-        ? Scaffold(
+    final loadedProduct =
+        ModalRoute.of(context)!.settings.arguments as ProductDTO; // is the id!
+    return Scaffold(
             appBar: AppBar(
-              title: Text(loadedProduct.title),
+              title: Text(loadedProduct.name),
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -70,8 +66,7 @@ class ProductDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
-          )
-        : SplashScreen();
+          );
   }
 
   Widget wrapWithMaterial() => MaterialApp(

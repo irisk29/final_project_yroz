@@ -1,45 +1,33 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 
 class StoreItem extends StatelessWidget {
-  final MemoryImage? image;
-  final String title;
-  final String address;
-  final String phoneNumber;
-  late final Map<String, List<TimeOfDay>> operationHours;
-  late final List<ProductDTO>? products;
+  final StoreDTO store;
+  final User user;
 
-  StoreItem(this.image, this.title, this.address, this.phoneNumber,
-      operationHours, products) {
-    this.operationHours = Map<String, List<TimeOfDay>>.from(operationHours);
-    this.products = products == null ? null : List<ProductDTO>.from(products);
+  StoreItem(this.store, this.user) {
+
   }
 
   void selectStore(BuildContext ctx) {
-    this.products == null
+    this.store is OnlineStoreDTO
         ? Navigator.of(ctx).pushNamed(
-            PhysicalStoreScreen.routeName,
+            OnlineStoreScreen.routeName,
             arguments: {
-              'title': title,
-              'address': address,
-              'image': image,
-              'phoneNumber': phoneNumber,
-              'operationHours':
-                  Map<String, List<TimeOfDay>>.from(operationHours),
+              'store': store,
+              'user': user
             },
           )
         : Navigator.of(ctx).pushNamed(
-            OnlineStoreScreen.routeName,
+            PhysicalStoreScreen.routeName,
             arguments: {
-              'title': title,
-              'address': address,
-              'image': image,
-              'phoneNumber': phoneNumber,
-              'operationHours':
-                  Map<String, List<TimeOfDay>>.from(operationHours),
-              'products': products
+              'store': store,
+              'user': user
             },
           );
   }
@@ -54,8 +42,8 @@ class StoreItem extends StatelessWidget {
               child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              image: this.image != null
-                  ? DecorationImage(image: this.image!, fit: BoxFit.cover)
+              image: this.store.image != null
+                  ? DecorationImage(image: this.store.imageFile!, fit: BoxFit.cover)
                   : DecorationImage(
                       image: AssetImage('assets/images/default-store.png'),
                       fit: BoxFit.cover),
@@ -71,7 +59,7 @@ class StoreItem extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Text(
-                    this.title,
+                    this.store.name,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color.fromRGBO(20, 19, 42, 1),
@@ -79,7 +67,7 @@ class StoreItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    this.address,
+                    this.store.address,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.grey,

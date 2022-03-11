@@ -1,4 +1,6 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +12,8 @@ import '../providers/products.dart';
 class OnlineStoreProductsScreen extends StatefulWidget {
   static const routeName = '/online-store-products';
 
-  String title = "";
-  List<ProductDTO> products = [];
+  late OnlineStoreDTO store;
+  late User user;
 
   @override
   _OnlineStoreProductsScreenState createState() =>
@@ -35,6 +37,9 @@ class OnlineStoreProductsScreen extends StatefulWidget {
 }
 
 class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
+
+  String cartSize = "0";
+
   @override
   void initState() {
     super.initState();
@@ -42,11 +47,10 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
-    widget.title = routeArgs['title'] as String;
-    Object? def = routeArgs['products'];
-    if (def != null) widget.products = def as List<ProductDTO>;
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    widget.store = routeArgs['store'] as OnlineStoreDTO;
+    widget.user = routeArgs['user'] as User;
+    cartSize = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString();
     super.didChangeDependencies();
   }
 
@@ -55,23 +59,19 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "" + widget.title,
+          "" + widget.store.name,
         ),
         actions: [
-          Consumer<Cart>(
-            builder: (_, cart, ch) => Badge(
-              child: ch!,
-              value: cart.itemCount.toString(),
-            ),
+          Badge(
             child: IconButton(
-              //color: Colors.black,
               icon: Icon(
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName);
+                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
               },
             ),
+            value: cartSize,
           ),
         ],
       ),
@@ -95,10 +95,10 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.all(5),
                 children: [
-                  widget.products
+                  widget.store.products
                       .map(
                         (storeData) =>
-                            ProductItem(storeData.name, storeData.imageUrl),
+                            ProductItem(storeData, widget.user, widget.store.id),
                       )
                       .toList(),
                 ].expand((i) => i).toList(),

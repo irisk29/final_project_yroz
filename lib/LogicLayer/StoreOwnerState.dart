@@ -42,6 +42,7 @@ class StoreOwnerState {
         operationHours: op,
         image: imageUrl,
         products: onlineStoreModel.storeProductModels == null
+        || onlineStoreModel.storeProductModels!.isEmpty
             ? []
             : onlineStoreModel.storeProductModels!
                 .map((e) => ProductDTO(
@@ -50,7 +51,8 @@ class StoreOwnerState {
                     description: e.description!,
                     category: e.categories,
                     price: e.price,
-                    imageUrl: e.imageUrl!))
+                    imageUrl: e.imageUrl!,
+                    storeID: e.onlinestoremodelID))
                 .toList(),
         qrCode: onlineStoreModel.qrCode);
   }
@@ -61,7 +63,7 @@ class StoreOwnerState {
         jsonDecode(physicalStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
     String? imageUrl = await StoreStorageProxy().getDownloadUrl(physicalStoreModel.id);
-    physicalStore = new StoreDTO(id: physicalStoreModel.id, name: physicalStoreModel.name, phoneNumber: physicalStoreModel.phoneNumber, 
+    physicalStore = new StoreDTO(id: physicalStoreModel.id, name: physicalStoreModel.name, phoneNumber: physicalStoreModel.phoneNumber,
     address: physicalStoreModel.address, categories: List<String>.from(categories), operationHours: op, image: imageUrl, qrCode: physicalStoreModel.qrCode!);
   }
 

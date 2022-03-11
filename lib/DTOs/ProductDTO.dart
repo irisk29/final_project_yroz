@@ -1,5 +1,3 @@
-import 'package:final_project_yroz/LogicLayer/Category.dart';
-
 class ProductDTO {
   String id;
   String name;
@@ -7,7 +5,20 @@ class ProductDTO {
   double price;
   String imageUrl;
   String description;
+  String storeID;
 
   ProductDTO(
-  {required this.id, required this.name, required this.price, required this.category, required this.imageUrl, required this.description});
+      {required this.id,
+      required this.name,
+      required this.price,
+      required this.category,
+      required this.imageUrl,
+      required this.description,
+      required this.storeID});
+
+  @override
+  bool operator ==(other) {
+    if (other is ProductDTO) return this.id == other.id;
+    return false;
+  }
 }

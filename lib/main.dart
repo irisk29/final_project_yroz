@@ -2,6 +2,9 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/screens/barcode_screen.dart';
+import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
+import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
@@ -26,7 +29,6 @@ import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/product_detail_screen.dart';
-import 'screens/products_overview_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/tabs_screen.dart';
 
@@ -138,7 +140,7 @@ class _MyAppState extends State<MyApp> {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),
             TabsScreen.routeName: (ctx) => TabsScreen(null),
-            EditProductScreen.routeName: (ctx) => EditProductScreen(),
+            EditProductScreen.routeName: (ctx) => EditProductScreen(null),
             CategoryScreen.routeName: (ctx) => CategoryScreen(),
             SettingsScreen.routeName: (ctx) => SettingsScreen(),
             PaymentScreen.routeName: (ctx) => PaymentScreen(),
@@ -146,12 +148,14 @@ class _MyAppState extends State<MyApp> {
                 OpenPhysicalStorePipeline(),
             OpenOnlineStorePipeline.routeName: (ctx) =>
                 OpenOnlineStorePipeline(),
-            ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
             PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
             OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
             OnlineStoreProductsScreen.routeName: (ctx) =>
                 OnlineStoreProductsScreen(),
             LandingScreen.routeName: (ctx) => LandingScreen(),
+            EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
+            EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
+            QRViewExample.routeName: (ctx) => QRViewExample()
           },
         ),
       ),

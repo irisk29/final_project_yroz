@@ -1,6 +1,11 @@
+import 'dart:ui';
+
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../widgets/badge.dart';
 import '../providers/cart.dart';
@@ -9,11 +14,8 @@ import './cart_screen.dart';
 class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
 
-  String title = "";
-  String address = "";
-  MemoryImage? image = null;
-  String phoneNumber = "";
-  Map<String, List<TimeOfDay>> operationHours = {};
+  late StoreDTO store;
+  late User user;
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
@@ -40,21 +42,15 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object?>;
-    widget.title = routeArgs['title'] as String;
-    widget.address = routeArgs['address'] as String;
-    widget.image = routeArgs['image'] as MemoryImage?;
-    widget.phoneNumber = routeArgs['phoneNumber'] as String;
-    Object? abc = routeArgs['operationHours'];
-    if (abc != null)
-      widget.operationHours = abc as Map<String, List<TimeOfDay>>;
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    widget.store = routeArgs['store'] as StoreDTO;
+    widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
   String mapAsString() {
     String map = "";
-    for (MapEntry<String, List<TimeOfDay>> e in widget.operationHours.entries) {
+    for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
       map = map + e.key + ": ";
       for (int i = 0; i < e.value.length; i++) {
         map = map + e.value[i].format(context) + " ";
@@ -84,7 +80,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
     //String hour = DateFormat('Hm').format(DateTime.now());
-    for (MapEntry<String, List<TimeOfDay>> e in widget.operationHours.entries) {
+    for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
       if (e.key == day) {
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
         if (opBigger(time, e.value[0]) && opSmaller(time, e.value[1])) {
@@ -104,23 +100,10 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "" + widget.title,
+          "" + widget.store.name,
         ),
         actions: [
-          Consumer<Cart>(
-            builder: (_, cart, ch) => Badge(
-              child: ch!,
-              value: cart.itemCount.toString(),
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.shopping_cart,
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName);
-              },
-            ),
-          ),
+
         ],
       ),
       body: SingleChildScrollView(
@@ -131,8 +114,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: widget.image != null
-                      ? DecorationImage(fit: BoxFit.cover, image: widget.image!)
+                  image: widget.store.image != null
+                      ? DecorationImage(fit: BoxFit.cover, image: widget.store.imageFile!)
                       : DecorationImage(
                           image: AssetImage('assets/images/default-store.png'),
                           fit: BoxFit.cover),
@@ -144,10 +127,18 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 "About the store",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
-              onTap: () {
+              onTap: () async {
+                widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.removeFavoriteStore(widget.store.id, false)
+                    : await widget.user.addFavoriteStore(widget.store.id, false);
+                setState(() {
+
+                });
                 //open change language
               },
-              trailing: Icon(
+              trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(
+                Icons.favorite,
+                color: Colors.black,
+              ) : Icon(
                 Icons.favorite_border,
                 color: Colors.black,
               ),
@@ -180,7 +171,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 Icons.location_on,
                 color: Colors.grey,
               ),
-              title: Text(widget.address),
+              title: Text(widget.store.address),
               onTap: () {
                 //open change location
               },
@@ -204,11 +195,12 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 Icons.phone,
                 color: Colors.grey,
               ),
-              title: Text(widget.phoneNumber),
+              title: Text(widget.store.phoneNumber),
               onTap: () {
                 //open change language
               },
             ),
+            QrImage.withQr(qr: QrCode.fromData(data: widget.store.qrCode!, errorCorrectLevel: QrErrorCorrectLevel.M)),
           ],
         ),
       ),

@@ -9,7 +9,6 @@ import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
-import 'package:final_project_yroz/models/CartProductModel.dart';
 import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
 import 'package:final_project_yroz/models/StoreOwnerModel.dart';
@@ -36,7 +35,7 @@ class StoreStorageProxy {
   StoreStorageProxy._internal();
 
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
-    OnlineStoreModel onlineStoreModelWithoutQR = OnlineStoreModel(
+    OnlineStoreModel onlineStoreModel = OnlineStoreModel(
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
@@ -52,9 +51,11 @@ class StoreStorageProxy {
           }
         }).convert(store.operationHours));
 
-    String qrCode = await generateUniqueQRCode(onlineStoreModelWithoutQR.id);
-    var onlineStoreModel = onlineStoreModelWithoutQR.copyWith(qrCode: qrCode);
-
+    String? qrCode = store.qrCode;
+    if (store.qrCode == null || store.qrCode!.isEmpty) {
+      qrCode = await generateUniqueQRCode(onlineStoreModel.id);
+      onlineStoreModel = onlineStoreModel.copyWith(qrCode: qrCode);
+    }
     if (store.image != null && store.image!.isNotEmpty) {
       await uploadPicture(store.image!, onlineStoreModel.id); // uploading the picture to s3
     }
@@ -293,7 +294,8 @@ class StoreStorageProxy {
             price: e.price,
             category: e.categories.isEmpty ? "" : jsonDecode(e.categories).cast<String>(),
             imageUrl: e.imageUrl!,
-            description: e.description!))
+            description: e.description!,
+            storeID: e.onlinestoremodelID))
         .toList();
   }
 
@@ -388,7 +390,8 @@ class StoreStorageProxy {
           price: model.price,
           category: jsonDecode(model.categories).cast<List<String>>(),
           imageUrl: model.imageUrl!,
-          description: model.description!);
+          description: model.description!,
+          storeID: model.onlinestoremodelID);
       lst.add(dto);
     }
     return lst;
@@ -464,7 +467,7 @@ class StoreStorageProxy {
     }
   }
 
-  Future<ResultInterface> updateOnlineStore(StoreDTO newStore) async {
+  Future<ResultInterface> updateOnlineStore(OnlineStoreDTO newStore) async {
     try {
       List<OnlineStoreModel> onlineStores =
           await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(newStore.id));
@@ -493,6 +496,8 @@ class StoreStorageProxy {
         updatePicture(newStore.image!, newStore.id);
       }
       await Amplify.DataStore.save(updatedStore);
+      ResultInterface prodRes = await updateOnlineStoreProducts(newStore.products, newStore.id);
+      if (!prodRes.getTag()) return prodRes;
       return new Ok("updated online store succssefully", updatedStore);
     } on Exception catch (e) {
       // TODO: write to log
@@ -501,17 +506,17 @@ class StoreStorageProxy {
   }
 
   Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
-    List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
+    List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     if (products.isEmpty) return new Failure("No products were found in store $storeID", storeID);
-    for (StoreProductModel prod in products) {
+    for (StoreProductModel prod in productsModels) {
       await Amplify.DataStore.delete(prod);
     }
 
     List<StoreProductModel> updatedProd = products
         .map((e) => StoreProductModel(
             name: e.name,
-            categories: e.categories,
+            categories: e.category,
             price: e.price,
             onlinestoremodelID: storeID,
             imageUrl: e.imageUrl,
@@ -522,16 +527,6 @@ class StoreStorageProxy {
       await Amplify.DataStore.save(p);
     }
     return new Ok("Updated products in store $storeID", updatedProd);
-  }
-
-  OnlineStoreModel convertPhysicalModelToOnlineModel(PhysicalStoreModel physicalStoreModel) {
-    return OnlineStoreModel(
-        name: physicalStoreModel.name,
-        phoneNumber: physicalStoreModel.phoneNumber,
-        address: physicalStoreModel.address,
-        operationHours: physicalStoreModel.operationHours,
-        categories: physicalStoreModel.categories,
-        qrCode: physicalStoreModel.qrCode);
   }
 
   Future<ResultInterface> deleteStore(String id, bool isOnline) async {
@@ -556,6 +551,8 @@ class StoreStorageProxy {
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
+      var res = await deleteStoreOwnerStateIfNeeded(true);
+      if (!res.getTag()) return res;
       return new Ok("Deleted online store succssefully", id);
     } on Exception catch (e) {
       // TODO: write to log
@@ -571,10 +568,121 @@ class StoreStorageProxy {
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
+      var res = await deleteStoreOwnerStateIfNeeded(false);
+      if (!res.getTag()) return res;
       return new Ok("Deleted physical store succssefully", id);
     } on Exception catch (e) {
       // TODO: write to log
       return new Failure(e.toString(), id);
     }
+  }
+
+  Future<ResultInterface> deleteStoreOwnerStateIfNeeded(bool deletedOnlineStore) async {
+    String? storeOwnerID = await UsersStorageProxy().getStoreOwnerStateId();
+    if (storeOwnerID == null) return new Failure("No store owner to delete", null);
+    List<StoreOwnerModel> storeOwners =
+        await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
+    StoreOwnerModel storeOwnerModel = storeOwners.first;
+    if (deletedOnlineStore) {
+      if (storeOwnerModel.storeOwnerModelPhysicalStoreModelId == null) {
+        await Amplify.DataStore.delete(storeOwnerModel); //no store left
+        UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+        if (currUser == null) return Failure("No such user", null);
+        UserModel userWithoutStoreOwnerState =
+            currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
+        await Amplify.DataStore.save(userWithoutStoreOwnerState);
+        return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
+      }
+      StoreOwnerModel updatedStoreModel =
+          storeOwnerModel.copyWith(onlineStoreModel: null, storeOwnerModelOnlineStoreModelId: null);
+      await Amplify.DataStore.save(updatedStoreModel);
+      return new Ok("Deleted online store from Store Owner State", updatedStoreModel);
+    }
+
+    if (storeOwnerModel.storeOwnerModelOnlineStoreModelId == null) {
+      await Amplify.DataStore.delete(storeOwnerModel); //no store left
+      UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+      if (currUser == null) return Failure("No such user", null);
+      UserModel userWithoutStoreOwnerState = currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
+      await Amplify.DataStore.save(userWithoutStoreOwnerState);
+      return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
+    }
+    StoreOwnerModel updatedStoreModel =
+        storeOwnerModel.copyWith(physicalStoreModel: null, storeOwnerModelPhysicalStoreModelId: null);
+    await Amplify.DataStore.save(updatedStoreModel);
+    return new Ok("Deleted online store from Store Owner State", updatedStoreModel);
+  }
+
+  Future<ResultInterface> convertPhysicalStoreToOnlineStore(StoreDTO physicalStore) async {
+    ResultInterface deletePhysicalRes = await deletePhysicalStore(physicalStore.id);
+    if (!deletePhysicalRes.getTag()) return deletePhysicalRes;
+    OnlineStoreDTO onlineStoreDTO = OnlineStoreDTO(
+        id: physicalStore.id,
+        name: physicalStore.name,
+        address: physicalStore.address,
+        phoneNumber: physicalStore.phoneNumber,
+        categories: physicalStore.categories,
+        operationHours: physicalStore.operationHours,
+        products: [],
+        qrCode: physicalStore.qrCode,
+        image: physicalStore.image);
+    ResultInterface openOnlineStoreRes = await openOnlineStore(onlineStoreDTO);
+    return openOnlineStoreRes;
+    //Tuple2<OnlineStoreModel, String>
+  }
+
+  Future<ResultInterface> getPhysicalStore(String storeID) async {
+    List<PhysicalStoreModel> stores =
+        await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(storeID));
+    if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
+    var store = stores.first;
+    return new Ok(
+        "Found store $storeID",
+        StoreDTO(
+            id: store.id,
+            name: store.name,
+            phoneNumber: store.phoneNumber,
+            address: store.address,
+            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            operationHours: opHours(jsonDecode(store.operationHours)),
+            qrCode: store.qrCode,
+            image: await getDownloadUrl(storeID)));
+  }
+
+  Future<ResultInterface> getOnlineStore(String storeID) async {
+    List<OnlineStoreModel> stores =
+        await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(storeID));
+    if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
+    var store = stores.first;
+    var products = await fetchStoreProducts(store.id);
+    return new Ok(
+        "Found store $storeID",
+        OnlineStoreDTO(
+            id: store.id,
+            name: store.name,
+            phoneNumber: store.phoneNumber,
+            address: store.address,
+            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            operationHours: opHours(jsonDecode(store.operationHours)),
+            products: products,
+            qrCode: store.qrCode,
+            image: await getDownloadUrl(storeID)));
+  }
+
+  Future<ResultInterface> getOnlineStoreProduct(String prodId) async {
+    List<StoreProductModel> prods =
+        await Amplify.DataStore.query(StoreProductModel.classType, where: StoreProductModel.ID.eq(prodId));
+    if (prods.isEmpty) return new Failure("No such product $prodId exists", prodId);
+    var prod = prods.first;
+    return new Ok(
+        "Found product $prodId",
+        ProductDTO(
+            id: prod.id,
+            name: prod.name,
+            price: prod.price,
+            category: prod.categories,
+            imageUrl: prod.imageUrl!,
+            description: prod.description!,
+            storeID: prod.onlinestoremodelID));
   }
 }

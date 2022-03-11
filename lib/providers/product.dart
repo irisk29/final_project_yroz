@@ -11,6 +11,7 @@ class Product with ChangeNotifier {
   final String category;
   final double price;
   final String imageUrl;
+  final String storeID;
   bool isFavorite;
 
   Product({
@@ -20,6 +21,7 @@ class Product with ChangeNotifier {
     required this.category,
     required this.price,
     required this.imageUrl,
+    required this.storeID,
     this.isFavorite = false,
   });
 
@@ -47,6 +49,7 @@ class Product with ChangeNotifier {
   }
 
   ProductDTO createDTO() {
-    return ProductDTO(id: '', name: title, price: price, category: category, imageUrl: imageUrl, description: description);
+    return ProductDTO(
+        id: id, name: title, price: price, category: category, imageUrl: imageUrl, description: description, storeID: storeID);
   }
 }

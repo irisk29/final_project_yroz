@@ -127,12 +127,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     setState(() {
       _isLoading = true;
     });
-    if (_editedStore!.id.isNotEmpty) {
-      _editedStore!.categories = _selectedItems;
-      _editedStore!.products = OpenOnlineStorePipeline._products;
-      await Provider.of<User>(context, listen: false)
-          .updateOnlineStore(_editedStore!);
-    } else {
       _editedStore!.categories = _selectedItems;
       _editedStore!.products = OpenOnlineStorePipeline._products;
       try {
@@ -141,25 +135,25 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       } catch (error) {
         await showDialog(
           context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text(error.toString()),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Okay'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              )
-            ],
-          ),
+          builder: (ctx) =>
+              AlertDialog(
+                title: Text('An error occurred!'),
+                content: Text(error.toString()),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                  )
+                ],
+              ),
         );
       }
-      setState(() {
-        _isLoading = false;
-      });
+    setState(() {
+      _isLoading = false;
+    });
       Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
-    }
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -233,8 +227,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           if (value!.isEmpty) {
                             return 'Please provide a value.';
                           }
-                          if (value.length < 8) {
-                            return 'Should be at least 8 characters long.';
+                          if (value.length < 2) {
+                            return 'Should be at least 2 characters long.';
                           }
                           return null;
                         },

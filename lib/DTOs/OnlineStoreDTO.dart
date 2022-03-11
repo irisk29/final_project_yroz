@@ -23,4 +23,10 @@ class OnlineStoreDTO extends StoreDTO {
   void addProduct(ProductDTO product) {
     this.products.add(product);
   }
+
+  @override
+  bool operator ==(other) {
+    if (other is OnlineStoreDTO) return this.id == other.id;
+    return false;
+  }
 }

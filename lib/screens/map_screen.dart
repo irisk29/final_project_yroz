@@ -19,15 +19,6 @@ class MapScreen extends StatefulWidget {
         const PlaceLocation(latitude: 31.262218, longitude: 34.801461),
     this.isSelecting = false,
   }){
-        () async {
-      Permission.locationAlways.request();
-      if (await Permission.locationAlways.isGranted) {
-        // Either the permission was already granted before or the user just granted it.
-        print("Location Permission is granted");
-      } else {
-        print("Location Permission is denied.");
-      }
-    }();
   }
 
   @override

@@ -1,3 +1,6 @@
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,12 +8,36 @@ import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
 import '../providers/orders.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
+
+  late OnlineStoreDTO store;
+  late User user;
+  late ShoppingBagDTO? cart;
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    widget.store = routeArgs['store'] as OnlineStoreDTO;
+    widget.user = routeArgs['user'] as User;
+    widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
+  }
+
+  void _update() {
+    setState(() {
+      widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -33,11 +60,11 @@ class CartScreen extends StatelessWidget {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$${cart.totalAmount.toStringAsFixed(2)}',
+                      '\$${widget.cart!.calculateTotalPrice().toStringAsFixed(2)}',
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  OrderButton(cart: cart)
+                  OrderButton(cart: widget.cart!)
                 ],
               ),
             ),
@@ -45,13 +72,12 @@ class CartScreen extends StatelessWidget {
           SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: cart.items.length,
+              itemCount: widget.cart!.products.length,
               itemBuilder: (ctx, i) => CartItem(
-                cart.items.values.toList()[i].id,
-                cart.items.keys.toList()[i],
-                cart.items.values.toList()[i].price,
-                cart.items.values.toList()[i].quantity,
-                cart.items.values.toList()[i].title,
+                  widget.cart!.products.toList()[i],
+                  widget.store,
+                  widget.user,
+                _update
               ),
             ),
           )
@@ -68,7 +94,7 @@ class CartScreen extends StatelessWidget {
             ),
           ],
           child: Scaffold(
-            body: this,
+            body: widget,
           ),
         ),
       );
@@ -80,7 +106,7 @@ class OrderButton extends StatefulWidget {
     required this.cart,
   }) : super(key: key);
 
-  final Cart cart;
+  final ShoppingBagDTO cart;
 
   @override
   _OrderButtonState createState() => _OrderButtonState();
@@ -93,20 +119,17 @@ class _OrderButtonState extends State<OrderButton> {
   Widget build(BuildContext context) {
     return FlatButton(
       child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
-      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+      onPressed: (widget.cart.calculateTotalPrice() <= 0 || _isLoading)
           ? null
           : () async {
               setState(() {
                 _isLoading = true;
               });
-              await Provider.of<Orders>(context, listen: false).addOrder(
-                widget.cart.items.values.toList(),
-                widget.cart.totalAmount,
-              );
+              //TODO: ADD PAYMENT FUNCTIONALITY
               setState(() {
                 _isLoading = false;
               });
-              widget.cart.clear();
+              widget.cart.clearBag();
             },
       textColor: Theme.of(context).primaryColor,
     );

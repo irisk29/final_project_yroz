@@ -59,18 +59,18 @@ type ShoppingBagModel @model @auth(rules: [{allow: public}]) {
 type CartProductModel @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
-  categories: AWSJSON!
+  categories: String!
   price: Float!
   imageUrl: String
   description: String
-  amount: Int
+  amount: Float!
   shoppingbagmodelID: ID! @index(name: "byShoppingBagModel")
 }
 
 type StoreProductModel @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
-  categories: AWSJSON!
+  categories: String!
   price: Float!
   imageUrl: String
   description: String

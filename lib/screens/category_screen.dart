@@ -1,5 +1,6 @@
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/store_item.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ enum FilterOptions {
 class CategoryScreen extends StatefulWidget {
   static const routeName = '/category';
   String? title;
+  User? user;
 
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
@@ -45,8 +47,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-    widget.title = routeArgs['title'];
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    widget.title = routeArgs['title'] as String;
+    widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -67,12 +70,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 DUMMY_STORES
                     .map(
                       (storeData) => StoreItem(
-                        storeData.imageFile,
-                        storeData.name,
-                        storeData.address,
-                        storeData.phoneNumber,
-                        Map<String,List<TimeOfDay>>.from(storeData.operationHours),
-                        null
+                        storeData, widget.user!
                       ),
                     )
                     .toList(),
