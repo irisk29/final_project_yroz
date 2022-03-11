@@ -52,6 +52,7 @@ class Products with ChangeNotifier {
           price: prodData['price'],
           isFavorite: faveData == null ? false : faveData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
+          storeID: prodData['storeID']
         ));
       });
       _items = loadedProducts;
@@ -71,6 +72,7 @@ class Products with ChangeNotifier {
         price: product.price,
         imageUrl: product.imageUrl,
         id: product.id,
+        storeID: product.storeID
       );
       _items.add(newProduct);
       notifyListeners();
