@@ -1,15 +1,15 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/product_detail_screen.dart';
 
 class ProductItem extends StatefulWidget {
   final ProductDTO product;
-  final User user;
   final String storeID;
 
-  ProductItem(this.product, this.user, this.storeID);
+  ProductItem(this.product, this.storeID);
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -38,15 +38,15 @@ class _ProductItemState extends State<ProductItem> {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           leading: IconButton(
-              icon: widget.user.favoriteProducts.contains(widget.product.id) ? Icon(
+              icon: Provider.of<User>(context, listen: false).favoriteProducts.contains(widget.product.id) ? Icon(
                 Icons.favorite,
               ) : Icon(
                 Icons.favorite_border,
               ),
               color: Theme.of(context).accentColor,
               onPressed: () async {
-                widget.user.favoriteProducts.contains(widget.product.id) ? await widget.user.removeFavoriteProduct(widget.product.id)
-                : await widget.user.addFavoriteProduct(widget.product.id);
+                Provider.of<User>(context, listen: false).favoriteProducts.contains(widget.product.id) ? await Provider.of<User>(context, listen: false).removeFavoriteProduct(widget.product.id)
+                : await Provider.of<User>(context, listen: false).addFavoriteProduct(widget.product.id);
                 setState(() {
 
                 });
@@ -77,7 +77,7 @@ class _ProductItemState extends State<ProductItem> {
                         onPressed: () {
                           quantity = double.parse(myController.text);
                           Navigator.of(context).pop();
-                          widget.user.addProductToShoppingBag(widget.product, quantity, widget.storeID);
+                          Provider.of<User>(context, listen: false).addProductToShoppingBag(widget.product, quantity, widget.storeID);
                           //cart.addItem(product.id, product.price, product.title);
                           Scaffold.of(context).hideCurrentSnackBar();
                           Scaffold.of(context).showSnackBar(
@@ -89,7 +89,7 @@ class _ProductItemState extends State<ProductItem> {
                               action: SnackBarAction(
                                 label: 'UNDO',
                                 onPressed: () {
-                                  widget.user.removeProductFromShoppingBag(widget.product, widget.storeID);
+                                  Provider.of<User>(context, listen: false).removeProductFromShoppingBag(widget.product, widget.storeID);
                                   //cart.removeSingleItem(product.id);
                                 },
                               ),

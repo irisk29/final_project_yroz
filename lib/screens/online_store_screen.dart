@@ -8,13 +8,14 @@ import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'cart_screen.dart';
 
 class OnlineStoreScreen extends StatefulWidget {
   static const routeName = '/online-store';
 
   late OnlineStoreDTO store;
-  late User user;
+  //late User user;
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
@@ -31,7 +32,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
-    widget.user = routeArgs['user'] as User;
+    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -85,7 +86,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   void routeToOnlineStoreProducts(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
       OnlineStoreProductsScreen.routeName,
-      arguments: {'store': widget.store, 'user': widget.user},
+      arguments: {'store': widget.store},
     );
   }
 
@@ -103,10 +104,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
+                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store});
               },
             ),
-            value: widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
+            value: Provider.of<User>(context, listen: false).bagInStores.length > 0 ? Provider.of<User>(context, listen: false).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
           ),
         ],
       ),
@@ -132,14 +133,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                widget.user.favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) == null ? await widget.user.addFavoriteStore(widget.store.id, true)
-                    : await widget.user.removeFavoriteStore(widget.store.id, true);
+                Provider.of<User>(context, listen: false).favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) == null ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, true)
+                    : await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, true);
                 setState(() {
 
                 });
                 //open change language
               },
-              trailing: widget.user.favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) != null ? Icon(
+              trailing: Provider.of<User>(context, listen: false).favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) != null ? Icon(
                 Icons.favorite,
                 color: Colors.black,
               ) : Icon(

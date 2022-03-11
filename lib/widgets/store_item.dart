@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 
 class StoreItem extends StatelessWidget {
   final StoreDTO store;
-  final User user;
+  //final User user;
 
-  StoreItem(this.store, this.user) {
+  StoreItem(this.store) {
 
   }
 
@@ -19,14 +19,14 @@ class StoreItem extends StatelessWidget {
             OnlineStoreScreen.routeName,
             arguments: {
               'store': store,
-              'user': user
+              //'user': user
             },
           )
         : Navigator.of(ctx).pushNamed(
             PhysicalStoreScreen.routeName,
             arguments: {
               'store': store,
-              'user': user
+              //'user': user
             },
           );
   }

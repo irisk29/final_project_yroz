@@ -10,7 +10,7 @@ import '../dummy_data.dart';
 import '../widgets/category_item.dart';
 
 class CategoriesScreen extends StatefulWidget {
-  User? user;
+  // User? user;
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
@@ -34,8 +34,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   void didChangeDependencies() {
-    final user = ModalRoute.of(context)!.settings.arguments as User?;
-    if (user != null) widget.user = user;
+    // final user = ModalRoute.of(context)!.settings.arguments as User?;
+    // if (user != null) widget.user = user;
     () async {
       onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
       physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
@@ -84,7 +84,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               catData.id,
                               catData.title,
                               catData.color,
-                              widget.user
+                              //widget.user
                             ),
                           )
                           .toList(),
@@ -120,7 +120,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             physicalStores
                                 .map(
                                   (storeData) => StoreItem(
-                                    storeData, widget.user!
+                                    storeData//, widget.user!
                                   ),
                                 )
                                 .toList(),
@@ -157,7 +157,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             onlineStores
                                 .map(
                                   (storeData) => StoreItem(
-                                      storeData, widget.user!
+                                      storeData//, widget.user!
                                   ),
                                 )
                                 .toList(),

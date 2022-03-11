@@ -23,8 +23,8 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appUser = context.watch<User>().isSignedIn;
-    print(appUser);
-    final user = ModalRoute.of(context)!.settings.arguments as User?;
-    return appUser ? TabsScreen(user) : AuthScreen();
+    // print(appUser);
+    // final user = ModalRoute.of(context)!.settings.arguments as User?;
+    return appUser ? TabsScreen() : AuthScreen();
   }
 }

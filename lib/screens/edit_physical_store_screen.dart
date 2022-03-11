@@ -35,7 +35,7 @@ class EditPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  User? user;
+  //User? user;
 
   @override
   _EditPhysicalStorePipelineState createState() =>
@@ -104,9 +104,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final user = ModalRoute.of(context)!.settings.arguments as User?;
-      widget.user = user;
-      _editedStore = user!.storeOwnerState!.physicalStore;
+      // final user = ModalRoute.of(context)!.settings.arguments as User?;
+      // widget.user = user;
+      // _editedStore = user!.storeOwnerState!.physicalStore;
       _selectedItems.addAll(_editedStore!.categories);
     }
     _isInit = false;
@@ -153,7 +153,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -543,7 +543,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             onPressed: () async {
               await Provider.of<User>(context, listen: false)
                   .convertPhysicalStoreToOnline(_editedStore!);
-              Navigator.of(context).pushReplacementNamed(EditOnlineStorePipeline.routeName, arguments: widget.user);
+              Navigator.of(context).pushReplacementNamed(EditOnlineStorePipeline.routeName);
             },
               tooltip: "make the store online"
           ),
@@ -554,7 +554,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             onPressed: () async {
               await Provider.of<User>(context, listen: false)
                   .deleteStore(_editedStore!.id, false);
-              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
             },
           ),
         ],

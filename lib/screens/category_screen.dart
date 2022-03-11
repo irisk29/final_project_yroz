@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class CategoryScreen extends StatefulWidget {
   static const routeName = '/category';
   String? title;
-  User? user;
+  //User? user;
 
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
@@ -44,7 +44,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.title = routeArgs['title'] as String;
-    widget.user = routeArgs['user'] as User;
+    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -65,7 +65,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 stores
                     .map(
                       (storeData) => StoreItem(
-                        storeData, widget.user!
+                        storeData//, widget.user!
                       ),
                     )
                     .toList(),

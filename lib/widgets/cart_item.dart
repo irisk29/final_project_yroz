@@ -3,11 +3,12 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CartItem extends StatefulWidget {
   final CartProductDTO product;
   final String storeID;
-  final User user;
+  //final User user;
   final void Function() update;
 
   late double price;
@@ -17,7 +18,7 @@ class CartItem extends StatefulWidget {
   CartItem(
     this.product,
     this.storeID,
-    this.user,
+    //this.user,
     this.update
   ){
     price = product.price;
@@ -77,11 +78,11 @@ class _CartItemState extends State<CartItem> {
         );
       },
       onDismissed: (direction) async {
-        await widget.user.removeProductFromShoppingBag(widget.product, widget.storeID);
+        await Provider.of<User>(context, listen: false).removeProductFromShoppingBag(widget.product, widget.storeID);
         setState(() {
             () => widget.update();
         });
-        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID, 'user': widget.user});
+        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -118,12 +119,12 @@ class _CartItemState extends State<CartItem> {
                           onPressed: () {
                             quantity = double.parse(myController.text);
                             Navigator.of(context).pop();
-                            widget.user.updateProductQuantityInBag(widget.product, widget.storeID, quantity);
+                            Provider.of<User>(context, listen: false).updateProductQuantityInBag(widget.product, widget.storeID, quantity);
                             setState(() {
                               widget.quantity = quantity;
                               () => widget.update();
                             });
-                            Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID, 'user': widget.user});
+                            Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID});
                           },
                         ),
                         FlatButton(

@@ -18,7 +18,7 @@ class _SettingsPageState extends State<SettingsScreen> {
   late bool _physicalStoreOwner;
   late bool _onlineStoreOwner;
   var _isInit = true;
-  User? _user = User("", "");
+  //User? _user = User("", "");
 
   @override
   void initState() {
@@ -30,13 +30,10 @@ class _SettingsPageState extends State<SettingsScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final user = ModalRoute.of(context)!.settings.arguments as User?;
-      if (user != null) {
-        _user = user;
-        if (user.storeOwnerState != null) {
-          _physicalStoreOwner = user.storeOwnerState!.physicalStore != null;
-          _onlineStoreOwner = user.storeOwnerState!.onlineStore != null;
-        }
+      //final user = ModalRoute.of(context)!.settings.arguments as User?;
+      if (Provider.of<User>(context, listen: false).storeOwnerState != null) {
+        _physicalStoreOwner = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore != null;
+        _onlineStoreOwner = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore != null;
       }
     }
     _isInit = false;
@@ -71,7 +68,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                           //open edit profile
                         },
                         title: Text(
-                          _user!.name!,
+                          Provider.of<User>(context, listen: false).name!,
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
@@ -80,7 +77,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                         leading: CircleAvatar(
                           radius: 30.0,
                           backgroundImage:
-                              Image.network(_user!.imageUrl!).image,
+                              Image.network(Provider.of<User>(context, listen: false).imageUrl!).image,
                         ),
                         trailing: Icon(
                           Icons.edit,
@@ -156,10 +153,10 @@ class _SettingsPageState extends State<SettingsScreen> {
                               !_onlineStoreOwner
                                   ? Navigator.of(context).pushNamed(
                                   OpenOnlineStorePipeline.routeName,
-                                  arguments: _user)
+                                  )
                               : Navigator.of(context).pushNamed(
                                   EditOnlineStorePipeline.routeName,
-                                  arguments: _user)
+                                  )
                               ;
                             },
                           )
@@ -187,10 +184,10 @@ class _SettingsPageState extends State<SettingsScreen> {
                               !_physicalStoreOwner
                                   ? Navigator.of(context).pushNamed(
                                   OpenPhysicalStorePipeline.routeName,
-                                  arguments: _user)
+                                  )
                               : Navigator.of(context).pushNamed(
                                   EditPhysicalStorePipeline.routeName,
-                                  arguments: _user)
+                                  )
                               ;
                             },
                           )

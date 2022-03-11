@@ -6,11 +6,12 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 import '../widgets/store_item.dart';
 
 class FavoriteScreen extends StatefulWidget {
-  User? user;
+  //User? user;
 
   @override
   State<FavoriteScreen> createState() => _FavoriteScreenState();
@@ -28,11 +29,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   @override
   void didChangeDependencies() {
-    final user = ModalRoute.of(context)!.settings.arguments as User?;
-    if (user != null) widget.user = user;
     () async {
       favoriteStores = [];
-      for(Tuple2<String,bool> store in user!.favoriteStores){
+      for(Tuple2<String,bool> store in Provider.of<User>(context, listen: false).favoriteStores){
         if(store.item2) //online store
         {
           ResultInterface res = await StoreStorageProxy().getOnlineStore(store.item1);
@@ -55,7 +54,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     
     () async {
       favoriteProducts = [];
-      for(String product in user!.favoriteProducts){
+      for(String product in Provider.of<User>(context, listen: false).favoriteProducts){
         ResultInterface res = await StoreStorageProxy().getOnlineStoreProduct(product);
         if(res.getTag()){
           favoriteProducts.add(res.getValue() as ProductDTO);
@@ -103,7 +102,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       favoriteStores
                           .map(
                             (storeData) => StoreItem(
-                              storeData, widget.user!
+                              storeData
                             ),
                       )
                           .toList(),
@@ -140,7 +139,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       favoriteProducts
                           .map(
                             (storeData) => ProductItem(
-                              storeData, widget.user!, storeData.storeID
+                              storeData, storeData.storeID
                             ),
                       ).toList(),
                     ].expand((i) => i).toList(),

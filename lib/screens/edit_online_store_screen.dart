@@ -37,7 +37,7 @@ class EditOnlineStorePipeline extends StatefulWidget {
 
   static TextEditingController _controller = TextEditingController();
 
-  User? user;
+  //User? user;
 
   @override
   _EditOnlineStorePipelineState createState() =>
@@ -106,9 +106,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final user = ModalRoute.of(context)!.settings.arguments as User?;
-      widget.user = user;
-      _editedStore = user!.storeOwnerState!.onlineStore;
+      // final user = ModalRoute.of(context)!.settings.arguments as User?;
+      // widget.user = user;
+      // _editedStore = user!.storeOwnerState!.onlineStore;
       _selectedItems.addAll(_editedStore!.categories);
       EditOnlineStorePipeline._products = _editedStore!.products;
     }
@@ -134,7 +134,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.categories = _selectedItems;
       _editedStore!.products = EditOnlineStorePipeline._products;
       try {
-        await widget.user!.updateOnlineStore(_editedStore!);
+        await Provider.of<User>(context, listen: false).updateOnlineStore(_editedStore!);
     } catch (error) {
         await showDialog(
           context: context,
@@ -155,7 +155,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       setState(() {
         _isLoading = false;
       });
-      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
     }
   }
 
@@ -597,7 +597,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             onPressed: () async {
               await Provider.of<User>(context, listen: false)
                   .deleteStore(_editedStore!.id, true);
-              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
             },
           ),
         ],

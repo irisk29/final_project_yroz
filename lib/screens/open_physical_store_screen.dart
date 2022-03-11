@@ -31,7 +31,7 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  User? user;
+  //User? user;
 
   @override
   _OpenPhysicalStorePipelineState createState() =>
@@ -102,8 +102,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final user = ModalRoute.of(context)!.settings.arguments as User?;
-      widget.user = user;
+      // final user = ModalRoute.of(context)!.settings.arguments as User?;
+      // widget.user = user;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -147,7 +147,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked

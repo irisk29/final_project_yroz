@@ -5,12 +5,13 @@ import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
 
   late StoreDTO store;
-  late User user;
+  //late User user;
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
@@ -27,7 +28,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as StoreDTO;
-    widget.user = routeArgs['user'] as User;
+    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -107,14 +108,14 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.removeFavoriteStore(widget.store.id, false)
-                    : await widget.user.addFavoriteStore(widget.store.id, false);
+                Provider.of<User>(context, listen: false).favoriteStores.contains(widget.store.id) ? await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, false)
+                    : await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, false);
                 setState(() {
 
                 });
                 //open change language
               },
-              trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(
+              trailing: Provider.of<User>(context, listen: false).favoriteStores.contains(widget.store.id) ? Icon(
                 Icons.favorite,
                 color: Colors.black,
               ) : Icon(

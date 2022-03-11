@@ -74,7 +74,6 @@ class _CartScreenState extends State<CartScreen> {
               itemBuilder: (ctx, i) => CartItem(
                   widget.cart!.products.toList()[i],
                   widget.storeID,
-                  widget.user,
                 _update
               ),
             ),
