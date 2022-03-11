@@ -56,8 +56,8 @@ class StoreStorageProxy {
       qrCode = await generateUniqueQRCode(onlineStoreModel.id);
       onlineStoreModel = onlineStoreModel.copyWith(qrCode: qrCode);
     }
-    if (store.image != null && store.image!.isNotEmpty) {
-      await uploadPicture(store.image!, onlineStoreModel.id, null); // uploading the picture to s3
+    if (store.imageFromPhone != null) {
+      await uploadPicture("", onlineStoreModel.id, store.imageFromPhone); // uploading the picture to s3
     }
 
     List<StoreProductModel> productsModel = [];
@@ -169,8 +169,8 @@ class StoreStorageProxy {
 
     String qrCode = await generateUniqueQRCode(physicalModelWithoutQR.id);
     var physicalModel = physicalModelWithoutQR.copyWith(qrCode: qrCode);
-    if (store.image != null) {
-      await uploadPicture(store.image!, physicalModel.id, null); // uploading the picture to s3
+    if (store.imageFromPhone != null) {
+      await uploadPicture("", physicalModel.id, store.imageFromPhone); // uploading the picture to s3
     }
     ResultInterface storeOwnerRes =
         await UsersStorageProxy().getStoreOwnerState(UserAuthenticator().getCurrentUserId());
@@ -380,6 +380,7 @@ class StoreStorageProxy {
     List<StoreDTO> lst = [];
     for (PhysicalStoreModel model in physicalStores) {
       String? url = await getDownloadUrl(model.id);
+      File? imageFile = url != null ? await createFileFromImageUrl(url) : null;
       StoreDTO dto = StoreDTO(
           id: model.id,
           name: model.name,
@@ -388,7 +389,8 @@ class StoreStorageProxy {
           categories: jsonDecode(model.categories).cast<String>(),
           operationHours: opHours(jsonDecode(model.operationHours)),
           image: url,
-          qrCode: model.qrCode!);
+          qrCode: model.qrCode!,
+          imageFromPhone: imageFile);
       lst.add(dto);
     }
     return lst;
@@ -398,6 +400,7 @@ class StoreStorageProxy {
     List<OnlineStoreDTO> lst = [];
     for (OnlineStoreModel model in onlineStores) {
       String? url = await getDownloadUrl(model.id);
+      File? imageFile = url != null ? await createFileFromImageUrl(url) : null;
       OnlineStoreDTO dto = OnlineStoreDTO(
           id: model.id,
           name: model.name,
@@ -407,7 +410,8 @@ class StoreStorageProxy {
           operationHours: opHours(jsonDecode(model.operationHours)),
           image: url,
           products: await fetchStoreProducts(model.id),
-          qrCode: model.qrCode);
+          qrCode: model.qrCode,
+          imageFromPhone: imageFile);
       lst.add(dto);
     }
     return lst;
@@ -665,7 +669,8 @@ class StoreStorageProxy {
         operationHours: physicalStore.operationHours,
         products: [],
         qrCode: physicalStore.qrCode,
-        image: physicalStore.image);
+        image: physicalStore.image,
+        imageFromPhone: physicalStore.imageFromPhone);
     ResultInterface openOnlineStoreRes = await openOnlineStore(onlineStoreDTO);
     return openOnlineStoreRes;
     //Tuple2<OnlineStoreModel, String>
@@ -676,6 +681,8 @@ class StoreStorageProxy {
         await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(storeID));
     if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
     var store = stores.first;
+    String? imageUrl = await getDownloadUrl(storeID);
+    File? imageFile = imageUrl != null ? await createFileFromImageUrl(imageUrl) : null;
     return new Ok(
         "Found store $storeID",
         StoreDTO(
@@ -686,7 +693,8 @@ class StoreStorageProxy {
             categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
             operationHours: opHours(jsonDecode(store.operationHours)),
             qrCode: store.qrCode,
-            image: await getDownloadUrl(storeID)));
+            image: imageUrl,
+            imageFromPhone: imageFile));
   }
 
   Future<ResultInterface> getOnlineStore(String storeID) async {
@@ -695,6 +703,8 @@ class StoreStorageProxy {
     if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
     var store = stores.first;
     var products = await fetchStoreProducts(store.id);
+    String? imageUrl = await getDownloadUrl(storeID);
+    File? imageFile = imageUrl != null ? await createFileFromImageUrl(imageUrl) : null;
     return new Ok(
         "Found store $storeID",
         OnlineStoreDTO(
@@ -706,7 +716,8 @@ class StoreStorageProxy {
             operationHours: opHours(jsonDecode(store.operationHours)),
             products: products,
             qrCode: store.qrCode,
-            image: await getDownloadUrl(storeID)));
+            image: imageUrl,
+            imageFromPhone: imageFile));
   }
 
   Future<ResultInterface> getOnlineStoreProduct(String prodId) async {

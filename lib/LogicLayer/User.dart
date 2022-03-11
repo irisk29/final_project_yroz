@@ -110,7 +110,7 @@ class User extends ChangeNotifier {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
     }
-    this.storeOwnerState!.setOnlineStore(tuple.item1);
+    this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
     notifyListeners();
     return res;
   }
@@ -182,7 +182,7 @@ class User extends ChangeNotifier {
     }
     Tuple2<OnlineStoreModel, String> retVal = res.getValue();
     this.storeOwnerState = new StoreOwnerState(retVal.item2);
-    this.storeOwnerState!.setOnlineStore(retVal.item1);
+    this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
     this.storeOwnerState!.physicalStore = null;
 
     notifyListeners();

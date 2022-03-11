@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -93,7 +95,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         ]
       },
       qrCode: "",
-      image: null);
+      image: null,
+      imageFromPhone: null);
 
   final List<String> _selectedItems = [];
   var _isInit = true;
@@ -218,7 +221,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -241,7 +245,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -259,7 +264,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                   ],

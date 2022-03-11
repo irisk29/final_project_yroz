@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
@@ -97,7 +99,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         ]
       },
       image: null,
-      products: []);
+      products: [],
+      imageFromPhone: null);
 
   final List<String> _selectedItems = [];
   var _isInit = true;
@@ -241,7 +244,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               operationHours: _editedStore!.operationHours,
                               image: _editedStore!.image,
                               id: '',
-                              products: _editedStore!.products);
+                              products: _editedStore!.products,
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                         onSaved: (value) {
                           _editedStore = OnlineStoreDTO(
@@ -252,7 +256,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               operationHours: _editedStore!.operationHours,
                               image: _editedStore!.image,
                               id: '',
-                              products: _editedStore!.products);
+                              products: _editedStore!.products,
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                       TextFormField(
@@ -275,7 +280,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               operationHours: _editedStore!.operationHours,
                               image: _editedStore!.image,
                               id: '',
-                              products: _editedStore!.products);
+                              products: _editedStore!.products,
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                         onSaved: (value) {
                           _editedStore = OnlineStoreDTO(
@@ -286,7 +292,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               operationHours: _editedStore!.operationHours,
                               image: _editedStore!.image,
                               id: '',
-                              products: _editedStore!.products);
+                              products: _editedStore!.products,
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                       TextFormField(
@@ -304,7 +311,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               operationHours: _editedStore!.operationHours,
                               image: _editedStore!.image,
                               id: '',
-                              products: _editedStore!.products);
+                              products: _editedStore!.products,
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                     ],

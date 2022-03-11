@@ -10,7 +10,7 @@ class StoreDTO {
   String address;
   List<String> categories;
   Map<String, List<TimeOfDay>> operationHours;
-  String? image;
+  String? image; //url for the imageFromPhone in s3
   String? qrCode;
   File? imageFromPhone;
 
@@ -25,10 +25,15 @@ class StoreDTO {
       this.qrCode,
       this.imageFromPhone});
 
-
   @override
   bool operator ==(other) {
     if (other is StoreDTO) return this.id == other.id;
     return false;
+  }
+
+  void fetchStoreImage() {
+    if (this.image != null && this.image!.isNotEmpty) {
+      this.imageFromPhone = File(this.image!);
+    }
   }
 }
