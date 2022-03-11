@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CartItem extends StatefulWidget {
-  final CartProductDTO product;
+  final CartProductDTO? product;
   final String storeID;
   //final User user;
   final void Function() update;
@@ -21,9 +21,9 @@ class CartItem extends StatefulWidget {
     //this.user,
     this.update
   ){
-    price = product.price;
-    quantity = product.amount;
-    title = product.name;
+    price = product!.price;
+    quantity = product!.amount;
+    title = product!.name;
   }
 
   @override
@@ -36,7 +36,7 @@ class _CartItemState extends State<CartItem> {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(widget.product.id),
+      key: ValueKey(widget.product!.id),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -78,7 +78,7 @@ class _CartItemState extends State<CartItem> {
         );
       },
       onDismissed: (direction) async {
-        await Provider.of<User>(context, listen: false).removeProductFromShoppingBag(widget.product, widget.storeID);
+        await Provider.of<User>(context, listen: false).removeProductFromShoppingBag(widget.product!, widget.storeID);
         setState(() {
             () => widget.update();
         });
@@ -119,7 +119,7 @@ class _CartItemState extends State<CartItem> {
                           onPressed: () {
                             quantity = double.parse(myController.text);
                             Navigator.of(context).pop();
-                            Provider.of<User>(context, listen: false).updateProductQuantityInBag(widget.product, widget.storeID, quantity);
+                            Provider.of<User>(context, listen: false).updateProductQuantityInBag(widget.product!, widget.storeID, quantity);
                             setState(() {
                               widget.quantity = quantity;
                               () => widget.update();

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
@@ -311,9 +312,6 @@ class User extends ChangeNotifier {
   }
 
   ShoppingBagDTO? getShoppingBag(String storeID){
-    () async {
-      ShoppingBagDTO? dto = await getCurrShoppingBag(storeID);
-      return dto;
-    }();
+    return bagInStores.firstWhereOrNull((element) => element.onlineStoreID == storeID);
   }
 }
