@@ -82,9 +82,9 @@ class _CartItemState extends State<CartItem> {
       onDismissed: (direction) async {
         await widget.user.removeProductFromShoppingBag(widget.product, widget.store.id);
         setState(() {
-          widget.update();
+            () => widget.update();
         });
-        //Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
+        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -124,9 +124,10 @@ class _CartItemState extends State<CartItem> {
                             widget.user.updateProductQuantityInBag(widget.product, widget.store.id, quantity);
                             setState(() {
                               widget.quantity = quantity;
-                              widget.update();
+                              () => widget.update();
                             });
-                            },
+                            Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
+                          },
                         ),
                         FlatButton(
                           child: Text('Cancel'),
