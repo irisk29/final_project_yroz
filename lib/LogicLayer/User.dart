@@ -9,7 +9,6 @@ import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/OnlineStoreModel.dart';
-import 'package:final_project_yroz/models/CartProductModel.dart';
 import 'package:final_project_yroz/models/ShoppingBagModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
@@ -24,7 +23,7 @@ class User extends ChangeNotifier {
   String? id;
   String? email;
   String? name;
-  List<String> favoriteStores; //IDs of favorite stores
+  List<Tuple2<String,bool>> favoriteStores; //IDs of favorite stores
   List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
@@ -36,14 +35,14 @@ class User extends ChangeNotifier {
   bool isSignedIn = false;
 
   User(this.email, this.name)
-      : favoriteStores = <String>[],
+      : favoriteStores = <Tuple2<String,bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
 
   User.withNull()
-      : favoriteStores = <String>[],
+      : favoriteStores = <Tuple2<String,bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
@@ -57,7 +56,7 @@ class User extends ChangeNotifier {
     this.favoriteProducts =
         model.favoriteProducts == null ? [] : (jsonDecode(model.favoriteProducts!) as List<dynamic>).cast<String>();
     this.favoriteStores =
-        model.favoriteStores == null ? [] : (jsonDecode(model.favoriteStores!) as List<dynamic>).cast<String>();
+        model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
     this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;

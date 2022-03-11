@@ -167,6 +167,33 @@ class UsersStorageProxy {
     return new Ok("new name $newName or new image url $newImageUrl was updated", user.id);
   }
 
+  static String toJsonFromTupleList(List<Tuple2<String,bool>> tuples) {
+    List list = tuples
+        .map(
+              (e) => {
+                '1': e.item1,
+                '2': e.item2,
+              },
+            ).toList();
+
+    String json = JsonEncoder.withIndent('  ').convert(list);
+    return json;
+  }
+
+  static List<Tuple2<String,bool>> fromJsonToTupleList(String json) {
+    List<dynamic> newList = jsonDecode(json) as List<dynamic>;
+
+    final newTuples = newList.map(
+              (e) => Tuple2<String,bool>(
+                e['1'],
+                e['2'],
+              ),
+            )
+            .toList();
+
+    return newTuples;
+  }
+
   Future<ResultInterface> addFavoriteProduct(String prodID) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
@@ -201,19 +228,19 @@ class UsersStorageProxy {
     }
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
-      List<Tuple2<String, bool>> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<Tuple2<String, bool>>();
+      List<Tuple2<String, bool>> fav = fromJsonToTupleList(user.favoriteStores!);
       if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) != null) {
         return new Failure("The store $storeID is already a favorite", storeID);
       }
       fav.add(Tuple2<String, bool>(storeID, isOnline));
       var updatedUser = user.copyWith(
-        favoriteStores: JsonEncoder.withIndent('  ').convert(fav),
+        favoriteStores: toJsonFromTupleList(fav),
       );
       await Amplify.DataStore.save(updatedUser);
       return new Ok("Added succssefully store $storeID to user's favorite", fav);
     }
     var updatedUser = user.copyWith(
-      favoriteStores: JsonEncoder.withIndent('  ').convert([Tuple2<String, bool>(storeID, isOnline)]),
+      favoriteStores: toJsonFromTupleList([Tuple2<String, bool>(storeID, isOnline)]),
     );
     await Amplify.DataStore.save(updatedUser);
     return new Ok("Added succssefully store $storeID to user's favorite", [Tuple2<String, bool>(storeID, isOnline)]);
@@ -249,13 +276,13 @@ class UsersStorageProxy {
     }
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
-      List<Tuple2<String, bool>> fav = (jsonDecode(user.favoriteStores!) as List<dynamic>).cast<Tuple2<String, bool>>();
+      List<Tuple2<String, bool>> fav = fromJsonToTupleList(user.favoriteStores!);
       if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) == null) {
         return new Failure("The store $storeID is not a favorite", storeID);
       }
       fav.removeWhere((element) => element.item1 == storeID);
       var updatedUser = user.copyWith(
-        favoriteStores: JsonEncoder.withIndent('  ').convert(fav),
+        favoriteStores: toJsonFromTupleList(fav),
       );
       await Amplify.DataStore.save(updatedUser);
       return new Ok("Removed succssefully store $storeID from user's favorite", fav);
