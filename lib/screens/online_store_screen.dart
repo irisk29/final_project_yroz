@@ -119,7 +119,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: widget.store.image != null
+                  image: widget.store.imageFromPhone != null
                       ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store.imageFromPhone!))
                       : DecorationImage(
                           image: AssetImage('assets/images/default-store.png'),
