@@ -167,29 +167,31 @@ class UsersStorageProxy {
     return new Ok("new name $newName or new image url $newImageUrl was updated", user.id);
   }
 
-  static String toJsonFromTupleList(List<Tuple2<String,bool>> tuples) {
+  static String toJsonFromTupleList(List<Tuple2<String, bool>> tuples) {
     List list = tuples
         .map(
-              (e) => {
-                '1': e.item1,
-                '2': e.item2,
-              },
-            ).toList();
+          (e) => {
+            '1': e.item1,
+            '2': e.item2,
+          },
+        )
+        .toList();
 
     String json = JsonEncoder.withIndent('  ').convert(list);
     return json;
   }
 
-  static List<Tuple2<String,bool>> fromJsonToTupleList(String json) {
+  static List<Tuple2<String, bool>> fromJsonToTupleList(String json) {
     List<dynamic> newList = jsonDecode(json) as List<dynamic>;
 
-    final newTuples = newList.map(
-              (e) => Tuple2<String,bool>(
-                e['1'],
-                e['2'],
-              ),
-            )
-            .toList();
+    final newTuples = newList
+        .map(
+          (e) => Tuple2<String, bool>(
+            e['1'],
+            e['2'],
+          ),
+        )
+        .toList();
 
     return newTuples;
   }
@@ -255,7 +257,7 @@ class UsersStorageProxy {
     var favoriteProd = user.favoriteProducts;
     if (favoriteProd != null) {
       List<String> fav = (jsonDecode(user.favoriteProducts!) as List<dynamic>).cast<String>();
-      if(fav.isNotEmpty) {
+      if (fav.isNotEmpty) {
         if (!fav.contains(prodID)) {
           return new Failure("The product $prodID is not a favorite", prodID);
         }
@@ -264,8 +266,7 @@ class UsersStorageProxy {
           favoriteProducts: JsonEncoder.withIndent('  ').convert(fav),
         );
         await Amplify.DataStore.save(updatedUser);
-        return new Ok(
-            "Removed succssefully product $prodID from user's favorite", fav);
+        return new Ok("Removed succssefully product $prodID from user's favorite", fav);
       }
       return new Failure("There is no favorite stores list from current user ${user.id}", null);
     }
@@ -336,6 +337,18 @@ class UsersStorageProxy {
     return new Ok("Found shopping bag for store $storeID and user $userID", shoppingBags[0]);
   }
 
+  Future<ResultInterface> getCurrentShoppingBag(String storeID, String userID) async {
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID
+            .eq(userID)
+            .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
+    if (shoppingBags.isEmpty) {
+      return new Failure("There is no shopping bag for user $userID", null);
+    }
+
+    return convertShoppingBagModelToDTO(shoppingBags[0]);
+  }
+
   Future<ResultInterface> getProductsOfShoppingBag(String shoppingBagID) async {
     List<CartProductModel> items = await Amplify.DataStore.query(CartProductModel.classType,
         where: CartProductModel.SHOPPINGBAGMODELID.eq(shoppingBagID));
@@ -349,7 +362,8 @@ class UsersStorageProxy {
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
     ShoppingBagDTO shoppingBag =
         ShoppingBagDTO(shoppingBagModel.usermodelID, shoppingBagModel.shoppingBagModelOnlineStoreModelId!);
-    List<CartProductDTO> shoppingBagProductsDTO = vals.map((e) => convertCartProductModelToDTO(e, shoppingBagModel.shoppingBagModelOnlineStoreModelId!)).toList();
+    List<CartProductDTO> shoppingBagProductsDTO =
+        vals.map((e) => convertCartProductModelToDTO(e, shoppingBagModel.shoppingBagModelOnlineStoreModelId!)).toList();
     shoppingBag.products = shoppingBagProductsDTO;
     return new Ok("convert was succsseful", shoppingBag);
   }
