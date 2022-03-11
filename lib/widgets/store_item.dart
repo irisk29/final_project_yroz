@@ -42,7 +42,7 @@ class StoreItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               image: this.store.image != null
-                  ? DecorationImage(image: this.store.imageFile!, fit: BoxFit.cover)
+                  ? DecorationImage(image: FileImage(this.store.imageFromPhone!), fit: BoxFit.cover)
                   : DecorationImage(
                       image: AssetImage('assets/images/default-store.png'),
                       fit: BoxFit.cover),
