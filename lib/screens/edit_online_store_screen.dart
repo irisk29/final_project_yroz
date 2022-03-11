@@ -136,8 +136,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.categories = _selectedItems;
       _editedStore!.products = EditOnlineStorePipeline._products;
       try {
-        await Provider.of<User>(context, listen: false)
-            .updateOnlineStore(_editedStore!);
+        await widget.user!.updateOnlineStore(_editedStore!);
     } catch (error) {
         await showDialog(
           context: context,
