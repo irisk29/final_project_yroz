@@ -57,7 +57,7 @@ class StoreStorageProxy {
       onlineStoreModel = onlineStoreModel.copyWith(qrCode: qrCode);
     }
     if (store.image != null && store.image!.isNotEmpty) {
-      await uploadPicture(store.image!, onlineStoreModel.id); // uploading the picture to s3
+      await uploadPicture(store.image!, onlineStoreModel.id, null); // uploading the picture to s3
     }
 
     List<StoreProductModel> productsModel = [];
@@ -116,15 +116,38 @@ class StoreStorageProxy {
 
   //for physical stores only
   Future<String> generateUniqueQRCode(String storeID) async {
-    final image = await QrPainter(
+    final qrValidationResult = QrValidator.validate(
       data: storeID,
       version: QrVersions.auto,
-      gapless: false,
-      color: Color(0x000000),
-      emptyColor: Color(0xffffff),
-    ).toImage(300);
-    final bytes = await image.toByteData(format: ImageByteFormat.png);
-    return new String.fromCharCodes(bytes!.buffer.asUint8List());
+      errorCorrectionLevel: QrErrorCorrectLevel.L,
+    );
+    final qrCode = qrValidationResult.qrCode;
+    final painter = QrPainter.withQr(
+      qr: qrCode!,
+      color: const Color(0xFF000000),
+      gapless: true,
+      embeddedImageStyle: null,
+      embeddedImage: null,
+    );
+
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    final ts = DateTime.now().millisecondsSinceEpoch.toString();
+    String path = '$tempPath/$ts.png';
+    final picData = await painter.toImageData(2048, format: ImageByteFormat.png);
+    File qrFile = await writeToFile(picData!, path);
+    var res = await uploadPicture("", "$storeID-qrcode", qrFile);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return "";
+    }
+    return path;
+  }
+
+  Future<File> writeToFile(ByteData data, String path) async {
+    final buffer = data.buffer;
+    File file = await File(path).writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+    return file;
   }
 
   Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
@@ -147,7 +170,7 @@ class StoreStorageProxy {
     String qrCode = await generateUniqueQRCode(physicalModelWithoutQR.id);
     var physicalModel = physicalModelWithoutQR.copyWith(qrCode: qrCode);
     if (store.image != null) {
-      await uploadPicture(store.image!, physicalModel.id); // uploading the picture to s3
+      await uploadPicture(store.image!, physicalModel.id, null); // uploading the picture to s3
     }
     ResultInterface storeOwnerRes =
         await UsersStorageProxy().getStoreOwnerState(UserAuthenticator().getCurrentUserId());
@@ -198,9 +221,9 @@ class StoreStorageProxy {
     return file;
   }
 
-  Future<ResultInterface> uploadPicture(String url, String storeId) async {
+  Future<ResultInterface> uploadPicture(String url, String storeId, File? file) async {
     try {
-      File img = await createFileFromImageUrl(url);
+      File img = file == null ? await createFileFromImageUrl(url) : file;
       final UploadFileResult result = await Amplify.Storage.uploadFile(
           local: img,
           key: storeId,
@@ -222,9 +245,20 @@ class StoreStorageProxy {
     }
   }
 
+  Future<void> deleteFileLocally(String? path) async {
+    try {
+      if (path == null) return;
+      final file = await File(path);
+      await file.delete();
+    } catch (e) {
+      //TODO: print to log
+      print(e.toString());
+    }
+  }
+
   Future<ResultInterface> updatePicture(String url, String storeId) async {
     var res = await deletePicture(storeId);
-    return res.getTag() ? await uploadPicture(url, storeId) : res;
+    return res.getTag() ? await uploadPicture(url, storeId, null) : res;
   }
 
   Future<OnlineStoreModel?> fetchOnlineStore(String? storeOwnerOnlineStoreId) async {
@@ -419,7 +453,7 @@ class StoreStorageProxy {
           description: productDTO.description,
           onlinestoremodelID: onlineStoreModelID);
       if (productDTO.imageUrl.isNotEmpty) {
-        await uploadPicture(productDTO.imageUrl, productModel.id); // uploading the picture to s3
+        await uploadPicture(productDTO.imageUrl, productModel.id, null); // uploading the picture to s3
       }
       await Amplify.DataStore.save(productModel);
       return new Ok(
@@ -551,6 +585,9 @@ class StoreStorageProxy {
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
+      deletePicture(id); // in s3 - for store picutre
+      deletePicture("$id-qrcode"); //in s3
+      deleteFileLocally(stores[0].qrCode);
       var res = await deleteStoreOwnerStateIfNeeded(true);
       if (!res.getTag()) return res;
       return new Ok("Deleted online store succssefully", id);
@@ -568,6 +605,9 @@ class StoreStorageProxy {
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
+      deletePicture(id); // in s3 - for store picutre
+      deletePicture("$id-qrcode"); //in s3
+      deleteFileLocally(stores[0].qrCode);
       var res = await deleteStoreOwnerStateIfNeeded(false);
       if (!res.getTag()) return res;
       return new Ok("Deleted physical store succssefully", id);
