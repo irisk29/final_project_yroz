@@ -9,6 +9,7 @@ import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/OnlineStoreModel.dart';
+import 'package:final_project_yroz/models/CartProductModel.dart';
 import 'package:final_project_yroz/models/ShoppingBagModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
@@ -61,8 +62,6 @@ class User extends ChangeNotifier {
     //TODO: generate credit card list from json
     this.bankAccount = model.bankAccount;
     //TODO: check if we need the other fields (because we are writing directly to the cloud)
-    this.storeOwnerState =
-        model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
     this.storeOwnerState =
         model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
     if (model.shoppingBagModels != null) {
@@ -301,5 +300,173 @@ class User extends ChangeNotifier {
     }
     ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
     if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
+  }
+
+  Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
+    var res = await StoreStorageProxy().convertPhysicalStoreToOnlineStore(physicalStore);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    Tuple2<OnlineStoreModel, String> retVal = res.getValue();
+    this.storeOwnerState = new StoreOwnerState(retVal.item2);
+    this.storeOwnerState!.setOnlineStore(retVal.item1);
+    this.storeOwnerState!.physicalStore = null;
+
+    notifyListeners();
+  }
+
+  Future<void> addFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().addFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> addFavoriteStore(String storeID, bool isOnline) async {
+    var res = await UsersStorageProxy().addFavoriteStore(storeID, isOnline);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteStore(String storeID, bool isOnline) async {
+    var res = await UsersStorageProxy().removeFavoriteStore(storeID, isOnline);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> addProductToShoppingBag(ProductDTO productDTO, double quantity, String storeID) async {
+    var res = await UsersStorageProxy()
+        .addProductToShoppingBag(productDTO, storeID, quantity, this.id!); // <product, shopping bag>
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    updateShoppingBag(res.getValue());
+
+    notifyListeners();
+  }
+
+  Future<void> removeProductFromShoppingBag(ProductDTO productDTO, String storeID) async {
+    var res = await UsersStorageProxy().removeProductFromShoppingBag(productDTO, storeID, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    updateShoppingBag(res.getValue());
+
+    notifyListeners();
+  }
+
+  Future<void> updateProductQuantityInBag(ProductDTO productDTO, String storeID, double newQuantity) async {
+    var res = await UsersStorageProxy().updateProductQuantityInBag(productDTO, storeID, newQuantity, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+
+    var shoppingBag = this
+        .bagInStores
+        .firstWhere((element) => element.onlineStoreID == storeID && element.userId == this.id, orElse: null);
+    if (shoppingBag == null) {
+      print("No such shopping bag in store $storeID for user ${this.id}");
+      return;
+    }
+
+    var cartDTO = UsersStorageProxy().convertStoreProductToCartProduct(productDTO, newQuantity);
+    shoppingBag.removeProduct(productDTO.id);
+    shoppingBag.addProduct(cartDTO);
+
+    notifyListeners();
+  }
+
+  Future<void> clearShoppingBagInStore(String storeID) async {
+    var res = await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+
+    this.bagInStores.removeWhere((element) => element.onlineStoreID == storeID && element.userId == this.id!);
+    notifyListeners();
+  }
+
+  Future<void> clearAllUserShoppingBags() async {
+    await UsersStorageProxy().clearAllShoppingBag(this.id!);
+  }
+
+  void updateShoppingBag(ShoppingBagModel? shoppingBag) async {
+    if (shoppingBag == null) {
+      this.bagInStores = [];
+      return;
+    }
+    var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
+    if (!convertRes.getTag()) {
+      print(convertRes.getMessage());
+      return;
+    }
+    ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
+    if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
+  }
+
+  Future<void> addFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().addFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteProduct(String prodID) async {
+    var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteProducts = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> addFavoriteStore(String storeID) async {
+    var res = await UsersStorageProxy().addFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeFavoriteStore(String storeID) async {
+    var res = await UsersStorageProxy().removeFavoriteStore(storeID);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.favoriteStores = res.getValue();
+    notifyListeners();
   }
 }
