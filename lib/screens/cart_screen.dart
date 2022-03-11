@@ -2,14 +2,15 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/cart_item.dart';
 
 class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
 
-  late OnlineStoreDTO store;
-  late User user;
-  late ShoppingBagDTO? cart;
+  late String storeID;
+  //late User user;
+  //late ShoppingBagDTO? cart;
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -21,19 +22,20 @@ class _CartScreenState extends State<CartScreen> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
-    widget.store = routeArgs['store'] as OnlineStoreDTO;
-    widget.user = routeArgs['user'] as User;
-    widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
+    widget.storeID = routeArgs['store'] as String;
+    //widget.user = routeArgs['user'] as User;
+    //widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
   }
 
   void _update() {
     setState(() {
-      widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
+      //widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<User>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -56,7 +58,7 @@ class _CartScreenState extends State<CartScreen> {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$${widget.cart!.calculateTotalPrice().toStringAsFixed(2)}',
+                      '\$${provider.bagInStores.firstWhere((element) => element.onlineStoreID == widget.store.id).calculateTotalPrice().toStringAsFixed(2)}',
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
@@ -71,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
               itemCount: widget.cart!.products.length,
               itemBuilder: (ctx, i) => CartItem(
                   widget.cart!.products.toList()[i],
-                  widget.store,
+                  widget.storeID,
                   widget.user,
                 _update
               ),

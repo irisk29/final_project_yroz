@@ -31,12 +31,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     category: '',
     storeID: ''
   );
-  var _initValues = {
-    'title': '',
-    'description': '',
-    'price': '',
-    'imageUrl': '',
-  };
+
   var _isInit = true;
   var _isLoading = false;
 
@@ -118,7 +113,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
-                initialValue: _initValues['title'],
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
@@ -142,7 +136,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 },
               ),
               TextFormField(
-                initialValue: _initValues['price'],
                 decoration: InputDecoration(labelText: 'Price'),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
@@ -175,7 +168,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 },
               ),
               TextFormField(
-                initialValue: _initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
