@@ -130,6 +130,9 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               onTap: () async {
                 !widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id, false)
                     : await widget.user.removeFavoriteStore(widget.store.id, false);
+                setState(() {
+
+                });
                 //open change language
               },
               trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(

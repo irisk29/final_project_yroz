@@ -150,6 +150,9 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               onTap: () async {
                 !widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id, true)
                     : await widget.user.removeFavoriteStore(widget.store.id, true);
+                setState(() {
+
+                });
                 //open change language
               },
               trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(
