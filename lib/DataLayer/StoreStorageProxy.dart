@@ -389,7 +389,6 @@ class StoreStorageProxy {
           operationHours: opHours(jsonDecode(model.operationHours)),
           image: url,
           qrCode: model.qrCode!);
-      await dto.initImageFile();
       lst.add(dto);
     }
     return lst;
@@ -409,7 +408,6 @@ class StoreStorageProxy {
           image: url,
           products: await fetchStoreProducts(model.id),
           qrCode: model.qrCode);
-      await dto.initImageFile();
       lst.add(dto);
     }
     return lst;

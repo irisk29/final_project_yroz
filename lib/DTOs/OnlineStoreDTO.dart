@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:flutter/material.dart';
 
@@ -15,10 +17,11 @@ class OnlineStoreDTO extends StoreDTO {
       required Map<String, List<TimeOfDay>> operationHours,
       String? image,
       required List<ProductDTO> products,
-      String? qrCode})
+      String? qrCode,
+      File? imageFromPhone})
       : this.products = products,
         super(id: id, name: name, phoneNumber: phoneNumber, address: address, categories: categories, operationHours: operationHours,
-            image: image, qrCode: qrCode) {}
+            image: image, qrCode: qrCode, imageFromPhone: imageFromPhone) {}
 
   void addProduct(ProductDTO product) {
     this.products.add(product);
