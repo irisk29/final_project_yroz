@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
@@ -200,7 +201,12 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 //open change language
               },
             ),
-            QrImage.withQr(qr: QrCode.fromData(data: widget.store.qrCode!, errorCorrectLevel: QrErrorCorrectLevel.M)),
+             Image.file(
+              File(widget.store.qrCode!),
+              width: 100,
+              height: 100,
+              fit: BoxFit.fill,
+            )
           ],
         ),
       ),
