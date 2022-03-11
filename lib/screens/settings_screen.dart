@@ -12,18 +12,6 @@ class SettingsScreen extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
 
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: User("", ""),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _SettingsPageState extends State<SettingsScreen> {

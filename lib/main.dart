@@ -17,10 +17,6 @@ import 'LogicLayer/User.dart';
 import 'amplifyconfiguration.dart';
 import 'blocs/application_bloc.dart';
 import 'models/ModelProvider.dart';
-import 'providers/auth.dart';
-import 'providers/cart.dart';
-import 'providers/orders.dart';
-import 'providers/products.dart';
 
 import 'screens/landing_screen.dart';
 import 'screens/payment_screen.dart';
@@ -100,18 +96,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: Auth(),
-        ),
-        ChangeNotifierProvider.value(value: Products.withNull()),
-        ChangeNotifierProvider.value(
-          value: Cart(),
-        ),
-        ChangeNotifierProxyProvider<Auth, Orders>(
-          create: (context) => Orders.withNull(),
-          update: (con, val, old) =>
-              Orders(val.token!, val.userId!, old == null ? [] : old.orders),
-        ),
         ChangeNotifierProvider(
           create: (context) => ApplicationBloc(),
         ),
@@ -119,23 +103,13 @@ class _MyAppState extends State<MyApp> {
           create: (context) => User.withNull(),
         ),
       ],
-      child: Consumer<Auth>(
-        builder: (ctx, auth, _) => MaterialApp(
+      child: MaterialApp(
           title: 'MyShop',
           theme: ThemeData(
             primarySwatch: MaterialColor(0xFFF35A6A, color),
             accentColor: Colors.purple,
           ),
-          home: auth.isAuth
-              ? ProductDetailScreen()
-              : FutureBuilder(
-                  future: auth.tryAutoLogin(),
-                  builder: (ctx, authResultSnapshot) =>
-                      authResultSnapshot.connectionState ==
-                              ConnectionState.waiting
-                          ? SplashScreen()
-                          : LandingScreen(),
-                ),
+          home:  LandingScreen(),
           routes: {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),
@@ -157,7 +131,6 @@ class _MyAppState extends State<MyApp> {
             EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
             QRViewExample.routeName: (ctx) => QRViewExample()
           },
-        ),
       ),
     );
   }

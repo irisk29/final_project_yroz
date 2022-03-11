@@ -82,7 +82,8 @@ class _QRViewExampleState extends State<QRViewExample> {
                                   return Text('loading');
                                 }
                               },
-                            )),
+                            ),
+                        ),
                       )
                     ],
                   ),

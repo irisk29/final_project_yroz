@@ -3,9 +3,6 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/cart.dart';
 
 class CartItem extends StatefulWidget {
   final CartProductDTO product;

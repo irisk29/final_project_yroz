@@ -144,21 +144,6 @@ class _StorePreviewState extends State<StorePreview> {
                   ),
                   ListTile(
                     leading: Icon(
-                      Icons.language,
-                      color: Colors.grey,
-                    ),
-                    title: Text(
-                      "www.mooo.com",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent),
-                    ),
-                    onTap: () {
-                      //open change language
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
                       Icons.phone,
                       color: Colors.grey,
                     ),

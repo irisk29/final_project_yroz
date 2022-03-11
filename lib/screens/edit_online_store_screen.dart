@@ -2,7 +2,6 @@ import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/providers/product.dart';
 import 'package:final_project_yroz/screens/edit_product_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
@@ -20,6 +19,7 @@ class EditOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/edit-online-store';
   static List<String> _selectedItems = [];
   static List<ProductDTO> _products = [];
+
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -34,6 +34,7 @@ class EditOnlineStorePipeline extends StatefulWidget {
   static TimeOfDay _friday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
+
   static TextEditingController _controller = TextEditingController();
 
   User? user;
@@ -47,9 +48,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
-  final _imageUrlController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(

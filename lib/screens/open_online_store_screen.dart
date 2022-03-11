@@ -18,6 +18,7 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/open-online-store';
   static List<String> _selectedItems = [];
   static List<ProductDTO> _products = [];
+
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -45,7 +46,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
-  final _imageUrlController = TextEditingController();
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();

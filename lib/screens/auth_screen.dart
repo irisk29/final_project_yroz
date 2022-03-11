@@ -127,6 +127,7 @@ class _AuthCardState extends State<AuthCard>
                           context
                               .read<User>()
                               .signIn(AuthProvider.google, context);
+                          //TODO: ADD CALL TO ERROR DIALOG IF FAILS
                         },
                       ),
                       SignInButton(
@@ -135,6 +136,7 @@ class _AuthCardState extends State<AuthCard>
                           context
                               .read<User>()
                               .signIn(AuthProvider.facebook, context);
+                          //TODO: ADD CALL TO ERROR DIALOG IF FAILS
                         },
                       ),
                     ],

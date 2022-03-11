@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -17,6 +14,7 @@ import '../dummy_data.dart';
 class OpenPhysicalStorePipeline extends StatefulWidget {
   static const routeName = '/open-physical-store';
   static List<String> _selectedItems = [];
+
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -44,7 +42,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
-  final _imageUrlController = TextEditingController();
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
@@ -97,11 +94,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       },
       qrCode: "",
       image: null);
-  var _initValues = {
-    'name': '',
-    'phoneNumber': '',
-    'address': '',
-  };
+
   final List<String> _selectedItems = [];
   var _isInit = true;
   var _isLoading = false;

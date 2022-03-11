@@ -1,11 +1,7 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
-
-import '../providers/product.dart';
-import '../providers/products.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const routeName = '/add-product';
@@ -18,25 +14,6 @@ class AddProductScreen extends StatefulWidget {
 
   @override
   _AddProductScreenState createState() => _AddProductScreenState();
-  Widget wrapWithMaterial() => MaterialApp(
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: Product(
-              id: "",
-              title: "",
-              description: "",
-              category: "",
-              price: 0,
-              imageUrl: "",
-              storeID: ""),
-        ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-  );
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
@@ -110,31 +87,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       _isLoading = true;
     });
-    // if (_editedProduct!.id != "") {
-    //   await Provider.of<Products>(context, listen: false)
-    //       .updateProduct(_editedProduct!.id, _editedProduct!);
-    // } else {
-    //   try {
-    //     await Provider.of<Products>(context, listen: false)
-    //         .addProduct(_editedProduct!);
-    //   } catch (error) {
-    //     await showDialog(
-    //       context: context,
-    //       builder: (ctx) => AlertDialog(
-    //         title: Text('An error occurred!'),
-    //         content: Text(error.toString()),
-    //         actions: <Widget>[
-    //           FlatButton(
-    //             child: Text('Okay'),
-    //             onPressed: () {
-    //               Navigator.of(ctx).pop();
-    //             },
-    //           )
-    //         ],
-    //       ),
-    //     );
-    //   }
-    // }
     setState(() {
       _isLoading = false;
     });

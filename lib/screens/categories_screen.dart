@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -25,10 +22,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   void initState() {
-    // Provider.of<Products>(context).fetchAndSetProducts(); // WON'T WORK!
-    // Future.delayed(Duration.zero).then((_) {
-    //   Provider.of<Products>(context).fetchAndSetProducts();
-    // });
     super.initState();
     () async {
       onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
@@ -57,7 +50,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-
     return SingleChildScrollView(
       child: Container(
         height: height,

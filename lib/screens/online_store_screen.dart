@@ -8,10 +8,6 @@ import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
-import '../providers/cart.dart';
-import '../providers/products.dart';
 import 'cart_screen.dart';
 
 class OnlineStoreScreen extends StatefulWidget {
@@ -23,21 +19,6 @@ class OnlineStoreScreen extends StatefulWidget {
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
 
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Products("", "", []),
-            ),
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
@@ -100,7 +81,6 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     }
     return 2;
   }
-
 
   void routeToOnlineStoreProducts(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
@@ -198,20 +178,6 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               title: Text(widget.store.address),
               onTap: () {
                 //open change location
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.language,
-                color: Colors.grey,
-              ),
-              title: Text(
-                "www.mooo.com",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.blueAccent),
-              ),
-              onTap: () {
-                //open change language
               },
             ),
             ListTile(

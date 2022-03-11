@@ -11,7 +11,7 @@ import '../lib/screens/product_detail_screen.dart';
 void main() {
   testWidgets('Product Detail Screen test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(ProductDetailScreen().wrapWithMaterial());
+    await tester.pumpWidget(ProductDetailScreen());
 
     // Verify that our counter starts at 0.
     expect(find.text('\€'), findsOneWidget);

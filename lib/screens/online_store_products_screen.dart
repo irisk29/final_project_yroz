@@ -3,11 +3,8 @@ import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../widgets/badge.dart';
-import '../providers/cart.dart';
 import './cart_screen.dart';
-import '../providers/products.dart';
 
 class OnlineStoreProductsScreen extends StatefulWidget {
   static const routeName = '/online-store-products';
@@ -19,21 +16,6 @@ class OnlineStoreProductsScreen extends StatefulWidget {
   _OnlineStoreProductsScreenState createState() =>
       _OnlineStoreProductsScreenState();
 
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Products("", "", []),
-            ),
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {

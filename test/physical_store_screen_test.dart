@@ -11,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Physical Store Screen test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(PhysicalStoreScreen().wrapWithMaterial());
+    await tester.pumpWidget(PhysicalStoreScreen());
 
     // Verify that our counter starts at 0.
     expect(find.text('About the store'), findsOneWidget);

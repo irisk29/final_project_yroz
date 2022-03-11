@@ -2,11 +2,7 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
-import '../providers/orders.dart';
 
 class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
@@ -85,19 +81,6 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: widget,
-          ),
-        ),
-      );
 }
 
 class OrderButton extends StatefulWidget {

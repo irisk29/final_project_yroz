@@ -18,6 +18,7 @@ import '../dummy_data.dart';
 class EditPhysicalStorePipeline extends StatefulWidget {
   static const routeName = '/edit-physical-store';
   static List<String> _selectedItems = [];
+
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -45,9 +46,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
-  final _imageUrlController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
@@ -98,11 +96,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       },
       qrCode: "",
       image: null);
-  var _initValues = {
-    'name': '',
-    'phoneNumber': '',
-    'address': '',
-  };
+
   final List<String> _selectedItems = [];
   var _isInit = true;
   var _isLoading = false;

@@ -1,19 +1,13 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
-import '../providers/auth.dart';
-import 'package:provider/provider.dart';
 
 import '../screens/product_detail_screen.dart';
-import '../providers/product.dart';
-import '../providers/cart.dart';
 
 class ProductItem extends StatefulWidget {
-  //final String id;
   final ProductDTO product;
   final User user;
   final String storeID;
-
 
   ProductItem(this.product, this.user, this.storeID);
 

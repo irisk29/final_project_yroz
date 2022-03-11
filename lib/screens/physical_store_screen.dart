@@ -5,12 +5,6 @@ import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-
-import '../widgets/badge.dart';
-import '../providers/cart.dart';
-import './cart_screen.dart';
 
 class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
@@ -21,18 +15,6 @@ class PhysicalStoreScreen extends StatefulWidget {
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
 
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
@@ -80,7 +62,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    //String hour = DateFormat('Hm').format(DateTime.now());
     for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
       if (e.key == day) {
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
@@ -103,9 +84,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
         title: Text(
           "" + widget.store.name,
         ),
-        actions: [
-
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -175,20 +153,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               title: Text(widget.store.address),
               onTap: () {
                 //open change location
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.language,
-                color: Colors.grey,
-              ),
-              title: Text(
-                "www.mooo.com",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.blueAccent),
-              ),
-              onTap: () {
-                //open change language
               },
             ),
             ListTile(

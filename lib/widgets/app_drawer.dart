@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import '../screens/tabs_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/auth.dart';
-
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -46,7 +44,6 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
             onTap: () {
-              Provider.of<Auth>(context, listen: false).logout();
               context.read<User>().signOut(context);
             },
           ),

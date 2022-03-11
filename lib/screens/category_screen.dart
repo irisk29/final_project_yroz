@@ -4,11 +4,6 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/store_item.dart';
 import 'package:flutter/material.dart';
 
-enum FilterOptions {
-  Favorites,
-  All,
-}
-
 class CategoryScreen extends StatefulWidget {
   static const routeName = '/category';
   String? title;
@@ -20,23 +15,23 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   var _isLoading = true;
-  List<StoreDTO> DUMMY_STORES = [];
+  List<StoreDTO> stores = []; // TODO: ADD ONLINE STORES
 
   @override
   void initState() {
     super.initState();
     () async {
-      DUMMY_STORES = await StoreStorageProxy().fetchAllPhysicalStores();
-      if(DUMMY_STORES.length==0) {
+      stores = await StoreStorageProxy().fetchAllPhysicalStores();
+      if(stores.length==0) {
         _isLoading = false;
       }
       List<StoreDTO> toRemove = [];
-      if(DUMMY_STORES.length>0) {
-        for (StoreDTO store in DUMMY_STORES) {
+      if(stores.length>0) {
+        for (StoreDTO store in stores) {
           if (!store.categories.contains(widget.title!))
               toRemove.add(store);
         }
-        DUMMY_STORES.removeWhere((element) => toRemove.contains(element));
+        stores.removeWhere((element) => toRemove.contains(element));
         _isLoading = false;
       }
       setState(() {
@@ -67,7 +62,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               scrollDirection: Axis.vertical,
               padding: const EdgeInsets.all(25),
               children: [
-                DUMMY_STORES
+                stores
                     .map(
                       (storeData) => StoreItem(
                         storeData, widget.user!
