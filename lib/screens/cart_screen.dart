@@ -28,13 +28,14 @@ class _CartScreenState extends State<CartScreen> {
 
   void _update() {
     setState(() {
+      //build(context);
       //widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<User>(context, listen: false);
+    var provider = Provider.of<User>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: Text(

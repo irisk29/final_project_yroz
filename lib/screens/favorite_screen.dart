@@ -31,7 +31,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   void didChangeDependencies() {
     () async {
       favoriteStores = [];
-      for(Tuple2<String,bool> store in Provider.of<User>(context, listen: false).favoriteStores){
+      for(Tuple2<String,bool> store in Provider.of<User>(context, listen: true).favoriteStores){
         if(store.item2) //online store
         {
           ResultInterface res = await StoreStorageProxy().getOnlineStore(store.item1);
@@ -54,7 +54,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     
     () async {
       favoriteProducts = [];
-      for(String product in Provider.of<User>(context, listen: false).favoriteProducts){
+      for(String product in Provider.of<User>(context, listen: true).favoriteProducts){
         ResultInterface res = await StoreStorageProxy().getOnlineStoreProduct(product);
         if(res.getTag()){
           favoriteProducts.add(res.getValue() as ProductDTO);

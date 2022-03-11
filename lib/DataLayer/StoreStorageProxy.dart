@@ -532,7 +532,9 @@ class StoreStorageProxy {
       await Amplify.DataStore.save(updatedStore);
       ResultInterface prodRes = await updateOnlineStoreProducts(newStore.products, newStore.id);
       if (!prodRes.getTag()) return prodRes;
-      return new Ok("updated online store succssefully", updatedStore);
+      List<StoreProductModel> prods = prodRes.getValue();
+      OnlineStoreModel update = updatedStore.copyWith(storeProductModels: prods);
+      return new Ok("updated online store succssefully", update);
     } on Exception catch (e) {
       // TODO: write to log
       throw e;

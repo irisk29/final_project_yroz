@@ -108,7 +108,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     if (_isInit) {
       // final user = ModalRoute.of(context)!.settings.arguments as User?;
       // widget.user = user;
-      // _editedStore = user!.storeOwnerState!.onlineStore;
+      _editedStore = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
       _selectedItems.addAll(_editedStore!.categories);
       EditOnlineStorePipeline._products = _editedStore!.products;
     }

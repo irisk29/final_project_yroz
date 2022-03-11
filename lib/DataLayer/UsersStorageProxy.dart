@@ -231,8 +231,12 @@ class UsersStorageProxy {
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
       List<Tuple2<String, bool>> fav = fromJsonToTupleList(user.favoriteStores!);
-      if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) != null) {
-        return new Failure("The store $storeID is already a favorite", storeID);
+      if(fav.isNotEmpty) {
+        if (fav.firstWhere((element) => element.item1 == storeID,
+            orElse: null) != null) {
+          return new Failure(
+              "The store $storeID is already a favorite", storeID);
+        }
       }
       fav.add(Tuple2<String, bool>(storeID, isOnline));
       var updatedUser = user.copyWith(

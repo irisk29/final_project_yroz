@@ -116,15 +116,14 @@ class _CartItemState extends State<CartItem> {
                       actions: [
                         FlatButton(
                           child: Text('Okay'),
-                          onPressed: () {
+                          onPressed: () async {
                             quantity = double.parse(myController.text);
                             Navigator.of(context).pop();
-                            Provider.of<User>(context, listen: false).updateProductQuantityInBag(widget.product!, widget.storeID, quantity);
+                            await Provider.of<User>(context, listen: false).updateProductQuantityInBag(widget.product!, widget.storeID, quantity);
                             setState(() {
                               widget.quantity = quantity;
                               () => widget.update();
                             });
-                            Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID});
                           },
                         ),
                         FlatButton(

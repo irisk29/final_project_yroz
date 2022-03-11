@@ -265,10 +265,13 @@ class User extends ChangeNotifier {
       print("No such shopping bag in store $storeID for user ${this.id}");
       return;
     }
-
+    var shoppingBagCopy = shoppingBag;
     var cartDTO = UsersStorageProxy().convertStoreProductToCartProduct(productDTO, newQuantity);
-    shoppingBag.removeProduct(productDTO.id);
-    shoppingBag.addProduct(cartDTO);
+    shoppingBagCopy.removeProduct(productDTO.id);
+    shoppingBagCopy.addProduct(cartDTO);
+
+    this.bagInStores.remove(shoppingBag);
+    this.bagInStores.add(shoppingBagCopy);
 
     notifyListeners();
   }
