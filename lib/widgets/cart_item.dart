@@ -11,6 +11,7 @@ class CartItem extends StatefulWidget {
   final CartProductDTO product;
   final OnlineStoreDTO store;
   final User user;
+  final void Function() update;
 
   late double price;
   late String title;
@@ -19,7 +20,8 @@ class CartItem extends StatefulWidget {
   CartItem(
     this.product,
     this.store,
-    this.user
+    this.user,
+    this.update
   ){
     price = product.price;
     quantity = product.amount;
@@ -79,7 +81,10 @@ class _CartItemState extends State<CartItem> {
       },
       onDismissed: (direction) async {
         await widget.user.removeProductFromShoppingBag(widget.product, widget.store.id);
-        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
+        setState(() {
+          widget.update();
+        });
+        //Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -119,6 +124,7 @@ class _CartItemState extends State<CartItem> {
                             widget.user.updateProductQuantityInBag(widget.product, widget.store.id, quantity);
                             setState(() {
                               widget.quantity = quantity;
+                              widget.update();
                             });
                             },
                         ),

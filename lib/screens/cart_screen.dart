@@ -30,6 +30,12 @@ class _CartScreenState extends State<CartScreen> {
     widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
   }
 
+  void _update() {
+    setState(() {
+      widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +76,8 @@ class _CartScreenState extends State<CartScreen> {
               itemBuilder: (ctx, i) => CartItem(
                 widget.cart!.products.toList()[i],
                 widget.store,
-                widget.user
+                widget.user,
+                  _update
               ),
             ),
           )
