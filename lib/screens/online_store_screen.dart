@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
@@ -222,7 +224,12 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            Text(widget.store.qrCode!),
+            Image.file(
+              File(widget.store.qrCode!),
+              width: 150,
+              height: 150,
+              fit: BoxFit.fill,
+            ),
             ElevatedButton(
               onPressed: () => routeToOnlineStoreProducts(context),
               child: Text('Online Store Shop'),

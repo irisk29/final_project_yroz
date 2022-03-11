@@ -203,8 +203,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
             ),
              Image.file(
               File(widget.store.qrCode!),
-              width: 100,
-              height: 100,
+              width: 150,
+              height: 150,
               fit: BoxFit.fill,
             )
           ],
