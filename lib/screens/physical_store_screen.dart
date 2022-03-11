@@ -128,8 +128,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                !widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id, false)
-                    : await widget.user.removeFavoriteStore(widget.store.id, false);
+                widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.removeFavoriteStore(widget.store.id, false)
+                    : await widget.user.addFavoriteStore(widget.store.id, false);
                 setState(() {
 
                 });

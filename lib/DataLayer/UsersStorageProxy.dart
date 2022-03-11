@@ -255,15 +255,19 @@ class UsersStorageProxy {
     var favoriteProd = user.favoriteProducts;
     if (favoriteProd != null) {
       List<String> fav = (jsonDecode(user.favoriteProducts!) as List<dynamic>).cast<String>();
-      if (!fav.contains(prodID)) {
-        return new Failure("The product $prodID is not a favorite", prodID);
+      if(fav.isNotEmpty) {
+        if (!fav.contains(prodID)) {
+          return new Failure("The product $prodID is not a favorite", prodID);
+        }
+        fav.remove(prodID);
+        var updatedUser = user.copyWith(
+          favoriteProducts: JsonEncoder.withIndent('  ').convert(fav),
+        );
+        await Amplify.DataStore.save(updatedUser);
+        return new Ok(
+            "Removed succssefully product $prodID from user's favorite", fav);
       }
-      fav.remove(prodID);
-      var updatedUser = user.copyWith(
-        favoriteProducts: JsonEncoder.withIndent('  ').convert(fav),
-      );
-      await Amplify.DataStore.save(updatedUser);
-      return new Ok("Removed succssefully product $prodID from user's favorite", fav);
+      return new Failure("There is no favorite stores list from current user ${user.id}", null);
     }
     return new Failure("There is no favorite products list from current user ${user.id}", null);
   }
