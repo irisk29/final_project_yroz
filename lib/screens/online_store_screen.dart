@@ -1,3 +1,4 @@
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -6,6 +7,7 @@ import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 import '../providers/cart.dart';
 import '../providers/products.dart';
 import 'cart_screen.dart';
@@ -148,14 +150,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                !widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id, true)
+                widget.user.favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) == null ? await widget.user.addFavoriteStore(widget.store.id, true)
                     : await widget.user.removeFavoriteStore(widget.store.id, true);
                 setState(() {
 
                 });
                 //open change language
               },
-              trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(
+              trailing: widget.user.favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) != null ? Icon(
                 Icons.favorite,
                 color: Colors.black,
               ) : Icon(

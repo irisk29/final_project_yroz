@@ -144,7 +144,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       favoriteProducts
                           .map(
                             (storeData) => ProductItem(
-                              storeData, widget.user!, ""
+                              storeData, widget.user!, storeData.storeID
                             ),
                       ).toList(),
                     ].expand((i) => i).toList(),
