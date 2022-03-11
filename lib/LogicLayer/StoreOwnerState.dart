@@ -54,7 +54,8 @@ class StoreOwnerState {
                     description: e.description!,
                     category: e.categories,
                     price: e.price,
-                    imageUrl: e.imageUrl!))
+                    imageUrl: e.imageUrl!,
+                    storeID: e.onlinestoremodelID))
                 .toList(),
         qrCode: onlineStoreModel.qrCode);
   }
