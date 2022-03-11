@@ -23,7 +23,7 @@ class User extends ChangeNotifier {
   String? id;
   String? email;
   String? name;
-  List<Tuple2<String,bool>> favoriteStores; //IDs of favorite stores
+  List<Tuple2<String, bool>> favoriteStores; //IDs of favorite stores
   List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
@@ -35,14 +35,14 @@ class User extends ChangeNotifier {
   bool isSignedIn = false;
 
   User(this.email, this.name)
-      : favoriteStores = <Tuple2<String,bool>>[],
+      : favoriteStores = <Tuple2<String, bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
 
   User.withNull()
-      : favoriteStores = <Tuple2<String,bool>>[],
+      : favoriteStores = <Tuple2<String, bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
@@ -299,5 +299,14 @@ class User extends ChangeNotifier {
     }
     ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
     if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
+  }
+
+  Future<ShoppingBagDTO?> getCurrShoppingBag(String storeID) async {
+    var res = await UsersStorageProxy().getCurrentShoppingBag(storeID, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return null;
+    }
+    return res.getValue();
   }
 }
