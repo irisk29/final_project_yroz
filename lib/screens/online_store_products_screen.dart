@@ -51,7 +51,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store});
+                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
               },
             ),
             value: cartSize,

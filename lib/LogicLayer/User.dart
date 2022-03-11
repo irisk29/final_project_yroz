@@ -309,4 +309,11 @@ class User extends ChangeNotifier {
     }
     return res.getValue();
   }
+
+  ShoppingBagDTO? getShoppingBag(String storeID){
+    () async {
+      ShoppingBagDTO? dto = await getCurrShoppingBag(storeID);
+      return dto;
+    }();
+  }
 }

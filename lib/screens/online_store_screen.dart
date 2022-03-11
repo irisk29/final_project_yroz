@@ -104,7 +104,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store});
+                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
               },
             ),
             value: Provider.of<User>(context, listen: false).bagInStores.length > 0 ? Provider.of<User>(context, listen: false).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),

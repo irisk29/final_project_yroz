@@ -58,11 +58,11 @@ class _CartScreenState extends State<CartScreen> {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$${provider.bagInStores.firstWhere((element) => element.onlineStoreID == widget.store.id).calculateTotalPrice().toStringAsFixed(2)}',
+                      '\$${provider.getShoppingBag(widget.storeID)!.calculateTotalPrice().toStringAsFixed(2)}',
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  OrderButton(cart: widget.cart!)
+                  OrderButton(cart: provider.getShoppingBag(widget.storeID)),
                 ],
               ),
             ),
@@ -70,9 +70,9 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: widget.cart!.products.length,
+              itemCount: provider.getShoppingBag(widget.storeID)!.products.length,
               itemBuilder: (ctx, i) => CartItem(
-                  widget.cart!.products.toList()[i],
+                  provider.getShoppingBag(widget.storeID)!.products.toList()[i],
                   widget.storeID,
                 _update
               ),
@@ -90,7 +90,7 @@ class OrderButton extends StatefulWidget {
     required this.cart,
   }) : super(key: key);
 
-  final ShoppingBagDTO cart;
+  final ShoppingBagDTO? cart;
 
   @override
   _OrderButtonState createState() => _OrderButtonState();
@@ -103,7 +103,7 @@ class _OrderButtonState extends State<OrderButton> {
   Widget build(BuildContext context) {
     return FlatButton(
       child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
-      onPressed: (widget.cart.calculateTotalPrice() <= 0 || _isLoading)
+      onPressed: (widget.cart!.calculateTotalPrice() <= 0 || _isLoading)
           ? null
           : () async {
               setState(() {
@@ -113,7 +113,7 @@ class _OrderButtonState extends State<OrderButton> {
               setState(() {
                 _isLoading = false;
               });
-              widget.cart.clearBag();
+              widget.cart!.clearBag();
             },
       textColor: Theme.of(context).primaryColor,
     );
