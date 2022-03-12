@@ -626,7 +626,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           'Open Physical Store',
         ),
       ),
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Container(

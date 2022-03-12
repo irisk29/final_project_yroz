@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/credit_cards_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'edit_online_store_screen.dart';
@@ -127,6 +128,7 @@ class _SettingsPageState extends State<SettingsScreen> {
                         title: Text("Credit Cards"),
                         trailing: Icon(Icons.keyboard_arrow_right),
                         onTap: () {
+                          Navigator.of(context).pushNamed(CreditCardsScreen.routeName);
                           //open change language
                         },
                       ),

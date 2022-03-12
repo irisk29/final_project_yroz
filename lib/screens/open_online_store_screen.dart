@@ -695,7 +695,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'Open Online Store',

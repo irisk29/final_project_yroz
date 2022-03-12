@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/screens/settings_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 class CreditCardsScreen extends StatefulWidget {
-  //User? user;
+  static const routeName = '/credit-cards';
 
   @override
   State<CreditCardsScreen> createState() => _CreditCardsScreenScreenState();
@@ -59,7 +60,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
               Icons.add,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed(SettingsScreen.routeName);
+              Navigator.of(context).pushNamed(AddCreditCardScreen.routeName);
             },
           ),
         ],
