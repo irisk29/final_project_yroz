@@ -21,6 +21,8 @@ import 'blocs/application_bloc.dart';
 import 'models/ModelProvider.dart';
 
 import 'screens/landing_screen.dart';
+import 'screens/manage_online_store_screen.dart';
+import 'screens/manage_physical_store_screen.dart';
 import 'screens/payment_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/category_screen.dart';
@@ -134,6 +136,8 @@ class _MyAppState extends State<MyApp> {
             QRViewExample.routeName: (ctx) => QRViewExample(),
             CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
             AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
+            ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
+            ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
           },
       ),
     );

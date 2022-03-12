@@ -57,7 +57,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.add,
+              IconData(0xf04b7, fontFamily: 'MaterialIcons'),
             ),
             onPressed: () {
               Navigator.of(context).pushNamed(AddCreditCardScreen.routeName);

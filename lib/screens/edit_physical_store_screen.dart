@@ -104,6 +104,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       // final user = ModalRoute.of(context)!.settings.arguments as User?;
       // widget.user = user;
       // _editedStore = user!.storeOwnerState!.physicalStore;
+      _editedStore = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore;
       _selectedItems.addAll(_editedStore!.categories);
     }
     _isInit = false;
