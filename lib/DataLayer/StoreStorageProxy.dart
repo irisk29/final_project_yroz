@@ -15,6 +15,7 @@ import 'package:final_project_yroz/models/StoreOwnerModel.dart';
 import 'package:final_project_yroz/models/StoreProductModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:flutter/material.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -86,6 +87,7 @@ class StoreStorageProxy {
           onlineStoreModel: onlineWithProducts, storeOwnerModelOnlineStoreModelId: onlineWithProducts.id);
       UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
+        FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
         return new Failure("no such user exists in the system!", null);
       }
       UserModel newUserModel = oldUserModel.copyWith(
@@ -105,16 +107,13 @@ class StoreStorageProxy {
       await Amplify.DataStore.save(newUserModel);
     } else if (!storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId!.isEmpty) // already have an online store
     {
-      //TODO: write the exception to log
+      FLog.error(text: "User already has online store - only one is allowed!");
       return new Failure("User already has online store - only one is allowed!", "");
-    } else //we have a store owner state but not an online store
-    {
-      UsersStorageProxy().addOnlineStoreToStoreOwnerState(onlineStoreModel);
     }
-    return new Ok("open online store succeeded", Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner!.id));
+    FLog.info(text: "open online store ${onlineWithProducts.id} for store owner ${storeOwner!.id}");
+    return new Ok("open online store succeeded", Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner.id));
   }
 
-  //for physical stores only
   Future<String> generateUniqueQRCode(String storeID) async {
     final qrValidationResult = QrValidator.validate(
       data: storeID,
@@ -141,6 +140,7 @@ class StoreStorageProxy {
       print(res.getMessage());
       return "";
     }
+    FLog.info(text: "Generated QRCode and saved it in $path");
     return path;
   }
 
@@ -181,6 +181,7 @@ class StoreStorageProxy {
           StoreOwnerModel(physicalStoreModel: physicalModel, storeOwnerModelPhysicalStoreModelId: physicalModel.id);
       UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
+        FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
         return new Failure("no such user exists in the system!", null);
       }
 
@@ -201,13 +202,11 @@ class StoreStorageProxy {
       await Amplify.DataStore.save(newUserModel);
     } else if (!storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId!.isEmpty) // already have an physical store
     {
-      //TODO: write the exception to log
+      FLog.error(text: "User already has physical store - only one is allowed!");
       return new Failure("User already has physical store - only one is allowed!", "");
-    } else //we have a store owner state but not an physical store
-    {
-      UsersStorageProxy().addPhysicalStoreToStoreOwnerState(physicalModel);
     }
-    return new Ok("open physical store succsseded", Tuple2<PhysicalStoreModel, String>(physicalModel, storeOwner!.id));
+    FLog.info(text: "open online store ${physicalModel.id} for store owner ${storeOwner!.id}");
+    return new Ok("open physical store succsseded", Tuple2<PhysicalStoreModel, String>(physicalModel, storeOwner.id));
   }
 
   Future<File> createFileFromImageUrl(String url) async {
@@ -230,8 +229,10 @@ class StoreStorageProxy {
           onProgress: (progress) {
             print("Fraction completed: " + progress.getFractionCompleted().toString());
           });
+      FLog.info(text: "Successfully uploaded file: ${result.key}");    
       return new Ok('Successfully uploaded file: ${result.key}', storeId);
     } on StorageException catch (e) {
+      FLog.error(text: e.message, stacktrace: StackTrace.current);
       return new Failure('Error uploading file: $e', storeId);
     }
   }
@@ -241,6 +242,7 @@ class StoreStorageProxy {
       final RemoveResult result = await Amplify.Storage.remove(key: storeId);
       return new Ok('Deleted file: ${result.key}', storeId);
     } on StorageException catch (e) {
+      FLog.error(text: e.message, stacktrace: StackTrace.current);
       return new Failure('Error deleting file: $e', storeId);
     }
   }
@@ -251,7 +253,7 @@ class StoreStorageProxy {
       final file = await File(path);
       await file.delete();
     } catch (e) {
-      //TODO: print to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       print(e.toString());
     }
   }
@@ -288,7 +290,7 @@ class StoreStorageProxy {
       List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(PhysicalStoreModel.classType);
       return convertPhysicalStoreModelToDTO(physicalStores); //only one physical store per user
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
   }
@@ -298,7 +300,7 @@ class StoreStorageProxy {
       List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(OnlineStoreModel.classType);
       return convertOnlineStoreModelToDTO(onlineStores); //only one online store per user
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
   }
@@ -313,7 +315,7 @@ class StoreStorageProxy {
       allDtos.addAll(physicalDtos);
       return allDtos;
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
   }
@@ -356,7 +358,7 @@ class StoreStorageProxy {
       allDtos.addAll(physicalDtos);
       return allDtos;
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
   }
@@ -368,11 +370,12 @@ class StoreStorageProxy {
       if (item.isEmpty) return null;
       final GetUrlResult result = await Amplify.Storage.getUrl(key: keyName);
       print('Got URL: ${result.url}');
+      FLog.info(text: "Got URL: ${result.url}");
       return result.url;
     } on StorageException catch (e) {
       print('Error getting download URL: $e');
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
-      //TODO: write to log
     }
   }
 
@@ -458,11 +461,12 @@ class StoreStorageProxy {
         await uploadPicture(productDTO.imageUrl, productModel.id, null); // uploading the picture to s3
       }
       await Amplify.DataStore.save(productModel);
+      FLog.info(text: "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}");
       return new Ok(
           "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}",
           productModel);
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString(), null);
     }
   }
@@ -472,6 +476,7 @@ class StoreStorageProxy {
       List<PhysicalStoreModel> physicalStores =
           await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(newStore.id));
       if (physicalStores.isEmpty) {
+        FLog.error(text: "No physical store is found!");
         return new Failure("No physical store is found!", null);
       }
       PhysicalStoreModel updatedStore = physicalStores[0].copyWith(
@@ -496,9 +501,10 @@ class StoreStorageProxy {
         updatePicture(newStore.image!, newStore.id);
       }
       await Amplify.DataStore.save(updatedStore);
+      FLog.info(text: "updated physical store succssefully");
       return new Ok("updated physical store succssefully", updatedStore);
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
   }
@@ -508,6 +514,7 @@ class StoreStorageProxy {
       List<OnlineStoreModel> onlineStores =
           await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(newStore.id));
       if (onlineStores.isEmpty) {
+        FLog.error(text: "No online store is found!");
         return new Failure("No online store is found!", null);
       }
       OnlineStoreModel updatedStore = onlineStores[0].copyWith(
@@ -536,9 +543,10 @@ class StoreStorageProxy {
       if (!prodRes.getTag()) return prodRes;
       List<StoreProductModel> prods = prodRes.getValue();
       OnlineStoreModel update = updatedStore.copyWith(storeProductModels: prods);
+      FLog.info(text: "updated online store succssefully");
       return new Ok("updated online store succssefully", update);
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
   }
@@ -546,7 +554,10 @@ class StoreStorageProxy {
   Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
     List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
-    if (products.isEmpty) return new Failure("No products were found in store $storeID", storeID);
+    if (products.isEmpty) {
+      FLog.error(text: "No products were found in store $storeID");
+      return new Failure("No products were found in store $storeID", storeID);
+    }
     for (StoreProductModel prod in productsModels) {
       await Amplify.DataStore.delete(prod);
     }
@@ -564,6 +575,7 @@ class StoreStorageProxy {
     for (StoreProductModel p in updatedProd) {
       await Amplify.DataStore.save(p);
     }
+    FLog.info(text: "Updated products in store $storeID");
     return new Ok("Updated products in store $storeID", updatedProd);
   }
 
@@ -576,7 +588,7 @@ class StoreStorageProxy {
       if (!res.getTag()) return res; //failure occured
       return new Ok(res.getMessage() + " " + msg, id);
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString(), null);
     }
   }
@@ -586,6 +598,7 @@ class StoreStorageProxy {
       List<OnlineStoreModel> stores =
           await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(id));
       if (stores.isEmpty) {
+        FLog.error(text: "No such store $id");
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
@@ -594,9 +607,10 @@ class StoreStorageProxy {
       deleteFileLocally(stores[0].qrCode);
       var res = await deleteStoreOwnerStateIfNeeded(true);
       if (!res.getTag()) return res;
+      FLog.info(text: "Deleted online store succssefully");
       return new Ok("Deleted online store succssefully", id);
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString(), id);
     }
   }
@@ -606,6 +620,7 @@ class StoreStorageProxy {
       List<PhysicalStoreModel> stores =
           await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(id));
       if (stores.isEmpty) {
+        FLog.error(text: "No such store $id");
         return new Failure("No such store", id);
       }
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
@@ -614,47 +629,43 @@ class StoreStorageProxy {
       deleteFileLocally(stores[0].qrCode);
       var res = await deleteStoreOwnerStateIfNeeded(false);
       if (!res.getTag()) return res;
+      FLog.info(text: "Deleted physical store succssefully");
       return new Ok("Deleted physical store succssefully", id);
     } on Exception catch (e) {
-      // TODO: write to log
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString(), id);
     }
   }
 
   Future<ResultInterface> deleteStoreOwnerStateIfNeeded(bool deletedOnlineStore) async {
     String? storeOwnerID = await UsersStorageProxy().getStoreOwnerStateId();
-    if (storeOwnerID == null) return new Failure("No store owner to delete", null);
+    if (storeOwnerID == null) {
+      FLog.error(text: "No store owner to delete");
+      return new Failure("No store owner to delete", null);
+    }
     List<StoreOwnerModel> storeOwners =
         await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
     StoreOwnerModel storeOwnerModel = storeOwners.first;
     if (deletedOnlineStore) {
-      if (storeOwnerModel.storeOwnerModelPhysicalStoreModelId == null) {
         await Amplify.DataStore.delete(storeOwnerModel); //no store left
         UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
         if (currUser == null) return Failure("No such user", null);
         UserModel userWithoutStoreOwnerState =
             currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
         await Amplify.DataStore.save(userWithoutStoreOwnerState);
-        return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
-      }
-      StoreOwnerModel updatedStoreModel =
-          storeOwnerModel.copyWith(onlineStoreModel: null, storeOwnerModelOnlineStoreModelId: null);
-      await Amplify.DataStore.save(updatedStoreModel);
-      return new Ok("Deleted online store from Store Owner State", updatedStoreModel);
+        FLog.info(text: "Deleted completly Store Owner State");
+        return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState); 
     }
 
-    if (storeOwnerModel.storeOwnerModelOnlineStoreModelId == null) {
-      await Amplify.DataStore.delete(storeOwnerModel); //no store left
-      UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
-      if (currUser == null) return Failure("No such user", null);
-      UserModel userWithoutStoreOwnerState = currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
-      await Amplify.DataStore.save(userWithoutStoreOwnerState);
-      return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
-    }
-    StoreOwnerModel updatedStoreModel =
-        storeOwnerModel.copyWith(physicalStoreModel: null, storeOwnerModelPhysicalStoreModelId: null);
-    await Amplify.DataStore.save(updatedStoreModel);
-    return new Ok("Deleted online store from Store Owner State", updatedStoreModel);
+    
+    await Amplify.DataStore.delete(storeOwnerModel); //no store left
+    UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+    if (currUser == null) return Failure("No such user", null);
+    UserModel userWithoutStoreOwnerState = currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
+    await Amplify.DataStore.save(userWithoutStoreOwnerState);
+    FLog.info(text: "Deleted completly Store Owner State");
+    return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
+    
   }
 
   Future<ResultInterface> convertPhysicalStoreToOnlineStore(StoreDTO physicalStore) async {
@@ -679,7 +690,10 @@ class StoreStorageProxy {
   Future<ResultInterface> getPhysicalStore(String storeID) async {
     List<PhysicalStoreModel> stores =
         await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(storeID));
-    if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
+    if (stores.isEmpty) {
+      FLog.error(text: "No such store $storeID exists");
+      return new Failure("No such store $storeID exists", storeID);
+    }
     var store = stores.first;
     String? imageUrl = await getDownloadUrl(storeID);
     File? imageFile = imageUrl != null ? await createFileFromImageUrl(imageUrl) : null;
@@ -700,7 +714,10 @@ class StoreStorageProxy {
   Future<ResultInterface> getOnlineStore(String storeID) async {
     List<OnlineStoreModel> stores =
         await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(storeID));
-    if (stores.isEmpty) return new Failure("No such store $storeID exists", storeID);
+    if (stores.isEmpty) {
+      FLog.error(text: "No such store $storeID exists");
+      return new Failure("No such store $storeID exists", storeID);
+    }
     var store = stores.first;
     var products = await fetchStoreProducts(store.id);
     String? imageUrl = await getDownloadUrl(storeID);
@@ -723,7 +740,10 @@ class StoreStorageProxy {
   Future<ResultInterface> getOnlineStoreProduct(String prodId) async {
     List<StoreProductModel> prods =
         await Amplify.DataStore.query(StoreProductModel.classType, where: StoreProductModel.ID.eq(prodId));
-    if (prods.isEmpty) return new Failure("No such product $prodId exists", prodId);
+    if (prods.isEmpty) {
+      FLog.error(text: "No such product $prodId exists");
+      return new Failure("No such product $prodId exists", prodId);
+    }
     var prod = prods.first;
     return new Ok(
         "Found product $prodId",
