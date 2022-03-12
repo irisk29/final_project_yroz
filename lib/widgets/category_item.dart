@@ -6,16 +6,14 @@ class CategoryItem extends StatelessWidget {
   final String id;
   final String title;
   final Color color;
-  final User? user;
 
-  CategoryItem(this.id, this.title, this.color, this.user);
+  CategoryItem(this.id, this.title, this.color);
 
   void selectCategory(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
       CategoryScreen.routeName,
       arguments: {
         'title': title,
-        'User': user
       },
     );
   }

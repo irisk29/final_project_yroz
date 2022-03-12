@@ -33,9 +33,7 @@ class _ImageInputState extends State<ImageInput> {
       _storedImage = imageFile;
     });
     imagePath = imageFile.path;
-    // final appDir = await syspaths.getApplicationDocumentsDirectory();
-    // final fileName = path.basename(imageFile.path);
-    // final savedImage = await imageFile.saveTo('${appDir.path}/$imagePath');
+
     widget.onSelectImage(imageFile);
   }
 
@@ -49,9 +47,6 @@ class _ImageInputState extends State<ImageInput> {
       _storedImage = imageFile;
     });
     imagePath = imageFile.path;
-    // final appDir = await syspaths.getApplicationDocumentsDirectory();
-    // final fileName = path.basename(imageFile.path);
-    // final savedImage = await imageFile.saveTo('${appDir.path}/$imagePath');
     widget.onSelectImage(imageFile);
   }
 

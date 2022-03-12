@@ -1,5 +1,4 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
@@ -8,9 +7,9 @@ import 'package:flutter/material.dart';
 
 class StoreItem extends StatelessWidget {
   final StoreDTO store;
-  final User user;
+  //final User user;
 
-  StoreItem(this.store, this.user) {
+  StoreItem(this.store) {
 
   }
 
@@ -20,14 +19,14 @@ class StoreItem extends StatelessWidget {
             OnlineStoreScreen.routeName,
             arguments: {
               'store': store,
-              'user': user
+              //'user': user
             },
           )
         : Navigator.of(ctx).pushNamed(
             PhysicalStoreScreen.routeName,
             arguments: {
               'store': store,
-              'user': user
+              //'user': user
             },
           );
   }
@@ -43,7 +42,7 @@ class StoreItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               image: this.store.image != null
-                  ? DecorationImage(image: this.store.imageFile!, fit: BoxFit.cover)
+                  ? DecorationImage(image: FileImage(this.store.imageFromPhone!), fit: BoxFit.cover)
                   : DecorationImage(
                       image: AssetImage('assets/images/default-store.png'),
                       fit: BoxFit.cover),

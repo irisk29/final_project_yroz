@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,9 +10,9 @@ class StoreDTO {
   String address;
   List<String> categories;
   Map<String, List<TimeOfDay>> operationHours;
-  String? image;
-  MemoryImage? imageFile;
+  String? image; //url for the imageFromPhone in s3
   String? qrCode;
+  File? imageFromPhone;
 
   StoreDTO(
       {required this.id,
@@ -20,18 +22,18 @@ class StoreDTO {
       required this.categories,
       required this.operationHours,
       this.image,
-      this.qrCode});
-
-  Future<void> initImageFile() async {
-    if (this.image != null) {
-      var res = await http.get(Uri.parse(this.image!));
-      imageFile = MemoryImage(res.bodyBytes, scale: 0.5);
-    }
-  }
+      this.qrCode,
+      this.imageFromPhone});
 
   @override
   bool operator ==(other) {
     if (other is StoreDTO) return this.id == other.id;
     return false;
+  }
+
+  void fetchStoreImage() {
+    if (this.image != null && this.image!.isNotEmpty) {
+      this.imageFromPhone = File(this.image!);
+    }
   }
 }

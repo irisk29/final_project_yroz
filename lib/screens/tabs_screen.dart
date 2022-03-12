@@ -11,11 +11,6 @@ import 'map_screen.dart';
 
 class TabsScreen extends StatefulWidget {
   static const routeName = '/tabs-screen';
-  User? user;
-
-  TabsScreen(User? user) {
-    this.user = user;
-  }
 
   @override
   _TabsScreenState createState() => _TabsScreenState();
@@ -51,9 +46,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   void didChangeDependencies() {
-    final user = ModalRoute.of(context)!.settings.arguments as User?;
-    if(user!=null)
-      widget.user = user;
+
     super.didChangeDependencies();
   }
 
@@ -77,7 +70,7 @@ class _TabsScreenState extends State<TabsScreen> {
               Icons.settings_outlined,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed(SettingsScreen.routeName, arguments: widget.user);
+              Navigator.of(context).pushNamed(SettingsScreen.routeName);
             },
           ),
         ],

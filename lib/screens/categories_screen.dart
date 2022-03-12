@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -13,7 +10,7 @@ import '../dummy_data.dart';
 import '../widgets/category_item.dart';
 
 class CategoriesScreen extends StatefulWidget {
-  User? user;
+  // User? user;
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
@@ -25,10 +22,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   void initState() {
-    // Provider.of<Products>(context).fetchAndSetProducts(); // WON'T WORK!
-    // Future.delayed(Duration.zero).then((_) {
-    //   Provider.of<Products>(context).fetchAndSetProducts();
-    // });
     super.initState();
     () async {
       onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
@@ -41,8 +34,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   void didChangeDependencies() {
-    final user = ModalRoute.of(context)!.settings.arguments as User?;
-    if (user != null) widget.user = user;
+    // final user = ModalRoute.of(context)!.settings.arguments as User?;
+    // if (user != null) widget.user = user;
     () async {
       onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
       physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
@@ -57,7 +50,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-
     return SingleChildScrollView(
       child: Container(
         height: height,
@@ -92,7 +84,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               catData.id,
                               catData.title,
                               catData.color,
-                              widget.user
+                              //widget.user
                             ),
                           )
                           .toList(),
@@ -128,7 +120,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             physicalStores
                                 .map(
                                   (storeData) => StoreItem(
-                                    storeData, widget.user!
+                                    storeData//, widget.user!
                                   ),
                                 )
                                 .toList(),
@@ -165,7 +157,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             onlineStores
                                 .map(
                                   (storeData) => StoreItem(
-                                      storeData, widget.user!
+                                      storeData//, widget.user!
                                   ),
                                 )
                                 .toList(),

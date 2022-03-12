@@ -5,35 +5,18 @@ import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/badge.dart';
-import '../providers/cart.dart';
 import './cart_screen.dart';
-import '../providers/products.dart';
 
 class OnlineStoreProductsScreen extends StatefulWidget {
   static const routeName = '/online-store-products';
 
   late OnlineStoreDTO store;
-  late User user;
+  //late User user;
 
   @override
   _OnlineStoreProductsScreenState createState() =>
       _OnlineStoreProductsScreenState();
 
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Products("", "", []),
-            ),
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
@@ -49,8 +32,8 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
-    widget.user = routeArgs['user'] as User;
-    cartSize = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString();
+    //widget.user = routeArgs['user'] as User;
+    cartSize = Provider.of<User>(context, listen: true).bagInStores.length > 0 ? Provider.of<User>(context, listen: true).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString();
     super.didChangeDependencies();
   }
 
@@ -68,7 +51,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
+                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
               },
             ),
             value: cartSize,
@@ -98,7 +81,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                   widget.store.products
                       .map(
                         (storeData) =>
-                            ProductItem(storeData, widget.user, widget.store.id),
+                            ProductItem(storeData, widget.store.id),
                       )
                       .toList(),
                 ].expand((i) => i).toList(),

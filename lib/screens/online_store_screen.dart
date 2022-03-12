@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -6,34 +9,17 @@ import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart.dart';
-import '../providers/products.dart';
 import 'cart_screen.dart';
 
 class OnlineStoreScreen extends StatefulWidget {
   static const routeName = '/online-store';
 
   late OnlineStoreDTO store;
-  late User user;
+  //late User user;
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
 
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Products("", "", []),
-            ),
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
@@ -46,7 +32,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
-    widget.user = routeArgs['user'] as User;
+    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -97,11 +83,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     return 2;
   }
 
-
   void routeToOnlineStoreProducts(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
       OnlineStoreProductsScreen.routeName,
-      arguments: {'store': widget.store, 'user': widget.user},
+      arguments: {'store': widget.store},
     );
   }
 
@@ -119,10 +104,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store, 'user': widget.user});
+                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
               },
             ),
-            value: widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
+            value: Provider.of<User>(context, listen: false).bagInStores.length > 0 ? Provider.of<User>(context, listen: false).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
           ),
         ],
       ),
@@ -134,8 +119,8 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: widget.store.image != null
-                      ? DecorationImage(fit: BoxFit.cover, image: widget.store.imageFile!)
+                  image: widget.store.imageFromPhone != null
+                      ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store.imageFromPhone!))
                       : DecorationImage(
                           image: AssetImage('assets/images/default-store.png'),
                           fit: BoxFit.cover),
@@ -148,14 +133,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                !widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.addFavoriteStore(widget.store.id, true)
-                    : await widget.user.removeFavoriteStore(widget.store.id, true);
+                Provider.of<User>(context, listen: false).favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) == null ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, true)
+                    : await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, true);
                 setState(() {
 
                 });
                 //open change language
               },
-              trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(
+              trailing: Provider.of<User>(context, listen: false).favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) != null ? Icon(
                 Icons.favorite,
                 color: Colors.black,
               ) : Icon(
@@ -198,20 +183,6 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
             ),
             ListTile(
               leading: Icon(
-                Icons.language,
-                color: Colors.grey,
-              ),
-              title: Text(
-                "www.mooo.com",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.blueAccent),
-              ),
-              onTap: () {
-                //open change language
-              },
-            ),
-            ListTile(
-              leading: Icon(
                 Icons.phone,
                 color: Colors.grey,
               ),
@@ -220,7 +191,12 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            Text(widget.store.qrCode!),
+            Image.file(
+              File(widget.store.qrCode!),
+              width: 150,
+              height: 150,
+              fit: BoxFit.fill,
+            ),
             ElevatedButton(
               onPressed: () => routeToOnlineStoreProducts(context),
               child: Text('Online Store Shop'),

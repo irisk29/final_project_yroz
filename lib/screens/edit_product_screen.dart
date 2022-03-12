@@ -1,11 +1,5 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
-import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
-
-import '../providers/product.dart';
-import '../providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -16,25 +10,6 @@ class EditProductScreen extends StatefulWidget {
 
   @override
   _EditProductScreenState createState() => _EditProductScreenState();
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Product(
-                  id: "",
-                  title: "",
-                  description: "",
-                  category: "",
-                  price: 0,
-                  imageUrl: "",
-                  storeID: ""),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
@@ -52,12 +27,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     category: '',
     storeID: ''
   );
-  var _initValues = {
-    'title': '',
-    'description': '',
-    'price': '',
-    'imageUrl': '',
-  };
+
   var _isInit = true;
   var _isLoading = false;
 

@@ -11,7 +11,7 @@ import '../lib/screens/map_screen.dart';
 void main() {
   testWidgets('Map Screen test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MapScreen().wrapWithMaterial());
+    await tester.pumpWidget(MapScreen());
 
     // Verify that our counter starts at 0.
     expect(find.text('Campground'), findsOneWidget);

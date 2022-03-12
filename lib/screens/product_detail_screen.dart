@@ -1,15 +1,7 @@
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
-import 'package:final_project_yroz/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/products.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  // final String title;
-  // final double price;
-
-  // ProductDetailScreen(this.title, this.price);
   static const routeName = '/product-detail';
 
   @override
@@ -68,17 +60,4 @@ class ProductDetailScreen extends StatelessWidget {
             ),
           );
   }
-
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Products("", "", []),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }

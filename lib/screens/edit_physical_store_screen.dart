@@ -18,6 +18,7 @@ import '../dummy_data.dart';
 class EditPhysicalStorePipeline extends StatefulWidget {
   static const routeName = '/edit-physical-store';
   static List<String> _selectedItems = [];
+
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -34,7 +35,7 @@ class EditPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  User? user;
+  //User? user;
 
   @override
   _EditPhysicalStorePipelineState createState() =>
@@ -45,9 +46,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
-  final _imageUrlController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
@@ -98,11 +96,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       },
       qrCode: "",
       image: null);
-  var _initValues = {
-    'name': '',
-    'phoneNumber': '',
-    'address': '',
-  };
+
   final List<String> _selectedItems = [];
   var _isInit = true;
   var _isLoading = false;
@@ -110,9 +104,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final user = ModalRoute.of(context)!.settings.arguments as User?;
-      widget.user = user;
-      _editedStore = user!.storeOwnerState!.physicalStore;
+      // final user = ModalRoute.of(context)!.settings.arguments as User?;
+      // widget.user = user;
+      // _editedStore = user!.storeOwnerState!.physicalStore;
       _selectedItems.addAll(_editedStore!.categories);
     }
     _isInit = false;
@@ -159,7 +153,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -549,7 +543,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             onPressed: () async {
               await Provider.of<User>(context, listen: false)
                   .convertPhysicalStoreToOnline(_editedStore!);
-              Navigator.of(context).pushReplacementNamed(EditOnlineStorePipeline.routeName, arguments: widget.user);
+              Navigator.of(context).pushReplacementNamed(EditOnlineStorePipeline.routeName);
             },
               tooltip: "make the store online"
           ),
@@ -560,7 +554,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             onPressed: () async {
               await Provider.of<User>(context, listen: false)
                   .deleteStore(_editedStore!.id, false);
-              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
             },
           ),
         ],

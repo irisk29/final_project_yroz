@@ -55,7 +55,7 @@ class _SearchBarState extends State<SearchBar> {
                 itemBuilder: (_, index) {
                   var store = relevantStores[index];
                   return SearchBarItem(
-                      store.imageFile,
+                      FileImage(store.imageFromPhone!),
                       store.name,
                       store.address,
                       store.phoneNumber,

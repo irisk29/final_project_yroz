@@ -3,17 +3,14 @@ import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
-import '../providers/orders.dart';
 
 class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
 
-  late OnlineStoreDTO store;
-  late User user;
-  late ShoppingBagDTO? cart;
+  late String storeID;
+  //late User user;
+  //late ShoppingBagDTO? cart;
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -25,19 +22,20 @@ class _CartScreenState extends State<CartScreen> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
-    widget.store = routeArgs['store'] as OnlineStoreDTO;
-    widget.user = routeArgs['user'] as User;
-    widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
+    widget.storeID = routeArgs['store'] as String;
+
   }
 
   void _update() {
     setState(() {
-      widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
+      //build(context);
+      //widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<User>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -60,11 +58,11 @@ class _CartScreenState extends State<CartScreen> {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$${widget.cart!.calculateTotalPrice().toStringAsFixed(2)}',
+                      '\$${provider.getShoppingBag(widget.storeID)!=null ? provider.getShoppingBag(widget.storeID)!.calculateTotalPrice().toStringAsFixed(2) : 0.toStringAsFixed(2)}',
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  OrderButton(cart: widget.cart!)
+                  OrderButton(cart: provider.getShoppingBag(widget.storeID)),
                 ],
               ),
             ),
@@ -72,11 +70,10 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: widget.cart!.products.length,
+              itemCount: provider.getShoppingBag(widget.storeID)!=null ? provider.getShoppingBag(widget.storeID)!.products.length : 0,
               itemBuilder: (ctx, i) => CartItem(
-                  widget.cart!.products.toList()[i],
-                  widget.store,
-                  widget.user,
+                  provider.getShoppingBag(widget.storeID)!.products.toList()[i],
+                  widget.storeID,
                 _update
               ),
             ),
@@ -85,19 +82,6 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: widget,
-          ),
-        ),
-      );
 }
 
 class OrderButton extends StatefulWidget {
@@ -106,7 +90,7 @@ class OrderButton extends StatefulWidget {
     required this.cart,
   }) : super(key: key);
 
-  final ShoppingBagDTO cart;
+  final ShoppingBagDTO? cart;
 
   @override
   _OrderButtonState createState() => _OrderButtonState();
@@ -119,7 +103,8 @@ class _OrderButtonState extends State<OrderButton> {
   Widget build(BuildContext context) {
     return FlatButton(
       child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
-      onPressed: (widget.cart.calculateTotalPrice() <= 0 || _isLoading)
+      onPressed: (widget.cart == null) ? null :
+        (widget.cart!.calculateTotalPrice() <= 0 || _isLoading)
           ? null
           : () async {
               setState(() {
@@ -129,7 +114,7 @@ class _OrderButtonState extends State<OrderButton> {
               setState(() {
                 _isLoading = false;
               });
-              widget.cart.clearBag();
+              widget.cart!.clearBag();
             },
       textColor: Theme.of(context).primaryColor,
     );

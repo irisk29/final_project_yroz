@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
@@ -23,7 +24,7 @@ class User extends ChangeNotifier {
   String? id;
   String? email;
   String? name;
-  List<Tuple2<String,bool>> favoriteStores; //IDs of favorite stores
+  List<Tuple2<String, bool>> favoriteStores; //IDs of favorite stores
   List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
@@ -35,14 +36,14 @@ class User extends ChangeNotifier {
   bool isSignedIn = false;
 
   User(this.email, this.name)
-      : favoriteStores = <Tuple2<String,bool>>[],
+      : favoriteStores = <Tuple2<String, bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
         digitalWallet = new DigitalWallet(0) {}
 
   User.withNull()
-      : favoriteStores = <Tuple2<String,bool>>[],
+      : favoriteStores = <Tuple2<String, bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
@@ -109,7 +110,7 @@ class User extends ChangeNotifier {
       //we might already have a store, hence it won't be null
       this.storeOwnerState = new StoreOwnerState(tuple.item2);
     }
-    this.storeOwnerState!.setOnlineStore(tuple.item1);
+    this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
     notifyListeners();
     return res;
   }
@@ -181,7 +182,7 @@ class User extends ChangeNotifier {
     }
     Tuple2<OnlineStoreModel, String> retVal = res.getValue();
     this.storeOwnerState = new StoreOwnerState(retVal.item2);
-    this.storeOwnerState!.setOnlineStore(retVal.item1);
+    this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
     this.storeOwnerState!.physicalStore = null;
 
     notifyListeners();
@@ -264,10 +265,13 @@ class User extends ChangeNotifier {
       print("No such shopping bag in store $storeID for user ${this.id}");
       return;
     }
-
+    var shoppingBagCopy = shoppingBag;
     var cartDTO = UsersStorageProxy().convertStoreProductToCartProduct(productDTO, newQuantity);
-    shoppingBag.removeProduct(productDTO.id);
-    shoppingBag.addProduct(cartDTO);
+    shoppingBagCopy.removeProduct(productDTO.id);
+    shoppingBagCopy.addProduct(cartDTO);
+
+    this.bagInStores.remove(shoppingBag);
+    this.bagInStores.add(shoppingBagCopy);
 
     notifyListeners();
   }
@@ -299,5 +303,18 @@ class User extends ChangeNotifier {
     }
     ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
     if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
+  }
+
+  Future<ShoppingBagDTO?> getCurrShoppingBag(String storeID) async {
+    var res = await UsersStorageProxy().getCurrentShoppingBag(storeID, this.id!);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return null;
+    }
+    return res.getValue();
+  }
+
+  ShoppingBagDTO? getShoppingBag(String storeID){
+    return bagInStores.firstWhereOrNull((element) => element.onlineStoreID == storeID);
   }
 }

@@ -4,7 +4,7 @@ import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 
 class SearchBarItem extends StatelessWidget {
-  final MemoryImage? image;
+  final FileImage? image;
   final String title;
   final String address;
   final String phoneNumber;

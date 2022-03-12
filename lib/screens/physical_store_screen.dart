@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
@@ -5,33 +6,16 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-
-import '../widgets/badge.dart';
-import '../providers/cart.dart';
-import './cart_screen.dart';
 
 class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
 
   late StoreDTO store;
-  late User user;
+  //late User user;
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
 
-  Widget wrapWithMaterial() => MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: Cart(),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
-        ),
-      );
 }
 
 class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
@@ -44,7 +28,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as StoreDTO;
-    widget.user = routeArgs['user'] as User;
+    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -79,7 +63,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    //String hour = DateFormat('Hm').format(DateTime.now());
     for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
       if (e.key == day) {
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
@@ -102,9 +85,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
         title: Text(
           "" + widget.store.name,
         ),
-        actions: [
-
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -114,8 +94,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: widget.store.image != null
-                      ? DecorationImage(fit: BoxFit.cover, image: widget.store.imageFile!)
+                  image: widget.store.imageFromPhone != null
+                      ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store.imageFromPhone!))
                       : DecorationImage(
                           image: AssetImage('assets/images/default-store.png'),
                           fit: BoxFit.cover),
@@ -128,14 +108,14 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                widget.user.favoriteStores.contains(widget.store.id) ? await widget.user.removeFavoriteStore(widget.store.id, false)
-                    : await widget.user.addFavoriteStore(widget.store.id, false);
+                Provider.of<User>(context, listen: false).favoriteStores.contains(widget.store.id) ? await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, false)
+                    : await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, false);
                 setState(() {
 
                 });
                 //open change language
               },
-              trailing: widget.user.favoriteStores.contains(widget.store.id) ? Icon(
+              trailing: Provider.of<User>(context, listen: false).favoriteStores.contains(widget.store.id) ? Icon(
                 Icons.favorite,
                 color: Colors.black,
               ) : Icon(
@@ -178,20 +158,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
             ),
             ListTile(
               leading: Icon(
-                Icons.language,
-                color: Colors.grey,
-              ),
-              title: Text(
-                "www.mooo.com",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.blueAccent),
-              ),
-              onTap: () {
-                //open change language
-              },
-            ),
-            ListTile(
-              leading: Icon(
                 Icons.phone,
                 color: Colors.grey,
               ),
@@ -200,7 +166,12 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 //open change language
               },
             ),
-            QrImage.withQr(qr: QrCode.fromData(data: widget.store.qrCode!, errorCorrectLevel: QrErrorCorrectLevel.M)),
+             Image.file(
+              File(widget.store.qrCode!),
+              width: 150,
+              height: 150,
+              fit: BoxFit.fill,
+            )
           ],
         ),
       ),

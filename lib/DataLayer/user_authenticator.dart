@@ -24,11 +24,12 @@ class UserAuthenticator {
         if (element.userAttributeKey.key == "picture") picture = element.value;
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
-      UserModel? currUser =
-      await UsersStorageProxy().createUser(email, name, picture);
+      UserModel? currUser = await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
       return currUser;
     } catch (e) {
+      var res = await signOut();
+      print("user signed out $res");
       throw e;
     }
   }

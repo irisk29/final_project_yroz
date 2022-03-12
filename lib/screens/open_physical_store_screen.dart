@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -17,6 +16,7 @@ import '../dummy_data.dart';
 class OpenPhysicalStorePipeline extends StatefulWidget {
   static const routeName = '/open-physical-store';
   static List<String> _selectedItems = [];
+
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
   static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
@@ -33,7 +33,7 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  User? user;
+  //User? user;
 
   @override
   _OpenPhysicalStorePipelineState createState() =>
@@ -44,7 +44,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   int _currentStep = 0;
 
   final destCtrl = TextEditingController();
-  final _imageUrlController = TextEditingController();
   final _nameController = TextEditingController();
   final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
@@ -96,12 +95,9 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         ]
       },
       qrCode: "",
-      image: null);
-  var _initValues = {
-    'name': '',
-    'phoneNumber': '',
-    'address': '',
-  };
+      image: null,
+      imageFromPhone: null);
+
   final List<String> _selectedItems = [];
   var _isInit = true;
   var _isLoading = false;
@@ -109,8 +105,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final user = ModalRoute.of(context)!.settings.arguments as User?;
-      widget.user = user;
+      // final user = ModalRoute.of(context)!.settings.arguments as User?;
+      // widget.user = user;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -154,7 +150,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName, arguments: widget.user);
+    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -225,7 +221,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -248,7 +245,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -266,7 +264,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: '',
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                   ],
