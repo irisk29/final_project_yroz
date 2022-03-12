@@ -1,5 +1,6 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
 
 import 'UsersStorageProxy.dart';
@@ -30,6 +31,7 @@ class UserAuthenticator {
     } catch (e) {
       var res = await signOut();
       print("user signed out $res");
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
   }
@@ -39,6 +41,7 @@ class UserAuthenticator {
       await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));
     } on AuthException catch (e) {
       print(e.message);
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return true;
     }
     return false; //false indicating the user is not signed in anymore

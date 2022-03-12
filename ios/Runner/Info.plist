@@ -35,6 +35,10 @@
 	<string>Music!</string>
 	<key>NSCameraUsageDescription</key>
 	<string>camera</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>FLogs would like to save photos from the app to your gallery</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>FLogs would like to access your photo gallery for uploading images to the app</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Always and when in use!</string>
 	<key>NSLocationAlwaysUsageDescription</key>

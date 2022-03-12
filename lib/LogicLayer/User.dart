@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:collection/src/iterable_extensions.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
@@ -8,6 +9,7 @@ import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/ShoppingBagModel.dart';
@@ -50,31 +52,35 @@ class User extends ChangeNotifier {
         digitalWallet = new DigitalWallet(0) {}
 
   void userFromModel(UserModel model) async {
-    this.id = model.id;
-    this.email = model.email;
-    this.name = model.name;
-    this.imageUrl = model.imageUrl;
-    this.favoriteProducts =
-        model.favoriteProducts == null ? [] : (jsonDecode(model.favoriteProducts!) as List<dynamic>).cast<String>();
-    this.favoriteStores =
-        model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
-    this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
-    //TODO: generate credit card list from json
-    this.bankAccount = model.bankAccount;
-    //TODO: check if we need the other fields (because we are writing directly to the cloud)
-    this.storeOwnerState =
-        model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
-    if (model.shoppingBagModels != null) {
-      for (ShoppingBagModel shoppingBagModel in model.shoppingBagModels!) {
-        var res = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBagModel);
-        if (!res.getTag()) {
-          print(res.getMessage());
-          continue;
+    try {
+      this.id = model.id;
+      this.email = model.email;
+      this.name = model.name;
+      this.imageUrl = model.imageUrl;
+      this.favoriteProducts =
+          model.favoriteProducts == null ? [] : (jsonDecode(model.favoriteProducts!) as List<dynamic>).cast<String>();
+      this.favoriteStores =
+          model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
+      this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
+      //TODO: generate credit card list from json
+      this.bankAccount = model.bankAccount;
+      //TODO: check if we need the other fields (because we are writing directly to the cloud)
+      this.storeOwnerState =
+          model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
+      if (model.shoppingBagModels != null) {
+        for (ShoppingBagModel shoppingBagModel in model.shoppingBagModels!) {
+          var res = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBagModel);
+          if (!res.getTag()) {
+            print(res.getMessage());
+            continue;
+          }
+          this.bagInStores.add(res.getValue());
         }
-        this.bagInStores.add(res.getValue());
-      }
-    } else
-      this.bagInStores = [];
+      } else
+        this.bagInStores = [];
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
   }
 
   void signIn(AuthProvider authProvider, BuildContext context) async {
@@ -87,7 +93,7 @@ class User extends ChangeNotifier {
       notifyListeners();
       Navigator.of(context).pushNamed(LandingScreen.routeName, arguments: this);
     } catch (e) {
-      throw e;
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
   }
 
@@ -99,63 +105,89 @@ class User extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print(e);
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
   }
 
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
-    var res = await StoreStorageProxy().openOnlineStore(store);
-    if (!res.getTag()) return res; //failure
-    var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
-    if (storeOwnerState == null) {
-      //we might already have a store, hence it won't be null
-      this.storeOwnerState = new StoreOwnerState(tuple.item2);
+    try {
+      var res = await StoreStorageProxy().openOnlineStore(store);
+      if (!res.getTag()) return res; //failure
+      var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
+      if (storeOwnerState == null) {
+        //we might already have a store, hence it won't be null
+        this.storeOwnerState = new StoreOwnerState(tuple.item2);
+      }
+      this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
+      notifyListeners();
+      return res;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return new Failure(e.toString(), null);
     }
-    this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
-    notifyListeners();
-    return res;
   }
 
   Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
-    var res = await StoreStorageProxy().openPhysicalStore(store);
-    if (!res.getTag()) return res; //failure
-    var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
-    if (storeOwnerState == null) {
-      //we might already have a store, hence it won't be null
-      this.storeOwnerState = new StoreOwnerState(tuple.item2);
+    try {
+      var res = await StoreStorageProxy().openPhysicalStore(store);
+      if (!res.getTag()) return res; //failure
+      var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
+      if (storeOwnerState == null) {
+        //we might already have a store, hence it won't be null
+        this.storeOwnerState = new StoreOwnerState(tuple.item2);
+      }
+      this.storeOwnerState!.setPhysicalStore(tuple.item1);
+      notifyListeners();
+      return res;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return new Failure(e.toString(), null);
     }
-    this.storeOwnerState!.setPhysicalStore(tuple.item1);
-    notifyListeners();
-    return res;
   }
 
   Future<ResultInterface> updatePhysicalStore(StoreDTO store) async {
-    var res = await StoreStorageProxy().updatePhysicalStore(store);
-    if (!res.getTag()) return res; //failure
+    try {
+      var res = await StoreStorageProxy().updatePhysicalStore(store);
+      if (!res.getTag()) return res; //failure
 
-    this.storeOwnerState!.setPhysicalStore(res.getValue());
-    notifyListeners();
-    return res;
+      this.storeOwnerState!.setPhysicalStore(res.getValue());
+      notifyListeners();
+      return res;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return new Failure(e.toString(), null);
+    }
   }
 
   Future<ResultInterface> updateOnlineStore(OnlineStoreDTO store) async {
-    var res = await StoreStorageProxy().updateOnlineStore(store);
-    if (!res.getTag()) return res; //failure
+    try {
+      var res = await StoreStorageProxy().updateOnlineStore(store);
+      if (!res.getTag()) return res; //failure
 
-    this.storeOwnerState!.setOnlineStore(res.getValue());
-    notifyListeners();
-    return res;
+      this.storeOwnerState!.setOnlineStore(res.getValue());
+      notifyListeners();
+      return res;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return new Failure(e.toString(), null);
+    }
   }
 
   Future<ResultInterface> deleteStore(String id, bool isOnline) async {
-    var res = await StoreStorageProxy().deleteStore(id, isOnline);
-    if (!res.getTag()) return res; //failure
+    try {
+      var res = await StoreStorageProxy().deleteStore(id, isOnline);
+      if (!res.getTag()) return res; //failure
 
-    if (isOnline)
-      this.storeOwnerState!.onlineStore = null;
-    else
-      this.storeOwnerState!.physicalStore = null;
-    notifyListeners();
-    return res;
+      if (isOnline)
+        this.storeOwnerState!.onlineStore = null;
+      else
+        this.storeOwnerState!.physicalStore = null;
+      notifyListeners();
+      return res;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return new Failure(e.toString(), null);
+    }
   }
 
   Future<List<StoreDTO>> getStoresByKeywords(String keywords) async {
@@ -163,128 +195,184 @@ class User extends ChangeNotifier {
   }
 
   Future<ResultInterface> changeName(String name) async {
-    var res = await UsersStorageProxy().updateUserNameOrUrl(name, "");
-    notifyListeners();
-    return res;
+    try {
+      var res = await UsersStorageProxy().updateUserNameOrUrl(name, "");
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return res;
+      }
+      this.name = name;
+      notifyListeners();
+      return res;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return new Failure(e.toString(), null);
+    }
   }
 
   Future<ResultInterface> changeImage(String imageUrl) async {
-    var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
-    notifyListeners();
-    return res;
+    try {
+      var res = await UsersStorageProxy().updateUserNameOrUrl("", imageUrl);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return res;
+      }
+      this.imageUrl = imageUrl;
+      notifyListeners();
+      return res;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return new Failure(e.toString(), null);
+    }
   }
 
   Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
-    var res = await StoreStorageProxy().convertPhysicalStoreToOnlineStore(physicalStore);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
-    }
-    Tuple2<OnlineStoreModel, String> retVal = res.getValue();
-    this.storeOwnerState = new StoreOwnerState(retVal.item2);
-    this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
-    this.storeOwnerState!.physicalStore = null;
+    try {
+      var res = await StoreStorageProxy().convertPhysicalStoreToOnlineStore(physicalStore);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      Tuple2<OnlineStoreModel, String> retVal = res.getValue();
+      this.storeOwnerState = new StoreOwnerState(retVal.item2);
+      this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
+      this.storeOwnerState!.physicalStore = null;
 
-    notifyListeners();
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
   }
 
   Future<void> addFavoriteProduct(String prodID) async {
-    var res = await UsersStorageProxy().addFavoriteProduct(prodID);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
+    try {
+      var res = await UsersStorageProxy().addFavoriteProduct(prodID);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      this.favoriteProducts = res.getValue();
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
-    this.favoriteProducts = res.getValue();
-    notifyListeners();
   }
 
   Future<void> removeFavoriteProduct(String prodID) async {
-    var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
+    try {
+      var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      this.favoriteProducts = res.getValue();
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
-    this.favoriteProducts = res.getValue();
-    notifyListeners();
   }
 
   Future<void> addFavoriteStore(String storeID, bool isOnline) async {
-    var res = await UsersStorageProxy().addFavoriteStore(storeID, isOnline);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
+    try {
+      var res = await UsersStorageProxy().addFavoriteStore(storeID, isOnline);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      this.favoriteStores = res.getValue();
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
-    this.favoriteStores = res.getValue();
-    notifyListeners();
   }
 
   Future<void> removeFavoriteStore(String storeID, bool isOnline) async {
-    var res = await UsersStorageProxy().removeFavoriteStore(storeID, isOnline);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
+    try {
+      var res = await UsersStorageProxy().removeFavoriteStore(storeID, isOnline);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      this.favoriteStores = res.getValue();
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
-    this.favoriteStores = res.getValue();
-    notifyListeners();
   }
 
   Future<void> addProductToShoppingBag(ProductDTO productDTO, double quantity, String storeID) async {
-    var res = await UsersStorageProxy()
-        .addProductToShoppingBag(productDTO, storeID, quantity, this.id!); // <product, shopping bag>
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
-    }
-    updateShoppingBag(res.getValue());
+    try {
+      var res = await UsersStorageProxy()
+          .addProductToShoppingBag(productDTO, storeID, quantity, this.id!); // <product, shopping bag>
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      updateShoppingBag(res.getValue());
 
-    notifyListeners();
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
   }
 
   Future<void> removeProductFromShoppingBag(ProductDTO productDTO, String storeID) async {
-    var res = await UsersStorageProxy().removeProductFromShoppingBag(productDTO, storeID, this.id!);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
-    }
-    updateShoppingBag(res.getValue());
+    try {
+      var res = await UsersStorageProxy().removeProductFromShoppingBag(productDTO, storeID, this.id!);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      updateShoppingBag(res.getValue());
 
-    notifyListeners();
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
   }
 
   Future<void> updateProductQuantityInBag(ProductDTO productDTO, String storeID, double newQuantity) async {
-    var res = await UsersStorageProxy().updateProductQuantityInBag(productDTO, storeID, newQuantity, this.id!);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
+    try {
+      var res = await UsersStorageProxy().updateProductQuantityInBag(productDTO, storeID, newQuantity, this.id!);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+
+      var shoppingBag = this
+          .bagInStores
+          .firstWhere((element) => element.onlineStoreID == storeID && element.userId == this.id, orElse: null);
+      if (shoppingBag == null) {
+        print("No such shopping bag in store $storeID for user ${this.id}");
+        return;
+      }
+      var shoppingBagCopy = shoppingBag;
+      var cartDTO = UsersStorageProxy().convertStoreProductToCartProduct(productDTO, newQuantity);
+      shoppingBagCopy.removeProduct(productDTO.id);
+      shoppingBagCopy.addProduct(cartDTO);
+
+      this.bagInStores.remove(shoppingBag);
+      this.bagInStores.add(shoppingBagCopy);
+
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
-
-    var shoppingBag = this
-        .bagInStores
-        .firstWhere((element) => element.onlineStoreID == storeID && element.userId == this.id, orElse: null);
-    if (shoppingBag == null) {
-      print("No such shopping bag in store $storeID for user ${this.id}");
-      return;
-    }
-    var shoppingBagCopy = shoppingBag;
-    var cartDTO = UsersStorageProxy().convertStoreProductToCartProduct(productDTO, newQuantity);
-    shoppingBagCopy.removeProduct(productDTO.id);
-    shoppingBagCopy.addProduct(cartDTO);
-
-    this.bagInStores.remove(shoppingBag);
-    this.bagInStores.add(shoppingBagCopy);
-
-    notifyListeners();
   }
 
   Future<void> clearShoppingBagInStore(String storeID) async {
-    var res = await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
-    if (!res.getTag()) {
-      print(res.getMessage());
-      return;
-    }
+    try {
+      var res = await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
 
-    this.bagInStores.removeWhere((element) => element.onlineStoreID == storeID && element.userId == this.id!);
-    notifyListeners();
+      this.bagInStores.removeWhere((element) => element.onlineStoreID == storeID && element.userId == this.id!);
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
   }
 
   Future<void> clearAllUserShoppingBags() async {
@@ -292,29 +380,38 @@ class User extends ChangeNotifier {
   }
 
   void updateShoppingBag(ShoppingBagModel? shoppingBag) async {
-    if (shoppingBag == null) {
-      this.bagInStores = [];
-      return;
+    try {
+      if (shoppingBag == null) {
+        this.bagInStores = [];
+        return;
+      }
+      var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
+      if (!convertRes.getTag()) {
+        print(convertRes.getMessage());
+        return;
+      }
+      ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
+      if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
-    var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
-    if (!convertRes.getTag()) {
-      print(convertRes.getMessage());
-      return;
-    }
-    ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
-    if (!this.bagInStores.contains(shoppingBagDTO)) this.bagInStores.add(shoppingBagDTO);
   }
 
   Future<ShoppingBagDTO?> getCurrShoppingBag(String storeID) async {
-    var res = await UsersStorageProxy().getCurrentShoppingBag(storeID, this.id!);
-    if (!res.getTag()) {
-      print(res.getMessage());
+    try {
+      var res = await UsersStorageProxy().getCurrentShoppingBag(storeID, this.id!);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return null;
+      }
+      return res.getValue();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return null;
     }
-    return res.getValue();
   }
 
-  ShoppingBagDTO? getShoppingBag(String storeID){
+  ShoppingBagDTO? getShoppingBag(String storeID) {
     return bagInStores.firstWhereOrNull((element) => element.onlineStoreID == storeID);
   }
 }
