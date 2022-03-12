@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 
 
 class CreditCardWidget extends StatelessWidget {
+  final String name;
+  final String fourDigits;
+  final String expiration;
+  final Color color;
+
+
+  CreditCardWidget(this.name, this.fourDigits, this.expiration, this.color);
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -9,7 +17,7 @@ class CreditCardWidget extends StatelessWidget {
             width: 240,
             height: 150,
             child: Card(
-              color: Colors.green,
+              color: color,
               elevation: 3,
               child: Stack(
                   children: <Widget>[
@@ -20,7 +28,7 @@ class CreditCardWidget extends StatelessWidget {
                     ),Positioned(
                         top: 35,
                         left: 120,
-                        child: Text('••••  6789', textAlign: TextAlign.right, style: TextStyle(
+                        child: Text('••••  ${fourDigits}', textAlign: TextAlign.right, style: TextStyle(
                             color: Color.fromRGBO(10, 113, 119, 1),
                             fontSize: 18,
                             height: 2
@@ -28,14 +36,14 @@ class CreditCardWidget extends StatelessWidget {
                     ),Positioned(
                         top: 100,
                         left: 20,
-                        child: Text('Jane Walker', textAlign: TextAlign.left, style: TextStyle(
+                        child: Text('$name', textAlign: TextAlign.left, style: TextStyle(
                             color: Color.fromRGBO(20, 19, 42, 1),
                             height: 1.5
                         ),)
                     ),Positioned(
                         top: 5,
                         left: 170,
-                        child: Text('Debit', textAlign: TextAlign.right, style: TextStyle(
+                        child: Text('$expiration', textAlign: TextAlign.right, style: TextStyle(
                             color: Color.fromRGBO(10, 113, 119, 1),
                             fontSize: 14,
                             height: 1.5
