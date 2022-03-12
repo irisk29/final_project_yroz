@@ -25,7 +25,7 @@ class WalletScreen extends StatelessWidget {
           ),
           SingleChildScrollView(
             child: Container(
-              height: deviceSize.height,
+              height: deviceSize.height / 1.3,
               width: deviceSize.width,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -101,47 +101,47 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      WidgetSpan(
-                        child: Icon(Icons.payments_outlined),
-                      ),
-                      TextSpan(text: "Cashback available: "+_initValues['cashback'].toString(), style: TextStyle(color: Colors.black, fontSize: 16.0)),
-                    ],
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            RichText(
+              text: TextSpan(
+                children: [
+                  WidgetSpan(
+                    child: Icon(Icons.payments_outlined),
                   ),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Cashback to use'),
-                  keyboardType: TextInputType.number,
-                  controller: myController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a number.';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      if(value!="")
-                        cashback = double.parse(value);
-                      else
-                        cashback = 0;
-                    });
-                  },
-                ),
-                Text('Amount left to pay: '+ (_initValues['cashback']! - (myController.text.length>0 ? double.parse(myController.text) : 0)).toString()),
-                FlatButton(
-                  child: Text('Confirm Amount'),
-                  onPressed: () {
-
-                  },
-                )
-              ],
+                  TextSpan(text: "Cashback available: "+_initValues['cashback'].toString(), style: TextStyle(color: Colors.black, fontSize: 16.0)),
+                ],
+              ),
             ),
-          )
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Cashback to use'),
+              keyboardType: TextInputType.number,
+              controller: myController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter a number.';
+                }
+                return null;
+              },
+              onChanged: (value) {
+                setState(() {
+                  if(value!="")
+                    cashback = double.parse(value);
+                  else
+                    cashback = 0;
+                });
+              },
+            ),
+            Text('Amount left to pay: '+ (_initValues['cashback']! - (myController.text.length>0 ? double.parse(myController.text) : 0)).toString()),
+            FlatButton(
+              child: Text('Confirm Amount'),
+              onPressed: () {
+
+              },
+            )
+          ],
+        ),
+      ),
     );
   }
 }
