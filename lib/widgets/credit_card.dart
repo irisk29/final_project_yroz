@@ -7,7 +7,6 @@ class CreditCardWidget extends StatelessWidget {
   final String expiration;
   final Color color;
 
-
   CreditCardWidget(this.name, this.fourDigits, this.expiration, this.color);
 
   @override

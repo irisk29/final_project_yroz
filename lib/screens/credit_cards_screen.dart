@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/settings_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,6 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
 
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -49,84 +49,99 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-
-    return SingleChildScrollView(
-      child: Container(
-        height: height,
-        child: Column(
-          children: [
-            Container(
-              height: height * 0.01,
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: Text("Credit Cards"),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.add,
             ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "Active",
-                  style:
-                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            onPressed: () {
+              Navigator.of(context).pushNamed(SettingsScreen.routeName);
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          height: height,
+          child: Column(
+            children: [
+              Container(
+                height: height * 0.01,
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: Text(
+                    "Active",
+                    style:
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ),
-            activeCards.isEmpty
-                ? SizedBox(height: height * 0.23)
-                : SizedBox(
-              height: height * 0.23,
-              child: GridView(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.all(height * 0.025),
-                children: [
-                  activeCards
-                      .map(
-                        (creditCard) => creditCard,
-                  )
-                      .toList(),
-                ].expand((i) => i).toList(),
-                gridDelegate:
-                SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
+              activeCards.isEmpty
+                  ? SizedBox(height: height * 0.23)
+                  : SizedBox(
+                height: height * 0.23,
+                child: GridView(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.all(height * 0.025),
+                  children: [
+                    activeCards
+                        .map(
+                          (creditCard) => creditCard,
+                    )
+                        .toList(),
+                  ].expand((i) => i).toList(),
+                  gridDelegate:
+                  SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                  ),
                 ),
               ),
-            ),
-            Divider(),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "Disabled",
-                  style:
-                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Divider(),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: Text(
+                    "Disabled",
+                    style:
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ),
-            disabledCards.isEmpty
-                ? SizedBox(height: height * 0.23)
-                : SizedBox(
-              height: height * 0.23,
-              child: GridView(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.all(height * 0.025),
-                children: [
-                  disabledCards
-                      .map(
-                        (creditCard) => creditCard,
-                  ).toList(),
-                ].expand((i) => i).toList(),
-                gridDelegate:
-                SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
+              disabledCards.isEmpty
+                  ? SizedBox(height: height * 0.23)
+                  : SizedBox(
+                height: height * 0.23,
+                child: GridView(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.all(height * 0.025),
+                  children: [
+                    disabledCards
+                        .map(
+                          (creditCard) => creditCard,
+                    ).toList(),
+                  ].expand((i) => i).toList(),
+                  gridDelegate:
+                  SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
