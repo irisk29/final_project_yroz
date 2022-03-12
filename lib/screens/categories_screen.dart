@@ -43,7 +43,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         // Update your UI with the desired changes.
       });
     }();
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 

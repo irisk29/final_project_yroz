@@ -78,7 +78,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     title: Text("Add Bank Account"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
-                      //open change language
+                      //TODO: ADD FUNCTIONALITY
                     },
                   ),
                   _buildDivider(),
@@ -90,7 +90,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     title: Text("Make Online Store"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
-                      //open change location
+                      //TODO: ADD FUNCTIONALITY
                     },
                   ),
                   _buildDivider(),
@@ -102,11 +102,31 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     title: Text("Edit Store"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
-                      //open change language
+                      //TODO: ADD FUNCTIONALITY
                     },
                   ),
                 ],
               ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                primary: Colors.red,
+              ),
+              child: Container(
+                margin: const EdgeInsets.all(12),
+                child: const Text(
+                  'DELETE STORE',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              onPressed: () {
+                //TODO: ADD FUNCTIONALITY
+              },
             ),
           ],
         ),

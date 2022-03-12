@@ -57,26 +57,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
         ),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator(),)
-          : GridView(
-              scrollDirection: Axis.vertical,
-              padding: const EdgeInsets.all(25),
-              children: [
-                stores
-                    .map(
-                      (storeData) => StoreItem(
-                        storeData//, widget.user!
-                      ),
-                    )
-                    .toList(),
-              ].expand((i) => i).toList(),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 3 / 2,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-              ),
-            ),
+        ? Center(child: CircularProgressIndicator(),)
+        : GridView(
+          scrollDirection: Axis.vertical,
+          padding: const EdgeInsets.all(25),
+          children: [
+            stores
+              .map(
+                (storeData) => StoreItem(
+                  storeData//, widget.user!
+                ),
+              )
+              .toList(),
+          ].expand((i) => i).toList(),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 200,
+            childAspectRatio: 3 / 2,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+          ),
+      ),
     );
   }
 }

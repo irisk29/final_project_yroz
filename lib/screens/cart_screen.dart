@@ -20,7 +20,6 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.storeID = routeArgs['store'] as String;
   }

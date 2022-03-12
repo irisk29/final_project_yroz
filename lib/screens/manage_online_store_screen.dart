@@ -78,7 +78,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     title: Text("Add Bank Account"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
-                      //open change language
+                      //TODO: ADD FUNCTIONALITY
                     },
                   ),
                   _buildDivider(),
@@ -90,7 +90,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     title: Text("View Store Purchases"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
-                      //open change location
+                      //TODO: ADD FUNCTIONALITY
                     },
                   ),
                   _buildDivider(),
@@ -102,7 +102,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     title: Text("Edit Store"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
-                      //open change language
+                      //TODO: ADD FUNCTIONALITY
                     },
                   ),
                 ],
@@ -125,6 +125,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                 ),
               ),
               onPressed: () {
+                //TODO: ADD FUNCTIONALITY
               },
             ),
           ],
