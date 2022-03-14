@@ -141,7 +141,8 @@ class StoreStorageProxy {
       return "";
     }
     FLog.info(text: "Generated QRCode and saved it in $path");
-    return path;
+    String? url = await getDownloadUrl("$storeID-qrcode");
+    return url!;
   }
 
   Future<File> writeToFile(ByteData data, String path) async {
@@ -329,7 +330,7 @@ class StoreStorageProxy {
           name: e.name,
           price: e.price,
           category: e.categories.isEmpty ? "" : jsonDecode(e.categories).cast<String>(),
-          imageUrl: e.imageUrl!,
+          imageUrl: e.imageUrl == null ? "" : e.imageUrl!,
           description: e.description!,
           storeID: e.onlinestoremodelID,
           imageFromPhone: file));
@@ -751,7 +752,7 @@ class StoreStorageProxy {
             name: prod.name,
             price: prod.price,
             category: prod.categories,
-            imageUrl: prod.imageUrl!,
+            imageUrl: prod.imageUrl == null ? "" : prod.imageUrl!,
             description: prod.description!,
             storeID: prod.onlinestoremodelID,
             imageFromPhone: file));

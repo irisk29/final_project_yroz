@@ -221,7 +221,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage, _pickedImage),
+                      ImageInput(_selectImage, _unselectImage, _pickedImage, true),
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(labelText: 'Store Name'),

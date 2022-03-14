@@ -221,7 +221,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                 key: _detailsform,
                 child: Column(
                   children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage, _pickedImage),
+                    ImageInput(_selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
                       initialValue: _editedStore!.name,
                       decoration: InputDecoration(labelText: 'Store Name'),

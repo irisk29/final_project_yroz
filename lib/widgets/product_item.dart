@@ -30,10 +30,18 @@ class _ProductItemState extends State<ProductItem> {
               arguments: widget.product,
             );
           },
-          child: Image.network(
-            widget.product.imageUrl,
-            fit: BoxFit.cover,
-          ),
+          child: Positioned(
+              child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              image: widget.product.imageUrl.isNotEmpty && widget.product.imageFromPhone != null
+                  ? DecorationImage(image: FileImage(widget.product.imageFromPhone!), fit: BoxFit.cover)
+                  : DecorationImage(
+                      image: AssetImage('assets/images/default_product.png'),
+                      fit: BoxFit.cover),
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ))
         ),
         footer: GridTileBar(
           backgroundColor: Colors.black87,
