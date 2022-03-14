@@ -1,11 +1,22 @@
+import 'dart:io';
+
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 
 class CartProductDTO extends ProductDTO {
   double amount;
 
-  CartProductDTO(String id, String name, double price, String category, String imageUrl, String description, double amount, String storeID)
+  CartProductDTO(String id, String name, double price, String category, String imageUrl, String description,
+      double amount, String storeID)
       : this.amount = amount,
-        super(id: id, name: name, price: price, category: category, imageUrl: imageUrl, description: description, storeID: storeID);
+        super(
+            id: id,
+            name: name,
+            price: price,
+            category: category,
+            imageUrl: imageUrl,
+            description: description,
+            storeID: storeID,
+            imageFromPhone: File(imageUrl));
 
   double calculatePricePerQuantity() {
     return price * amount;

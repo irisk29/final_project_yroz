@@ -33,6 +33,24 @@ class StoreOwnerState {
     var op = parseOperationHours(operationHours);
     String? imageUrl = await StoreStorageProxy().getDownloadUrl(onlineStoreModel.id);
     File? imageFile = imageUrl != null ? await StoreStorageProxy().createFileFromImageUrl(imageUrl) : null;
+    List<ProductDTO> products = [];
+    if (onlineStoreModel.storeProductModels == null || onlineStoreModel.storeProductModels!.isEmpty) {
+      onlineStoreModel.storeProductModels!.forEach((e) async {
+        String? prodImageUrl = await StoreStorageProxy().getDownloadUrl(e.id);
+        File? prodImageFile =
+            prodImageUrl != null ? await StoreStorageProxy().createFileFromImageUrl(prodImageUrl) : null;
+        products.add(new ProductDTO(
+            id: e.id,
+            name: e.name,
+            description: e.description!,
+            category: e.categories,
+            price: e.price,
+            imageUrl: e.imageUrl!,
+            storeID: e.onlinestoremodelID,
+            imageFromPhone: prodImageFile));
+      });
+    }
+
     onlineStore = new OnlineStoreDTO(
         id: onlineStoreModel.id,
         name: onlineStoreModel.name,
@@ -41,18 +59,7 @@ class StoreOwnerState {
         categories: List<String>.from(categories),
         operationHours: op,
         image: imageUrl,
-        products: onlineStoreModel.storeProductModels == null || onlineStoreModel.storeProductModels!.isEmpty
-            ? []
-            : onlineStoreModel.storeProductModels!
-                .map((e) => ProductDTO(
-                    id: e.id,
-                    name: e.name,
-                    description: e.description!,
-                    category: e.categories,
-                    price: e.price,
-                    imageUrl: e.imageUrl!,
-                    storeID: e.onlinestoremodelID))
-                .toList(),
+        products: products,
         qrCode: onlineStoreModel.qrCode,
         imageFromPhone: imageFile);
   }
