@@ -3,6 +3,7 @@ import 'package:flutter_credit_card/credit_card_brand.dart';
 import 'package:flutter_credit_card/credit_card_form.dart';
 import 'package:flutter_credit_card/credit_card_model.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class AddCreditCardScreen extends StatefulWidget {
   static const routeName = '/add-credit-card';
@@ -126,51 +127,6 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            const Text(
-                              'Glassmorphism',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                              ),
-                            ),
-                            Switch(
-                              value: useGlassMorphism,
-                              inactiveTrackColor: Colors.grey,
-                              activeColor: Colors.black,
-                              activeTrackColor: Colors.green,
-                              onChanged: (bool value) => setState(() {
-                                useGlassMorphism = value;
-                              }),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            const Text(
-                              'Card Image',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                              ),
-                            ),
-                            Switch(
-                              value: useBackgroundImage,
-                              inactiveTrackColor: Colors.grey,
-                              activeColor: Colors.black,
-                              activeTrackColor: Colors.green,
-                              onChanged: (bool value) => setState(() {
-                                useBackgroundImage = value;
-                              }),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -196,6 +152,12 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                             } else {
                               print('invalid!');
                             }
+                            final key = encrypt.Key.fromLength(32);
+                            final iv = encrypt.IV.fromLength(8);
+                            final encrypter = encrypt.Encrypter(encrypt.AES(key));
+
+                            final encrypted = encrypter.encrypt(cardNumber, iv: iv);
+                            final decrypted = encrypter.decrypt(encrypted, iv: iv);
                             // TODO: CALL STUB
                           },
                         ),
