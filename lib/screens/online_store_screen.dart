@@ -19,7 +19,6 @@ class OnlineStoreScreen extends StatefulWidget {
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
-
 }
 
 class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
@@ -56,13 +55,11 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   }
 
   bool opBigger(TimeOfDay me, TimeOfDay other) {
-    return other.hour < me.hour ||
-        other.hour == me.hour && other.minute < me.minute;
+    return other.hour < me.hour || other.hour == me.hour && other.minute < me.minute;
   }
 
   bool opSmaller(TimeOfDay me, TimeOfDay other) {
-    return other.hour > me.hour ||
-        other.hour == me.hour && other.minute > me.minute;
+    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
   }
 
   int isStoreOpen() {
@@ -107,7 +104,15 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
               },
             ),
-            value: Provider.of<User>(context, listen: false).bagInStores.length > 0 ? Provider.of<User>(context, listen: false).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
+            value: Provider.of<User>(context, listen: false).bagInStores.length > 0
+                ? Provider.of<User>(context, listen: false)
+                    .bagInStores
+                    .where((element) => element.onlineStoreID == widget.store.id)
+                    .first
+                    .products
+                    .length
+                    .toString()
+                : 0.toString(),
           ),
         ],
       ),
@@ -121,9 +126,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 decoration: BoxDecoration(
                   image: widget.store.imageFromPhone != null
                       ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store.imageFromPhone!))
-                      : DecorationImage(
-                          image: AssetImage('assets/images/default-store.png'),
-                          fit: BoxFit.cover),
+                      : DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -133,20 +136,27 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                Provider.of<User>(context, listen: false).favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) == null ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, true)
+                Provider.of<User>(context, listen: false)
+                            .favoriteStores
+                            .firstWhereOrNull((e) => e.item1 == widget.store.id) ==
+                        null
+                    ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, true)
                     : await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, true);
-                setState(() {
-
-                });
+                setState(() {});
                 //open change language
               },
-              trailing: Provider.of<User>(context, listen: false).favoriteStores.firstWhereOrNull((e) => e.item1 == widget.store.id) != null ? Icon(
-                Icons.favorite,
-                color: Colors.black,
-              ) : Icon(
-                Icons.favorite_border,
-                color: Colors.black,
-              ),
+              trailing: Provider.of<User>(context, listen: false)
+                          .favoriteStores
+                          .firstWhereOrNull((e) => e.item1 == widget.store.id) !=
+                      null
+                  ? Icon(
+                      Icons.favorite,
+                      color: Colors.black,
+                    )
+                  : Icon(
+                      Icons.favorite_border,
+                      color: Colors.black,
+                    ),
             ),
             ListTile(
               leading: Icon(
@@ -154,14 +164,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 color: isStoreOpen() == 0
                     ? Colors.green
                     : isStoreOpen() == 1
-                    ? Colors.orange
-                    : Colors.red,
+                        ? Colors.orange
+                        : Colors.red,
               ),
               title: isStoreOpen() == 0
                   ? Text("Open Now")
                   : isStoreOpen() == 1
-                  ? Text("Closing Soon")
-                  : Text("Closed"),
+                      ? Text("Closing Soon")
+                      : Text("Closed"),
               onTap: () {
                 showDialog(
                     context: context,
@@ -191,11 +201,11 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            Image.file(
-              File(widget.store.qrCode!),
+            Image.network(
+              widget.store.qrCode!,
+              fit: BoxFit.cover,
               width: 150,
               height: 150,
-              fit: BoxFit.fill,
             ),
             ElevatedButton(
               onPressed: () => routeToOnlineStoreProducts(context),

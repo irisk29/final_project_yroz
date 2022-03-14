@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,11 +30,5 @@ class StoreDTO {
   bool operator ==(other) {
     if (other is StoreDTO) return this.id == other.id;
     return false;
-  }
-
-  void fetchStoreImage() {
-    if (this.image != null && this.image!.isNotEmpty) {
-      this.imageFromPhone = File(this.image!);
-    }
   }
 }

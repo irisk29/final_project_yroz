@@ -7,8 +7,9 @@ class ImageInput extends StatefulWidget {
   final Function onSelectImage;
   final Function onUnselectImage;
   XFile? image;
+  bool isStore = true;
 
-  ImageInput(this.onSelectImage, this.onUnselectImage, this.image);
+  ImageInput(this.onSelectImage, this.onUnselectImage, this.image, this.isStore);
 
   @override
   _ImageInputState createState() => _ImageInputState(image);
@@ -19,9 +20,7 @@ class _ImageInputState extends State<ImageInput> {
   String? imagePath;
 
   _ImageInputState(this._storedImage) {
-    this._storedImage == null
-        ? this.imagePath = null
-        : this.imagePath = this._storedImage!.path;
+    this._storedImage == null ? this.imagePath = null : this.imagePath = this._storedImage!.path;
   }
 
   Future<void> _takePicture() async {
@@ -38,8 +37,7 @@ class _ImageInputState extends State<ImageInput> {
   }
 
   Future<void> _choosePicture() async {
-    final imageFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (imageFile == null) {
       return;
     }
@@ -69,8 +67,7 @@ class _ImageInputState extends State<ImageInput> {
           ),
           child: _storedImage != null
               ? Image.file(File(imagePath!))
-              : const Image(
-                  image: AssetImage('assets/images/default-store.png')),
+              : Image(image: widget.isStore ? AssetImage('assets/images/default-store.png') : AssetImage('assets/images/default_product.png')),
           alignment: Alignment.center,
         ),
         SizedBox(

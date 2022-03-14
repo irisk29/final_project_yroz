@@ -141,7 +141,8 @@ class StoreStorageProxy {
       return "";
     }
     FLog.info(text: "Generated QRCode and saved it in $path");
-    return path;
+    String? url = await getDownloadUrl("$storeID-qrcode");
+    return url!;
   }
 
   Future<File> writeToFile(ByteData data, String path) async {
@@ -229,7 +230,7 @@ class StoreStorageProxy {
           onProgress: (progress) {
             print("Fraction completed: " + progress.getFractionCompleted().toString());
           });
-      FLog.info(text: "Successfully uploaded file: ${result.key}");    
+      FLog.info(text: "Successfully uploaded file: ${result.key}");
       return new Ok('Successfully uploaded file: ${result.key}', storeId);
     } on StorageException catch (e) {
       FLog.error(text: e.message, stacktrace: StackTrace.current);
@@ -320,19 +321,27 @@ class StoreStorageProxy {
     }
   }
 
+  List<ProductDTO> convertProductsModelToDTO(List<StoreProductModel> products) {
+    List<ProductDTO> productsDTO = [];
+    products.forEach((e) async {
+      File? file = e.imageUrl != null ? await createFileFromImageUrl(e.imageUrl!) : null;
+      productsDTO.add(new ProductDTO(
+          id: e.id,
+          name: e.name,
+          price: e.price,
+          category: e.categories.isEmpty ? "" : jsonDecode(e.categories).cast<String>(),
+          imageUrl: e.imageUrl == null ? "" : e.imageUrl!,
+          description: e.description!,
+          storeID: e.onlinestoremodelID,
+          imageFromPhone: file));
+    });
+    return productsDTO;
+  }
+
   Future<List<ProductDTO>> fetchStoreProducts(String storeId) async {
     List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeId));
-    return products
-        .map((e) => ProductDTO(
-            id: e.id,
-            name: e.name,
-            price: e.price,
-            category: e.categories.isEmpty ? "" : jsonDecode(e.categories).cast<String>(),
-            imageUrl: e.imageUrl!,
-            description: e.description!,
-            storeID: e.onlinestoremodelID))
-        .toList();
+    return convertProductsModelToDTO(products);
   }
 
   Future<List<StoreDTO>> fetchStoresByKeywords(String keywords) async {
@@ -420,22 +429,6 @@ class StoreStorageProxy {
     return lst;
   }
 
-  List<ProductDTO> convertProductModelToDTO(List<StoreProductModel> products) {
-    List<ProductDTO> lst = [];
-    for (StoreProductModel model in products) {
-      ProductDTO dto = ProductDTO(
-          id: model.id,
-          name: model.name,
-          price: model.price,
-          category: jsonDecode(model.categories).cast<List<String>>(),
-          imageUrl: model.imageUrl!,
-          description: model.description!,
-          storeID: model.onlinestoremodelID);
-      lst.add(dto);
-    }
-    return lst;
-  }
-
   Map<String, List<TimeOfDay>> opHours(Map<String, dynamic> oper) {
     Map<String, List<TimeOfDay>> map = {};
     for (MapEntry e in oper.entries) {
@@ -452,16 +445,19 @@ class StoreStorageProxy {
     try {
       StoreProductModel productModel = StoreProductModel(
           name: productDTO.name,
-          imageUrl: productDTO.imageUrl,
           price: productDTO.price,
           categories: productDTO.category,
           description: productDTO.description,
           onlinestoremodelID: onlineStoreModelID);
-      if (productDTO.imageUrl.isNotEmpty) {
-        await uploadPicture(productDTO.imageUrl, productModel.id, null); // uploading the picture to s3
+      if (productDTO.imageFromPhone != null) {
+        var res = await uploadPicture("", productModel.id, productDTO.imageFromPhone); // uploading the picture to s3
+        if (!res.getTag()) return res;
+        productModel = productModel.copyWith(imageUrl: await getDownloadUrl(productModel.id));
       }
+
       await Amplify.DataStore.save(productModel);
-      FLog.info(text: "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}");
+      FLog.info(
+          text: "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}");
       return new Ok(
           "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}",
           productModel);
@@ -559,18 +555,19 @@ class StoreStorageProxy {
       return new Failure("No products were found in store $storeID", storeID);
     }
     for (StoreProductModel prod in productsModels) {
+      deletePicture(prod.id);
       await Amplify.DataStore.delete(prod);
     }
 
-    List<StoreProductModel> updatedProd = products
-        .map((e) => StoreProductModel(
-            name: e.name,
-            categories: e.category,
-            price: e.price,
-            onlinestoremodelID: storeID,
-            imageUrl: e.imageUrl,
-            description: e.description))
-        .toList();
+    List<StoreProductModel> updatedProd = [];
+    products.forEach((element) async {
+      var res = await createProductForOnlineStore(element, storeID);
+      if (res.getTag()) {
+        updatedProd.add(res.getValue());
+      } else {
+        FLog.error(text: res.getMessage());
+      }
+    });
 
     for (StoreProductModel p in updatedProd) {
       await Amplify.DataStore.save(p);
@@ -601,6 +598,11 @@ class StoreStorageProxy {
         FLog.error(text: "No such store $id");
         return new Failure("No such store", id);
       }
+      List<String> prodsID =
+          stores[0].storeProductModels == null ? [] : stores[0].storeProductModels!.map((e) => e.id).toList();
+      prodsID.forEach((element) {
+        deletePicture(element);
+      });
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
       deletePicture(id); // in s3 - for store picutre
       deletePicture("$id-qrcode"); //in s3
@@ -647,17 +649,15 @@ class StoreStorageProxy {
         await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
     StoreOwnerModel storeOwnerModel = storeOwners.first;
     if (deletedOnlineStore) {
-        await Amplify.DataStore.delete(storeOwnerModel); //no store left
-        UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
-        if (currUser == null) return Failure("No such user", null);
-        UserModel userWithoutStoreOwnerState =
-            currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
-        await Amplify.DataStore.save(userWithoutStoreOwnerState);
-        FLog.info(text: "Deleted completly Store Owner State");
-        return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState); 
+      await Amplify.DataStore.delete(storeOwnerModel); //no store left
+      UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+      if (currUser == null) return Failure("No such user", null);
+      UserModel userWithoutStoreOwnerState = currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
+      await Amplify.DataStore.save(userWithoutStoreOwnerState);
+      FLog.info(text: "Deleted completly Store Owner State");
+      return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
     }
 
-    
     await Amplify.DataStore.delete(storeOwnerModel); //no store left
     UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
     if (currUser == null) return Failure("No such user", null);
@@ -665,7 +665,6 @@ class StoreStorageProxy {
     await Amplify.DataStore.save(userWithoutStoreOwnerState);
     FLog.info(text: "Deleted completly Store Owner State");
     return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
-    
   }
 
   Future<ResultInterface> convertPhysicalStoreToOnlineStore(StoreDTO physicalStore) async {
@@ -745,6 +744,7 @@ class StoreStorageProxy {
       return new Failure("No such product $prodId exists", prodId);
     }
     var prod = prods.first;
+    File? file = prod.imageUrl != null ? await createFileFromImageUrl(prod.imageUrl!) : null;
     return new Ok(
         "Found product $prodId",
         ProductDTO(
@@ -752,8 +752,9 @@ class StoreStorageProxy {
             name: prod.name,
             price: prod.price,
             category: prod.categories,
-            imageUrl: prod.imageUrl!,
+            imageUrl: prod.imageUrl == null ? "" : prod.imageUrl!,
             description: prod.description!,
-            storeID: prod.onlinestoremodelID));
+            storeID: prod.onlinestoremodelID,
+            imageFromPhone: file));
   }
 }

@@ -166,12 +166,12 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 //open change language
               },
             ),
-             Image.file(
-              File(widget.store.qrCode!),
+            Image.network(
+              widget.store.qrCode!,
+              fit: BoxFit.cover,
               width: 150,
               height: 150,
-              fit: BoxFit.fill,
-            )
+            ),
           ],
         ),
       ),
