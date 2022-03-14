@@ -30,7 +30,7 @@ class User extends ChangeNotifier {
   List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
-  String? bankAccount;
+  String? eWallet;
   StoreOwnerState? storeOwnerState;
   DigitalWallet digitalWallet;
   List<ShoppingBagDTO> bagInStores;
@@ -57,14 +57,11 @@ class User extends ChangeNotifier {
       this.email = model.email;
       this.name = model.name;
       this.imageUrl = model.imageUrl;
+      this.eWallet = model.eWallet;
       this.favoriteProducts =
           model.favoriteProducts == null ? [] : (jsonDecode(model.favoriteProducts!) as List<dynamic>).cast<String>();
       this.favoriteStores =
           model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
-      this.digitalWallet = DigitalWallet.digitalWalletFromModel(model.digitalWalletModel!);
-      //TODO: generate credit card list from json
-      this.bankAccount = model.bankAccount;
-      //TODO: check if we need the other fields (because we are writing directly to the cloud)
       this.storeOwnerState =
           model.storeOwnerModel == null ? null : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
       if (model.shoppingBagModels != null) {

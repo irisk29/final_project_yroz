@@ -21,7 +21,6 @@
 
 import 'package:amplify_core/amplify_core.dart';
 import 'CartProductModel.dart';
-import 'DigitalWalletModel.dart';
 import 'OnlineStoreModel.dart';
 import 'PhysicalStoreModel.dart';
 import 'PurchaseHistoryModel.dart';
@@ -31,7 +30,6 @@ import 'StoreProductModel.dart';
 import 'UserModel.dart';
 
 export 'CartProductModel.dart';
-export 'DigitalWalletModel.dart';
 export 'OnlineStoreModel.dart';
 export 'PhysicalStoreModel.dart';
 export 'PurchaseHistoryModel.dart';
@@ -42,9 +40,9 @@ export 'UserModel.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "29e46e2bb1e5b6fbc072b116c7ffa006";
+  String version = "0568b913749dbf9e13b53aa56e930ebc";
   @override
-  List<ModelSchema> modelSchemas = [CartProductModel.schema, DigitalWalletModel.schema, OnlineStoreModel.schema, PhysicalStoreModel.schema, PurchaseHistoryModel.schema, ShoppingBagModel.schema, StoreOwnerModel.schema, StoreProductModel.schema, UserModel.schema];
+  List<ModelSchema> modelSchemas = [CartProductModel.schema, OnlineStoreModel.schema, PhysicalStoreModel.schema, PurchaseHistoryModel.schema, ShoppingBagModel.schema, StoreOwnerModel.schema, StoreProductModel.schema, UserModel.schema];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -55,8 +53,6 @@ class ModelProvider implements ModelProviderInterface {
     switch(modelName) {
       case "CartProductModel":
         return CartProductModel.classType;
-      case "DigitalWalletModel":
-        return DigitalWalletModel.classType;
       case "OnlineStoreModel":
         return OnlineStoreModel.classType;
       case "PhysicalStoreModel":

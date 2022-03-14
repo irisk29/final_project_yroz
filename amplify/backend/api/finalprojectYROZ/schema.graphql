@@ -10,9 +10,8 @@ type UserModel @model @auth(rules: [{allow: public}]) {
   name: String!
   imageUrl: String
   creditCards: AWSJSON
-  bankAccount: String
+  eWallet: String
   storeOwnerModel: StoreOwnerModel @hasOne
-  digitalWalletModel: DigitalWalletModel @hasOne
   shoppingBagModels: [ShoppingBagModel] @hasMany(indexName: "byUserModel", fields: ["id"])
   favoriteStores: AWSJSON
   favoriteProducts: AWSJSON
@@ -73,10 +72,5 @@ type StoreProductModel @model @auth(rules: [{allow: public}]) {
   imageUrl: String
   description: String
   onlinestoremodelID: ID! @index(name: "byOnlineStoreModel")
-}
-
-type DigitalWalletModel @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  cashBackAmount: Float!
 }
  

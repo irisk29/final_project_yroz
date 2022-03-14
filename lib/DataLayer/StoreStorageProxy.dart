@@ -91,16 +91,7 @@ class StoreStorageProxy {
         return new Failure("no such user exists in the system!", null);
       }
       UserModel newUserModel = oldUserModel.copyWith(
-          id: oldUserModel.id,
-          email: oldUserModel.email,
-          name: oldUserModel.name,
-          imageUrl: oldUserModel.imageUrl,
-          creditCards: oldUserModel.creditCards,
-          bankAccount: oldUserModel.bankAccount,
-          shoppingBagModels: oldUserModel.shoppingBagModels,
           storeOwnerModel: storeOwner,
-          digitalWalletModel: oldUserModel.digitalWalletModel,
-          userModelDigitalWalletModelId: oldUserModel.userModelDigitalWalletModelId,
           userModelStoreOwnerModelId: storeOwner.id);
       await Amplify.DataStore.save(onlineWithProducts);
       await Amplify.DataStore.save(storeOwner);
@@ -187,16 +178,7 @@ class StoreStorageProxy {
       }
 
       UserModel newUserModel = oldUserModel.copyWith(
-          id: oldUserModel.id,
-          email: oldUserModel.email,
-          name: oldUserModel.name,
-          imageUrl: oldUserModel.imageUrl,
-          creditCards: oldUserModel.creditCards,
-          bankAccount: oldUserModel.bankAccount,
-          shoppingBagModels: oldUserModel.shoppingBagModels,
           storeOwnerModel: storeOwner,
-          digitalWalletModel: oldUserModel.digitalWalletModel,
-          userModelDigitalWalletModelId: oldUserModel.userModelDigitalWalletModelId,
           userModelStoreOwnerModelId: storeOwner.id);
       await Amplify.DataStore.save(physicalModel);
       await Amplify.DataStore.save(storeOwner);
