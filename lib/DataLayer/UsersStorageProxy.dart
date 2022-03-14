@@ -26,10 +26,7 @@ class UsersStorageProxy {
 
     if (users.isEmpty) //no such user in the DB
     {
-      UserModel userModel = UserModel(
-          email: email,
-          name: name,
-          imageUrl: imageUrl);
+      UserModel userModel = UserModel(email: email, name: name, imageUrl: imageUrl);
       await Amplify.DataStore.save(userModel);
       print("Created user and saved to DB");
       FLog.info(text: "Created user with id ${userModel.id}");
@@ -40,7 +37,6 @@ class UsersStorageProxy {
   }
 
   Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
-
     var resStoreOwner = await getStoreOwnerState(user.email);
     StoreOwnerModel? storeOwner = resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
     List<ShoppingBagModel> shoppingBags =
@@ -86,8 +82,7 @@ class UsersStorageProxy {
     List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
     if (storeOwners.isEmpty) {
-      FLog.warning(
-         text: "The current user $emailCurrUser does not have store owner state");
+      FLog.warning(text: "The current user $emailCurrUser does not have store owner state");
       return new Failure("There is no store owner state", null);
     }
     var storeOwner = storeOwners.first;
@@ -114,8 +109,7 @@ class UsersStorageProxy {
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
     var storeOwner = storeOwners.isEmpty ? null : storeOwners.first;
     if (storeOwner == null) {
-      FLog.warning(
-          text: "The current user $emailCurrUser does not have store owner state");
+      FLog.warning(text: "The current user $emailCurrUser does not have store owner state");
       return new Failure("No store owner state", emailCurrUser);
     }
     await Amplify.DataStore.delete(storeOwner);
@@ -126,8 +120,7 @@ class UsersStorageProxy {
   Future<ResultInterface> updateUserNameOrUrl(String newName, String newImageUrl) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
-      FLog.error(
-          text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+      FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
       return new Failure("No user was found", null);
     }
     var nameUpdate = newName.isEmpty ? user.name : newName;
@@ -230,8 +223,7 @@ class UsersStorageProxy {
   Future<ResultInterface> removeFavoriteProduct(String prodID) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
-      FLog.error(
-          text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+      FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
       return new Failure("No user was found", null);
     }
     var favoriteProd = user.favoriteProducts;
@@ -249,12 +241,10 @@ class UsersStorageProxy {
         await Amplify.DataStore.save(updatedUser);
         return new Ok("Removed succssefully product $prodID from user's favorite", fav);
       }
-      FLog.error(
-          text: "There is no favorite stores list from current user ${user.id}");
+      FLog.error(text: "There is no favorite stores list from current user ${user.id}");
       return new Failure("There is no favorite stores list from current user ${user.id}", null);
     }
-    FLog.error(
-        text: "There is no favorite products list from current user ${user.id}");
+    FLog.error(text: "There is no favorite products list from current user ${user.id}");
     return new Failure("There is no favorite products list from current user ${user.id}", null);
   }
 
@@ -279,8 +269,7 @@ class UsersStorageProxy {
       FLog.info(text: "Removed succssefully store $storeID from user's favorite");
       return new Ok("Removed succssefully store $storeID from user's favorite", fav);
     }
-    FLog.error(
-        text: "There is no favorite stores list from current user ${user.id}");
+    FLog.error(text: "There is no favorite stores list from current user ${user.id}");
     return Failure("There is no favorite stores list from current user ${user.id}", null);
   }
 
@@ -302,8 +291,7 @@ class UsersStorageProxy {
     List<CartProductModel> productsList = shoppingBag.CartProductModels == null ? [] : shoppingBag.CartProductModels!;
     productsList.add(item);
     var shoppingBagWithNewItem = shoppingBag.copyWith(CartProductModels: productsList);
-    FLog.info(
-        text: "Saved shopping bag product(id - ${item.id}) succssesfully");
+    FLog.info(text: "Saved shopping bag product(id - ${item.id}) succssesfully");
     return new Ok("Saved shopping bag product(id - ${item.id}) succssesfully", shoppingBagWithNewItem);
   }
 
@@ -325,8 +313,7 @@ class UsersStorageProxy {
       FLog.info(text: "Created new shopping bag for store $storeID and user $userID");
       return new Ok("Created new shopping bag for store $storeID and user $userID", shoppingBagModel);
     }
-    FLog.info(
-        text: "Found shopping bag for store $storeID and user $userID");
+    FLog.info(text: "Found shopping bag for store $storeID and user $userID");
     return new Ok("Found shopping bag for store $storeID and user $userID", shoppingBags[0]);
   }
 
@@ -385,8 +372,7 @@ class UsersStorageProxy {
             .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
 
     if (shoppingBags.isEmpty) {
-      FLog.error(
-          text: "No shopping bag was found for store $storeID and user $userID");
+      FLog.error(text: "No shopping bag was found for store $storeID and user $userID");
       return new Failure("No shopping bag was found for store $storeID and user $userID", null);
     }
 
@@ -447,8 +433,7 @@ class UsersStorageProxy {
             .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
 
     if (shoppingBags.isEmpty) {
-      FLog.error(
-          text: "No shopping bag was found for store $storeID and user $userID");
+      FLog.error(text: "No shopping bag was found for store $storeID and user $userID");
       return new Failure("No shopping bag was found for store $storeID and user $userID", null);
     }
 
@@ -464,5 +449,67 @@ class UsersStorageProxy {
     for (ShoppingBagModel model in shoppingBags) {
       await Amplify.DataStore.delete(model);
     }
+  }
+
+  Future<ResultInterface> addCreditCardToken(String token) async {
+    String emailCurrUser = UserAuthenticator().getCurrentUserId();
+    UserModel? currUser = await getUser(emailCurrUser);
+    if (currUser == null) {
+      FLog.error(text: "No such user - $emailCurrUser");
+      return new Failure("No such user - $emailCurrUser", null);
+    }
+
+    List<String> creditCards = currUser.creditCards != null && currUser.creditCards!.isNotEmpty
+        ? jsonDecode(currUser.creditCards!).cast<String>()
+        : [];
+
+    creditCards.add(token);
+    UserModel updatedUser = currUser.copyWith(creditCards: JsonEncoder.withIndent('  ').convert(creditCards));
+    await Amplify.DataStore.save(updatedUser);
+    FLog.info(text: "Succssefully added credit card token $token");
+    return new Ok("Succssefully added credit card token $token", creditCards);
+  }
+
+  Future<ResultInterface> removeCreditCardToken(String token) async {
+    String emailCurrUser = UserAuthenticator().getCurrentUserId();
+    UserModel? currUser = await getUser(emailCurrUser);
+    if (currUser == null) {
+      FLog.error(text: "No such user - $emailCurrUser");
+      return new Failure("No such user - $emailCurrUser", null);
+    }
+
+    List<String> creditCards = currUser.creditCards != null && currUser.creditCards!.isNotEmpty
+        ? jsonDecode(currUser.creditCards!).cast<String>()
+        : [];
+
+    if (creditCards.isEmpty) {
+      FLog.error(text: "No credit card tokens were found for user $emailCurrUser");
+      return new Failure("No credit card tokens were found for user $emailCurrUser", null);
+    }
+
+    bool res = creditCards.remove(token);
+    if(!res)
+    {
+      FLog.error(text: "Removal of credit card token $token was not successful");
+      return new Failure("Removal of credit card token $token was not successful", null);
+    }
+    UserModel updatedUser = currUser.copyWith(creditCards: JsonEncoder.withIndent('  ').convert(creditCards));
+    await Amplify.DataStore.save(updatedUser);
+    FLog.info(text: "Succssefully removed credit card token $token");
+    return new Ok("Succssefully removed credit card token $token", creditCards);
+  }
+
+  Future<ResultInterface> saveEWallet(String eWallet) async {
+    String emailCurrUser = UserAuthenticator().getCurrentUserId();
+    UserModel? currUser = await getUser(emailCurrUser);
+    if (currUser == null) {
+      FLog.error(text: "No such user - $emailCurrUser");
+      return new Failure("No such user - $emailCurrUser", null);
+    }
+
+    UserModel updatedUser = currUser.copyWith(eWallet: eWallet);
+    await Amplify.DataStore.save(updatedUser);
+    FLog.info(text: "Succssefully added eWallet token $eWallet");
+    return new Ok("Succssefully added eWallet token $eWallet", eWallet);
   }
 }

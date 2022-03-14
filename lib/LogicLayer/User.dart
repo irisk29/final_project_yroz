@@ -411,4 +411,34 @@ class User extends ChangeNotifier {
   ShoppingBagDTO? getShoppingBag(String storeID) {
     return bagInStores.firstWhereOrNull((element) => element.onlineStoreID == storeID);
   }
+
+  Future<void> addCreditCardToken(String token) async {
+    var res = await UsersStorageProxy().addCreditCardToken(token);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.creditCards = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> removeCreditCardToken(String token) async {
+    var res = await UsersStorageProxy().removeCreditCardToken(token);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.creditCards = res.getValue();
+    notifyListeners();
+  }
+
+  Future<void> createEWallet(String eWallet) async {
+    var res = await UsersStorageProxy().saveEWallet(eWallet);
+    if (!res.getTag()) {
+      print(res.getMessage());
+      return;
+    }
+    this.eWallet = res.getValue();
+    notifyListeners();
+  }
 }
