@@ -26,14 +26,10 @@ class UsersStorageProxy {
 
     if (users.isEmpty) //no such user in the DB
     {
-      DigitalWalletModel digitalWalletModel = DigitalWalletModel(cashBackAmount: 0);
       UserModel userModel = UserModel(
           email: email,
           name: name,
-          imageUrl: imageUrl,
-          digitalWalletModel: digitalWalletModel,
-          userModelDigitalWalletModelId: digitalWalletModel.id);
-      await Amplify.DataStore.save(digitalWalletModel);
+          imageUrl: imageUrl);
       await Amplify.DataStore.save(userModel);
       print("Created user and saved to DB");
       FLog.info(text: "Created user with id ${userModel.id}");
@@ -44,12 +40,9 @@ class UsersStorageProxy {
   }
 
   Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
-    List<DigitalWalletModel> digitalWallet = await Amplify.DataStore.query(DigitalWalletModel.classType,
-        where: DigitalWalletModel.ID.eq(user.userModelDigitalWalletModelId));
 
     var resStoreOwner = await getStoreOwnerState(user.email);
     StoreOwnerModel? storeOwner = resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
-    DigitalWalletModel? wallet = digitalWallet.isNotEmpty ? digitalWallet.first : null;
     List<ShoppingBagModel> shoppingBags =
         await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
 
@@ -59,12 +52,10 @@ class UsersStorageProxy {
         name: name,
         imageUrl: imageUrl,
         creditCards: user.creditCards,
-        bankAccount: user.bankAccount,
+        eWallet: user.eWallet,
         shoppingBagModels: shoppingBags,
         storeOwnerModel: storeOwner,
-        digitalWalletModel: wallet,
-        userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id,
-        userModelDigitalWalletModelId: wallet == null ? "" : wallet.id);
+        userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id);
     FLog.info(text: "Fetched existing user");
     return fullUser;
   }
