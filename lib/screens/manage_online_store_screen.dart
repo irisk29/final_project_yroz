@@ -75,7 +75,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                       Icons.account_balance,
                       color: Colors.purple,
                     ),
-                    title: Text("Add Bank Account"),
+                    title: Text("Edit Bank Account"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
                       //TODO: ADD FUNCTIONALITY
