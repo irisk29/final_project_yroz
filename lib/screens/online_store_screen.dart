@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/widgets/badge.dart';
@@ -29,7 +26,8 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
     //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
@@ -37,7 +35,8 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
 
   String mapAsString() {
     String map = "";
-    for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
+    for (MapEntry<String, List<TimeOfDay>> e
+        in widget.store.operationHours.entries) {
       map = map + e.key + ": ";
       for (int i = 0; i < e.value.length; i++) {
         map = map + e.value[i].format(context) + " ";
@@ -55,17 +54,20 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   }
 
   bool opBigger(TimeOfDay me, TimeOfDay other) {
-    return other.hour < me.hour || other.hour == me.hour && other.minute < me.minute;
+    return other.hour < me.hour ||
+        other.hour == me.hour && other.minute < me.minute;
   }
 
   bool opSmaller(TimeOfDay me, TimeOfDay other) {
-    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
+    return other.hour > me.hour ||
+        other.hour == me.hour && other.minute > me.minute;
   }
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
     //String hour = DateFormat('Hm').format(DateTime.now());
-    for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
+    for (MapEntry<String, List<TimeOfDay>> e
+        in widget.store.operationHours.entries) {
       if (e.key == day) {
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
         if (opBigger(time, e.value[0]) && opSmaller(time, e.value[1])) {
@@ -101,18 +103,21 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
+                Navigator.of(context).pushNamed(CartScreen.routeName,
+                    arguments: {'store': widget.store.id});
               },
             ),
-            value: Provider.of<User>(context, listen: false).bagInStores.length > 0
-                ? Provider.of<User>(context, listen: false)
-                    .bagInStores
-                    .where((element) => element.onlineStoreID == widget.store.id)
-                    .first
-                    .products
-                    .length
-                    .toString()
-                : 0.toString(),
+            value:
+                Provider.of<User>(context, listen: false).bagInStores.length > 0
+                    ? Provider.of<User>(context, listen: false)
+                        .bagInStores
+                        .where((element) =>
+                            element.onlineStoreID == widget.store.id)
+                        .first
+                        .products
+                        .length
+                        .toString()
+                    : 0.toString(),
           ),
         ],
       ),
@@ -125,8 +130,12 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 height: 150,
                 decoration: BoxDecoration(
                   image: widget.store.imageFromPhone != null
-                      ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store.imageFromPhone!))
-                      : DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
+                      ? DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(widget.store.imageFromPhone!))
+                      : DecorationImage(
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -138,16 +147,20 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               onTap: () async {
                 Provider.of<User>(context, listen: false)
                             .favoriteStores
-                            .firstWhereOrNull((e) => e.item1 == widget.store.id) ==
+                            .firstWhereOrNull(
+                                (e) => e.item1 == widget.store.id) ==
                         null
-                    ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, true)
-                    : await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, true);
+                    ? await Provider.of<User>(context, listen: false)
+                        .addFavoriteStore(widget.store.id, true)
+                    : await Provider.of<User>(context, listen: false)
+                        .removeFavoriteStore(widget.store.id, true);
                 setState(() {});
                 //open change language
               },
               trailing: Provider.of<User>(context, listen: false)
                           .favoriteStores
-                          .firstWhereOrNull((e) => e.item1 == widget.store.id) !=
+                          .firstWhereOrNull(
+                              (e) => e.item1 == widget.store.id) !=
                       null
                   ? Icon(
                       Icons.favorite,

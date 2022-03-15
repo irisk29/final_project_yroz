@@ -108,7 +108,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     if (_isInit) {
       // final user = ModalRoute.of(context)!.settings.arguments as User?;
       // widget.user = user;
-      _editedStore = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
+      _editedStore = Provider.of<User>(context, listen: false)
+          .storeOwnerState!
+          .onlineStore;
       _selectedItems.addAll(_editedStore!.categories);
       EditOnlineStorePipeline._products = _editedStore!.products;
     }
@@ -134,8 +136,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.categories = _selectedItems;
       _editedStore!.products = EditOnlineStorePipeline._products;
       try {
-        await Provider.of<User>(context, listen: false).updateOnlineStore(_editedStore!);
-    } catch (error) {
+        await Provider.of<User>(context, listen: false)
+            .updateOnlineStore(_editedStore!);
+      } catch (error) {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -174,15 +177,15 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: _editedStore!
-          .operationHours[time.substring(0, time.indexOf('['))]![
-      int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
+              .operationHours[time.substring(0, time.indexOf('['))]![
+          int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
       initialEntryMode: TimePickerEntryMode.input,
     );
     if (newTime != null) {
       setState(() {
         _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
-        int.parse(
-            time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
+                int.parse(
+                    time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
       });
     }
@@ -221,7 +224,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                 key: _detailsform,
                 child: Column(
                   children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage, _pickedImage, true),
+                    ImageInput(
+                        _selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
                       initialValue: _editedStore!.name,
                       decoration: InputDecoration(labelText: 'Store Name'),
@@ -308,28 +312,28 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                     .map((e) => e.title)
                     .toList()
                     .map((item) => CheckboxListTile(
-                  value: _selectedItems.contains(item),
-                  title: Text(item),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isChecked) =>
-                      _itemChange(item, isChecked!),
-                ))
+                          value: _selectedItems.contains(item),
+                          title: Text(item),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          onChanged: (isChecked) =>
+                              _itemChange(item, isChecked!),
+                        ))
                     .toList(),
               ),
             ),
             Wrap(
               children: _selectedItems
                   .map((e) => Chip(
-                deleteIcon: Icon(
-                  Icons.close,
-                ),
-                onDeleted: () {
-                  setState(() {
-                    _selectedItems.remove(e);
-                  });
-                },
-                label: Text(e),
-              ))
+                        deleteIcon: Icon(
+                          Icons.close,
+                        ),
+                        onDeleted: () {
+                          setState(() {
+                            _selectedItems.remove(e);
+                          });
+                        },
+                        label: Text(e),
+                      ))
                   .toList(),
             ),
           ],
@@ -546,32 +550,33 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             Wrap(
               children: EditOnlineStorePipeline._products
                   .map((e) => Chip(
-                deleteIcon: Icon(
-                  Icons.edit,
-                ),
-                onDeleted: () async {
-                  final ProductDTO? result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditProductScreen(e)),
-                  );
-                  if (result != null) {
-                    setState(() {
-                      EditOnlineStorePipeline._products.remove(e);
-                      EditOnlineStorePipeline._products.add(result);
-                    });
-                  }
-                  else{
-                    EditOnlineStorePipeline._products.remove(e);
-                  }
-                },
-                label: Text(e.name),
-              ))
+                        deleteIcon: Icon(
+                          Icons.edit,
+                        ),
+                        onDeleted: () async {
+                          final ProductDTO? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditProductScreen(e)),
+                          );
+                          if (result != null) {
+                            setState(() {
+                              EditOnlineStorePipeline._products.remove(e);
+                              EditOnlineStorePipeline._products.add(result);
+                            });
+                          } else {
+                            EditOnlineStorePipeline._products.remove(e);
+                          }
+                        },
+                        label: Text(e.name),
+                      ))
                   .toList(),
             ),
           ],
         );
       case 4:
         return StorePreview(
+            true,
             _editedStore!.name,
             _editedStore!.address,
             _pickedImage,
@@ -606,54 +611,54 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Container(
-        child: Column(
-          children: [
-            IconStepper(
-              icons: [
-                Icon(Icons.info),
-                Icon(Icons.tag),
-                Icon(Icons.access_time),
-                Icon(Icons.add_shopping_cart_rounded),
-                Icon(Icons.store),
-              ],
-              // activeStep property set to activeStep variable defined above.
-              activeStep: _currentStep,
-              steppingEnabled: false,
-              enableStepTapping: false,
-              enableNextPreviousButtons: false,
-              activeStepColor: Theme.of(context).primaryColor,
-              // This ensures step-tapping updates the activeStep.
-              onStepReached: (index) {
-                setState(() {
-                  _currentStep = index;
-                });
-              },
-            ),
-            currentStepWidget()!,
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: cancel,
-                        child: Text('Prev'),
-                      ),
-                      ElevatedButton(
-                        onPressed: continued,
-                        child: Text('Next'),
-                      ),
+              child: Column(
+                children: [
+                  IconStepper(
+                    icons: [
+                      Icon(Icons.info),
+                      Icon(Icons.tag),
+                      Icon(Icons.access_time),
+                      Icon(Icons.add_shopping_cart_rounded),
+                      Icon(Icons.store),
                     ],
+                    // activeStep property set to activeStep variable defined above.
+                    activeStep: _currentStep,
+                    steppingEnabled: false,
+                    enableStepTapping: false,
+                    enableNextPreviousButtons: false,
+                    activeStepColor: Theme.of(context).primaryColor,
+                    // This ensures step-tapping updates the activeStep.
+                    onStepReached: (index) {
+                      setState(() {
+                        _currentStep = index;
+                      });
+                    },
                   ),
-                ),
+                  currentStepWidget()!,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: cancel,
+                              child: Text('Prev'),
+                            ),
+                            ElevatedButton(
+                              onPressed: continued,
+                              child: Text('Next'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 

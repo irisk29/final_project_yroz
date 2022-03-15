@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
-import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -130,9 +127,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     if (_editedStore!.id.isNotEmpty) {
       _editedStore!.categories = _selectedItems;
       try {
-      await Provider.of<User>(context, listen: false)
-          .updatePhysicalStore(_editedStore!);
-    } catch (error) {
+        await Provider.of<User>(context, listen: false)
+            .updatePhysicalStore(_editedStore!);
+      } catch (error) {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -171,15 +168,15 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
       initialTime: _editedStore!
-          .operationHours[time.substring(0, time.indexOf('['))]![
-      int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
+              .operationHours[time.substring(0, time.indexOf('['))]![
+          int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
       initialEntryMode: TimePickerEntryMode.input,
     );
     if (newTime != null) {
       setState(() {
         _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
-        int.parse(
-            time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
+                int.parse(
+                    time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
       });
     }
@@ -201,7 +198,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                 key: _detailsform,
                 child: Column(
                   children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage, _pickedImage, true),
+                    ImageInput(
+                        _selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
                       initialValue: _editedStore!.name,
                       decoration: InputDecoration(labelText: 'Store Name'),
@@ -288,28 +286,28 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                     .map((e) => e.title)
                     .toList()
                     .map((item) => CheckboxListTile(
-                  value: _selectedItems.contains(item),
-                  title: Text(item),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isChecked) =>
-                      _itemChange(item, isChecked!),
-                ))
+                          value: _selectedItems.contains(item),
+                          title: Text(item),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          onChanged: (isChecked) =>
+                              _itemChange(item, isChecked!),
+                        ))
                     .toList(),
               ),
             ),
             Wrap(
               children: _selectedItems
                   .map((e) => Chip(
-                deleteIcon: Icon(
-                  Icons.close,
-                ),
-                onDeleted: () {
-                  setState(() {
-                    _selectedItems.remove(e);
-                  });
-                },
-                label: Text(e),
-              ))
+                        deleteIcon: Icon(
+                          Icons.close,
+                        ),
+                        onDeleted: () {
+                          setState(() {
+                            _selectedItems.remove(e);
+                          });
+                        },
+                        label: Text(e),
+                      ))
                   .toList(),
             ),
           ],
@@ -518,6 +516,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         );
       case 3:
         return StorePreview(
+            false,
             _editedStore!.name,
             _editedStore!.address,
             _pickedImage,
@@ -537,16 +536,16 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.arrow_circle_up,
-            ),
-            onPressed: () async {
-              await Provider.of<User>(context, listen: false)
-                  .convertPhysicalStoreToOnline(_editedStore!);
-              Navigator.of(context).pushReplacementNamed(EditOnlineStorePipeline.routeName);
-            },
-              tooltip: "make the store online"
-          ),
+              icon: Icon(
+                Icons.arrow_circle_up,
+              ),
+              onPressed: () async {
+                await Provider.of<User>(context, listen: false)
+                    .convertPhysicalStoreToOnline(_editedStore!);
+                Navigator.of(context)
+                    .pushReplacementNamed(EditOnlineStorePipeline.routeName);
+              },
+              tooltip: "make the store online"),
           IconButton(
             icon: Icon(
               Icons.delete,
@@ -563,53 +562,53 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Container(
-        child: Column(
-          children: [
-            IconStepper(
-              icons: [
-                Icon(Icons.info),
-                Icon(Icons.tag),
-                Icon(Icons.access_time),
-                Icon(Icons.store),
-              ],
-              // activeStep property set to activeStep variable defined above.
-              activeStep: _currentStep,
-              steppingEnabled: false,
-              enableStepTapping: false,
-              enableNextPreviousButtons: false,
-              activeStepColor: Theme.of(context).primaryColor,
-              // This ensures step-tapping updates the activeStep.
-              onStepReached: (index) {
-                setState(() {
-                  _currentStep = index;
-                });
-              },
-            ),
-            currentStepWidget()!,
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: cancel,
-                        child: Text('Prev'),
-                      ),
-                      ElevatedButton(
-                        onPressed: continued,
-                        child: Text('Next'),
-                      ),
+              child: Column(
+                children: [
+                  IconStepper(
+                    icons: [
+                      Icon(Icons.info),
+                      Icon(Icons.tag),
+                      Icon(Icons.access_time),
+                      Icon(Icons.store),
                     ],
+                    // activeStep property set to activeStep variable defined above.
+                    activeStep: _currentStep,
+                    steppingEnabled: false,
+                    enableStepTapping: false,
+                    enableNextPreviousButtons: false,
+                    activeStepColor: Theme.of(context).primaryColor,
+                    // This ensures step-tapping updates the activeStep.
+                    onStepReached: (index) {
+                      setState(() {
+                        _currentStep = index;
+                      });
+                    },
                   ),
-                ),
+                  currentStepWidget()!,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: cancel,
+                              child: Text('Prev'),
+                            ),
+                            ElevatedButton(
+                              onPressed: continued,
+                              child: Text('Next'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
