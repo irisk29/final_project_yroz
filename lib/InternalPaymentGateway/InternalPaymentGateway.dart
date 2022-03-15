@@ -5,12 +5,13 @@ import 'package:final_project_yroz/result/Failure.dart';
 import 'package:final_project_yroz/result/OK.dart';
 import 'package:final_project_yroz/result/ResultInterface.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class InternalPaymentGateway {
   static final InternalPaymentGateway _internalPaymentGateway =
       InternalPaymentGateway._internal();
   static const externalPaymentUrl =
-      'https://0cjie5t2fa.execute-api.us-east-1.amazonaws.com';
+      '0cjie5t2fa.execute-api.us-east-1.amazonaws.com';
 
   factory InternalPaymentGateway() {
     return _internalPaymentGateway;
@@ -95,28 +96,28 @@ class InternalPaymentGateway {
   // params: user id - email
   // returns: Result with eWalletoken
   Future<ResultInterface> createUserAccount(String userId) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/userAccount');
+    var url = Uri.parse('https://' + externalPaymentUrl + '/dev/userAccount');
     var body = {"userId": userId};
     return await _postRequest(url, body, "eWalletoken");
   }
 
   // params: user id - email
   Future<ResultInterface> deleteUserAccount(String userId) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/userAccount');
+    var url = Uri.parse('https://' + externalPaymentUrl + '/dev/userAccount');
     var body = {"userId": userId};
     return await _deleteRequest(url, body);
   }
 
   // params: store id
   Future<ResultInterface> createStoreAccount(String storeId) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/storeAccount');
+    var url = Uri.parse('https://' + externalPaymentUrl + '/dev/storeAccount');
     var body = {"storeId": storeId};
     return await _postRequest(url, body);
   }
 
   // params: store id
   Future<ResultInterface> deleteStoreAccount(String storeId) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/storeAccount');
+    var url = Uri.parse('https://' + externalPaymentUrl + '/dev/storeAccount');
     var body = {"storeId": storeId};
     return await _deleteRequest(url, body);
   }
@@ -125,7 +126,8 @@ class InternalPaymentGateway {
   // returns: Result with credit crad token
   Future<ResultInterface> addUserCreditCard(String userId, String cardNumber,
       String expiryDate, String cvv, String cardHolder) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/userCreditCard');
+    var url =
+        Uri.parse('https://' + externalPaymentUrl + '/dev/userCreditCard');
     var body = {
       "userId": userId,
       "cardNumber": cardNumber,
@@ -139,7 +141,8 @@ class InternalPaymentGateway {
   // params: userId - email, creditToken - saved credit token that recived from addUserCreditCard
   Future<ResultInterface> removeUserCreditCard(
       String userId, String creditToken) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/userCreditCard');
+    var url =
+        Uri.parse('https://' + externalPaymentUrl + '/dev/userCreditCard');
     var body = {"userId": userId, "creditToken": creditToken};
     return await _deleteRequest(url, body);
   }
@@ -161,7 +164,8 @@ class InternalPaymentGateway {
   // returns: Result with bank account token
   Future<ResultInterface> addUserBankAccount(String userId, String bankName,
       String branchNumber, String bankAccount) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/userBankAccount');
+    var url =
+        Uri.parse('https://' + externalPaymentUrl + '/dev/userBankAccount');
     var body = {
       "userId": userId,
       "bankName": bankName,
@@ -174,7 +178,8 @@ class InternalPaymentGateway {
   // params: userId - email, bankAccountToken - saved bank account token that recived from addUserBankAccount
   Future<ResultInterface> removeUserBankAccount(
       String userId, String bankAccountToken) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/userBankAccount');
+    var url =
+        Uri.parse('https://' + externalPaymentUrl + '/dev/userBankAccount');
     var body = {"userId": userId, "bankAccountToken": bankAccountToken};
     return await _deleteRequest(url, body);
   }
@@ -195,7 +200,8 @@ class InternalPaymentGateway {
   // returns: Result with bank account token
   Future<ResultInterface> addStoreBankAccount(String storeId, String bankName,
       String branchNumber, String bankAccount) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/storeBankAccount');
+    var url =
+        Uri.parse('https://' + externalPaymentUrl + '/dev/storeBankAccount');
     var body = {
       "storeId": storeId,
       "bankName": bankName,
@@ -208,7 +214,8 @@ class InternalPaymentGateway {
   // params: storeId, bankAccountToken - saved bank account token that recived from addUserBankAccount
   Future<ResultInterface> removeStoreBankAccount(
       String storeId, String bankAccountToken) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/storeBankAccount');
+    var url =
+        Uri.parse('https://' + externalPaymentUrl + '/dev/storeBankAccount');
     var body = {"storeId": storeId, "bankAccountToken": bankAccountToken};
     return await _deleteRequest(url, body);
   }
@@ -244,7 +251,7 @@ class InternalPaymentGateway {
       String eWalletToken,
       String bankAccountToken,
       String cashBackAmount) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/eWallet');
+    var url = Uri.parse('https://' + externalPaymentUrl + '/dev/eWallet');
     var body = {
       "userId": userId,
       "eWalletToken": eWalletToken,
@@ -252,6 +259,21 @@ class InternalPaymentGateway {
       "cashBackAmount": cashBackAmount
     };
     return await _patchRequest(url, body);
+  }
+
+  Future<ResultInterface> getPurchaseHistory(
+      DateTime startDate, DateTime endDate,
+      {String userId = "*", String storeId = "*", bool? succeeded}) async {
+    final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
+    var body = {
+      "startDate": formatter.format(startDate),
+      "endDate": formatter.format(endDate),
+      "userId": userId,
+      "storeId": storeId,
+      "succeeded": succeeded == null ? "*" : succeeded.toString()
+    };
+    return await _getRequest(
+        externalPaymentUrl, '/dev/payments', body, "purchases");
   }
 
   // params: userId - email, storeId, eWalletToken - saved e wallet token that recived when calling createUserAccount,
@@ -265,7 +287,7 @@ class InternalPaymentGateway {
       String creditCardToken,
       String cashBackAmount,
       String creditAmount) async {
-    var url = Uri.parse(externalPaymentUrl + '/dev/payments');
+    var url = Uri.parse('https://' + externalPaymentUrl + '/dev/payments');
     var body = {
       "userId": userId,
       "storeId": storeId,
