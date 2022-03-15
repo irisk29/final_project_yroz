@@ -1,19 +1,21 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class StorePreview extends StatefulWidget {
+  final bool isOnlineStore;
   final String title;
   final String address;
   final XFile? image;
   final String phoneNumber;
   final Map<String, List<TimeOfDay>> operationHours;
 
-  StorePreview(this.title, this.address, this.image, this.phoneNumber,
-      this.operationHours);
+  StorePreview(this.isOnlineStore, this.title, this.address, this.image,
+      this.phoneNumber, this.operationHours);
 
   @override
   _StorePreviewState createState() => _StorePreviewState();
@@ -152,6 +154,12 @@ class _StorePreviewState extends State<StorePreview> {
                       //open change language
                     },
                   ),
+                  widget.isOnlineStore
+                      ? ElevatedButton(
+                          onPressed: null,
+                          child: Text('Online Store Shop'),
+                        )
+                      : Container(),
                 ],
               ),
             );
