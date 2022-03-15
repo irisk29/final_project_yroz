@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:final_project_yroz/screens/payment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -165,12 +166,12 @@ class _openUrl {
 
   _openUrl(this.result);
 
-  void _launchURL(url) async =>
-      await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
+  void _launchPayment(context, url) async =>
+      Navigator.of(context).pushNamed(PaymentScreen.routeName, arguments: {'store': url.toString()});
 
   @override
   Widget build(BuildContext context) {
-    //_launchURL(result!.code);
+    _launchPayment(context, result.code);
     return Text(
         'Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}');
   }

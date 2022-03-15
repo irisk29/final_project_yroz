@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 
-class PaymentScreen extends StatelessWidget {
-
+class PaymentScreen extends StatefulWidget {
   static const routeName = '/payment';
+
+  late String storeID;
+
+  @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+
+  @override
+  void didChangeDependencies() {
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    widget.storeID = routeArgs['store'] as String;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +38,7 @@ class PaymentScreen extends StatelessWidget {
           ),
           SingleChildScrollView(
             child: Container(
-              height: deviceSize.height,
+              height: deviceSize.height / 1.3,
               width: deviceSize.width,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -59,6 +72,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   var _isLoading = false;
   AnimationController? _controller;
   Animation<Size>? _heightAnimation;
+  final myController = TextEditingController();
 
   @override
   void initState() {
@@ -70,7 +84,6 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
         begin: Size(double.infinity, 260.0))
         .animate(
         CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
-    _heightAnimation!.addListener(() => setState(() {}));
   }
 
   void _showErrorDialog(String message) {
@@ -94,63 +107,64 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    double cashback = 0;
+    double cashback = 0.0;
     final _initValues = {
-      'cashback': '0',
+      'cashback': 75.0,
     };
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
       elevation: 8.0,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-        height: 320,
-        constraints: BoxConstraints(minHeight: 320),
-        width: deviceSize.width * 0.75,
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      WidgetSpan(
-                        child: Icon(Icons.payments_outlined),
-                      ),
-                      TextSpan(text: 'Cashback available: 75'),
-                    ],
-                  ),
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+          height: 320,
+          constraints: BoxConstraints(minHeight: 320),
+          width: deviceSize.width * 0.75,
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              RichText(
+                text: TextSpan(
+                  children: [
+                    WidgetSpan(
+                      child: Icon(Icons.payments_outlined),
+                    ),
+                    TextSpan(text: "Cashback available: "+_initValues['cashback'].toString(), style: TextStyle(color: Colors.black, fontSize: 16.0)),
+                  ],
                 ),
-                TextFormField(
-                  initialValue: _initValues['cashback'],
-                  decoration: InputDecoration(labelText: 'Cashback to use'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a number.';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    cashback = value as double;
-                  },
-                ),
-                Text('Amount left to pay: '+ ((_initValues['cashback'] as double) - cashback).toString()),
-                FlatButton(
-                  child: Text('Confirm Amount'),
-                  onPressed: () {
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Cashback to use'),
+                keyboardType: TextInputType.number,
+                controller: myController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a number.';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    if(value!="")
+                      cashback = double.parse(value);
+                    else
+                      cashback = 0;
+                  });
+                },
+              ),
+              Text('Amount left to pay: '+ (_initValues['cashback']! - (myController.text.length>0 ? double.parse(myController.text) : 0)).toString()),
+              FlatButton(
+                child: Text('Confirm Amount'),
+                onPressed: () {
 
-                  },
-                )
-              ],
-            ),
+                },
+              )
+            ],
           ),
         ),
-      ),
     );
   }
 }

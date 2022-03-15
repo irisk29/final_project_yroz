@@ -64,7 +64,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         // Update your UI with the desired changes.
       });
     }();
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 

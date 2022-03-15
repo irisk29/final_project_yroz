@@ -1,4 +1,8 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/add_bank_account_screen.dart';
+import 'package:final_project_yroz/screens/credit_cards_screen.dart';
+import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
+import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'edit_online_store_screen.dart';
@@ -127,6 +131,20 @@ class _SettingsPageState extends State<SettingsScreen> {
                         title: Text("Credit Cards"),
                         trailing: Icon(Icons.keyboard_arrow_right),
                         onTap: () {
+                          Navigator.of(context).pushNamed(CreditCardsScreen.routeName);
+                          //open change language
+                        },
+                      ),
+                      _buildDivider(),
+                      ListTile(
+                        leading: Icon(
+                          Icons.account_balance,
+                          color: Colors.purple,
+                        ),
+                        title: Text("Add Bank Account"),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                        onTap: () {
+                          Navigator.of(context).pushNamed(AddBankAccountScreen.routeName);
                           //open change language
                         },
                       ),
@@ -147,15 +165,15 @@ class _SettingsPageState extends State<SettingsScreen> {
                             ),
                             title: !_onlineStoreOwner
                                 ? Text("Open Online Store")
-                                : Text("Edit Online Store"),
+                                : Text("Manage Online Store"),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
                               !_onlineStoreOwner
                                   ? Navigator.of(context).pushNamed(
                                   OpenOnlineStorePipeline.routeName,
                                   )
-                              : Navigator.of(context).pushNamed(
-                                  EditOnlineStorePipeline.routeName,
+                                  : Navigator.of(context).pushNamed(
+                                  ManageOnlineStoreScreen.routeName,
                                   )
                               ;
                             },
@@ -178,15 +196,15 @@ class _SettingsPageState extends State<SettingsScreen> {
                             ),
                             title: !_physicalStoreOwner
                                 ? Text("Open Physical Store")
-                                : Text("Edit Physical Store"),
+                                : Text("Manage Physical Store"),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
                               !_physicalStoreOwner
                                   ? Navigator.of(context).pushNamed(
                                   OpenPhysicalStorePipeline.routeName,
                                   )
-                              : Navigator.of(context).pushNamed(
-                                  EditPhysicalStorePipeline.routeName,
+                                  : Navigator.of(context).pushNamed(
+                                  ManagePhysicalStoreScreen.routeName,
                                   )
                               ;
                             },

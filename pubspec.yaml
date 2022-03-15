@@ -58,6 +58,8 @@ dependencies:
   material_floating_search_bar: ^0.3.7
   im_stepper: ^0.1.3
   f_logs: ^2.0.0
+  flutter_credit_card: ^3.0.1
+  encrypt: ^5.0.1
 
 dev_dependencies:
   flutter_test:
@@ -89,12 +91,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/icon/yroz2.png
-     - assets/icon/yroz1.jpg
-     - assets/icon/yroz3.png
-     - assets/icon/yroz4.png
      - assets/icon/yroz5.png
-     - assets/icon/icon.png
      - assets/icon/icon2.png
      - assets/images/food.png
      - assets/images/home.png

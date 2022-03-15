@@ -623,7 +623,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Open Store',
+          'Open Physical Store',
         ),
       ),
       resizeToAvoidBottomInset: false,
