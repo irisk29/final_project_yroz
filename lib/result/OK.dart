@@ -2,9 +2,9 @@ import 'ResultInterface.dart';
 
 class Ok<T> implements ResultInterface<T> {
   String message;
-  T value;
+  T? value;
 
-  Ok(this.message, this.value) {}
+  Ok(this.message, [this.value = null]) {}
 
   bool getTag() {
     return true;
@@ -14,7 +14,7 @@ class Ok<T> implements ResultInterface<T> {
     return this.message;
   }
 
-  T getValue() {
+  T? getValue() {
     return this.value;
   }
 }

@@ -2,9 +2,9 @@ import 'ResultInterface.dart';
 
 class Failure<T> implements ResultInterface<T> {
   String message;
-  T value;
+  T? value;
 
-  Failure(this.message, this.value) {}
+  Failure(this.message, [this.value = null]) {}
 
   bool getTag() {
     return false;
@@ -14,7 +14,7 @@ class Failure<T> implements ResultInterface<T> {
     return this.message;
   }
 
-  T getValue() {
+  T? getValue() {
     return this.value;
   }
 }
