@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
@@ -139,9 +140,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     });
     _editedStore!.categories = _selectedItems;
     try {
-      // TODO: pass bank account details DTO to openPhysicalStore
       await Provider.of<User>(context, listen: false)
-          .openPhysicalStore(_editedStore!);
+          .openPhysicalStore(_editedStore!, new BankAccountDTO(this.bankName!, this.branchNumber!, this.accountNumber!));
     } catch (error) {
       await showDialog(
         context: context,

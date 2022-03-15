@@ -135,19 +135,6 @@ class _SettingsPageState extends State<SettingsScreen> {
                           //open change language
                         },
                       ),
-                      _buildDivider(),
-                      ListTile(
-                        leading: Icon(
-                          Icons.account_balance,
-                          color: Colors.purple,
-                        ),
-                        title: Text("Add Bank Account"),
-                        trailing: Icon(Icons.keyboard_arrow_right),
-                        onTap: () {
-                          Navigator.of(context).pushNamed(AddBankAccountScreen.routeName);
-                          //open change language
-                        },
-                      ),
                     ],
                   ),
                 ),

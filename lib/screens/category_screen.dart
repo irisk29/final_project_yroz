@@ -15,13 +15,13 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   var _isLoading = true;
-  List<StoreDTO> stores = []; // TODO: ADD ONLINE STORES
+  List<StoreDTO> stores = [];
 
   @override
   void initState() {
     super.initState();
     () async {
-      stores = await StoreStorageProxy().fetchAllPhysicalStores();
+      stores = await StoreStorageProxy().fetchAllStores();
       if(stores.length==0) {
         _isLoading = false;
       }
@@ -72,7 +72,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ].expand((i) => i).toList(),
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
-            childAspectRatio: 3 / 2,
+            childAspectRatio: 1,
             crossAxisSpacing: 20,
             mainAxisSpacing: 20,
           ),

@@ -2,6 +2,7 @@ type StoreOwnerModel @model @auth(rules: [{allow: public}]) {
   id: ID!
   onlineStoreModel: OnlineStoreModel @hasOne
   physicalStoreModel: PhysicalStoreModel @hasOne
+  bankAccountToken: String
 }
 
 type UserModel @model @auth(rules: [{allow: public}]) {

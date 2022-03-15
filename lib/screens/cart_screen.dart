@@ -17,7 +17,6 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-
   @override
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
@@ -56,7 +55,7 @@ class _CartScreenState extends State<CartScreen> {
                   Spacer(),
                   Chip(
                     label: Text(
-                      '\$${provider.getShoppingBag(widget.storeID)!=null ? provider.getShoppingBag(widget.storeID)!.calculateTotalPrice().toStringAsFixed(2) : 0.toStringAsFixed(2)}',
+                      '\$${provider.getShoppingBag(widget.storeID) != null ? provider.getShoppingBag(widget.storeID)!.calculateTotalPrice().toStringAsFixed(2) : 0.toStringAsFixed(2)}',
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
@@ -68,12 +67,11 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
-              itemCount: provider.getShoppingBag(widget.storeID)!=null ? provider.getShoppingBag(widget.storeID)!.products.length : 0,
-              itemBuilder: (ctx, i) => CartItem(
-                  provider.getShoppingBag(widget.storeID)!.products.toList()[i],
-                  widget.storeID,
-                _update
-              ),
+              itemCount: provider.getShoppingBag(widget.storeID) != null
+                  ? provider.getShoppingBag(widget.storeID)!.products.length
+                  : 0,
+              itemBuilder: (ctx, i) =>
+                  CartItem(provider.getShoppingBag(widget.storeID)!.products.toList()[i], widget.storeID, _update),
             ),
           )
         ],
@@ -101,19 +99,20 @@ class _OrderButtonState extends State<OrderButton> {
   Widget build(BuildContext context) {
     return FlatButton(
       child: _isLoading ? CircularProgressIndicator() : Text('ORDER NOW'),
-      onPressed: (widget.cart == null) ? null :
-        (widget.cart!.calculateTotalPrice() <= 0 || _isLoading)
+      onPressed: (widget.cart == null)
           ? null
-          : () async {
-              setState(() {
-                _isLoading = true;
-              });
-              //TODO: ADD PAYMENT FUNCTIONALITY
-              setState(() {
-                _isLoading = false;
-              });
-              widget.cart!.clearBag();
-            },
+          : (widget.cart!.calculateTotalPrice() <= 0 || _isLoading)
+              ? null
+              : () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await Provider.of<User>(context, listen: false).makePaymentOnlineStore(creditCardToken, cashBackAmount, creditCardAmount, widget.cart!);
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  widget.cart!.clearBag();
+                },
       textColor: Theme.of(context).primaryColor,
     );
   }

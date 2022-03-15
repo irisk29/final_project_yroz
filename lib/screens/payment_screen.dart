@@ -1,4 +1,6 @@
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PaymentScreen extends StatefulWidget {
   static const routeName = '/payment';
@@ -46,7 +48,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 children: <Widget>[
                   Flexible(
                     flex: deviceSize.width > 600 ? 2 : 1,
-                    child: PaymentCard(),
+                    child: PaymentCard(storeID: widget.storeID,),
                   ),
                 ],
               ),
@@ -59,8 +61,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
 }
 
 class PaymentCard extends StatefulWidget {
+  final String? storeID;
+
   const PaymentCard({
     Key? key,
+    this.storeID
   }) : super(key: key);
 
   @override
@@ -73,6 +78,9 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   AnimationController? _controller;
   Animation<Size>? _heightAnimation;
   final myController = TextEditingController();
+  final _initValues = {
+    'cashback': 0.0,
+  };
 
   @override
   void initState() {
@@ -84,6 +92,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
         begin: Size(double.infinity, 260.0))
         .animate(
         CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
+    initCashBack();
   }
 
   void _showErrorDialog(String message) {
@@ -104,13 +113,16 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     );
   }
 
+  void initCashBack() async {
+    String cb = await Provider.of<User>(context, listen: false).getEWalletBalance();
+    _initValues['cashback'] = double.parse(cb);
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     double cashback = 0.0;
-    final _initValues = {
-      'cashback': 75.0,
-    };
+
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -158,8 +170,9 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
               Text('Amount left to pay: '+ (_initValues['cashback']! - (myController.text.length>0 ? double.parse(myController.text) : 0)).toString()),
               FlatButton(
                 child: Text('Confirm Amount'),
-                onPressed: () {
-
+                onPressed: () async {
+                    await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(creditCardToken, cashback.toString(), creditAmount, widget.storeID)
+                    Navigator.of(context).pop();
                 },
               )
             ],

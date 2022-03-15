@@ -1,7 +1,8 @@
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class WalletScreen extends StatelessWidget {
-
   static const routeName = '/payment';
 
   @override
@@ -60,18 +61,18 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   AnimationController? _controller;
   Animation<Size>? _heightAnimation;
   final myController = TextEditingController();
+  final _initValues = {
+    'cashback': 0.0,
+  };
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _heightAnimation = Tween<Size>(
-        end: Size(double.infinity, 320.0),
-        begin: Size(double.infinity, 260.0))
-        .animate(
-        CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _heightAnimation = Tween<Size>(end: Size(double.infinity, 320.0), begin: Size(double.infinity, 260.0))
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
     _heightAnimation!.addListener(() => setState(() {}));
+    initCashBack();
   }
 
   @override
@@ -81,13 +82,15 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     super.dispose();
   }
 
+  void initCashBack() async {
+    String cb = await Provider.of<User>(context, listen: false).getEWalletBalance();
+    _initValues['cashback'] = double.parse(cb);
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     double cashback = 0.0;
-    final _initValues = {
-      'cashback': 75.0,
-    };
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),

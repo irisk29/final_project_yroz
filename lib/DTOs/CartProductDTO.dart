@@ -27,4 +27,19 @@ class CartProductDTO extends ProductDTO {
     if (other is CartProductDTO) return this.id == other.id;
     return false;
   }
+
+  CartProductDTO.fromJson(Map<String, dynamic> json)
+      : amount = json['amount'],
+      super(
+            id: json['id'],
+            name: json['name'],
+            price: json['price'],
+            category: "",
+            imageUrl: "",
+            description: json['description'],
+            storeID: json['storeID'],
+            imageFromPhone: null);
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'price': price, 'description': description, 'amount': amount, 'storeID': storeID};
 }

@@ -1,4 +1,5 @@
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -146,7 +147,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.products = EditOnlineStorePipeline._products;
       try {
         await Provider.of<User>(context, listen: false)
-            .updateOnlineStore(_editedStore!);
+            .updateOnlineStore(_editedStore!, new BankAccountDTO(this.bankName!, this.branchNumber!, this.accountNumber!));
       } catch (error) {
         await showDialog(
           context: context,

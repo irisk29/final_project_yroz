@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:f_logs/model/flog/flog.dart';
-import 'package:final_project_yroz/result/Failure.dart';
-import 'package:final_project_yroz/result/OK.dart';
-import 'package:final_project_yroz/result/ResultInterface.dart';
+import 'package:final_project_yroz/Result/Failure.dart';
+import 'package:final_project_yroz/Result/OK.dart';
+import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -29,7 +29,7 @@ class InternalPaymentGateway {
       }
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
-      FLog.error(text: e.toString());
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString());
     }
   }
@@ -44,7 +44,7 @@ class InternalPaymentGateway {
       }
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
-      FLog.error(text: e.toString());
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString());
     }
   }
@@ -59,7 +59,7 @@ class InternalPaymentGateway {
       }
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
-      FLog.error(text: e.toString());
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString());
     }
   }
@@ -75,7 +75,7 @@ class InternalPaymentGateway {
       }
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
-      FLog.error(text: e.toString());
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Failure(e.toString());
     }
   }
@@ -87,7 +87,7 @@ class InternalPaymentGateway {
     var body = {"userId": userId};
     var result = await _postRequest(url, body);
     if (result.getTag()) {
-      String token = result.getValue()["eWalletToken"];
+      String token = result.getValue()["eWalletoken"];
       return new Ok(result.getMessage(), token);
     }
     return new Failure(result.getMessage());
