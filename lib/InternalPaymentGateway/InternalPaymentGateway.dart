@@ -87,7 +87,7 @@ class InternalPaymentGateway {
     var body = {"userId": userId};
     var result = await _postRequest(url, body);
     if (result.getTag()) {
-      String token = result.getValue()["token"];
+      String token = result.getValue()["eWalletToken"];
       return new Ok(result.getMessage(), token);
     }
     return new Failure(result.getMessage());
@@ -307,20 +307,27 @@ class InternalPaymentGateway {
     return await _patchRequest(url, body);
   }
 
-  // Future<ResultInterface> getPurchaseHistory(
-  //     DateTime startDate, DateTime endDate,
-  //     {String userId = "*", String storeId = "*", bool? succeeded}) async {
-  //   final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
-  //   var body = {
-  //     "startDate": formatter.format(startDate),
-  //     "endDate": formatter.format(endDate),
-  //     "userId": userId,
-  //     "storeId": storeId,
-  //     "succeeded": succeeded == null ? "*" : succeeded.toString()
-  //   };
-  //   return await _getRequest(
-  //       externalPaymentUrl, '/dev/payments', body, "purchases");
-  // }
+  Future<ResultInterface<Iterable<Map<String, Object>>>> getPurchaseHistory(
+      DateTime startDate, DateTime endDate,
+      {String userId = "*", String storeId = "*", bool? succeeded}) async {
+    final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
+    var body = {
+      "startDate": formatter.format(startDate),
+      "endDate": formatter.format(endDate),
+      "userId": userId,
+      "storeId": storeId,
+      "succeeded": succeeded == null ? "*" : succeeded.toString()
+    };
+    var result = await _getRequest(externalPaymentUrl, '/dev/payments', body);
+    if (result.getTag()) {
+      var purchaseHistory = result.getValue()["purchases"] as List<dynamic>;
+      var convertedPurchaseHistory = purchaseHistory.map((e) =>
+          (e as Map<String, dynamic>)
+              .map((key, value) => MapEntry(key, value as Object)));
+      return new Ok(result.getMessage(), convertedPurchaseHistory);
+    }
+    return new Failure(result.getMessage());
+  }
 
   // params: userId - email, storeId, eWalletToken - saved e wallet token that recived when calling createUserAccount,
   // creditCardToken - saved bank account token that recived from addUserCreditCard,

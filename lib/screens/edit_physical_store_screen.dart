@@ -14,7 +14,6 @@ import '../dummy_data.dart';
 
 class EditPhysicalStorePipeline extends StatefulWidget {
   static const routeName = '/edit-physical-store';
-  static List<String> _selectedItems = [];
 
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
@@ -60,7 +59,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       name: "",
       phoneNumber: "",
       address: "",
-      categories: EditPhysicalStorePipeline._selectedItems,
+      categories: [],
       operationHours: {
         'sunday': [
           EditPhysicalStorePipeline._sunday_open,
@@ -92,9 +91,22 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         ]
       },
       qrCode: "",
-      image: null);
+      image: null,
+      imageFromPhone: null);
 
   final List<String> _selectedItems = [];
+
+  String? accountNumber;
+  String? bankName;
+  String? branchNumber;
+  OutlineInputBorder? border = OutlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.grey.withOpacity(0.7),
+      width: 2.0,
+    ),
+  );
+  final _bankAccountForm = GlobalKey<FormState>();
+
   var _isInit = true;
   var _isLoading = false;
 
@@ -104,6 +116,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       // final user = ModalRoute.of(context)!.settings.arguments as User?;
       // widget.user = user;
       // _editedStore = user!.storeOwnerState!.physicalStore;
+      _editedStore = Provider.of<User>(context, listen: false)
+          .storeOwnerState!
+          .physicalStore;
       _selectedItems.addAll(_editedStore!.categories);
     }
     _isInit = false;
@@ -515,6 +530,76 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           ],
         );
       case 3:
+        return Column(
+          children: <Widget>[
+            const Text(
+              "Store's Bank Account Details",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _bankAccountForm,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                          initialValue: "",
+                          decoration: InputDecoration(
+                            labelText: 'BANK NAME',
+                            hintStyle: const TextStyle(color: Colors.black),
+                            labelStyle: const TextStyle(color: Colors.black),
+                            focusedBorder: border,
+                            enabledBorder: border,
+                          ),
+                          onSaved: (value) {
+                            bankName = value;
+                          }),
+                      TextFormField(
+                        initialValue: "",
+                        decoration: InputDecoration(
+                          hintStyle: const TextStyle(color: Colors.black),
+                          labelStyle: const TextStyle(color: Colors.black),
+                          focusedBorder: border,
+                          enabledBorder: border,
+                          labelText: 'BRANCH NUMBER',
+                          hintText: 'XXX',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.length != 3) {
+                            return "Invalid Branch Number";
+                          }
+                          return null;
+                        },
+                        onSaved: (value) => branchNumber = value,
+                      ),
+                      TextFormField(
+                        initialValue: "",
+                        decoration: InputDecoration(
+                          hintStyle: const TextStyle(color: Colors.black),
+                          labelStyle: const TextStyle(color: Colors.black),
+                          focusedBorder: border,
+                          enabledBorder: border,
+                          labelText: 'ACCOUNT NUMBER',
+                          hintText: 'XXXXXXXXX',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.length != 9) {
+                            return "Invalid Account Number";
+                          }
+                          return null;
+                        },
+                        onSaved: (value) => accountNumber = value,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      case 4:
         return StorePreview(
             false,
             _editedStore!.name,
@@ -569,6 +654,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                       Icon(Icons.info),
                       Icon(Icons.tag),
                       Icon(Icons.access_time),
+                      Icon(Icons.account_balance_wallet_outlined),
                       Icon(Icons.store),
                     ],
                     // activeStep property set to activeStep variable defined above.
@@ -617,18 +703,24 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       case 0:
         if (_detailsform.currentState!.validate()) {
           _detailsform.currentState!.save();
-          _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+          setState(() => _currentStep += 1);
         }
         break;
       case 1:
         if (_selectedItems.isNotEmpty) {
-          _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+          setState(() => _currentStep += 1);
         }
         break;
       case 2:
-        _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+        setState(() => _currentStep += 1);
         break;
       case 3:
+        if (_bankAccountForm.currentState!.validate()) {
+          _bankAccountForm.currentState!.save();
+          setState(() => _currentStep += 1);
+        }
+        break;
+      case 4:
         _saveForm();
         break;
     }
