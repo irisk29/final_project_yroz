@@ -17,12 +17,10 @@ class MapScreen extends StatefulWidget {
     this.initialLocation =
         const PlaceLocation(latitude: 31.262218, longitude: 34.801461),
     this.isSelecting = false,
-  }){
-  }
+  }) {}
 
   @override
   _MapScreenState createState() => _MapScreenState();
-
 }
 
 class _MapScreenState extends State<MapScreen> {
@@ -33,7 +31,6 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
-
     final applicationBloc =
         Provider.of<ApplicationBloc>(context, listen: false);
 
@@ -72,7 +69,7 @@ class _MapScreenState extends State<MapScreen> {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
         body: applicationBloc.currentLocation == null
-            ? SplashScreen()
+            ? CircularProgressIndicator()
             : SingleChildScrollView(
                 child: Column(
                   children: [
@@ -114,11 +111,13 @@ class _MapScreenState extends State<MapScreen> {
                           child: Wrap(
                             spacing: 8.0,
                             children: [
-                              ...DUMMY_CATEGORIES.map((e) => FilterChip(
+                              ...DUMMY_CATEGORIES.map(
+                                (e) => FilterChip(
                                   label: Text(e.title),
                                   onSelected: (val) => applicationBloc
                                       .togglePlaceType(e.title, val),
-                                  selected: applicationBloc.placeType == e.title,
+                                  selected:
+                                      applicationBloc.placeType == e.title,
                                   selectedColor: Colors.blue,
                                 ),
                               ),
@@ -137,7 +136,8 @@ class _MapScreenState extends State<MapScreen> {
                           Container(
                             height: 300.0,
                             child: ListView.builder(
-                                itemCount: applicationBloc.searchResults!.length,
+                                itemCount:
+                                    applicationBloc.searchResults!.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
                                     title: Text(
@@ -171,5 +171,4 @@ class _MapScreenState extends State<MapScreen> {
       ),
     );
   }
-
 }

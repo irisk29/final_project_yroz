@@ -17,12 +17,11 @@ class AuthScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.5),
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.9),
+                  Color.fromRGBO(255, 179, 179, 1),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                stops: [0, 1],
+                stops: [0],
               ),
             ),
           ),
@@ -60,7 +59,6 @@ class AuthCard extends StatefulWidget {
 class _AuthCardState extends State<AuthCard>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  var _isLoading = false;
   late AnimationController _controller;
   late Animation<Size> _heightAnimation;
 
@@ -106,8 +104,7 @@ class _AuthCardState extends State<AuthCard>
       child: AnimatedContainer(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeIn,
-        height: 320,
-        constraints: BoxConstraints(minHeight: 320),
+        constraints: BoxConstraints(minHeight: deviceSize.height * 0.4),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -115,30 +112,27 @@ class _AuthCardState extends State<AuthCard>
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Image.asset('assets/icon/yroz5.png'),
-                if (_isLoading)
-                  CircularProgressIndicator()
-                else
-                  Column(
-                    children: [
-                      SignInButton(
-                        Buttons.Google,
-                        onPressed: () {
-                         Provider.of<User>(context, listen: false)
-                              .signIn(AuthProvider.google, context);
-                          //TODO: ADD CALL TO ERROR DIALOG IF FAILS
-                        },
-                      ),
-                      SignInButton(
-                        Buttons.FacebookNew,
-                        onPressed: () {
-                          Provider.of<User>(context, listen: false)
-                              .signIn(AuthProvider.facebook, context);
-                          //TODO: ADD CALL TO ERROR DIALOG IF FAILS
-                        },
-                      ),
-                    ],
-                  ),
+                Image.asset('assets/icon/yroz.png'),
+                Column(
+                  children: [
+                    SignInButton(
+                      Buttons.Google,
+                      onPressed: () {
+                        Provider.of<User>(context, listen: false)
+                            .signIn(AuthProvider.google, context);
+                        //TODO: ADD CALL TO ERROR DIALOG IF FAILS
+                      },
+                    ),
+                    SignInButton(
+                      Buttons.FacebookNew,
+                      onPressed: () {
+                        Provider.of<User>(context, listen: false)
+                            .signIn(AuthProvider.facebook, context);
+                        //TODO: ADD CALL TO ERROR DIALOG IF FAILS
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
