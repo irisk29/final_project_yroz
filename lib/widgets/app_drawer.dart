@@ -12,21 +12,21 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('Hello Friend!'),
+            title: Text('Hello, ${Provider.of<User>(context, listen: false).name!}'),
             automaticallyImplyLeading: false,
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.shop),
-            title: Text('Shop'),
+            title: Text('Home'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
             },
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.payment),
-            title: Text('Orders'),
+            leading: Icon(Icons.account_balance_wallet),
+            title: Text('Purchases'),
             onTap: () {
 
             },
@@ -34,7 +34,7 @@ class AppDrawer extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(Icons.qr_code_scanner),
-            title: Text('Scan Barcode'),
+            title: Text('Scan A Barcode'),
             onTap: () {
               Navigator.pushNamed(context, QRViewExample.routeName);
             },

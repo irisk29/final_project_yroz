@@ -2,7 +2,9 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
+import 'package:final_project_yroz/screens/credit_cards_screen.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
@@ -19,6 +21,8 @@ import 'blocs/application_bloc.dart';
 import 'models/ModelProvider.dart';
 
 import 'screens/landing_screen.dart';
+import 'screens/manage_online_store_screen.dart';
+import 'screens/manage_physical_store_screen.dart';
 import 'screens/payment_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/category_screen.dart';
@@ -104,30 +108,37 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: MaterialApp(
-        title: 'MyShop',
-        theme: ThemeData(
-          primarySwatch: MaterialColor(0xFFF35A6A, color),
-          accentColor: Colors.purple,
-        ),
-        home: LandingScreen(),
-        routes: {
-          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-          CartScreen.routeName: (ctx) => CartScreen(),
-          TabsScreen.routeName: (ctx) => TabsScreen(),
-          EditProductScreen.routeName: (ctx) => EditProductScreen(null),
-          CategoryScreen.routeName: (ctx) => CategoryScreen(),
-          SettingsScreen.routeName: (ctx) => SettingsScreen(),
-          PaymentScreen.routeName: (ctx) => PaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
-          OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
-          PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
-          OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
-          LandingScreen.routeName: (ctx) => LandingScreen(),
-          EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
-          QRViewExample.routeName: (ctx) => QRViewExample()
-        },
+          title: 'MyShop',
+          theme: ThemeData(
+            primarySwatch: MaterialColor(0xFFF35A6A, color),
+            accentColor: Colors.purple,
+          ),
+          home:  LandingScreen(),
+          routes: {
+            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+            CartScreen.routeName: (ctx) => CartScreen(),
+            TabsScreen.routeName: (ctx) => TabsScreen(),
+            EditProductScreen.routeName: (ctx) => EditProductScreen(null),
+            CategoryScreen.routeName: (ctx) => CategoryScreen(),
+            SettingsScreen.routeName: (ctx) => SettingsScreen(),
+            PaymentScreen.routeName: (ctx) => PaymentScreen(),
+            OpenPhysicalStorePipeline.routeName: (ctx) =>
+                OpenPhysicalStorePipeline(),
+            OpenOnlineStorePipeline.routeName: (ctx) =>
+                OpenOnlineStorePipeline(),
+            PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
+            OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
+            OnlineStoreProductsScreen.routeName: (ctx) =>
+                OnlineStoreProductsScreen(),
+            LandingScreen.routeName: (ctx) => LandingScreen(),
+            EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
+            EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
+            QRViewExample.routeName: (ctx) => QRViewExample(),
+            CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
+            AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
+            ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
+            ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
+          },
       ),
     );
   }
