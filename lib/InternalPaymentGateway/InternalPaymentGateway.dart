@@ -19,17 +19,13 @@ class InternalPaymentGateway {
 
   InternalPaymentGateway._internal();
 
-  Future<ResultInterface> _postRequest(Uri url, Map<String, String> body,
-      [String? responseBodyName]) async {
+  Future<ResultInterface> _postRequest(
+      Uri url, Map<String, String> body) async {
     try {
       var response = await http.post(url, body: json.encode(body));
       var responseBody = json.decode(response.body);
       if (response.statusCode == 200) {
-        return new Ok(
-            responseBody["msg"],
-            responseBodyName != null
-                ? responseBody[responseBodyName]
-                : responseBodyName);
+        return new Ok(responseBody["msg"], responseBody);
       }
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
@@ -38,17 +34,13 @@ class InternalPaymentGateway {
     }
   }
 
-  Future<ResultInterface> _patchRequest(Uri url, Map<String, String> body,
-      [String? responseBodyName]) async {
+  Future<ResultInterface> _patchRequest(
+      Uri url, Map<String, String> body) async {
     try {
       var response = await http.patch(url, body: json.encode(body));
       var responseBody = json.decode(response.body);
       if (response.statusCode == 200) {
-        return new Ok(
-            responseBody["msg"],
-            responseBodyName != null
-                ? responseBody[responseBodyName]
-                : responseBodyName);
+        return new Ok(responseBody["msg"], responseBody);
       }
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
@@ -73,18 +65,13 @@ class InternalPaymentGateway {
   }
 
   Future<ResultInterface> _getRequest(
-      String authority, String unencodedPath, Map<String, String> body,
-      [String? responseBodyName]) async {
+      String authority, String unencodedPath, Map<String, String> body) async {
     try {
       var url = Uri.https(authority, unencodedPath, body);
       var response = await http.get(url);
       var responseBody = json.decode(response.body);
       if (response.statusCode == 200) {
-        return new Ok(
-            responseBody["msg"],
-            responseBodyName != null
-                ? responseBody[responseBodyName]
-                : responseBodyName);
+        return new Ok(responseBody["msg"], responseBody);
       }
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
@@ -95,10 +82,15 @@ class InternalPaymentGateway {
 
   // params: user id - email
   // returns: Result with eWalletoken
-  Future<ResultInterface> createUserAccount(String userId) async {
+  Future<ResultInterface<String>> createUserAccount(String userId) async {
     var url = Uri.parse('https://' + externalPaymentUrl + '/dev/userAccount');
     var body = {"userId": userId};
-    return await _postRequest(url, body, "eWalletoken");
+    var result = await _postRequest(url, body);
+    if (result.getTag()) {
+      String token = result.getValue()["token"];
+      return new Ok(result.getMessage(), token);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: user id - email
@@ -124,8 +116,12 @@ class InternalPaymentGateway {
 
   // params: userId - email, cardNumber - 16 string length, expiryDate - m/y, cvv - 3 string length, cardHolder
   // returns: Result with credit crad token
-  Future<ResultInterface> addUserCreditCard(String userId, String cardNumber,
-      String expiryDate, String cvv, String cardHolder) async {
+  Future<ResultInterface<String>> addUserCreditCard(
+      String userId,
+      String cardNumber,
+      String expiryDate,
+      String cvv,
+      String cardHolder) async {
     var url =
         Uri.parse('https://' + externalPaymentUrl + '/dev/userCreditCard');
     var body = {
@@ -135,7 +131,12 @@ class InternalPaymentGateway {
       "cvv": cvv,
       "cardHolder": cardHolder
     };
-    return await _postRequest(url, body, "token");
+    var result = await _postRequest(url, body);
+    if (result.getTag()) {
+      String token = result.getValue()["token"];
+      return new Ok(result.getMessage(), token);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: userId - email, creditToken - saved credit token that recived from addUserCreditCard
@@ -149,21 +150,32 @@ class InternalPaymentGateway {
 
   // params: userId - email, creditCardTokens - list of credit cards tokens
   // returns: list of all credit cards that were asked
-  Future<ResultInterface> userCreditCardDetails(
-      String userId, List<String> creditCardTokens) async {
+  Future<ResultInterface<Map<String, Map<String, String>>>>
+      userCreditCardDetails(
+          String userId, List<String> creditCardTokens) async {
     String splitedTokens = creditCardTokens.join(' ');
     var body = {
       "userId": userId,
       "creditCardTokens": splitedTokens,
     };
-    return await _getRequest(
-        externalPaymentUrl, '/dev/userCreditCard', body, "creditCards");
+    var result =
+        await _getRequest(externalPaymentUrl, '/dev/userCreditCard', body);
+    if (result.getTag()) {
+      var cardsDetails =
+          result.getValue()["creditCards"] as Map<String, dynamic>;
+      var convertedCardsDetails = cardsDetails.map((key, value) => MapEntry(
+          key,
+          (value as Map<String, dynamic>)
+              .map((key, value) => MapEntry(key, value as String))));
+      return new Ok(result.getMessage(), convertedCardsDetails);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: userId - email, bankName, branchNumber, bankAccount - 9 string length
   // returns: Result with bank account token
-  Future<ResultInterface> addUserBankAccount(String userId, String bankName,
-      String branchNumber, String bankAccount) async {
+  Future<ResultInterface<String>> addUserBankAccount(String userId,
+      String bankName, String branchNumber, String bankAccount) async {
     var url =
         Uri.parse('https://' + externalPaymentUrl + '/dev/userBankAccount');
     var body = {
@@ -172,7 +184,12 @@ class InternalPaymentGateway {
       "branchNumber": branchNumber,
       "bankAccount": bankAccount,
     };
-    return await _postRequest(url, body, "token");
+    var result = await _postRequest(url, body);
+    if (result.getTag()) {
+      String token = result.getValue()["token"];
+      return new Ok(result.getMessage(), token);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: userId - email, bankAccountToken - saved bank account token that recived from addUserBankAccount
@@ -186,20 +203,30 @@ class InternalPaymentGateway {
 
   // params: userId - email, bankAccountToken - saved bank account token that recived from addUserBankAccount
   // returns: bank account details that was asked
-  Future<ResultInterface> userBankAccountDetails(
-      String userId, String bankAccountToken) async {
+  Future<ResultInterface<Map<String, Map<String, String>>>>
+      userBankAccountDetails(String userId, String bankAccountToken) async {
     var body = {
       "userId": userId,
       "bankAccountToken": bankAccountToken,
     };
-    return await _getRequest(
-        externalPaymentUrl, '/dev/userBankAccount', body, "bankAccountDetails");
+    var result =
+        await _getRequest(externalPaymentUrl, '/dev/userBankAccount', body);
+    if (result.getTag()) {
+      var bankDetails =
+          result.getValue()["bankAccountDetails"] as Map<String, dynamic>;
+      var convertedBankDetails = bankDetails.map((key, value) => MapEntry(
+          key,
+          (value as Map<String, dynamic>)
+              .map((key, value) => MapEntry(key, value as String))));
+      return new Ok(result.getMessage(), convertedBankDetails);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: storeId, bankName, branchNumber, bankAccount - 9 string length
   // returns: Result with bank account token
-  Future<ResultInterface> addStoreBankAccount(String storeId, String bankName,
-      String branchNumber, String bankAccount) async {
+  Future<ResultInterface<String>> addStoreBankAccount(String storeId,
+      String bankName, String branchNumber, String bankAccount) async {
     var url =
         Uri.parse('https://' + externalPaymentUrl + '/dev/storeBankAccount');
     var body = {
@@ -208,7 +235,12 @@ class InternalPaymentGateway {
       "branchNumber": branchNumber,
       "bankAccount": bankAccount,
     };
-    return await _postRequest(url, body, "token");
+    var result = await _postRequest(url, body);
+    if (result.getTag()) {
+      String token = result.getValue()["token"];
+      return new Ok(result.getMessage(), token);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: storeId, bankAccountToken - saved bank account token that recived from addUserBankAccount
@@ -228,20 +260,34 @@ class InternalPaymentGateway {
       "storeId": storeId,
       "bankAccountToken": bankAccountToken,
     };
-    return await _getRequest(externalPaymentUrl, '/dev/storeBankAccount', body,
-        "bankAccountDetails");
+    var result =
+        await _getRequest(externalPaymentUrl, '/dev/storeBankAccount', body);
+    if (result.getTag()) {
+      var bankDetails =
+          result.getValue()["bankAccountDetails"] as Map<String, dynamic>;
+      var convertedBankDetails = bankDetails.map((key, value) => MapEntry(
+          key,
+          (value as Map<String, dynamic>)
+              .map((key, value) => MapEntry(key, value as String))));
+      return new Ok(result.getMessage(), convertedBankDetails);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: userId - email, eWalletToken - saved e wallet token that recived when calling createUserAccount
   // returns: user's e wallet balance
-  Future<ResultInterface> eWalletBalance(
+  Future<ResultInterface<String>> eWalletBalance(
       String userId, String eWalletToken) async {
     var body = {
       "userId": userId,
       "eWalletToken": eWalletToken,
     };
-    return await _getRequest(
-        externalPaymentUrl, '/dev/eWallet', body, "balance");
+    var result = await _getRequest(externalPaymentUrl, '/dev/eWallet', body);
+    if (result.getTag()) {
+      String token = result.getValue()["balance"];
+      return new Ok(result.getMessage(), token);
+    }
+    return new Failure(result.getMessage());
   }
 
   // params: userId - email, eWalletToken - saved e wallet token that recived when calling createUserAccount,
@@ -261,26 +307,26 @@ class InternalPaymentGateway {
     return await _patchRequest(url, body);
   }
 
-  Future<ResultInterface> getPurchaseHistory(
-      DateTime startDate, DateTime endDate,
-      {String userId = "*", String storeId = "*", bool? succeeded}) async {
-    final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
-    var body = {
-      "startDate": formatter.format(startDate),
-      "endDate": formatter.format(endDate),
-      "userId": userId,
-      "storeId": storeId,
-      "succeeded": succeeded == null ? "*" : succeeded.toString()
-    };
-    return await _getRequest(
-        externalPaymentUrl, '/dev/payments', body, "purchases");
-  }
+  // Future<ResultInterface> getPurchaseHistory(
+  //     DateTime startDate, DateTime endDate,
+  //     {String userId = "*", String storeId = "*", bool? succeeded}) async {
+  //   final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
+  //   var body = {
+  //     "startDate": formatter.format(startDate),
+  //     "endDate": formatter.format(endDate),
+  //     "userId": userId,
+  //     "storeId": storeId,
+  //     "succeeded": succeeded == null ? "*" : succeeded.toString()
+  //   };
+  //   return await _getRequest(
+  //       externalPaymentUrl, '/dev/payments', body, "purchases");
+  // }
 
   // params: userId - email, storeId, eWalletToken - saved e wallet token that recived when calling createUserAccount,
   // creditCardToken - saved bank account token that recived from addUserCreditCard,
   // cashBackAmount - cash back amount to use, creditAmount - credit amount to use
   // returns: generated token for this purchase
-  Future<ResultInterface> makePayment(
+  Future<ResultInterface<String>> makePayment(
       String userId,
       String storeId,
       String eWalletToken,
@@ -296,6 +342,11 @@ class InternalPaymentGateway {
       "cashBackAmount": cashBackAmount,
       "creditAmount": creditAmount,
     };
-    return await _patchRequest(url, body, "token");
+    var result = await _patchRequest(url, body);
+    if (result.getTag()) {
+      String token = result.getValue()["token"];
+      return new Ok(result.getMessage(), token);
+    }
+    return new Failure(result.getMessage());
   }
 }
