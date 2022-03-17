@@ -68,17 +68,8 @@ class PurchaseHistoryModel extends Model {
     }
   }
   
-  String get products {
-    try {
-      return _products!;
-    } catch(e) {
-      throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get products {
+    return _products;
   }
   
   TemporalDateTime? get createdAt {
@@ -89,9 +80,9 @@ class PurchaseHistoryModel extends Model {
     return _updatedAt;
   }
   
-  const PurchaseHistoryModel._internal({required this.id, required date, required transactionID, required products, createdAt, updatedAt}): _date = date, _transactionID = transactionID, _products = products, _createdAt = createdAt, _updatedAt = updatedAt;
+  const PurchaseHistoryModel._internal({required this.id, required date, required transactionID, products, createdAt, updatedAt}): _date = date, _transactionID = transactionID, _products = products, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory PurchaseHistoryModel({String? id, required TemporalDateTime date, required String transactionID, required String products}) {
+  factory PurchaseHistoryModel({String? id, required TemporalDateTime date, required String transactionID, String? products}) {
     return PurchaseHistoryModel._internal(
       id: id == null ? UUID.getUUID() : id,
       date: date,
@@ -187,7 +178,7 @@ class PurchaseHistoryModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: PurchaseHistoryModel.PRODUCTS,
-      isRequired: true,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     

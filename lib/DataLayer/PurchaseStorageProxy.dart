@@ -34,7 +34,8 @@ class PurchaseStorageProxy {
       FLog.error(text: "No Purchases were found for transaction $transactionID");
     }
     PurchaseHistoryModel purchase = purchases.first; //transaction ID is unique
-    List<CartProductDTO> products = jsonDecode(purchase.products);
+    if (purchase.products == null) return new Ok("No products for purchase", []);
+    List<CartProductDTO> products = jsonDecode(purchase.products!).cast<CartProductDTO>();
     return new Ok("Found products for purchase $transactionID", products);
   }
 }
