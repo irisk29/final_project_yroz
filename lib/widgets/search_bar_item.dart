@@ -1,45 +1,26 @@
-import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 
 class SearchBarItem extends StatelessWidget {
-  final FileImage? image;
-  final String title;
-  final String address;
-  final String phoneNumber;
-  late final Map<String, List<TimeOfDay>> operationHours;
-  late final List<ProductDTO>? products;
+  final StoreDTO store;
 
-  SearchBarItem(this.image, this.title, this.address, this.phoneNumber,
-      operationHours, products) {
-    this.operationHours = Map<String, List<TimeOfDay>>.from(operationHours);
-    this.products = products == null ? null : List<ProductDTO>.from(products);
-  }
+  SearchBarItem(this.store);
 
   void selectStore(BuildContext ctx) {
-    this.products == null
+    this.store is OnlineStoreDTO
         ? Navigator.of(ctx).pushNamed(
-            PhysicalStoreScreen.routeName,
+            OnlineStoreScreen.routeName,
             arguments: {
-              'title': title,
-              'address': address,
-              'image': image,
-              'phoneNumber': phoneNumber,
-              'operationHours':
-                  Map<String, List<TimeOfDay>>.from(operationHours),
+              'store': store,
             },
           )
         : Navigator.of(ctx).pushNamed(
-            OnlineStoreScreen.routeName,
+            PhysicalStoreScreen.routeName,
             arguments: {
-              'title': title,
-              'address': address,
-              'image': image,
-              'phoneNumber': phoneNumber,
-              'operationHours':
-                  Map<String, List<TimeOfDay>>.from(operationHours),
-              'products': products
+              'store': store,
             },
           );
   }
@@ -52,7 +33,7 @@ class SearchBarItem extends StatelessWidget {
         children: [Icon(Icons.store)],
       ),
       title: Text(
-        this.title,
+        this.store.name,
         style: TextStyle(
           color: Color.fromRGBO(20, 19, 42, 1),
           fontSize: 15,
@@ -60,7 +41,7 @@ class SearchBarItem extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        this.address,
+        this.store.address,
         style: TextStyle(
           fontSize: 12,
         ),
