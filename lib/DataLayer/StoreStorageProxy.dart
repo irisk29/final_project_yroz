@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
@@ -90,9 +91,8 @@ class StoreStorageProxy {
         FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
         return new Failure("no such user exists in the system!", null);
       }
-      UserModel newUserModel = oldUserModel.copyWith(
-          storeOwnerModel: storeOwner,
-          userModelStoreOwnerModelId: storeOwner.id);
+      UserModel newUserModel =
+          oldUserModel.copyWith(storeOwnerModel: storeOwner, userModelStoreOwnerModelId: storeOwner.id);
       await Amplify.DataStore.save(onlineWithProducts);
       await Amplify.DataStore.save(storeOwner);
       await Amplify.DataStore.save(newUserModel);
@@ -177,9 +177,8 @@ class StoreStorageProxy {
         return new Failure("no such user exists in the system!", null);
       }
 
-      UserModel newUserModel = oldUserModel.copyWith(
-          storeOwnerModel: storeOwner,
-          userModelStoreOwnerModelId: storeOwner.id);
+      UserModel newUserModel =
+          oldUserModel.copyWith(storeOwnerModel: storeOwner, userModelStoreOwnerModelId: storeOwner.id);
       await Amplify.DataStore.save(physicalModel);
       await Amplify.DataStore.save(storeOwner);
       await Amplify.DataStore.save(newUserModel);
@@ -290,12 +289,15 @@ class StoreStorageProxy {
 
   Future<List<StoreDTO>> fetchAllStores() async {
     try {
-      List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(OnlineStoreModel.classType);
-      List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(PhysicalStoreModel.classType);
-      List<OnlineStoreDTO> onlineDtos = await convertOnlineStoreModelToDTO(onlineStores);
-      List<StoreDTO> physicalDtos = await convertPhysicalStoreModelToDTO(physicalStores);
-      List<StoreDTO> allDtos = onlineDtos;
-      allDtos.addAll(physicalDtos);
+      List<OnlineStoreDTO> onlineDtos = await fetchAllOnlineStores();
+      List<StoreDTO> physicalDtos = await fetchAllPhysicalStores();
+      List<StoreDTO> allDtos = [];
+      onlineDtos.forEach((element) {
+        allDtos.add(element);
+      });
+      physicalDtos.forEach((element) {
+        allDtos.add(element);
+      });
       return allDtos;
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);

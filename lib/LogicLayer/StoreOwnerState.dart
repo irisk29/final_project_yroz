@@ -13,6 +13,7 @@ class StoreOwnerState {
   String _storeOwnerID;
   OnlineStoreDTO? onlineStore;
   StoreDTO? physicalStore;
+  String? storeBankAccountToken;
 
   StoreOwnerState(this._storeOwnerID);
   StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model) : _storeOwnerID = model.id {
@@ -22,6 +23,7 @@ class StoreOwnerState {
     if (model.physicalStoreModel != null) {
       setPhysicalStore(model.physicalStoreModel!);
     }
+    this.storeBankAccountToken = model.bankAccountToken;
   }
 
   String get getStoreOwnerID => _storeOwnerID;

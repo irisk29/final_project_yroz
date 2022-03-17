@@ -1,5 +1,4 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/add_bank_account_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
 import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
 import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
@@ -132,19 +131,6 @@ class _SettingsPageState extends State<SettingsScreen> {
                         trailing: Icon(Icons.keyboard_arrow_right),
                         onTap: () {
                           Navigator.of(context).pushNamed(CreditCardsScreen.routeName);
-                          //open change language
-                        },
-                      ),
-                      _buildDivider(),
-                      ListTile(
-                        leading: Icon(
-                          Icons.account_balance,
-                          color: Colors.purple,
-                        ),
-                        title: Text("Add Bank Account"),
-                        trailing: Icon(Icons.keyboard_arrow_right),
-                        onTap: () {
-                          Navigator.of(context).pushNamed(AddBankAccountScreen.routeName);
                           //open change language
                         },
                       ),
