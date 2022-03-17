@@ -712,7 +712,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       Icon(Icons.tag),
                       Icon(Icons.access_time),
                       Icon(Icons.add_shopping_cart_rounded),
-                      Icon(Icons.account_balance_wallet_outlined),
+                      Icon(Icons.account_balance),
                       Icon(Icons.store),
                     ],
                     // activeStep property set to activeStep variable defined above.

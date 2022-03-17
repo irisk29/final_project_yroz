@@ -1,5 +1,4 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/add_bank_account_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
 import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
 import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
