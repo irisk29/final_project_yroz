@@ -31,6 +31,7 @@ class StoreOwnerModel extends Model {
   final String id;
   final OnlineStoreModel? _onlineStoreModel;
   final PhysicalStoreModel? _physicalStoreModel;
+  final String? _bankAccountToken;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _storeOwnerModelOnlineStoreModelId;
@@ -52,6 +53,10 @@ class StoreOwnerModel extends Model {
     return _physicalStoreModel;
   }
   
+  String? get bankAccountToken {
+    return _bankAccountToken;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -68,13 +73,14 @@ class StoreOwnerModel extends Model {
     return _storeOwnerModelPhysicalStoreModelId;
   }
   
-  const StoreOwnerModel._internal({required this.id, onlineStoreModel, physicalStoreModel, createdAt, updatedAt, storeOwnerModelOnlineStoreModelId, storeOwnerModelPhysicalStoreModelId}): _onlineStoreModel = onlineStoreModel, _physicalStoreModel = physicalStoreModel, _createdAt = createdAt, _updatedAt = updatedAt, _storeOwnerModelOnlineStoreModelId = storeOwnerModelOnlineStoreModelId, _storeOwnerModelPhysicalStoreModelId = storeOwnerModelPhysicalStoreModelId;
+  const StoreOwnerModel._internal({required this.id, onlineStoreModel, physicalStoreModel, bankAccountToken, createdAt, updatedAt, storeOwnerModelOnlineStoreModelId, storeOwnerModelPhysicalStoreModelId}): _onlineStoreModel = onlineStoreModel, _physicalStoreModel = physicalStoreModel, _bankAccountToken = bankAccountToken, _createdAt = createdAt, _updatedAt = updatedAt, _storeOwnerModelOnlineStoreModelId = storeOwnerModelOnlineStoreModelId, _storeOwnerModelPhysicalStoreModelId = storeOwnerModelPhysicalStoreModelId;
   
-  factory StoreOwnerModel({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
+  factory StoreOwnerModel({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? bankAccountToken, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
     return StoreOwnerModel._internal(
       id: id == null ? UUID.getUUID() : id,
       onlineStoreModel: onlineStoreModel,
       physicalStoreModel: physicalStoreModel,
+      bankAccountToken: bankAccountToken,
       storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId,
       storeOwnerModelPhysicalStoreModelId: storeOwnerModelPhysicalStoreModelId);
   }
@@ -90,6 +96,7 @@ class StoreOwnerModel extends Model {
       id == other.id &&
       _onlineStoreModel == other._onlineStoreModel &&
       _physicalStoreModel == other._physicalStoreModel &&
+      _bankAccountToken == other._bankAccountToken &&
       _storeOwnerModelOnlineStoreModelId == other._storeOwnerModelOnlineStoreModelId &&
       _storeOwnerModelPhysicalStoreModelId == other._storeOwnerModelPhysicalStoreModelId;
   }
@@ -103,6 +110,7 @@ class StoreOwnerModel extends Model {
     
     buffer.write("StoreOwnerModel {");
     buffer.write("id=" + "$id" + ", ");
+    buffer.write("bankAccountToken=" + "$_bankAccountToken" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("storeOwnerModelOnlineStoreModelId=" + "$_storeOwnerModelOnlineStoreModelId" + ", ");
@@ -112,11 +120,12 @@ class StoreOwnerModel extends Model {
     return buffer.toString();
   }
   
-  StoreOwnerModel copyWith({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
+  StoreOwnerModel copyWith({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? bankAccountToken, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
     return StoreOwnerModel._internal(
       id: id ?? this.id,
       onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
       physicalStoreModel: physicalStoreModel ?? this.physicalStoreModel,
+      bankAccountToken: bankAccountToken ?? this.bankAccountToken,
       storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId ?? this.storeOwnerModelOnlineStoreModelId,
       storeOwnerModelPhysicalStoreModelId: storeOwnerModelPhysicalStoreModelId ?? this.storeOwnerModelPhysicalStoreModelId);
   }
@@ -129,13 +138,14 @@ class StoreOwnerModel extends Model {
       _physicalStoreModel = json['physicalStoreModel']?['serializedData'] != null
         ? PhysicalStoreModel.fromJson(new Map<String, dynamic>.from(json['physicalStoreModel']['serializedData']))
         : null,
+      _bankAccountToken = json['bankAccountToken'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
       _storeOwnerModelOnlineStoreModelId = json['storeOwnerModelOnlineStoreModelId'],
       _storeOwnerModelPhysicalStoreModelId = json['storeOwnerModelPhysicalStoreModelId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'onlineStoreModel': _onlineStoreModel?.toJson(), 'physicalStoreModel': _physicalStoreModel?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'storeOwnerModelOnlineStoreModelId': _storeOwnerModelOnlineStoreModelId, 'storeOwnerModelPhysicalStoreModelId': _storeOwnerModelPhysicalStoreModelId
+    'id': id, 'onlineStoreModel': _onlineStoreModel?.toJson(), 'physicalStoreModel': _physicalStoreModel?.toJson(), 'bankAccountToken': _bankAccountToken, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'storeOwnerModelOnlineStoreModelId': _storeOwnerModelOnlineStoreModelId, 'storeOwnerModelPhysicalStoreModelId': _storeOwnerModelPhysicalStoreModelId
   };
 
   static final QueryField ID = QueryField(fieldName: "storeOwnerModel.id");
@@ -145,6 +155,7 @@ class StoreOwnerModel extends Model {
   static final QueryField PHYSICALSTOREMODEL = QueryField(
     fieldName: "physicalStoreModel",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (PhysicalStoreModel).toString()));
+  static final QueryField BANKACCOUNTTOKEN = QueryField(fieldName: "bankAccountToken");
   static final QueryField STOREOWNERMODELONLINESTOREMODELID = QueryField(fieldName: "storeOwnerModelOnlineStoreModelId");
   static final QueryField STOREOWNERMODELPHYSICALSTOREMODELID = QueryField(fieldName: "storeOwnerModelPhysicalStoreModelId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
@@ -176,6 +187,12 @@ class StoreOwnerModel extends Model {
       isRequired: false,
       ofModelName: (PhysicalStoreModel).toString(),
       associatedKey: PhysicalStoreModel.ID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: StoreOwnerModel.BANKACCOUNTTOKEN,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

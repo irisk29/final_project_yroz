@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:tuple/tuple.dart';
 
-import 'DigitalWallet.dart';
 import 'StoreOwnerState.dart';
 
 class User extends ChangeNotifier {
@@ -32,7 +31,6 @@ class User extends ChangeNotifier {
   String? imageUrl;
   String? eWallet;
   StoreOwnerState? storeOwnerState;
-  DigitalWallet digitalWallet;
   List<ShoppingBagDTO> bagInStores;
 
   bool isSignedIn = false;
@@ -41,15 +39,13 @@ class User extends ChangeNotifier {
       : favoriteStores = <Tuple2<String, bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
-        bagInStores = <ShoppingBagDTO>[],
-        digitalWallet = new DigitalWallet(0) {}
+        bagInStores = <ShoppingBagDTO>[] {}
 
   User.withNull()
       : favoriteStores = <Tuple2<String, bool>>[],
         favoriteProducts = <String>[],
         creditCards = <String>[],
-        bagInStores = <ShoppingBagDTO>[],
-        digitalWallet = new DigitalWallet(0) {}
+        bagInStores = <ShoppingBagDTO>[] {}
 
   void userFromModel(UserModel model) async {
     try {

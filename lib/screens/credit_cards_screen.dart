@@ -1,6 +1,5 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
-import 'package:final_project_yroz/screens/settings_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,9 +25,8 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
   void didChangeDependencies() {
     () async {
       activeCards = [];
-      for(Tuple2<String,bool> store in Provider.of<User>(context, listen: true).favoriteStores){
-
-      }
+      for (Tuple2<String, bool> store
+          in Provider.of<User>(context, listen: true).favoriteStores) {}
       setState(() {
         // Update your UI with the desired changes.
       });
@@ -36,9 +34,8 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
 
     () async {
       disabledCards = [];
-      for(String product in Provider.of<User>(context, listen: true).favoriteProducts){
-
-      }
+      for (String product
+          in Provider.of<User>(context, listen: true).favoriteProducts) {}
       setState(() {
         // Update your UI with the desired changes.
       });
@@ -78,34 +75,32 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                   padding: const EdgeInsets.only(left: 15.0),
                   child: Text(
                     "Active",
-                    style:
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               activeCards.isEmpty
                   ? SizedBox(height: height * 0.23)
                   : SizedBox(
-                height: height * 0.23,
-                child: GridView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.all(height * 0.025),
-                  children: [
-                    activeCards
-                        .map(
-                          (creditCard) => creditCard,
-                    )
-                        .toList(),
-                  ].expand((i) => i).toList(),
-                  gridDelegate:
-                  SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                  ),
-                ),
-              ),
+                      height: height * 0.23,
+                      child: GridView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.all(height * 0.025),
+                        children: [
+                          activeCards
+                              .map(
+                                (creditCard) => creditCard,
+                              )
+                              .toList(),
+                        ].expand((i) => i).toList(),
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          childAspectRatio: 1,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                        ),
+                      ),
+                    ),
               Divider(),
               Align(
                 alignment: Alignment.topLeft,
@@ -113,33 +108,32 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                   padding: const EdgeInsets.only(left: 15.0),
                   child: Text(
                     "Disabled",
-                    style:
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               disabledCards.isEmpty
                   ? SizedBox(height: height * 0.23)
                   : SizedBox(
-                height: height * 0.23,
-                child: GridView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.all(height * 0.025),
-                  children: [
-                    disabledCards
-                        .map(
-                          (creditCard) => creditCard,
-                    ).toList(),
-                  ].expand((i) => i).toList(),
-                  gridDelegate:
-                  SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                  ),
-                ),
-              ),
+                      height: height * 0.23,
+                      child: GridView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.all(height * 0.025),
+                        children: [
+                          disabledCards
+                              .map(
+                                (creditCard) => creditCard,
+                              )
+                              .toList(),
+                        ].expand((i) => i).toList(),
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          childAspectRatio: 1,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),
