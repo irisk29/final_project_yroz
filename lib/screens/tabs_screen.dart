@@ -1,9 +1,9 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/wallet_screen.dart';
+import 'package:final_project_yroz/screens/account_screen.dart';
+import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
+import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
 import 'package:flutter/material.dart';
-import '../screens/settings_screen.dart';
-import '../screens/splash_screen.dart';
-import '../widgets/app_drawer.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/categories_screen.dart';
 import 'favorite_screen.dart';
@@ -17,35 +17,18 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  late List<Map<String, Object>> _pages;
+  late List<Widget> _pages;
   int _selectedPageIndex = 0;
 
   @override
   void initState() {
-    _pages = [
-      {
-        'page': CategoriesScreen(),
-        'title': 'Home',
-      },
-      {
-        'page': FavoriteScreen(),
-        'title': 'Your Favorites',
-      },
-      {
-        'page': MapScreen(),
-        'title': 'Locations',
-      },
-      {
-        'page': WalletScreen(),
-        'title': 'Wallet',
-      },
-    ];
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+    _pages = [
+      CategoriesScreen(),
+      MapScreen(),
+      FavoriteScreen(),
+      AccountScreen()
+    ];
   }
 
   void _selectPage(int index) {
@@ -56,25 +39,40 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+    final user = Provider.of<User>(context);
+    late List<Widget> actions = [];
+
+    if (user.storeOwnerState != null &&
+        user.storeOwnerState!.physicalStore != null)
+      actions.add(IconButton(
+          icon: Icon(Icons.storefront),
+          onPressed: () => Navigator.of(context).pushNamed(
+                ManagePhysicalStoreScreen.routeName,
+              )));
+    else if (user.storeOwnerState != null &&
+        user.storeOwnerState!.onlineStore != null)
+      actions.add(IconButton(
+        icon: Icon(Icons.store_outlined),
+        onPressed: () => Navigator.of(context).pushNamed(
+          ManageOnlineStoreScreen.routeName,
+        ),
+      ));
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text(
-          _pages[_selectedPageIndex]['title'] as String,
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings_outlined,
-            ),
-            onPressed: () {
-              Navigator.of(context).pushNamed(SettingsScreen.routeName);
-            },
+        leading: Padding(
+          padding: EdgeInsets.only(
+            left: deviceSize.width * 0.03,
           ),
-        ],
+          child: Image.asset('assets/icon/yroz-removebg.png'),
+        ),
+        leadingWidth: deviceSize.width * 0.37,
+        toolbarHeight: deviceSize.height * 0.1,
+        actions: actions,
       ),
-      drawer: AppDrawer(),
-      body: _pages[_selectedPageIndex]['page'] as Widget,
+      body: _pages[_selectedPageIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         onTap: _selectPage,
@@ -91,18 +89,18 @@ class _TabsScreenState extends State<TabsScreen> {
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.favorite_border),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
             icon: Icon(Icons.location_on_outlined),
             label: 'Nearby',
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            label: 'Wallet',
+            icon: Icon(Icons.favorite_border),
+            label: 'Favorites',
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: Theme.of(context).primaryColor,
+            icon: Icon(Icons.account_circle),
+            label: 'Account',
           ),
         ],
       ),

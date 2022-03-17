@@ -26,7 +26,6 @@ import 'screens/landing_screen.dart';
 import 'screens/manage_online_store_screen.dart';
 import 'screens/manage_physical_store_screen.dart';
 import 'screens/physical_payment_screen.dart';
-import 'screens/settings_screen.dart';
 import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
@@ -115,38 +114,38 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: MaterialApp(
-          title: 'MyShop',
-          theme: ThemeData(
-            primarySwatch: MaterialColor(0xFFF35A6A, color),
-            accentColor: Colors.purple,
-          ),
-          home:  LandingScreen(),
-          routes: {
-            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-            CartScreen.routeName: (ctx) => CartScreen(),
-            TabsScreen.routeName: (ctx) => TabsScreen(),
-            EditProductScreen.routeName: (ctx) => EditProductScreen(null),
-            CategoryScreen.routeName: (ctx) => CategoryScreen(),
-            SettingsScreen.routeName: (ctx) => SettingsScreen(),
-            PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-            OpenPhysicalStorePipeline.routeName: (ctx) =>
-                OpenPhysicalStorePipeline(),
-            OpenOnlineStorePipeline.routeName: (ctx) =>
-                OpenOnlineStorePipeline(),
-            PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
-            OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-            OnlineStoreProductsScreen.routeName: (ctx) =>
-                OnlineStoreProductsScreen(),
-            LandingScreen.routeName: (ctx) => LandingScreen(),
-            EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-            EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
-            QRViewExample.routeName: (ctx) => QRViewExample(),
-            CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
-            AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
-            ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-            ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
-            OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
-          },
+        title: 'MyShop',
+        theme: ThemeData(
+          primarySwatch: MaterialColor(0xFFFF9191, color),
+          accentColor: Colors.purple,
+        ),
+        home: LandingScreen(),
+        routes: {
+          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          CartScreen.routeName: (ctx) => CartScreen(),
+          TabsScreen.routeName: (ctx) => TabsScreen(),
+          EditProductScreen.routeName: (ctx) => EditProductScreen(null),
+          CategoryScreen.routeName: (ctx) => CategoryScreen(),
+          PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
+          OpenPhysicalStorePipeline.routeName: (ctx) =>
+              OpenPhysicalStorePipeline(),
+          OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
+          PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
+          OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) =>
+              OnlineStoreProductsScreen(),
+          LandingScreen.routeName: (ctx) => LandingScreen(),
+          EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) =>
+              EditPhysicalStorePipeline(),
+          QRViewExample.routeName: (ctx) => QRViewExample(),
+          CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
+          AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
+          ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) =>
+              ManagePhysicalStoreScreen(),
+          OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
+        },
       ),
     );
   }

@@ -1,16 +1,9 @@
-import 'dart:convert';
-
-import 'package:encrypt/encrypt.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/Result/ResultInterface.dart';
-import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
-import 'package:final_project_yroz/screens/settings_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 class CreditCardsScreen extends StatefulWidget {
   static const routeName = '/credit-cards';
@@ -35,16 +28,26 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
       disabledCards = [];
 
       Map<String, Map<String, dynamic>> creditCards =
-          await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+          await Provider.of<User>(context, listen: false)
+              .getUserCreditCardDetails();
       creditCards.forEach((token, creditCard) {
-        DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+        DateTime expirationDate =
+            new DateFormat('MM/yy').parse(creditCard['expiryDate']);
         if (DateTime.now().isBefore(expirationDate)) //not expired
         {
-          activeCards.add(CreditCardWidget(creditCard['cardHolder'], creditCard['cardNumber'].toString().substring(15),
-              creditCard['expiryDate'], Colors.blue, token));
+          activeCards.add(CreditCardWidget(
+              creditCard['cardHolder'],
+              creditCard['cardNumber'].toString().substring(15),
+              creditCard['expiryDate'],
+              Colors.blue,
+              token));
         } else {
-          disabledCards.add(CreditCardWidget(creditCard['cardHolder'],
-              creditCard['cardNumber'].toString().substring(15), creditCard['expiryDate'], Colors.red, token));
+          disabledCards.add(CreditCardWidget(
+              creditCard['cardHolder'],
+              creditCard['cardNumber'].toString().substring(15),
+              creditCard['expiryDate'],
+              Colors.red,
+              token));
         }
       });
       setState(() {
@@ -67,7 +70,8 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
               IconData(0xf04b7, fontFamily: 'MaterialIcons'),
             ),
             onPressed: () async {
-              await Navigator.of(context).pushNamed(AddCreditCardScreen.routeName);
+              await Navigator.of(context)
+                  .pushNamed(AddCreditCardScreen.routeName);
             },
           ),
         ],

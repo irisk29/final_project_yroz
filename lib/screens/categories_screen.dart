@@ -61,7 +61,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               ),
                             ),
                             SizedBox(
-                              height: height * 0.23,
+                              height: height * 0.22,
                               child: GridView(
                                 scrollDirection: Axis.horizontal,
                                 padding: EdgeInsets.all(height * 0.025),
@@ -100,9 +100,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               ),
                             ),
                             physicalStores.isEmpty
-                                ? SizedBox(height: height * 0.23)
+                                ? SizedBox(height: height * 0.22)
                                 : SizedBox(
-                                    height: height * 0.23,
+                                    height: height * 0.22,
                                     child: GridView(
                                       scrollDirection: Axis.horizontal,
                                       padding: EdgeInsets.all(height * 0.025),
@@ -138,9 +138,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               ),
                             ),
                             onlineStores.isEmpty
-                                ? SizedBox(height: height * 0.23)
+                                ? SizedBox(height: height * 0.22)
                                 : SizedBox(
-                                    height: height * 0.23,
+                                    height: height * 0.22,
                                     child: GridView(
                                       scrollDirection: Axis.horizontal,
                                       padding: EdgeInsets.all(height * 0.025),

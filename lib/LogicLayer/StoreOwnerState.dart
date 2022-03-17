@@ -16,7 +16,8 @@ class StoreOwnerState {
   String? storeBankAccountToken;
 
   StoreOwnerState(this._storeOwnerID);
-  StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model) : _storeOwnerID = model.id {
+  StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model)
+      : _storeOwnerID = model.id {
     if (model.onlineStoreModel != null) {
       setOnlineStoreFromModel(model.onlineStoreModel!);
     }
@@ -31,16 +32,22 @@ class StoreOwnerState {
 
   void setOnlineStoreFromModel(OnlineStoreModel onlineStoreModel) async {
     var categories = jsonDecode(onlineStoreModel.categories);
-    Map<String, dynamic> operationHours = jsonDecode(onlineStoreModel.operationHours);
+    Map<String, dynamic> operationHours =
+        jsonDecode(onlineStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
-    String? imageUrl = await StoreStorageProxy().getDownloadUrl(onlineStoreModel.id);
-    File? imageFile = imageUrl != null ? await StoreStorageProxy().createFileFromImageUrl(imageUrl) : null;
+    String? imageUrl =
+        await StoreStorageProxy().getDownloadUrl(onlineStoreModel.id);
+    File? imageFile = imageUrl != null
+        ? await StoreStorageProxy().createFileFromImageUrl(imageUrl)
+        : null;
     List<ProductDTO> products = [];
-    if (onlineStoreModel.storeProductModels == null || onlineStoreModel.storeProductModels!.isEmpty) {
+    if (onlineStoreModel.storeProductModels == null ||
+        onlineStoreModel.storeProductModels!.isEmpty) {
       onlineStoreModel.storeProductModels!.forEach((e) async {
         String? prodImageUrl = await StoreStorageProxy().getDownloadUrl(e.id);
-        File? prodImageFile =
-            prodImageUrl != null ? await StoreStorageProxy().createFileFromImageUrl(prodImageUrl) : null;
+        File? prodImageFile = prodImageUrl != null
+            ? await StoreStorageProxy().createFileFromImageUrl(prodImageUrl)
+            : null;
         products.add(new ProductDTO(
             id: e.id,
             name: e.name,
@@ -72,10 +79,14 @@ class StoreOwnerState {
 
   void setPhysicalStore(PhysicalStoreModel physicalStoreModel) async {
     var categories = jsonDecode(physicalStoreModel.categories);
-    Map<String, dynamic> operationHours = jsonDecode(physicalStoreModel.operationHours);
+    Map<String, dynamic> operationHours =
+        jsonDecode(physicalStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
-    String? imageUrl = await StoreStorageProxy().getDownloadUrl(physicalStoreModel.id);
-    File? imageFile = imageUrl != null ? await StoreStorageProxy().createFileFromImageUrl(imageUrl) : null;
+    String? imageUrl =
+        await StoreStorageProxy().getDownloadUrl(physicalStoreModel.id);
+    File? imageFile = imageUrl != null
+        ? await StoreStorageProxy().createFileFromImageUrl(imageUrl)
+        : null;
     physicalStore = new StoreDTO(
         id: physicalStoreModel.id,
         name: physicalStoreModel.name,
@@ -88,12 +99,15 @@ class StoreOwnerState {
         imageFromPhone: imageFile);
   }
 
-  Map<String, List<TimeOfDay>> parseOperationHours(Map<String, dynamic> operationHours) {
+  Map<String, List<TimeOfDay>> parseOperationHours(
+      Map<String, dynamic> operationHours) {
     Map<String, List<TimeOfDay>> opH = {};
     operationHours.forEach((key, value) {
       List<dynamic> op = List.from(value);
       DateFormat inputFormat = DateFormat('hh:mm a');
-      List<TimeOfDay> lst = op.map((e) => TimeOfDay.fromDateTime(inputFormat.parse(e as String))).toList();
+      List<TimeOfDay> lst = op
+          .map((e) => TimeOfDay.fromDateTime(inputFormat.parse(e as String)))
+          .toList();
       opH[key] = lst;
     });
     return opH;
