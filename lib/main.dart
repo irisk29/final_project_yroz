@@ -7,6 +7,7 @@ import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
+import 'package:final_project_yroz/screens/online_payment_screen.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
@@ -23,7 +24,7 @@ import 'models/ModelProvider.dart';
 import 'screens/landing_screen.dart';
 import 'screens/manage_online_store_screen.dart';
 import 'screens/manage_physical_store_screen.dart';
-import 'screens/payment_screen.dart';
+import 'screens/physical_payment_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
@@ -121,7 +122,7 @@ class _MyAppState extends State<MyApp> {
             EditProductScreen.routeName: (ctx) => EditProductScreen(null),
             CategoryScreen.routeName: (ctx) => CategoryScreen(),
             SettingsScreen.routeName: (ctx) => SettingsScreen(),
-            PaymentScreen.routeName: (ctx) => PaymentScreen(),
+            PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
             OpenPhysicalStorePipeline.routeName: (ctx) =>
                 OpenPhysicalStorePipeline(),
             OpenOnlineStorePipeline.routeName: (ctx) =>
@@ -138,6 +139,7 @@ class _MyAppState extends State<MyApp> {
             AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
             ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
             ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
+            OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(),
           },
       ),
     );

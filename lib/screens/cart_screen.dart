@@ -1,6 +1,7 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/online_payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/cart_item.dart';
@@ -107,7 +108,10 @@ class _OrderButtonState extends State<OrderButton> {
                   setState(() {
                     _isLoading = true;
                   });
-                  await Provider.of<User>(context, listen: false).makePaymentOnlineStore(creditCardToken, cashBackAmount, creditCardAmount, widget.cart!);
+                  Navigator.of(context).pushNamed(OnlinePaymentScreen.routeName, arguments: {
+                    'store': widget.cart!.onlineStoreID.toString(),
+                    'bag': widget.cart!
+                  });
                   setState(() {
                     _isLoading = false;
                   });

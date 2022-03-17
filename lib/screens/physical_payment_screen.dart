@@ -1,17 +1,19 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
-class PaymentScreen extends StatefulWidget {
-  static const routeName = '/payment';
+class PhysicalPaymentScreen extends StatefulWidget {
+  static const routeName = '/physical-payment';
 
   late String storeID;
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  State<PhysicalPaymentScreen> createState() => _PhysicalPaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
 
   @override
   void didChangeDependencies() {
@@ -73,14 +75,17 @@ class PaymentCard extends StatefulWidget {
 }
 
 class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStateMixin {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  var _isLoading = false;
   AnimationController? _controller;
+  final cashbackController = TextEditingController();
+  final amountController = TextEditingController();
   Animation<Size>? _heightAnimation;
-  final myController = TextEditingController();
   final _initValues = {
     'cashback': 0.0,
   };
+
+  String dropdownvalue = '';
+
+  List<Tuple2<String,String>> items = [];
 
   @override
   void initState() {
@@ -93,6 +98,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
         .animate(
         CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
     initCashBack();
+    activeCreditCards();
   }
 
   void _showErrorDialog(String message) {
@@ -113,6 +119,18 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     );
   }
 
+  Future<void> activeCreditCards() async {
+    Map<String, Map<String, dynamic>> creditCards =
+        await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+    creditCards.forEach((token, creditCard) {
+      DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+      if (DateTime.now().isBefore(expirationDate)) //not expired
+          {
+        items.add(Tuple2<String,String>(creditCard['cardNumber'].toString().substring(12), token));
+      }
+    });
+  }
+
   void initCashBack() async {
     String cb = await Provider.of<User>(context, listen: false).getEWalletBalance();
     _initValues['cashback'] = double.parse(cb);
@@ -122,6 +140,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     double cashback = 0.0;
+    double amount = 0.0;
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -138,6 +157,25 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Purchase amount'),
+                keyboardType: TextInputType.number,
+                controller: amountController,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a number.';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    if(value!="")
+                      amount = double.parse(value);
+                    else
+                      amount = 0;
+                  });
+                },
+              ),
               RichText(
                 text: TextSpan(
                   children: [
@@ -151,7 +189,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
               TextFormField(
                 decoration: InputDecoration(labelText: 'Cashback to use'),
                 keyboardType: TextInputType.number,
-                controller: myController,
+                controller: cashbackController,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter a number.';
@@ -167,11 +205,26 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                   });
                 },
               ),
-              Text('Amount left to pay: '+ (_initValues['cashback']! - (myController.text.length>0 ? double.parse(myController.text) : 0)).toString()),
+              DropdownButton(
+                value: dropdownvalue,
+                icon: const Icon(Icons.keyboard_arrow_down),
+                items: items.map((Tuple2<String,String> items) {
+                  return DropdownMenuItem(
+                    value: items.item2,
+                    child: Text(items.item1),
+                    );
+                  }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                  });
+                },
+              ),
+              Text('Amount left to pay: '+ (double.parse(amountController.text) - (cashbackController.text.length>0 ? double.parse(cashbackController.text) : 0)).toString()),
               FlatButton(
                 child: Text('Confirm Amount'),
                 onPressed: () async {
-                    await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(creditCardToken, cashback.toString(), creditAmount, widget.storeID)
+                    await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(dropdownvalue, cashback.toString(), (double.parse(amountController.text) - (cashbackController.text.length>0 ? double.parse(cashbackController.text) : 0)).toString(), widget.storeID!);
                     Navigator.of(context).pop();
                 },
               )
