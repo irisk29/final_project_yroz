@@ -8,9 +8,21 @@ import '../widgets/store_item.dart';
 import '../dummy_data.dart';
 import '../widgets/category_item.dart';
 
-class CategoriesScreen extends StatelessWidget {
+class CategoriesScreen extends StatefulWidget {
+  @override
+  _CategoriesScreenState createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends State<CategoriesScreen> {
   List<StoreDTO> physicalStores = [];
   List<OnlineStoreDTO> onlineStores = [];
+  late final _storesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _storesFuture = _fetchStores();
+  }
 
   Future<void> _fetchStores() async {
     onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
@@ -21,9 +33,9 @@ class CategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     return FutureBuilder(
-        future: _fetchStores(),
+        future: _storesFuture,
         builder: (BuildContext context, AsyncSnapshot snap) {
-          return snap.connectionState == ConnectionState.waiting
+          return snap.connectionState != ConnectionState.done
               ? Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
                   child: Container(

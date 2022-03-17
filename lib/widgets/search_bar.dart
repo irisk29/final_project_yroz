@@ -54,15 +54,7 @@ class _SearchBarState extends State<SearchBar> {
                 shrinkWrap: true,
                 itemBuilder: (_, index) {
                   var store = relevantStores[index];
-                  return SearchBarItem(
-                      FileImage(store.imageFromPhone!),
-                      store.name,
-                      store.address,
-                      store.phoneNumber,
-                      store.operationHours,
-                      store is OnlineStoreDTO
-                          ? store.products
-                          : null);
+                  return SearchBarItem(store);
                 }),
           ),
         );
