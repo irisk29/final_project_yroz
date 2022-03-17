@@ -42,8 +42,9 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
     super.initState();
   }
 
-  void saveCreditCard(String cardNumber) async {
-    this.token = await Provider.of<User>(context, listen: false).addCreditCardToken(cardNumber, expiryDate, cvvCode, cardHolderName);
+  void saveCreditCard() async {
+    this.token = await Provider.of<User>(context, listen: false)
+        .addCreditCardToken(cardNumber, expiryDate, cvvCode, cardHolderName);
   }
 
   @override
@@ -167,8 +168,9 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                           final encrypted = encrypter.encrypt(cardNumber, iv: iv);
                           final decrypted = encrypter.decrypt(encrypted, iv: iv);
 
-                          saveCreditCard(encrypted.toString());
-                          Navigator.of(context).pop(Tuple2<String?, IV?>(this.token, iv));
+                          saveCreditCard();
+                          Navigator.of(context).pop();
+                          //Navigator.of(context).pop(Tuple2<String?, IV?>(this.token, iv));
                         },
                       ),
                     ],

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:final_project_yroz/DTOs/CartProductDTO.dart';
 
 class ShoppingBagDTO {
@@ -19,7 +21,7 @@ class ShoppingBagDTO {
     products.add(productDTO);
   }
 
-  void removeProduct(String  productID) {
+  void removeProduct(String productID) {
     products.removeWhere((element) => element.id == productID);
   }
 
@@ -32,4 +34,14 @@ class ShoppingBagDTO {
     if (other is ShoppingBagDTO) return this.userId == other.userId && this.onlineStoreID == other.onlineStoreID;
     return false;
   }
+
+  Map toJson() {
+    List<Map> productsJson = this.products.map((i) => i.toJson()).toList();
+    return {'userId': this.userId, 'onlineStoreID': this.onlineStoreID, 'products': productsJson};
+  }
+
+  ShoppingBagDTO.fromJson(Map<String, dynamic> json)
+      : userId = json['userId'],
+        onlineStoreID = json['onlineStoreID'],
+        products = jsonDecode(json['products']);
 }

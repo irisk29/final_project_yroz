@@ -14,6 +14,7 @@ import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'LogicLayer/User.dart';
@@ -144,7 +145,7 @@ class _MyAppState extends State<MyApp> {
             AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
             ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
             ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
-            OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(),
+            OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           },
       ),
     );

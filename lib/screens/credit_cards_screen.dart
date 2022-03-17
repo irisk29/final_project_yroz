@@ -40,11 +40,11 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
         DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
         if (DateTime.now().isBefore(expirationDate)) //not expired
         {
-          activeCards.add(CreditCardWidget(
-              creditCard['cardHolder'], creditCard['cardNumber'].toString().substring(12), creditCard['expiryDate'], Colors.blue, token));
+          activeCards.add(CreditCardWidget(creditCard['cardHolder'], creditCard['cardNumber'].toString().substring(12),
+              creditCard['expiryDate'], Colors.blue, token));
         } else {
-          disabledCards.add(CreditCardWidget(
-              creditCard['cardHolder'], creditCard['cardNumber'].toString().substring(12), creditCard['expiryDate'], Colors.red, token));
+          disabledCards.add(CreditCardWidget(creditCard['cardHolder'],
+              creditCard['cardNumber'].toString().substring(12), creditCard['expiryDate'], Colors.red, token));
         }
       });
       setState(() {
@@ -67,10 +67,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
               IconData(0xf04b7, fontFamily: 'MaterialIcons'),
             ),
             onPressed: () async {
-              final Tuple2<String?, IV?> result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddCreditCardScreen()),
-                  );
+              await Navigator.of(context).pushNamed(AddCreditCardScreen.routeName);
             },
           ),
         ],
@@ -109,7 +106,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                         ].expand((i) => i).toList(),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 300,
-                          childAspectRatio: 1/2,
+                          childAspectRatio: 1 / 2,
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
                         ),

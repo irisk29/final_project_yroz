@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -108,10 +110,7 @@ class _OrderButtonState extends State<OrderButton> {
                   setState(() {
                     _isLoading = true;
                   });
-                  Navigator.of(context).pushNamed(OnlinePaymentScreen.routeName, arguments: {
-                    'store': widget.cart!.onlineStoreID.toString(),
-                    'bag': widget.cart!
-                  });
+                  Navigator.push(context, MaterialPageRoute(builder: (ctx) => OnlinePaymentScreen(JsonEncoder.withIndent('  ').convert(widget.cart))));
                   setState(() {
                     _isLoading = false;
                   });

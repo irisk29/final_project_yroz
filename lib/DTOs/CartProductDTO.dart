@@ -35,10 +35,10 @@ class CartProductDTO extends ProductDTO {
             name: json['name'],
             price: json['price'],
             category: "",
-            imageUrl: "",
+            imageUrl: json.containsKey('imageUrl') ? json['imageUrl'] : "",
             description: json['description'],
             storeID: json['storeID'],
-            imageFromPhone: null);
+            imageFromPhone: json.containsKey('imageUrl') ? File(json['imageUrl']) : null);
 
   Map<String, dynamic> toJson() =>
       {'id': id, 'name': name, 'price': price, 'description': description, 'amount': amount, 'storeID': storeID};
