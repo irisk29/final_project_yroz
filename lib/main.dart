@@ -13,6 +13,7 @@ import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'LogicLayer/User.dart';
@@ -29,10 +30,13 @@ import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/product_detail_screen.dart';
-import 'screens/splash_screen.dart';
 import 'screens/tabs_screen.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -46,6 +50,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _configureAmplify();
+    WidgetsBinding.instance!
+        .addPostFrameCallback((_) => FlutterNativeSplash.remove());
   }
 
   void _configureAmplify() async {
@@ -84,16 +90,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   Map<int, Color> color = {
-    50: Color.fromRGBO(243, 90, 106, .1),
-    100: Color.fromRGBO(243, 90, 106, .2),
-    200: Color.fromRGBO(243, 90, 106, .3),
-    300: Color.fromRGBO(243, 90, 106, .4),
-    400: Color.fromRGBO(243, 90, 106, .5),
-    500: Color.fromRGBO(243, 90, 106, .6),
-    600: Color.fromRGBO(243, 90, 106, .7),
-    700: Color.fromRGBO(243, 90, 106, .8),
-    800: Color.fromRGBO(243, 90, 106, .9),
-    900: Color.fromRGBO(243, 90, 106, 1),
+    50: Color.fromRGBO(255, 179, 179, .1),
+    100: Color.fromRGBO(255, 179, 179, .2),
+    200: Color.fromRGBO(255, 179, 179, .3),
+    300: Color.fromRGBO(255, 179, 179, .4),
+    400: Color.fromRGBO(255, 179, 179, .5),
+    500: Color.fromRGBO(255, 179, 179, .6),
+    600: Color.fromRGBO(255, 179, 179, .7),
+    700: Color.fromRGBO(255, 179, 179, .8),
+    800: Color.fromRGBO(255, 179, 179, .9),
+    900: Color.fromRGBO(255, 179, 179, 1),
   };
 
   @override
@@ -108,37 +114,38 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: MaterialApp(
-          title: 'MyShop',
-          theme: ThemeData(
-            primarySwatch: MaterialColor(0xFFF35A6A, color),
-            accentColor: Colors.purple,
-          ),
-          home:  LandingScreen(),
-          routes: {
-            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-            CartScreen.routeName: (ctx) => CartScreen(),
-            TabsScreen.routeName: (ctx) => TabsScreen(),
-            EditProductScreen.routeName: (ctx) => EditProductScreen(null),
-            CategoryScreen.routeName: (ctx) => CategoryScreen(),
-            SettingsScreen.routeName: (ctx) => SettingsScreen(),
-            PaymentScreen.routeName: (ctx) => PaymentScreen(),
-            OpenPhysicalStorePipeline.routeName: (ctx) =>
-                OpenPhysicalStorePipeline(),
-            OpenOnlineStorePipeline.routeName: (ctx) =>
-                OpenOnlineStorePipeline(),
-            PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
-            OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-            OnlineStoreProductsScreen.routeName: (ctx) =>
-                OnlineStoreProductsScreen(),
-            LandingScreen.routeName: (ctx) => LandingScreen(),
-            EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-            EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
-            QRViewExample.routeName: (ctx) => QRViewExample(),
-            CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
-            AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
-            ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-            ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
-          },
+        title: 'MyShop',
+        theme: ThemeData(
+          primarySwatch: MaterialColor(0xFFF35A6A, color),
+          accentColor: Colors.purple,
+        ),
+        home: LandingScreen(),
+        routes: {
+          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          CartScreen.routeName: (ctx) => CartScreen(),
+          TabsScreen.routeName: (ctx) => TabsScreen(),
+          EditProductScreen.routeName: (ctx) => EditProductScreen(null),
+          CategoryScreen.routeName: (ctx) => CategoryScreen(),
+          SettingsScreen.routeName: (ctx) => SettingsScreen(),
+          PaymentScreen.routeName: (ctx) => PaymentScreen(),
+          OpenPhysicalStorePipeline.routeName: (ctx) =>
+              OpenPhysicalStorePipeline(),
+          OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
+          PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
+          OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) =>
+              OnlineStoreProductsScreen(),
+          LandingScreen.routeName: (ctx) => LandingScreen(),
+          EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) =>
+              EditPhysicalStorePipeline(),
+          QRViewExample.routeName: (ctx) => QRViewExample(),
+          CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
+          AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
+          ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) =>
+              ManagePhysicalStoreScreen(),
+        },
       ),
     );
   }

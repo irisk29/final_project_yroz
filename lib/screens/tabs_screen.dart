@@ -22,7 +22,6 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   void initState() {
-
     _pages = [
       {
         'page': CategoriesScreen(),
@@ -46,7 +45,6 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   void didChangeDependencies() {
-
     super.didChangeDependencies();
   }
 
