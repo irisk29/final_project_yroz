@@ -110,7 +110,7 @@ class _OrderButtonState extends State<OrderButton> {
                   setState(() {
                     _isLoading = true;
                   });
-                  Navigator.push(context, MaterialPageRoute(builder: (ctx) => OnlinePaymentScreen(JsonEncoder.withIndent('  ').convert(widget.cart))));
+                  Navigator.push(context, MaterialPageRoute(builder: (ctx) => OnlinePaymentScreen(widget.cart!.onlineStoreID)));
                   setState(() {
                     _isLoading = false;
                   });

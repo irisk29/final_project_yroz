@@ -10,9 +10,9 @@ import 'package:tuple/tuple.dart';
 class OnlinePaymentScreen extends StatefulWidget {
   static const routeName = '/online-payment';
 
-  late String? bag;
+  late String? storeID;
 
-  OnlinePaymentScreen(this.bag);
+  OnlinePaymentScreen(this.storeID);
 
   @override
   State<OnlinePaymentScreen> createState() => _OnlinePaymentScreenState();
@@ -51,9 +51,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
                 children: <Widget>[
                   Flexible(
                     flex: deviceSize.width > 600 ? 2 : 1,
-                    child: PaymentCard(
-                      bagJson: widget.bag,
-                    ),
+                    child: PaymentCard(widget.storeID),
                   ),
                 ],
               ),
@@ -66,13 +64,10 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
 }
 
 class PaymentCard extends StatefulWidget {
-  final String? storeID;
-  ShoppingBagDTO? bag;
-  final String? bagJson;
+  String? storeID;
+  late ShoppingBagDTO? bag;
 
-  PaymentCard({Key? key, this.bagJson, this.storeID, this.bag}) : super(key: key){
-    this.bag = ShoppingBagDTO.fromJson(jsonDecode(this.bagJson!));
-  }
+  PaymentCard(this.storeID);
 
   @override
   _PaymentCardState createState() => _PaymentCardState();
@@ -98,8 +93,9 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _heightAnimation = Tween<Size>(end: Size(double.infinity, 320.0), begin: Size(double.infinity, 260.0))
         .animate(CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
-    initCashBack();
-    activeCreditCards();
+    () => initCashBack();
+    () => activeCreditCards();
+    () => getBagDetails();
   }
 
   void _showErrorDialog(String message) {
@@ -135,6 +131,10 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   void initCashBack() async {
     String cb = await Provider.of<User>(context, listen: false).getEWalletBalance();
     _initValues['cashback'] = double.parse(cb);
+  }
+
+  Future<void> getBagDetails() async {
+    widget.bag = await Provider.of<User>(context, listen: false).getCurrShoppingBag(widget.storeID!);
   }
 
   @override
