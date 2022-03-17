@@ -2,8 +2,8 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 class CreditCardsScreen extends StatefulWidget {
   static const routeName = '/credit-cards';
@@ -25,17 +25,31 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
   void didChangeDependencies() {
     () async {
       activeCards = [];
-      for (Tuple2<String, bool> store
-          in Provider.of<User>(context, listen: true).favoriteStores) {}
-      setState(() {
-        // Update your UI with the desired changes.
-      });
-    }();
-
-    () async {
       disabledCards = [];
-      for (String product
-          in Provider.of<User>(context, listen: true).favoriteProducts) {}
+
+      Map<String, Map<String, dynamic>> creditCards =
+          await Provider.of<User>(context, listen: false)
+              .getUserCreditCardDetails();
+      creditCards.forEach((token, creditCard) {
+        DateTime expirationDate =
+            new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+        if (DateTime.now().isBefore(expirationDate)) //not expired
+        {
+          activeCards.add(CreditCardWidget(
+              creditCard['cardHolder'],
+              creditCard['cardNumber'].toString().substring(15),
+              creditCard['expiryDate'],
+              Colors.blue,
+              token));
+        } else {
+          disabledCards.add(CreditCardWidget(
+              creditCard['cardHolder'],
+              creditCard['cardNumber'].toString().substring(15),
+              creditCard['expiryDate'],
+              Colors.red,
+              token));
+        }
+      });
       setState(() {
         // Update your UI with the desired changes.
       });
@@ -55,8 +69,9 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
             icon: Icon(
               IconData(0xf04b7, fontFamily: 'MaterialIcons'),
             ),
-            onPressed: () {
-              Navigator.of(context).pushNamed(AddCreditCardScreen.routeName);
+            onPressed: () async {
+              await Navigator.of(context)
+                  .pushNamed(AddCreditCardScreen.routeName);
             },
           ),
         ],
@@ -94,8 +109,8 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                               .toList(),
                         ].expand((i) => i).toList(),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          childAspectRatio: 1,
+                          maxCrossAxisExtent: 300,
+                          childAspectRatio: 1 / 2,
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
                         ),

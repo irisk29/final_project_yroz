@@ -32,8 +32,6 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
-    //widget.user = routeArgs['user'] as User;
-    cartSize = Provider.of<User>(context, listen: true).bagInStores.length > 0 ? Provider.of<User>(context, listen: true).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString();
     super.didChangeDependencies();
   }
 
@@ -54,7 +52,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
               },
             ),
-            value: cartSize,
+            value: Provider.of<User>(context, listen: true).bagInStores.length > 0 ? Provider.of<User>(context, listen: true).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
           ),
         ],
       ),

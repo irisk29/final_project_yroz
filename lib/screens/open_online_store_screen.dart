@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:address_search_field/address_search_field.dart';
+import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -144,9 +145,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     _editedStore!.categories = _selectedItems;
     _editedStore!.products = _products;
     try {
-      // TODO: pass bank account details DTO to openPhysicalStore
       await Provider.of<User>(context, listen: false)
-          .openOnlineStore(_editedStore!);
+          .openOnlineStore(_editedStore!, new BankAccountDTO(this.bankName!, this.branchNumber!, this.accountNumber!));
     } catch (error) {
       await showDialog(
         context: context,
@@ -636,6 +636,9 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           onSaved: (value) {
                             bankName = value;
                           }),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       TextFormField(
                         initialValue: "",
                         decoration: InputDecoration(
@@ -653,6 +656,9 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           return null;
                         },
                         onSaved: (value) => branchNumber = value,
+                      ),
+                      const SizedBox(
+                        height: 20,
                       ),
                       TextFormField(
                         initialValue: "",
@@ -712,7 +718,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       Icon(Icons.tag),
                       Icon(Icons.access_time),
                       Icon(Icons.add_shopping_cart_rounded),
-                      Icon(Icons.account_balance_wallet_outlined),
+                      Icon(Icons.account_balance),
                       Icon(Icons.store),
                     ],
                     // activeStep property set to activeStep variable defined above.

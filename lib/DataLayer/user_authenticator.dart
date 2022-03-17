@@ -2,6 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
+import 'package:tuple/tuple.dart';
 
 import 'UsersStorageProxy.dart';
 
@@ -14,7 +15,7 @@ class UserAuthenticator {
 
   UserAuthenticator._internal();
 
-  Future<UserModel> signIn(AuthProvider authProvider) async {
+  Future<Tuple2<UserModel?, bool>> signIn(AuthProvider authProvider) async {
     try {
       await Amplify.Auth.signInWithWebUI(provider: authProvider);
       var res = await Amplify.Auth.fetchUserAttributes();
@@ -25,7 +26,7 @@ class UserAuthenticator {
         if (element.userAttributeKey.key == "picture") picture = element.value;
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
-      UserModel? currUser = await UsersStorageProxy().createUser(email, name, picture);
+      Tuple2<UserModel?, bool> currUser = await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
       return currUser;
     } catch (e) {

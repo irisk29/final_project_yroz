@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:final_project_yroz/screens/payment_screen.dart';
+import 'package:final_project_yroz/screens/physical_payment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -167,7 +167,7 @@ class _openUrl {
   _openUrl(this.result);
 
   void _launchPayment(context, url) async =>
-      Navigator.of(context).pushNamed(PaymentScreen.routeName, arguments: {'store': url.toString()});
+      Navigator.of(context).pushNamed(PhysicalPaymentScreen.routeName, arguments: {'store': url.toString()});
 
   @override
   Widget build(BuildContext context) {

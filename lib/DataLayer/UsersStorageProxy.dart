@@ -21,7 +21,7 @@ class UsersStorageProxy {
 
   UsersStorageProxy._internal();
 
-  Future<UserModel> createUser(String email, String name, String imageUrl) async {
+  Future<Tuple2<UserModel, bool>> createUser(String email, String name, String imageUrl) async {
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
 
     if (users.isEmpty) //no such user in the DB
@@ -30,10 +30,10 @@ class UsersStorageProxy {
       await Amplify.DataStore.save(userModel);
       print("Created user and saved to DB");
       FLog.info(text: "Created user with id ${userModel.id}");
-      return userModel;
+      return Tuple2<UserModel, bool>(userModel, true);
     }
     var user = users.first;
-    return createFullUser(user, user.name, user.imageUrl);
+    return Tuple2<UserModel, bool>(await createFullUser(user, user.name, user.imageUrl), false);
   }
 
   Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
@@ -488,8 +488,7 @@ class UsersStorageProxy {
     }
 
     bool res = creditCards.remove(token);
-    if(!res)
-    {
+    if (!res) {
       FLog.error(text: "Removal of credit card token $token was not successful");
       return new Failure("Removal of credit card token $token was not successful", null);
     }
@@ -511,5 +510,25 @@ class UsersStorageProxy {
     await Amplify.DataStore.save(updatedUser);
     FLog.info(text: "Succssefully added eWallet token $eWallet");
     return new Ok("Succssefully added eWallet token $eWallet", eWallet);
+  }
+
+  Future<void> saveStoreBankAccount(String token) async {
+    var storeOwnerRes = await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
+    if (!storeOwnerRes.getTag()) {
+      FLog.error(text: storeOwnerRes.getMessage());
+    }
+    StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
+    storeOwnerModel = storeOwnerModel.copyWith(bankAccountToken: token);
+    await Amplify.DataStore.save(storeOwnerModel);
+  }
+
+  Future<void> removeStoreBankAccount(String token) async {
+    var storeOwnerRes = await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
+    if (!storeOwnerRes.getTag()) {
+      FLog.error(text: storeOwnerRes.getMessage());
+    }
+    StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
+    storeOwnerModel = storeOwnerModel.copyWith(bankAccountToken: null);
+    await Amplify.DataStore.save(storeOwnerModel);
   }
 }
