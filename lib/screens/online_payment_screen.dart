@@ -93,9 +93,31 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _heightAnimation = Tween<Size>(end: Size(double.infinity, 320.0), begin: Size(double.infinity, 260.0))
         .animate(CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
-    () => initCashBack();
-    () => activeCreditCards();
-    () => getBagDetails();
+    initCashBack();
+    //activeCreditCards();
+    widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(widget.storeID!);
+  }
+
+  @override
+  void didChangeDependencies() {
+    () async {
+      items = [];
+
+      Map<String, Map<String, dynamic>> creditCards =
+      await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+      creditCards.forEach((token, creditCard) {
+        DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+        if (DateTime.now().isBefore(expirationDate)) //not expired
+          {
+          items.add(Tuple2<String, String>(creditCard['cardNumber'].toString().substring(12), token));
+        }
+      });
+      setState(() {
+        dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
+        // Update your UI with the desired changes.
+      });
+    }();
+    super.didChangeDependencies();
   }
 
   void _showErrorDialog(String message) {
@@ -119,9 +141,10 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   Future<void> activeCreditCards() async {
     Map<String, Map<String, dynamic>> creditCards =
         await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+    items = [];
     creditCards.forEach((token, creditCard) {
       DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
-      if (DateTime.now().isBefore(expirationDate)) //not expired
+      if (DateTime.now().isBefore(expirationDate) && !items.where((element) => element.item1 == token).isNotEmpty) //not expired
       {
         items.add(Tuple2<String, String>(creditCard['cardNumber'].toString().substring(12), token));
       }
@@ -131,10 +154,6 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   void initCashBack() async {
     String cb = await Provider.of<User>(context, listen: false).getEWalletBalance();
     _initValues['cashback'] = double.parse(cb);
-  }
-
-  Future<void> getBagDetails() async {
-    widget.bag = await Provider.of<User>(context, listen: false).getCurrShoppingBag(widget.storeID!);
   }
 
   @override
@@ -193,10 +212,10 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
             DropdownButton(
               value: dropdownvalue,
               icon: const Icon(Icons.keyboard_arrow_down),
-              items: items.map((Tuple2<String, String> items) {
+              items: items.map((Tuple2<String, String> item) {
                 return DropdownMenuItem(
-                  value: items.item2,
-                  child: Text(items.item1),
+                  value: item.item2,
+                  child: Text(item.item1),
                 );
               }).toList(),
               onChanged: (String? newValue) {

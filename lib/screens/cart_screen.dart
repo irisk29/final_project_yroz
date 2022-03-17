@@ -114,7 +114,7 @@ class _OrderButtonState extends State<OrderButton> {
                   setState(() {
                     _isLoading = false;
                   });
-                  widget.cart!.clearBag();
+                  //widget.cart!.clearBag();
                 },
       textColor: Theme.of(context).primaryColor,
     );

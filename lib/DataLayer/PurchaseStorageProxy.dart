@@ -17,7 +17,7 @@ class PurchaseStorageProxy {
   PurchaseStorageProxy._internal();
 
   Future<void> savePurchase(String transactionID, [List<CartProductDTO>? products]) async {
-    var date = TemporalDateTime.fromString(DateTime.now().toIso8601String());
+    var date = TemporalDateTime.fromString(DateTime.now().toDateTimeIso8601String());
     var productsJson = products == null ? "" : JsonEncoder.withIndent('  ').convert(products);
     PurchaseHistoryModel purchaseHistoryModel =
         new PurchaseHistoryModel(date: date, transactionID: transactionID, products: productsJson);

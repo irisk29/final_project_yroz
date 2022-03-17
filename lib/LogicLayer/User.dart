@@ -619,7 +619,7 @@ class User extends ChangeNotifier {
       }
 
       await PurchaseStorageProxy().savePurchase(res.getValue()!, null);
-      return new Ok("Purchase was succsseful", res.getValue());
+      return new Ok("Purchase was successful", res.getValue());
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return Failure(e.toString());

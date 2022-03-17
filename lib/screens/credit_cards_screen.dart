@@ -40,11 +40,11 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
         DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
         if (DateTime.now().isBefore(expirationDate)) //not expired
         {
-          activeCards.add(CreditCardWidget(creditCard['cardHolder'], creditCard['cardNumber'].toString().substring(12),
+          activeCards.add(CreditCardWidget(creditCard['cardHolder'], creditCard['cardNumber'].toString().substring(15),
               creditCard['expiryDate'], Colors.blue, token));
         } else {
           disabledCards.add(CreditCardWidget(creditCard['cardHolder'],
-              creditCard['cardNumber'].toString().substring(12), creditCard['expiryDate'], Colors.red, token));
+              creditCard['cardNumber'].toString().substring(15), creditCard['expiryDate'], Colors.red, token));
         }
       });
       setState(() {

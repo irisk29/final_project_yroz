@@ -98,7 +98,29 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
         .animate(
         CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
     initCashBack();
-    activeCreditCards();
+    //activeCreditCards();
+  }
+
+  @override
+  void didChangeDependencies() {
+    () async {
+      items = [];
+
+      Map<String, Map<String, dynamic>> creditCards =
+      await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+      creditCards.forEach((token, creditCard) {
+        DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+        if (DateTime.now().isBefore(expirationDate)) //not expired
+            {
+          items.add(Tuple2<String, String>(creditCard['cardNumber'].toString().substring(12), token));
+        }
+      });
+      setState(() {
+        dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
+        // Update your UI with the desired changes.
+      });
+    }();
+    super.didChangeDependencies();
   }
 
   void _showErrorDialog(String message) {
@@ -220,7 +242,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                   });
                 },
               ),
-              Text('Amount left to pay: '+ (double.parse(amountController.text) - (cashbackController.text.length>0 ? double.parse(cashbackController.text) : 0)).toString()),
+              Text('Amount left to pay: '+ (amount - cashback).toString()),
               FlatButton(
                 child: Text('Confirm Amount'),
                 onPressed: () async {
