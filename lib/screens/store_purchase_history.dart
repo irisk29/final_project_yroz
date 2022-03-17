@@ -38,7 +38,6 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
             },
           ),
         ),
-      ),
-    );
+      );
   }
 }
