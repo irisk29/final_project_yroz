@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import '../screens/tabs_screen.dart';
@@ -23,8 +26,6 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appUser = context.watch<User>().isSignedIn;
-    // print(appUser);
-    // final user = ModalRoute.of(context)!.settings.arguments as User?;
     return appUser ? TabsScreen() : AuthScreen();
   }
 }

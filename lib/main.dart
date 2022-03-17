@@ -30,10 +30,13 @@ import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/product_detail_screen.dart';
-import 'screens/splash_screen.dart';
 import 'screens/tabs_screen.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -47,6 +50,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _configureAmplify();
+    WidgetsBinding.instance!
+        .addPostFrameCallback((_) => FlutterNativeSplash.remove());
   }
 
   void _configureAmplify() async {
