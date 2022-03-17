@@ -26,7 +26,6 @@ import 'screens/landing_screen.dart';
 import 'screens/manage_online_store_screen.dart';
 import 'screens/manage_physical_store_screen.dart';
 import 'screens/physical_payment_screen.dart';
-import 'screens/settings_screen.dart';
 import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
@@ -117,7 +116,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'MyShop',
         theme: ThemeData(
-          primarySwatch: MaterialColor(0xFFF35A6A, color),
+          primarySwatch: MaterialColor(0xFFFF9191, color),
           accentColor: Colors.purple,
         ),
         home: LandingScreen(),
@@ -127,7 +126,6 @@ class _MyAppState extends State<MyApp> {
           TabsScreen.routeName: (ctx) => TabsScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
-          SettingsScreen.routeName: (ctx) => SettingsScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
           OpenPhysicalStorePipeline.routeName: (ctx) =>
               OpenPhysicalStorePipeline(),

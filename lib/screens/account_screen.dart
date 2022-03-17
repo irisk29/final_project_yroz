@@ -45,143 +45,178 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Card(
-            elevation: 8.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ListTile(
-                onTap: null,
-                title: Text(
-                  user.name!,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                leading: CircleAvatar(
-                  radius: 30.0,
-                  backgroundImage: Image.network(user.imageUrl!).image,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Card(
-              elevation: 4.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    leading: Icon(
-                      Icons.credit_card,
-                      color: Colors.purple,
-                    ),
-                    title: Text("My Credit Cards"),
-                    trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(CreditCardsScreen.routeName);
-                      //open change language
-                    },
-                  ),
-                  _buildDivider(),
-                  ListTile(
-                    leading: Icon(
-                      Icons.history,
-                      color: Colors.purple,
-                    ),
-                    title: Text("My Purchases"),
-                    trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {},
-                  ),
-                ],
-              ),
-            ),
-          ),
-          _physicalStoreOwner || _onlineStoreOwner
-              ? Container()
-              : Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Card(
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          leading: Icon(
-                            Icons.storefront,
-                            color: Colors.purple,
+    return FutureBuilder(
+        future: user.getEWalletBalance(),
+        builder: (BuildContext context, AsyncSnapshot snap) => snap
+                    .connectionState !=
+                ConnectionState.done
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Card(
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          onTap: null,
+                          title: Text(
+                            user.name!,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                          title: Text("Open Physical Store"),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context).pushNamed(
-                            OpenPhysicalStorePipeline.routeName,
+                          leading: CircleAvatar(
+                            radius: 30.0,
+                            backgroundImage:
+                                Image.network(user.imageUrl!).image,
                           ),
                         ),
-                        _buildDivider(),
-                        ListTile(
-                          leading: Icon(
-                            Icons.store_outlined,
-                            color: Colors.purple,
-                          ),
-                          title: Text("Open Online Store"),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context).pushNamed(
-                            OpenOnlineStorePipeline.routeName,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Card(
+                        elevation: 4.0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Container(
+                          child: Column(
+                            children: <Widget>[
+                              ListTile(
+                                leading: Icon(
+                                  Icons.account_balance_wallet_outlined,
+                                  color: Colors.purple,
+                                ),
+                                title: Padding(
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  child: Text(
+                                    "Total Wallet Balance",
+                                    style: TextStyle(fontSize: 17),
+                                  ),
+                                ),
+                                trailing: Padding(
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  child: Text(
+                                    "€" + snap.data,
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              _buildDivider(),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.credit_card,
+                                  color: Colors.purple,
+                                ),
+                                title: Text("My Credit Cards"),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed(CreditCardsScreen.routeName);
+                                  //open change language
+                                },
+                              ),
+                              _buildDivider(),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.history,
+                                  color: Colors.purple,
+                                ),
+                                title: Text("My Purchases"),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                                onTap: () {},
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    _physicalStoreOwner || _onlineStoreOwner
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Card(
+                              elevation: 4.0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.storefront,
+                                      color: Colors.purple,
+                                    ),
+                                    title: Text("Open Physical Store"),
+                                    trailing: Icon(Icons.keyboard_arrow_right),
+                                    onTap: () =>
+                                        Navigator.of(context).pushNamed(
+                                      OpenPhysicalStorePipeline.routeName,
+                                    ),
+                                  ),
+                                  _buildDivider(),
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.store_outlined,
+                                      color: Colors.purple,
+                                    ),
+                                    title: Text("Open Online Store"),
+                                    trailing: Icon(Icons.keyboard_arrow_right),
+                                    onTap: () =>
+                                        Navigator.of(context).pushNamed(
+                                      OpenOnlineStorePipeline.routeName,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Card(
+                        elevation: 4.0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.qr_code_scanner,
+                            color: Colors.purple,
+                          ),
+                          title: Text("Scan A Barcode"),
+                          trailing: Icon(Icons.keyboard_arrow_right),
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, QRViewExample.routeName);
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Card(
+                        elevation: 4.0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.exit_to_app,
+                            color: Colors.purple,
+                          ),
+                          title: Text("Logout"),
+                          onTap: () => context.read<User>().signOut(context),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Card(
-              elevation: 4.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              child: ListTile(
-                leading: Icon(
-                  Icons.qr_code_scanner,
-                  color: Colors.purple,
-                ),
-                title: Text("Scan A Barcode"),
-                trailing: Icon(Icons.keyboard_arrow_right),
-                onTap: () {
-                  Navigator.pushNamed(context, QRViewExample.routeName);
-                },
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Card(
-              elevation: 4.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
-              child: ListTile(
-                leading: Icon(
-                  Icons.exit_to_app,
-                  color: Colors.purple,
-                ),
-                title: Text("Logout"),
-                onTap: () => context.read<User>().signOut(context),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+              ));
   }
 
   Container _buildDivider() {
