@@ -1,23 +1,32 @@
+import 'dart:ffi';
+
 import 'package:intl/intl.dart';
 
 class PurchaseHistoryDTO {
-  String? transactionID;
-  String? userID;
-  String? storeID;
-  bool? succeeded;
-  String? creditAmount;
-  String? cashBackAmount;
-  DateTime? purchaseDate;
+  String transactionID;
+  String userID;
+  String storeID;
+  bool succeeded;
+  double creditAmount;
+  double cashBackAmount;
+  DateTime purchaseDate;
 
   PurchaseHistoryDTO(
-      {this.userID, this.storeID, this.succeeded, this.creditAmount, this.cashBackAmount, this.purchaseDate, this.transactionID});
+      this.userID,
+      this.storeID,
+      this.succeeded,
+      this.creditAmount,
+      this.cashBackAmount,
+      this.purchaseDate,
+      this.transactionID);
 
   PurchaseHistoryDTO.fromJson(Map<String, dynamic> json)
-      : userID = json.containsKey('userId') ? json['userId'] : null,
-        storeID = json.containsKey('storeId') ? json['storeId'] : null,
-        cashBackAmount = json.containsKey('cashBackAmount') ? json['cashBackAmount'] : null,
-        creditAmount = json.containsKey('creditAmount') ? json['creditAmount'] : null,
+      : transactionID = json['purchaseToken'],
+        userID = json['userId'],
+        storeID = json['storeId'],
+        cashBackAmount = double.parse(json['cashBackAmount']),
+        creditAmount = double.parse(json['creditAmount']),
         purchaseDate =
-            json.containsKey('purchaseDate') ? new DateFormat('dd/MM/yyyy HH:mm:ss').parse(json['purchaseDate']) : null,
-        succeeded = json.containsKey('info') ? json['info']['succeeded'] == 'true' : null;
+            DateFormat('dd/MM/yyyy HH:mm:ss').parse(json['purchaseDate']),
+        succeeded = json['info']['succeeded'] == 'true';
 }

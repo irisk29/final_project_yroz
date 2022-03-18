@@ -698,25 +698,16 @@ class User extends ChangeNotifier {
       if (purchases != null) {
         purchases.forEach((json) {
           Map<String, String> info = json['info'] as Map<String, String>;
-          purchasesDTO.add(new PurchaseHistoryDTO(
-              userID:
-                  json.containsKey('userId') ? json['userId'] as String : null,
-              storeID: json.containsKey('storeId')
-                  ? json['storeId'] as String
-                  : null,
-              cashBackAmount: json.containsKey('cashBackAmount')
-                  ? json['cashBackAmount'] as String
-                  : null,
-              creditAmount: json.containsKey('creditAmount')
-                  ? json['creditAmount'] as String
-                  : null,
-              purchaseDate: json.containsKey('purchaseDate')
-                  ? new DateFormat('dd/MM/yyyy HH:mm:ss')
-                      .parse(json['purchaseDate'] as String)
-                  : null,
-              succeeded:
-                  json.containsKey('info') ? info['succeeded'] == 'true' : null,
-              transactionID: json["purchaseToken"] as String));
+          var purchase = PurchaseHistoryDTO(
+              json['userId'] as String,
+              json['storeId'] as String,
+              info['succeeded'] == 'true',
+              double.parse(json['cashBackAmount'] as String),
+              double.parse(json['creditAmount'] as String),
+              DateFormat('dd/MM/yyyy HH:mm:ss')
+                  .parse(json['purchaseDate'] as String),
+              json["purchaseToken"] as String);
+          purchasesDTO.add(purchase);
         });
       }
       return purchasesDTO;
@@ -746,25 +737,16 @@ class User extends ChangeNotifier {
       if (purchases != null) {
         purchases.forEach((json) {
           Map<String, String> info = json['info'] as Map<String, String>;
-          purchasesDTO.add(new PurchaseHistoryDTO(
-              userID:
-                  json.containsKey('userId') ? json['userId'] as String : null,
-              storeID: json.containsKey('storeId')
-                  ? json['storeId'] as String
-                  : null,
-              cashBackAmount: json.containsKey('cashBackAmount')
-                  ? json['cashBackAmount'] as String
-                  : null,
-              creditAmount: json.containsKey('creditAmount')
-                  ? json['creditAmount'] as String
-                  : null,
-              purchaseDate: json.containsKey('purchaseDate')
-                  ? new DateFormat('dd/MM/yyyy HH:mm:ss')
-                      .parse(json['purchaseDate'] as String)
-                  : null,
-              succeeded:
-                  json.containsKey('info') ? info['succeeded'] == 'true' : null,
-              transactionID: json["purchaseToken"] as String));
+          var purchase = PurchaseHistoryDTO(
+              json['userId'] as String,
+              json['storeId'] as String,
+              info['succeeded'] == 'true',
+              double.parse(json['cashBackAmount'] as String),
+              double.parse(json['creditAmount'] as String),
+              DateFormat('dd/MM/yyyy HH:mm:ss')
+                  .parse(json['purchaseDate'] as String),
+              json["purchaseToken"] as String);
+          purchasesDTO.add(purchase);
         });
       }
       return purchasesDTO;
@@ -782,7 +764,7 @@ class User extends ChangeNotifier {
         print(res.getMessage());
         return [];
       }
-      return res.getValue();
+      return res.getValue()!;
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return [];

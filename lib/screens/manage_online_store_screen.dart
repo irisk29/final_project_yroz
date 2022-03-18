@@ -1,5 +1,6 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/store_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -122,9 +123,8 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     title: Text("View Store Purchases"),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(StorePurchasesScreen.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
