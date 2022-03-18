@@ -34,6 +34,7 @@ type OnlineStoreModel @model @auth(rules: [{allow: public}]) {
   categories: AWSJSON!
   storeProductModels: [StoreProductModel] @hasMany(indexName: "byOnlineStoreModel", fields: ["id"])
   qrCode: String
+  imageUrl: String
 }
 
 type PhysicalStoreModel @model @auth(rules: [{allow: public}]) {
@@ -44,6 +45,7 @@ type PhysicalStoreModel @model @auth(rules: [{allow: public}]) {
   operationHours: AWSJSON!
   categories: AWSJSON!
   qrCode: String
+  imageUrl: String
 }
 
 type ShoppingBagModel @model @auth(rules: [{allow: public}]) {
