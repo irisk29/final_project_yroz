@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_payment_screen.dart';
@@ -22,7 +19,8 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.storeID = routeArgs['store'] as String;
   }
 
@@ -73,8 +71,10 @@ class _CartScreenState extends State<CartScreen> {
               itemCount: provider.getShoppingBag(widget.storeID) != null
                   ? provider.getShoppingBag(widget.storeID)!.products.length
                   : 0,
-              itemBuilder: (ctx, i) =>
-                  CartItem(provider.getShoppingBag(widget.storeID)!.products.toList()[i], widget.storeID, _update),
+              itemBuilder: (ctx, i) => CartItem(
+                  provider.getShoppingBag(widget.storeID)!.products.toList()[i],
+                  widget.storeID,
+                  _update),
             ),
           )
         ],
@@ -110,7 +110,11 @@ class _OrderButtonState extends State<OrderButton> {
                   setState(() {
                     _isLoading = true;
                   });
-                  Navigator.push(context, MaterialPageRoute(builder: (ctx) => OnlinePaymentScreen(widget.cart!.onlineStoreID)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (ctx) =>
+                              OnlinePaymentScreen(widget.cart!.onlineStoreID)));
                   setState(() {
                     _isLoading = false;
                   });

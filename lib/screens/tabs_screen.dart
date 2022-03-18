@@ -2,6 +2,7 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/account_screen.dart';
 import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
 import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
+import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,27 +38,37 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
 
+  Widget? buildAction() {
+    final user = Provider.of<User>(context, listen: true);
+
+    if (user.storeOwnerState != null) {
+      var notificationValue = user.storeOwnerState!.newPurchasesNoViewed;
+      var notificationString =
+          notificationValue > 9 ? "9+" : notificationValue.toString();
+      var icon = user.storeOwnerState!.physicalStore != null
+          ? IconButton(
+              icon: Icon(Icons.storefront),
+              onPressed: () => Navigator.of(context).pushNamed(
+                ManagePhysicalStoreScreen.routeName,
+              ),
+            )
+          : IconButton(
+              icon: Icon(Icons.store_outlined),
+              onPressed: () => Navigator.of(context).pushNamed(
+                ManageOnlineStoreScreen.routeName,
+              ),
+            );
+      return notificationValue == 0
+          ? icon
+          : Badge(child: icon, value: notificationString);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    final user = Provider.of<User>(context);
-    late List<Widget> actions = [];
-
-    if (user.storeOwnerState != null &&
-        user.storeOwnerState!.physicalStore != null)
-      actions.add(IconButton(
-          icon: Icon(Icons.storefront),
-          onPressed: () => Navigator.of(context).pushNamed(
-                ManagePhysicalStoreScreen.routeName,
-              )));
-    else if (user.storeOwnerState != null &&
-        user.storeOwnerState!.onlineStore != null)
-      actions.add(IconButton(
-        icon: Icon(Icons.store_outlined),
-        onPressed: () => Navigator.of(context).pushNamed(
-          ManageOnlineStoreScreen.routeName,
-        ),
-      ));
+    final action = buildAction();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -70,7 +81,7 @@ class _TabsScreenState extends State<TabsScreen> {
         ),
         leadingWidth: deviceSize.width * 0.37,
         toolbarHeight: deviceSize.height * 0.1,
-        actions: actions,
+        actions: action != null ? List.from([action]) : [],
       ),
       body: _pages[_selectedPageIndex],
       bottomNavigationBar: BottomNavigationBar(

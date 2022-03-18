@@ -73,7 +73,8 @@ class User extends ChangeNotifier {
           : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
       this.storeOwnerState = model.storeOwnerModel == null
           ? null
-          : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!);
+          : StoreOwnerState.storeOwnerStateFromModel(
+              model.storeOwnerModel!, () => notifyListeners());
       if (model.shoppingBagModels != null) {
         for (ShoppingBagModel shoppingBagModel in model.shoppingBagModels!) {
           var res = await UsersStorageProxy()
@@ -131,7 +132,8 @@ class User extends ChangeNotifier {
           (res.getValue() as Tuple2); //<online store model, store owner id>
       if (storeOwnerState == null) {
         //we might already have a store, hence it won't be null
-        this.storeOwnerState = new StoreOwnerState(tuple.item2);
+        this.storeOwnerState =
+            new StoreOwnerState(tuple.item2, () => notifyListeners());
       }
       this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
       String storeID = tuple.item1.id;
@@ -155,7 +157,8 @@ class User extends ChangeNotifier {
           (res.getValue() as Tuple2); //<physical store model, store owner id>
       if (storeOwnerState == null) {
         //we might already have a store, hence it won't be null
-        this.storeOwnerState = new StoreOwnerState(tuple.item2);
+        this.storeOwnerState =
+            new StoreOwnerState(tuple.item2, () => notifyListeners());
       }
       this.storeOwnerState!.setPhysicalStore(tuple.item1);
       String storeID = tuple.item1.id;
@@ -262,7 +265,8 @@ class User extends ChangeNotifier {
         return;
       }
       Tuple2<OnlineStoreModel, String> retVal = res.getValue();
-      this.storeOwnerState = new StoreOwnerState(retVal.item2);
+      this.storeOwnerState =
+          new StoreOwnerState(retVal.item2, () => notifyListeners());
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
       this.storeOwnerState!.physicalStore = null;
 
