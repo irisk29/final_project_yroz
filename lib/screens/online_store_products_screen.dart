@@ -21,11 +21,6 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
   String cartSize = "0";
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     final routeArgs =
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;

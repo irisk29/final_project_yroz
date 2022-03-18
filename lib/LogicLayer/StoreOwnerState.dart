@@ -37,7 +37,8 @@ class StoreOwnerState {
   String get getStoreOwnerID => _storeOwnerID;
   void setStoreOwnerID(id) => _storeOwnerID = id;
 
-  void setOnlineStoreFromModel(OnlineStoreModel onlineStoreModel) async {
+  Future<void> setOnlineStoreFromModel(
+      OnlineStoreModel onlineStoreModel) async {
     var categories = jsonDecode(onlineStoreModel.categories);
     Map<String, dynamic> operationHours =
         jsonDecode(onlineStoreModel.operationHours);
@@ -84,7 +85,7 @@ class StoreOwnerState {
     this.onlineStore = onlineStoreDTO;
   }
 
-  void setPhysicalStore(PhysicalStoreModel physicalStoreModel) async {
+  Future<void> setPhysicalStore(PhysicalStoreModel physicalStoreModel) async {
     var categories = jsonDecode(physicalStoreModel.categories);
     Map<String, dynamic> operationHours =
         jsonDecode(physicalStoreModel.operationHours);

@@ -6,35 +6,33 @@ import 'package:provider/provider.dart';
 class ManagePhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/manage-physical-store';
 
-  late StoreDTO? store;
+  late StoreDTO store;
 
   @override
-  _ManagePhysicalStoreScreenState createState() => _ManagePhysicalStoreScreenState();
-
+  _ManagePhysicalStoreScreenState createState() =>
+      _ManagePhysicalStoreScreenState();
 }
 
 class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
-    widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore;
+    widget.store = Provider.of<User>(context, listen: false)
+        .storeOwnerState!
+        .physicalStore!;
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final notificationCount = Provider.of<User>(context, listen: true)
+        .storeOwnerState!
+        .newPurchasesNoViewed;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.store!.name,
+          widget.store.name,
         ),
-        actions: [
-
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -44,22 +42,13 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: widget.store!.imageFromPhone != null
-                      ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store!.imageFromPhone!))
+                  image: widget.store.imageFromPhone != null
+                      ? DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(widget.store.imageFromPhone!))
                       : DecorationImage(
-                      image: AssetImage('assets/images/default-store.png'),
-                      fit: BoxFit.cover),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "Actions:",
-                  style:
-                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -72,11 +61,63 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                 children: <Widget>[
                   ListTile(
                     leading: Icon(
+                      Icons.edit,
+                      color: Colors.purple,
+                    ),
+                    title: Text("Edit Store Details"),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () {
+                      //TODO: ADD FUNCTIONALITY
+                    },
+                  ),
+                  _buildDivider(),
+                  ListTile(
+                    leading: Icon(
                       Icons.account_balance,
                       color: Colors.purple,
                     ),
-                    title: Text("Add Bank Account"),
+                    title: Text("Edit Bank Account"),
                     trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () {
+                      //TODO: ADD FUNCTIONALITY
+                    },
+                  ),
+                  _buildDivider(),
+                  ListTile(
+                    leading: Stack(
+                      children: <Widget>[
+                        Icon(
+                          Icons.history,
+                          color: Colors.purple,
+                        ),
+                        notificationCount > 0
+                            ? Positioned(
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(1),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 12,
+                                    minHeight: 12,
+                                  ),
+                                  child: Text(
+                                    '$notificationCount',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    title: Text("View Store Purchases"),
                     onTap: () {
                       //TODO: ADD FUNCTIONALITY
                     },
@@ -87,19 +128,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                       Icons.arrow_circle_up,
                       color: Colors.purple,
                     ),
-                    title: Text("Make Online Store"),
-                    trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
-                  ),
-                  _buildDivider(),
-                  ListTile(
-                    leading: Icon(
-                      Icons.edit,
-                      color: Colors.purple,
-                    ),
-                    title: Text("Edit Store"),
+                    title: Text("Upgrade to Online Store"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
                       //TODO: ADD FUNCTIONALITY
