@@ -3,6 +3,7 @@ type StoreOwnerModel @model @auth(rules: [{allow: public}]) {
   onlineStoreModel: OnlineStoreModel @hasOne
   physicalStoreModel: PhysicalStoreModel @hasOne
   bankAccountToken: String
+  lastPurchasesView: AWSDateTime
 }
 
 type UserModel @model @auth(rules: [{allow: public}]) {
@@ -23,6 +24,8 @@ type PurchaseHistoryModel @model @auth(rules: [{allow: public}]) {
   date: AWSDateTime!
   transactionID: String!
   products: AWSJSON
+  userID: String
+  storeID: String
 }
 
 type OnlineStoreModel @model @auth(rules: [{allow: public}]) {

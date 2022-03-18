@@ -23,8 +23,10 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
   }
 
   Future<void> _pullRefresh() async {
-    List<PurchaseHistoryDTO> newPurchasesTemp = await Provider.of<User>(context)
-        .getSuccssefulPurchaseHistoryForStoreInPastMonth();
+    DateTime now = DateTime.now();
+    DateTime monthAgo = new DateTime(now.year, now.month - 1, now.day);
+    List<PurchaseHistoryDTO> newPurchasesTemp =
+        await Provider.of<User>(context).storeOwnerState!.getSuccssefulPurchaseHistoryForStoreInDateRange(monthAgo, now);
     setState(() {
       newStorePurchases = newPurchasesTemp;
     });

@@ -1,11 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/DTOs/PurchaseHistoryDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
-import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
+import 'package:final_project_yroz/models/PurchaseHistoryModel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -15,12 +21,11 @@ class StoreOwnerState {
   StoreDTO? physicalStore;
   String? storeBankAccountToken;
 
-  VoidCallback callback;
-  DateTime? lastTimeViewedPurchases;
+  VoidCallback callback; //to notify changes in store owner state
+   //Default Value, everything wil be bigger because this date already passed
+  DateTime lastTimeViewedPurchases = DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
   int newPurchasesNoViewed = 0;
-
-  // TODO: add here the observeQuery and stream.listen for notifications
-  // inside stream.listen call this.callback instead of setState
+  StreamSubscription<QuerySnapshot<PurchaseHistoryModel>>? purchasesMonitor;
 
   StoreOwnerState(this._storeOwnerID, this.callback);
   StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model, this.callback)
@@ -32,20 +37,19 @@ class StoreOwnerState {
       setPhysicalStore(model.physicalStoreModel!);
     }
     this.storeBankAccountToken = model.bankAccountToken;
+    this.lastTimeViewedPurchases = model.lastPurchasesView!.getDateTimeInUtc();
+    createPurchasesSubscription();
   }
 
   String get getStoreOwnerID => _storeOwnerID;
   void setStoreOwnerID(id) => _storeOwnerID = id;
 
-  Future<void> setOnlineStoreFromModel(
-      OnlineStoreModel onlineStoreModel) async {
+  Future<void> setOnlineStoreFromModel(OnlineStoreModel onlineStoreModel) async {
     var categories = jsonDecode(onlineStoreModel.categories);
-    Map<String, dynamic> operationHours =
-        jsonDecode(onlineStoreModel.operationHours);
+    Map<String, dynamic> operationHours = jsonDecode(onlineStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
     List<ProductDTO> products = [];
-    if (onlineStoreModel.storeProductModels == null ||
-        onlineStoreModel.storeProductModels!.isEmpty) {
+    if (onlineStoreModel.storeProductModels == null || onlineStoreModel.storeProductModels!.isEmpty) {
       onlineStoreModel.storeProductModels!.forEach((e) async {
         products.add(new ProductDTO(
             id: e.id,
@@ -77,8 +81,7 @@ class StoreOwnerState {
 
   Future<void> setPhysicalStore(PhysicalStoreModel physicalStoreModel) async {
     var categories = jsonDecode(physicalStoreModel.categories);
-    Map<String, dynamic> operationHours =
-        jsonDecode(physicalStoreModel.operationHours);
+    Map<String, dynamic> operationHours = jsonDecode(physicalStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
     physicalStore = new StoreDTO(
         id: physicalStoreModel.id,
@@ -91,17 +94,73 @@ class StoreOwnerState {
         qrCode: physicalStoreModel.qrCode!);
   }
 
-  Map<String, List<TimeOfDay>> parseOperationHours(
-      Map<String, dynamic> operationHours) {
+  Map<String, List<TimeOfDay>> parseOperationHours(Map<String, dynamic> operationHours) {
     Map<String, List<TimeOfDay>> opH = {};
     operationHours.forEach((key, value) {
       List<dynamic> op = List.from(value);
       DateFormat inputFormat = DateFormat('hh:mm a');
-      List<TimeOfDay> lst = op
-          .map((e) => TimeOfDay.fromDateTime(inputFormat.parse(e as String)))
-          .toList();
+      List<TimeOfDay> lst = op.map((e) => TimeOfDay.fromDateTime(inputFormat.parse(e as String))).toList();
       opH[key] = lst;
     });
     return opH;
+  }
+
+  Future<List<PurchaseHistoryDTO>> getSuccssefulPurchaseHistoryForStoreInDateRange(DateTime start, DateTime end) async {
+    try {
+      String storeID = this.onlineStore != null ? this.onlineStore!.id : this.physicalStore!.id;
+      var res = await InternalPaymentGateway().getPurchaseHistory(start, end, storeId: storeID, succeeded: true);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return [];
+      }
+      FLog.info(text: "Got store purchases: ${res.getValue()}");
+      List<PurchaseHistoryDTO> purchasesDTO = [];
+      Iterable<Map<String, Object>>? purchases = res.getValue();
+      if (purchases != null) {
+        purchases.forEach((json) {
+          Map<String, String> info = json['info'] as Map<String, String>;
+          var purchase = PurchaseHistoryDTO(
+              json['userId'] as String,
+              json['storeId'] as String,
+              info['succeeded'] == 'true',
+              double.parse(json['cashBackAmount'] as String),
+              double.parse(json['creditAmount'] as String),
+              DateFormat('dd/MM/yyyy HH:mm:ss').parse(json['purchaseDate'] as String),
+              json["purchaseToken"] as String);
+          purchasesDTO.add(purchase);
+        });
+      }
+      return purchasesDTO;
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return [];
+    }
+  }
+
+  Future<void> cancelPurchasesSubscription() async {
+    try {
+      if (this.purchasesMonitor != null) {
+        await this.purchasesMonitor!.cancel();
+      }
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
+  }
+
+  void createPurchasesSubscription() {
+    String myStore = this.onlineStore != null ? this.onlineStore!.id : this.physicalStore!.id;
+    Stream<QuerySnapshot<PurchaseHistoryModel>> stream = Amplify.DataStore.observeQuery(PurchaseHistoryModel.classType,
+        where: PurchaseHistoryModel.STOREID.eq(myStore) & PurchaseHistoryModel.DATE.gt(this.lastTimeViewedPurchases));
+
+    this.purchasesMonitor = stream.listen((QuerySnapshot<PurchaseHistoryModel> snapshot) {
+      this.newPurchasesNoViewed = snapshot.items.length;
+      callback();
+    });
+  }
+
+  Future<void> updateLastTimeViewedPurchses(DateTime date) async {
+    this.lastTimeViewedPurchases = date;
+    cancelPurchasesSubscription();
+    createPurchasesSubscription();
   }
 }

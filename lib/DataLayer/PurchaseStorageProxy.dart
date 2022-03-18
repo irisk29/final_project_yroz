@@ -17,14 +17,15 @@ class PurchaseStorageProxy {
 
   PurchaseStorageProxy._internal();
 
-  Future<void> savePurchase(String transactionID,
+  Future<void> savePurchase(String transactionID, String userID, String storeID,
       [List<CartProductDTO>? products]) async {
     var date =
         TemporalDateTime.fromString(DateTime.now().toDateTimeIso8601String());
     var productsJson =
         products == null ? "" : JsonEncoder.withIndent('  ').convert(products);
     PurchaseHistoryModel purchaseHistoryModel = new PurchaseHistoryModel(
-        date: date, transactionID: transactionID, products: productsJson);
+        date: date, transactionID: transactionID,
+        userID: userID, storeID: storeID, products: productsJson);
 
     await Amplify.DataStore.save(purchaseHistoryModel);
     FLog.info(
