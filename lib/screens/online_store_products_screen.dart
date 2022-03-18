@@ -1,5 +1,4 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
-import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +15,9 @@ class OnlineStoreProductsScreen extends StatefulWidget {
   @override
   _OnlineStoreProductsScreenState createState() =>
       _OnlineStoreProductsScreenState();
-
 }
 
 class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
-
   String cartSize = "0";
 
   @override
@@ -30,7 +27,8 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
     super.didChangeDependencies();
   }
@@ -49,10 +47,21 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 Icons.shopping_cart,
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName, arguments: {'store': widget.store.id});
+                Navigator.of(context).pushNamed(CartScreen.routeName,
+                    arguments: {'store': widget.store.id});
               },
             ),
-            value: Provider.of<User>(context, listen: true).bagInStores.length > 0 ? Provider.of<User>(context, listen: true).bagInStores.where((element) => element.onlineStoreID == widget.store.id).first.products.length.toString() : 0.toString(),
+            value: Provider.of<User>(context, listen: true).bagInStores.length >
+                    0
+                ? Provider.of<User>(context, listen: true)
+                    .bagInStores
+                    .where(
+                        (element) => element.onlineStoreID == widget.store.id)
+                    .first
+                    .products
+                    .length
+                    .toString()
+                : 0.toString(),
           ),
         ],
       ),
@@ -78,8 +87,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 children: [
                   widget.store.products
                       .map(
-                        (storeData) =>
-                            ProductItem(storeData, widget.store.id),
+                        (storeData) => ProductItem(storeData, widget.store.id),
                       )
                       .toList(),
                 ].expand((i) => i).toList(),

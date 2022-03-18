@@ -15,8 +15,15 @@ class StoreOwnerState {
   StoreDTO? physicalStore;
   String? storeBankAccountToken;
 
-  StoreOwnerState(this._storeOwnerID);
-  StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model)
+  VoidCallback callback;
+  DateTime? lastTimeViewedPurchases;
+  int newPurchasesNoViewed = 0;
+
+  // TODO: add here the observeQuery and stream.listen for notifications
+  // inside stream.listen call this.callback instead of setState
+
+  StoreOwnerState(this._storeOwnerID, this.callback);
+  StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model, this.callback)
       : _storeOwnerID = model.id {
     if (model.onlineStoreModel != null) {
       setOnlineStoreFromModel(model.onlineStoreModel!);
