@@ -34,6 +34,7 @@ class PhysicalStoreModel extends Model {
   final String? _operationHours;
   final String? _categories;
   final String? _qrCode;
+  final String? _imageUrl;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -114,6 +115,10 @@ class PhysicalStoreModel extends Model {
     return _qrCode;
   }
   
+  String? get imageUrl {
+    return _imageUrl;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -122,9 +127,9 @@ class PhysicalStoreModel extends Model {
     return _updatedAt;
   }
   
-  const PhysicalStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, qrCode, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _qrCode = qrCode, _createdAt = createdAt, _updatedAt = updatedAt;
+  const PhysicalStoreModel._internal({required this.id, required name, required phoneNumber, required address, required operationHours, required categories, qrCode, imageUrl, createdAt, updatedAt}): _name = name, _phoneNumber = phoneNumber, _address = address, _operationHours = operationHours, _categories = categories, _qrCode = qrCode, _imageUrl = imageUrl, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory PhysicalStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, String? qrCode}) {
+  factory PhysicalStoreModel({String? id, required String name, required String phoneNumber, required String address, required String operationHours, required String categories, String? qrCode, String? imageUrl}) {
     return PhysicalStoreModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -132,7 +137,8 @@ class PhysicalStoreModel extends Model {
       address: address,
       operationHours: operationHours,
       categories: categories,
-      qrCode: qrCode);
+      qrCode: qrCode,
+      imageUrl: imageUrl);
   }
   
   bool equals(Object other) {
@@ -149,7 +155,8 @@ class PhysicalStoreModel extends Model {
       _address == other._address &&
       _operationHours == other._operationHours &&
       _categories == other._categories &&
-      _qrCode == other._qrCode;
+      _qrCode == other._qrCode &&
+      _imageUrl == other._imageUrl;
   }
   
   @override
@@ -167,6 +174,7 @@ class PhysicalStoreModel extends Model {
     buffer.write("operationHours=" + "$_operationHours" + ", ");
     buffer.write("categories=" + "$_categories" + ", ");
     buffer.write("qrCode=" + "$_qrCode" + ", ");
+    buffer.write("imageUrl=" + "$_imageUrl" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -174,7 +182,7 @@ class PhysicalStoreModel extends Model {
     return buffer.toString();
   }
   
-  PhysicalStoreModel copyWith({String? id, String? name, String? phoneNumber, String? address, String? operationHours, String? categories, String? qrCode}) {
+  PhysicalStoreModel copyWith({String? id, String? name, String? phoneNumber, String? address, String? operationHours, String? categories, String? qrCode, String? imageUrl}) {
     return PhysicalStoreModel._internal(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -182,7 +190,8 @@ class PhysicalStoreModel extends Model {
       address: address ?? this.address,
       operationHours: operationHours ?? this.operationHours,
       categories: categories ?? this.categories,
-      qrCode: qrCode ?? this.qrCode);
+      qrCode: qrCode ?? this.qrCode,
+      imageUrl: imageUrl ?? this.imageUrl);
   }
   
   PhysicalStoreModel.fromJson(Map<String, dynamic> json)  
@@ -193,11 +202,12 @@ class PhysicalStoreModel extends Model {
       _operationHours = json['operationHours'],
       _categories = json['categories'],
       _qrCode = json['qrCode'],
+      _imageUrl = json['imageUrl'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'phoneNumber': _phoneNumber, 'address': _address, 'operationHours': _operationHours, 'categories': _categories, 'qrCode': _qrCode, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'phoneNumber': _phoneNumber, 'address': _address, 'operationHours': _operationHours, 'categories': _categories, 'qrCode': _qrCode, 'imageUrl': _imageUrl, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "physicalStoreModel.id");
@@ -207,6 +217,7 @@ class PhysicalStoreModel extends Model {
   static final QueryField OPERATIONHOURS = QueryField(fieldName: "operationHours");
   static final QueryField CATEGORIES = QueryField(fieldName: "categories");
   static final QueryField QRCODE = QueryField(fieldName: "qrCode");
+  static final QueryField IMAGEURL = QueryField(fieldName: "imageUrl");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "PhysicalStoreModel";
     modelSchemaDefinition.pluralName = "PhysicalStoreModels";
@@ -256,6 +267,12 @@ class PhysicalStoreModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: PhysicalStoreModel.QRCODE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: PhysicalStoreModel.IMAGEURL,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));

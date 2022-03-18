@@ -43,19 +43,10 @@ class StoreOwnerState {
     Map<String, dynamic> operationHours =
         jsonDecode(onlineStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
-    String? imageUrl =
-        await StoreStorageProxy().getDownloadUrl(onlineStoreModel.id);
-    File? imageFile = imageUrl != null
-        ? await StoreStorageProxy().createFileFromImageUrl(imageUrl)
-        : null;
     List<ProductDTO> products = [];
     if (onlineStoreModel.storeProductModels == null ||
         onlineStoreModel.storeProductModels!.isEmpty) {
       onlineStoreModel.storeProductModels!.forEach((e) async {
-        String? prodImageUrl = await StoreStorageProxy().getDownloadUrl(e.id);
-        File? prodImageFile = prodImageUrl != null
-            ? await StoreStorageProxy().createFileFromImageUrl(prodImageUrl)
-            : null;
         products.add(new ProductDTO(
             id: e.id,
             name: e.name,
@@ -64,7 +55,7 @@ class StoreOwnerState {
             price: e.price,
             imageUrl: e.imageUrl!,
             storeID: e.onlinestoremodelID,
-            imageFromPhone: prodImageFile));
+            imageFromPhone: null));
       });
     }
 
@@ -75,10 +66,9 @@ class StoreOwnerState {
         address: onlineStoreModel.address,
         categories: List<String>.from(categories),
         operationHours: op,
-        image: imageUrl,
+        image: onlineStoreModel.imageUrl,
         products: products,
-        qrCode: onlineStoreModel.qrCode,
-        imageFromPhone: imageFile);
+        qrCode: onlineStoreModel.qrCode);
   }
 
   void setOnlineStore(OnlineStoreDTO onlineStoreDTO) {
@@ -90,11 +80,6 @@ class StoreOwnerState {
     Map<String, dynamic> operationHours =
         jsonDecode(physicalStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
-    String? imageUrl =
-        await StoreStorageProxy().getDownloadUrl(physicalStoreModel.id);
-    File? imageFile = imageUrl != null
-        ? await StoreStorageProxy().createFileFromImageUrl(imageUrl)
-        : null;
     physicalStore = new StoreDTO(
         id: physicalStoreModel.id,
         name: physicalStoreModel.name,
@@ -102,9 +87,8 @@ class StoreOwnerState {
         address: physicalStoreModel.address,
         categories: List<String>.from(categories),
         operationHours: op,
-        image: imageUrl,
-        qrCode: physicalStoreModel.qrCode!,
-        imageFromPhone: imageFile);
+        image: physicalStoreModel.imageUrl,
+        qrCode: physicalStoreModel.qrCode!);
   }
 
   Map<String, List<TimeOfDay>> parseOperationHours(

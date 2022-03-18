@@ -34,8 +34,8 @@ class _ProductItemState extends State<ProductItem> {
               child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              image: widget.product.imageUrl.isNotEmpty && widget.product.imageFromPhone != null
-                  ? DecorationImage(image: FileImage(widget.product.imageFromPhone!), fit: BoxFit.cover)
+              image: widget.product.imageUrl.isNotEmpty
+                  ? DecorationImage(image: NetworkImage(widget.product.imageUrl), fit: BoxFit.cover)
                   : DecorationImage(
                       image: AssetImage('assets/images/default_product.png'),
                       fit: BoxFit.cover),

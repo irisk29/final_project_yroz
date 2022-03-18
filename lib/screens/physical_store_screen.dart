@@ -94,8 +94,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: widget.store.imageFromPhone != null
-                      ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store.imageFromPhone!))
+                  image: widget.store.image != null
+                      ? DecorationImage(fit: BoxFit.cover, image: NetworkImage(widget.store.image!))
                       : DecorationImage(
                           image: AssetImage('assets/images/default-store.png'),
                           fit: BoxFit.cover),
