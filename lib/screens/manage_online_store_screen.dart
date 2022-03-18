@@ -6,11 +6,11 @@ import 'package:provider/provider.dart';
 class ManageOnlineStoreScreen extends StatefulWidget {
   static const routeName = '/manage-online-store';
 
-  late OnlineStoreDTO? store;
+  late OnlineStoreDTO store;
 
   @override
-  _ManageOnlineStoreScreenState createState() => _ManageOnlineStoreScreenState();
-
+  _ManageOnlineStoreScreenState createState() =>
+      _ManageOnlineStoreScreenState();
 }
 
 class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
@@ -21,20 +21,22 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
 
   @override
   void didChangeDependencies() {
-    widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
+    widget.store =
+        Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final notificationCount = Provider.of<User>(context, listen: true)
+        .storeOwnerState!
+        .newPurchasesNoViewed;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.store!.name,
+          widget.store.name,
         ),
-        actions: [
-
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -44,22 +46,13 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
-                  image: widget.store!.imageFromPhone != null
-                      ? DecorationImage(fit: BoxFit.cover, image: FileImage(widget.store!.imageFromPhone!))
+                  image: widget.store.imageFromPhone != null
+                      ? DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(widget.store.imageFromPhone!))
                       : DecorationImage(
-                      image: AssetImage('assets/images/default-store.png'),
-                      fit: BoxFit.cover),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: EdgeInsets.only(left: 15.0),
-                child: Text(
-                  "Actions:",
-                  style:
-                  TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -70,6 +63,18 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                   borderRadius: BorderRadius.circular(10.0)),
               child: Column(
                 children: <Widget>[
+                  ListTile(
+                    leading: Icon(
+                      Icons.edit,
+                      color: Colors.purple,
+                    ),
+                    title: Text("Edit Store Details"),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () {
+                      //TODO: ADD FUNCTIONALITY
+                    },
+                  ),
+                  _buildDivider(),
                   ListTile(
                     leading: Icon(
                       Icons.account_balance,
@@ -83,12 +88,40 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                   ),
                   _buildDivider(),
                   ListTile(
-                    leading: Icon(
-                      Icons.payments,
-                      color: Colors.purple,
+                    leading: Stack(
+                      children: <Widget>[
+                        Icon(
+                          Icons.history,
+                          color: Colors.purple,
+                        ),
+                        notificationCount > 0
+                            ? Positioned(
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(1),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 12,
+                                    minHeight: 12,
+                                  ),
+                                  child: Text(
+                                    '$notificationCount',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
                     ),
-                    title: Text("View Store Purchases"),
                     trailing: Icon(Icons.keyboard_arrow_right),
+                    title: Text("View Store Purchases"),
                     onTap: () {
                       //TODO: ADD FUNCTIONALITY
                     },
@@ -96,10 +129,10 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                   _buildDivider(),
                   ListTile(
                     leading: Icon(
-                      Icons.edit,
+                      Icons.arrow_circle_down,
                       color: Colors.purple,
                     ),
-                    title: Text("Edit Store"),
+                    title: Text("Downgrade to Physical Store"),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     onTap: () {
                       //TODO: ADD FUNCTIONALITY
