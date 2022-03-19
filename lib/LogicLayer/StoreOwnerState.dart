@@ -174,8 +174,8 @@ class StoreOwnerState {
     this.purchasesMonitor =
         stream.listen((QuerySnapshot<PurchaseHistoryModel> snapshot) {
       this.newPurchasesNoViewed = snapshot.items.length;
-      FLog.info(text: snapshot.items.first.date.toString());
-      FLog.info(text: "purchases: " + this.newPurchasesNoViewed.toString());
+      FLog.info(
+          text: "Got new purchases: " + this.newPurchasesNoViewed.toString());
       callback();
     });
   }
