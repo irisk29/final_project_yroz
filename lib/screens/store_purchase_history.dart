@@ -16,70 +16,61 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
   late List<PurchaseHistoryDTO> newStorePurchases = [];
   late List<PurchaseHistoryDTO> earlierStorePurchases = [];
 
-  @override
-  void didChangeDependencies() {
-    _pullRefresh();
-    super.didChangeDependencies();
-  }
-
   Future<void> _pullRefresh() async {
-    User user = Provider.of<User>(context);
+    User user = Provider.of<User>(context, listen: false);
     DateTime now = DateTime.now();
     DateTime monthAgo = new DateTime(now.year, now.month - 1, now.day);
     DateTime lastVisit = user.storeOwnerState!.lastTimeViewedPurchases;
-    print(lastVisit);
-    print(now);
-    List<PurchaseHistoryDTO> newPurchasesTemp = await user.storeOwnerState!
+    newStorePurchases = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(lastVisit, now);
-    List<PurchaseHistoryDTO> earlierPurchasesTemp = await user.storeOwnerState!
+    earlierStorePurchases = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(monthAgo, lastVisit);
-    setState(() {
-      newStorePurchases = newPurchasesTemp;
-      earlierStorePurchases = earlierPurchasesTemp;
-    });
-    user.storeOwnerState!.updateLastTimeViewedPurchses(now);
+    await user.storeOwnerState!.updateLastTimeViewedPurchses(now);
+    print(user.storeOwnerState!.newPurchasesNoViewed);
   }
 
   @override
   Widget build(BuildContext context) {
-    var numOfPurchases =
-        newStorePurchases.length + earlierStorePurchases.length;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "Latest Purchases",
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: _pullRefresh,
-        child: numOfPurchases > 0
-            ? ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: numOfPurchases,
-                itemBuilder: (context, index) {
-                  if (index == 0 && newStorePurchases.length > 0) {
-                    return Column(children: [
-                      Text("New"),
-                      HistoryPurchaseItem(newStorePurchases[index])
-                    ]);
-                  } else if (index == newStorePurchases.length) {
-                    return Column(children: [
-                      Text("Earlier"),
-                      HistoryPurchaseItem(earlierStorePurchases[
-                          index - newStorePurchases.length])
-                    ]);
-                  } else if (index < newStorePurchases.length) {
-                    return HistoryPurchaseItem(newStorePurchases[index]);
-                  }
-                  return HistoryPurchaseItem(
-                      earlierStorePurchases[index - newStorePurchases.length]);
-                },
-              )
-            : Center(
-                child:
-                    Text("We are Sorry, no purchases made in your store yet"),
-              ),
+      body: FutureBuilder(
+        future: _pullRefresh(),
+        builder: (BuildContext context, AsyncSnapshot snap) {
+          return snap.connectionState != ConnectionState.done
+              ? Center(child: CircularProgressIndicator())
+              : newStorePurchases.length + earlierStorePurchases.length > 0
+                  ? ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: newStorePurchases.length +
+                          earlierStorePurchases.length,
+                      itemBuilder: (context, index) {
+                        if (index == 0 && newStorePurchases.length > 0) {
+                          return Column(children: [
+                            Text("New"),
+                            HistoryPurchaseItem(newStorePurchases[index])
+                          ]);
+                        } else if (index == newStorePurchases.length) {
+                          return Column(children: [
+                            Text("Earlier"),
+                            HistoryPurchaseItem(earlierStorePurchases[
+                                index - newStorePurchases.length])
+                          ]);
+                        } else if (index < newStorePurchases.length) {
+                          return HistoryPurchaseItem(newStorePurchases[index]);
+                        }
+                        return HistoryPurchaseItem(earlierStorePurchases[
+                            index - newStorePurchases.length]);
+                      },
+                    )
+                  : Center(
+                      child: Text(
+                          "We are Sorry, no purchases made in your store yet"),
+                    );
+        },
       ),
     );
   }
