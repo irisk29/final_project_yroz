@@ -51,8 +51,25 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _configureAmplify();
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => FlutterNativeSplash.remove());
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      await deleteLocalDataStore();
+      FlutterNativeSplash.remove();
+    });
+  }
+
+  Future<void> deleteLocalDataStore() async {
+    //get fresh information from cloud everytime the app starts
+    try {
+      await Amplify.DataStore.clear();
+    } catch (error) {
+      print('Error stopping DataStore: $error');
+    }
+
+    try {
+      await Amplify.DataStore.start();
+    } catch (error) {
+      print('Error starting DataStore: $error');
+    }
   }
 
   void _configureAmplify() async {
@@ -75,18 +92,6 @@ class _MyAppState extends State<MyApp> {
       });
     } catch (e) {
       print(e);
-    }
-    //get fresh information from cloud everytime the app starts
-    try {
-      await Amplify.DataStore.clear();
-    } catch (error) {
-      print('Error stopping DataStore: $error');
-    }
-
-    try {
-      await Amplify.DataStore.start();
-    } catch (error) {
-      print('Error starting DataStore: $error');
     }
   }
 
@@ -128,23 +133,19 @@ class _MyAppState extends State<MyApp> {
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) =>
-              OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) =>
-              OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
           LandingScreen.routeName: (ctx) => LandingScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) =>
-              EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) =>
-              ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
         },

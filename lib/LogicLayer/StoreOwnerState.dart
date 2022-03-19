@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -11,7 +10,6 @@ import 'package:final_project_yroz/DTOs/PurchaseHistoryDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
-import 'package:final_project_yroz/models/PurchaseHistoryModel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -38,7 +36,7 @@ class StoreOwnerState {
       setPhysicalStore(model.physicalStoreModel!);
     }
     this.storeBankAccountToken = model.bankAccountToken;
-    this.lastTimeViewedPurchases = model.lastPurchasesView! as DateTime;
+    this.lastTimeViewedPurchases = model.lastPurchasesView!.getDateTimeInUtc();
     createPurchasesSubscription();
   }
 
@@ -131,7 +129,7 @@ class StoreOwnerState {
       Iterable<Map<String, Object>>? purchases = res.getValue();
       if (purchases != null) {
         purchases.forEach((json) {
-          Map<String, String> info = json['info'] as Map<String, String>;
+          Map<String, dynamic> info = json['info'] as Map<String, dynamic>;
           var purchase = PurchaseHistoryDTO(
               json['userId'] as String,
               json['storeId'] as String,
@@ -165,14 +163,18 @@ class StoreOwnerState {
     String myStore = this.onlineStore != null
         ? this.onlineStore!.id
         : this.physicalStore!.id;
+    print(TemporalDateTime.fromString(
+        this.lastTimeViewedPurchases.toDateTimeIso8601String()));
     Stream<QuerySnapshot<PurchaseHistoryModel>> stream =
         Amplify.DataStore.observeQuery(PurchaseHistoryModel.classType,
             where: PurchaseHistoryModel.STOREID.eq(myStore) &
-                PurchaseHistoryModel.DATE.gt(this.lastTimeViewedPurchases));
+                PurchaseHistoryModel.DATE.gt(TemporalDateTime.fromString(
+                    this.lastTimeViewedPurchases.toDateTimeIso8601String())));
 
     this.purchasesMonitor =
         stream.listen((QuerySnapshot<PurchaseHistoryModel> snapshot) {
       this.newPurchasesNoViewed = snapshot.items.length;
+      FLog.info(text: "Got new purchases: " + this.newPurchasesNoViewed.toString());
       callback();
     });
   }
