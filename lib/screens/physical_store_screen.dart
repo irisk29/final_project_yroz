@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:collection/src/iterable_extensions.dart';
 
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -108,17 +109,28 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               onTap: () async {
-                Provider.of<User>(context, listen: false).favoriteStores.contains(widget.store.id) ? await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, false)
-                    : await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, false);
-                setState(() {
-
-                });
+                Provider.of<User>(context, listen: false)
+                    .favoriteStores
+                    .firstWhereOrNull(
+                        (e) => e.item1 == widget.store.id) ==
+                    null
+                    ? await Provider.of<User>(context, listen: false)
+                    .addFavoriteStore(widget.store.id, true)
+                    : await Provider.of<User>(context, listen: false)
+                    .removeFavoriteStore(widget.store.id, true);
+                setState(() {});
                 //open change language
               },
-              trailing: Provider.of<User>(context, listen: false).favoriteStores.contains(widget.store.id) ? Icon(
+              trailing: Provider.of<User>(context, listen: false)
+                  .favoriteStores
+                  .firstWhereOrNull(
+                      (e) => e.item1 == widget.store.id) !=
+                  null
+                  ? Icon(
                 Icons.favorite,
                 color: Colors.black,
-              ) : Icon(
+              )
+                  : Icon(
                 Icons.favorite_border,
                 color: Colors.black,
               ),

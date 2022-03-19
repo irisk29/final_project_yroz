@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:collection/src/iterable_extensions.dart';
+
 import 'package:f_logs/f_logs.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:final_project_yroz/DTOs/CartProductDTO.dart';
@@ -199,7 +201,7 @@ class UsersStorageProxy {
     if (favoriteStores != null) {
       List<Tuple2<String, bool>> fav = fromJsonToTupleList(user.favoriteStores!);
       if (fav.isNotEmpty) {
-        if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) != null) {
+        if (fav.firstWhereOrNull((element) => element.item1 == storeID) != null) {
           FLog.error(text: "The store $storeID is already a favorite");
           return new Failure("The store $storeID is already a favorite", storeID);
         }
@@ -257,7 +259,7 @@ class UsersStorageProxy {
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
       List<Tuple2<String, bool>> fav = fromJsonToTupleList(user.favoriteStores!);
-      if (fav.firstWhere((element) => element.item1 == storeID, orElse: null) == null) {
+      if (fav.firstWhereOrNull((element) => element.item1 == storeID) == null) {
         FLog.error(text: "The store $storeID is not a favorite");
         return new Failure("The store $storeID is not a favorite", storeID);
       }
@@ -380,7 +382,7 @@ class UsersStorageProxy {
     ResultInterface res = await getProductsOfShoppingBag(shoppingBag.id);
     if (!res.getTag()) return res;
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
-    CartProductModel? prodToRemove = vals.firstWhere((element) => element.id == productDTO.id, orElse: null);
+    CartProductModel? prodToRemove = vals.firstWhereOrNull((element) => element.id == productDTO.id);
     vals.removeWhere((element) => element.id == productDTO.id);
     if (prodToRemove != null) {
       await Amplify.DataStore.delete(prodToRemove);
