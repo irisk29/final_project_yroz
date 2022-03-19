@@ -18,10 +18,18 @@ class ProductDetailScreen extends StatelessWidget {
             Container(
               height: 300,
               width: double.infinity,
-              child: Image.network(
-                loadedProduct.imageUrl,
-                fit: BoxFit.cover,
-              ),
+              child: Positioned(
+              child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              image: loadedProduct.imageUrl.isNotEmpty 
+                  ? DecorationImage(image: NetworkImage(loadedProduct.imageUrl), fit: BoxFit.cover)
+                  : DecorationImage(
+                      image: AssetImage('assets/images/default_product.png'),
+                      fit: BoxFit.cover),
+              borderRadius: BorderRadius.circular(15),
+            ),
+          )),
             ),
             SizedBox(height: 10),
             Text(
