@@ -14,6 +14,7 @@ import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
+import 'package:final_project_yroz/screens/user_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
@@ -133,21 +134,26 @@ class _MyAppState extends State<MyApp> {
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) =>
+              OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) =>
+              OnlineStoreProductsScreen(),
           LandingScreen.routeName: (ctx) => LandingScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) =>
+              EditPhysicalStorePipeline(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) =>
+              ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
+          UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
         },
       ),
     );

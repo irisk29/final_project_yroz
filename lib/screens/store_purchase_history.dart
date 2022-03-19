@@ -26,7 +26,6 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
     earlierStorePurchases = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(monthAgo, lastVisit);
     await user.storeOwnerState!.updateLastTimeViewedPurchses(now);
-    print(user.storeOwnerState!.newPurchasesNoViewed);
   }
 
   @override
@@ -37,40 +36,44 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
           "Latest Purchases",
         ),
       ),
-      body: FutureBuilder(
-        future: _pullRefresh(),
-        builder: (BuildContext context, AsyncSnapshot snap) {
-          return snap.connectionState != ConnectionState.done
-              ? Center(child: CircularProgressIndicator())
-              : newStorePurchases.length + earlierStorePurchases.length > 0
-                  ? ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: newStorePurchases.length +
-                          earlierStorePurchases.length,
-                      itemBuilder: (context, index) {
-                        if (index == 0 && newStorePurchases.length > 0) {
-                          return Column(children: [
-                            Text("New"),
-                            HistoryPurchaseItem(newStorePurchases[index])
-                          ]);
-                        } else if (index == newStorePurchases.length) {
-                          return Column(children: [
-                            Text("Earlier"),
-                            HistoryPurchaseItem(earlierStorePurchases[
-                                index - newStorePurchases.length])
-                          ]);
-                        } else if (index < newStorePurchases.length) {
-                          return HistoryPurchaseItem(newStorePurchases[index]);
-                        }
-                        return HistoryPurchaseItem(earlierStorePurchases[
-                            index - newStorePurchases.length]);
-                      },
-                    )
-                  : Center(
-                      child: Text(
-                          "We are Sorry, no purchases made in your store yet"),
-                    );
-        },
+      body: RefreshIndicator(
+        onRefresh: _pullRefresh,
+        child: FutureBuilder(
+          future: _pullRefresh(),
+          builder: (BuildContext context, AsyncSnapshot snap) {
+            return snap.connectionState != ConnectionState.done
+                ? Center(child: CircularProgressIndicator())
+                : newStorePurchases.length + earlierStorePurchases.length > 0
+                    ? ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: newStorePurchases.length +
+                            earlierStorePurchases.length,
+                        itemBuilder: (context, index) {
+                          if (index == 0 && newStorePurchases.length > 0) {
+                            return Column(children: [
+                              ListTile(title: Text("New")),
+                              HistoryPurchaseItem(newStorePurchases[index])
+                            ]);
+                          } else if (index == newStorePurchases.length) {
+                            return Column(children: [
+                              ListTile(title: Text("Earlier")),
+                              HistoryPurchaseItem(earlierStorePurchases[
+                                  index - newStorePurchases.length])
+                            ]);
+                          } else if (index < newStorePurchases.length) {
+                            return HistoryPurchaseItem(
+                                newStorePurchases[index]);
+                          }
+                          return HistoryPurchaseItem(earlierStorePurchases[
+                              index - newStorePurchases.length]);
+                        },
+                      )
+                    : Center(
+                        child: Text(
+                            "We are Sorry, no purchases made in your store yet"),
+                      );
+          },
+        ),
       ),
     );
   }

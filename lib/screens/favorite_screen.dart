@@ -4,6 +4,7 @@ import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +12,6 @@ import 'package:tuple/tuple.dart';
 import '../widgets/store_item.dart';
 
 class FavoriteScreen extends StatefulWidget {
-  //User? user;
-
   @override
   State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
@@ -22,138 +21,204 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   List<ProductDTO> favoriteProducts = [];
 
   @override
-  void initState() {
-
-    super.initState();
+  Future<void> didChangeDependencies() async {
+    await _fetchFavorites();
+    super.didChangeDependencies();
   }
 
-  @override
-  void didChangeDependencies() {
-    () async {
-      favoriteStores = [];
-      for(Tuple2<String,bool> store in Provider.of<User>(context, listen: true).favoriteStores){
-        if(store.item2) //online store
-        {
-          ResultInterface res = await StoreStorageProxy().getOnlineStore(store.item1);
-          if(res.getTag()){
-            favoriteStores.add(res.getValue() as OnlineStoreDTO);
-          }
+  Future<void> _fetchFavorites() async {
+    for (Tuple2<String, bool> store
+        in Provider.of<User>(context, listen: true).favoriteStores) {
+      if (store.item2) //online store
+      {
+        ResultInterface res =
+            await StoreStorageProxy().getOnlineStore(store.item1);
+        if (res.getTag()) {
+          favoriteStores.add(res.getValue() as OnlineStoreDTO);
         }
-        else //physical store
-        {
-          ResultInterface res = await StoreStorageProxy().getPhysicalStore(store.item1);
-          if(res.getTag()){
-            favoriteStores.add(res.getValue() as StoreDTO);
-          }
+      } else //physical store
+      {
+        ResultInterface res =
+            await StoreStorageProxy().getPhysicalStore(store.item1);
+        if (res.getTag()) {
+          favoriteStores.add(res.getValue() as StoreDTO);
         }
       }
-      setState(() {
-        // Update your UI with the desired changes.
-      });
-    }(); 
-    
-    () async {
-      favoriteProducts = [];
-      for(String product in Provider.of<User>(context, listen: true).favoriteProducts){
-        ResultInterface res = await StoreStorageProxy().getOnlineStoreProduct(product);
-        if(res.getTag()){
-          favoriteProducts.add(res.getValue() as ProductDTO);
-        }
+    }
+
+    for (String product
+        in Provider.of<User>(context, listen: true).favoriteProducts) {
+      ResultInterface res =
+          await StoreStorageProxy().getOnlineStoreProduct(product);
+      if (res.getTag()) {
+        favoriteProducts.add(res.getValue() as ProductDTO);
       }
-      setState(() {
-        // Update your UI with the desired changes.
-      });
-    }();
-    super.didChangeDependencies();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
+    var deviceSize = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Container(
-        height: height,
-        child: Column(
-              children: [
-                Container(
-                  height: height * 0.01,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: Text(
-                      "Favorite Stores",
-                      style:
-                      TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                favoriteStores.isEmpty
-                    ? SizedBox(height: height * 0.23)
-                    : SizedBox(
-                  height: height * 0.23,
-                  child: GridView(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.all(height * 0.025),
+    return FutureBuilder(
+        future: _fetchFavorites(),
+        builder: (BuildContext context, AsyncSnapshot snap) {
+          return snap.connectionState != ConnectionState.done
+              ? Center(child: CircularProgressIndicator())
+              : Container(
+                  height: deviceSize.height,
+                  child: Column(
                     children: [
-                      favoriteStores
-                          .map(
-                            (storeData) => StoreItem(
-                              storeData
+                      Container(
+                        height: deviceSize.height * 0.01,
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0, top: 5),
+                          child: Text(
+                            "Favorite Stores",
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      favoriteStores.isEmpty
+                          ? SizedBox(
+                              height: deviceSize.height * 0.32,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: deviceSize.width * 0.4,
+                                    height: deviceSize.height * 0.25,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                            'assets/images/favorite-stores.png'),
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                          "You have no favorite stores yet..."),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pushReplacementNamed(
+                                                context, TabsScreen.routeName),
+                                        child: Text(
+                                          "Click here to find some",
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          : SizedBox(
+                              height: deviceSize.height * 0.32,
+                              child: GridView(
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.05,
+                                    top: deviceSize.height * 0.05,
+                                    left: deviceSize.width * 0.035),
+                                children: [
+                                  favoriteStores
+                                      .map(
+                                        (storeData) => StoreItem(storeData),
+                                      )
+                                      .toList(),
+                                ].expand((i) => i).toList(),
+                                gridDelegate:
+                                    SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: deviceSize.height * 0.3,
+                                  crossAxisSpacing: deviceSize.height * 0.025,
+                                  mainAxisSpacing: deviceSize.width * 0.025,
+                                ),
+                              ),
                             ),
-                      )
-                          .toList(),
-                    ].expand((i) => i).toList(),
-                    gridDelegate:
-                    SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      childAspectRatio: 1,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                    ),
-                  ),
-                ),
-                Divider(),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: Text(
-                      "Favorite Products",
-                      style:
-                      TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                favoriteProducts.isEmpty
-                    ? SizedBox(height: height * 0.23)
-                    : SizedBox(
-                  height: height * 0.23,
-                  child: GridView(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.all(height * 0.025),
-                    children: [
-                      favoriteProducts
-                          .map(
-                            (storeData) => ProductItem(
-                              storeData, storeData.storeID
+                      Divider(),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0, top: 5),
+                          child: Text(
+                            "Favorite Products",
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      favoriteProducts.isEmpty
+                          ? SizedBox(
+                              height: deviceSize.height * 0.32,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: deviceSize.width * 0.4,
+                                    height: deviceSize.height * 0.22,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                            'assets/images/favorite-products.png'),
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                          "You have no favorite products yet..."),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pushReplacementNamed(
+                                                context, TabsScreen.routeName),
+                                        child: Text(
+                                          "Click here to find some",
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          : SizedBox(
+                              height: deviceSize.height * 0.32,
+                              child: GridView(
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.05,
+                                    top: deviceSize.height * 0.05,
+                                    left: deviceSize.width * 0.035),
+                                children: [
+                                  favoriteProducts
+                                      .map(
+                                        (storeData) => ProductItem(
+                                            storeData, storeData.storeID),
+                                      )
+                                      .toList(),
+                                ].expand((i) => i).toList(),
+                                gridDelegate:
+                                    SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: deviceSize.height * 0.3,
+                                  crossAxisSpacing: deviceSize.height * 0.025,
+                                  mainAxisSpacing: deviceSize.width * 0.025,
+                                ),
+                              ),
                             ),
-                      ).toList(),
-                    ].expand((i) => i).toList(),
-                    gridDelegate:
-                    SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      childAspectRatio: 1,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                    ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-      ),
-    );
+                );
+        });
   }
 }

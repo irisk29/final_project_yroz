@@ -111,6 +111,8 @@ flutter:
      - assets/images/visa1.png
      - assets/images/default-store.png
      - assets/images/default_product.png
+     - assets/images/favorite-stores.png
+     - assets/images/favorite-products.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
