@@ -1,6 +1,7 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
+import 'package:final_project_yroz/screens/user_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'open_online_store_screen.dart';
@@ -132,7 +133,8 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                                 title: Text("My Purchases"),
                                 trailing: Icon(Icons.keyboard_arrow_right),
-                                onTap: () {},
+                                onTap: () => Navigator.of(context)
+                                    .pushNamed(UserPurchasesScreen.routeName),
                               ),
                             ],
                           ),

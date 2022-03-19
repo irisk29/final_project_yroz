@@ -140,6 +140,7 @@ class User extends ChangeNotifier {
       await _createStoreAccount(storeID);
       await _addStoreAccount(storeID, bankAccountDTO.bankName,
           bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
+      this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return new Ok("opened online store", tuple.item1.id);
     } on Exception catch (e) {
@@ -165,6 +166,7 @@ class User extends ChangeNotifier {
       await _createStoreAccount(storeID);
       await _addStoreAccount(storeID, bankAccountDTO.bankName,
           bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
+      this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return res;
     } on Exception catch (e) {
@@ -654,8 +656,8 @@ class User extends ChangeNotifier {
         return res;
       }
       await clearShoppingBagInStore(shoppingBagDTO.onlineStoreID);
-      await PurchaseStorageProxy()
-          .savePurchase(res.getValue()!, shoppingBagDTO.products);
+      await PurchaseStorageProxy().savePurchase(res.getValue()!, this.id!,
+          shoppingBagDTO.onlineStoreID, shoppingBagDTO.products);
       return new Ok("Purchase was succsseful", res.getValue());
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -673,7 +675,8 @@ class User extends ChangeNotifier {
         return res;
       }
 
-      await PurchaseStorageProxy().savePurchase(res.getValue()!, null);
+      await PurchaseStorageProxy()
+          .savePurchase(res.getValue()!, this.id!, storeID, null);
       return new Ok("Purchase was successful", res.getValue());
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -681,57 +684,16 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<List<PurchaseHistoryDTO>>
-      getSuccssefulPurchaseHistoryForUserInPastMonth() async {
+  Future<List<PurchaseHistoryDTO>> getSuccssefulPurchaseHistoryForUserInRange(
+      DateTime start, DateTime end) async {
     try {
-      DateTime now = new DateTime.now();
-      DateTime monthAgo = new DateTime(now.year, now.month - 1, now.day);
       var res = await InternalPaymentGateway()
-          .getPurchaseHistory(monthAgo, now, userId: this.id!, succeeded: true);
+          .getPurchaseHistory(start, end, userId: this.id!, succeeded: true);
       if (!res.getTag()) {
         print(res.getMessage());
         return [];
       }
       FLog.info(text: "Got users purchases: ${res.getValue()}");
-      List<PurchaseHistoryDTO> purchasesDTO = [];
-      Iterable<Map<String, Object>>? purchases = res.getValue();
-      if (purchases != null) {
-        purchases.forEach((json) {
-          Map<String, String> info = json['info'] as Map<String, String>;
-          var purchase = PurchaseHistoryDTO(
-              json['userId'] as String,
-              json['storeId'] as String,
-              info['succeeded'] == 'true',
-              double.parse(json['cashBackAmount'] as String),
-              double.parse(json['creditAmount'] as String),
-              DateFormat('dd/MM/yyyy HH:mm:ss')
-                  .parse(json['purchaseDate'] as String),
-              json["purchaseToken"] as String);
-          purchasesDTO.add(purchase);
-        });
-      }
-      return purchasesDTO;
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return [];
-    }
-  }
-
-  Future<List<PurchaseHistoryDTO>>
-      getSuccssefulPurchaseHistoryForStoreInPastMonth() async {
-    try {
-      DateTime now = new DateTime.now();
-      DateTime monthAgo = new DateTime(now.year, now.month - 1, now.day);
-      String storeID = this.storeOwnerState!.onlineStore != null
-          ? this.storeOwnerState!.onlineStore!.id
-          : this.storeOwnerState!.physicalStore!.id;
-      var res = await InternalPaymentGateway()
-          .getPurchaseHistory(monthAgo, now, storeId: storeID, succeeded: true);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return [];
-      }
-      FLog.info(text: "Got store purchases: ${res.getValue()}");
       List<PurchaseHistoryDTO> purchasesDTO = [];
       Iterable<Map<String, Object>>? purchases = res.getValue();
       if (purchases != null) {

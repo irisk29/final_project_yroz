@@ -14,6 +14,7 @@ import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
+import 'package:final_project_yroz/screens/user_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
@@ -51,8 +52,25 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _configureAmplify();
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => FlutterNativeSplash.remove());
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      await deleteLocalDataStore();
+      FlutterNativeSplash.remove();
+    });
+  }
+
+  Future<void> deleteLocalDataStore() async {
+    //get fresh information from cloud everytime the app starts
+    try {
+      await Amplify.DataStore.clear();
+    } catch (error) {
+      print('Error stopping DataStore: $error');
+    }
+
+    try {
+      await Amplify.DataStore.start();
+    } catch (error) {
+      print('Error starting DataStore: $error');
+    }
   }
 
   void _configureAmplify() async {
@@ -75,18 +93,6 @@ class _MyAppState extends State<MyApp> {
       });
     } catch (e) {
       print(e);
-    }
-    //get fresh information from cloud everytime the app starts
-    try {
-      await Amplify.DataStore.clear();
-    } catch (error) {
-      print('Error stopping DataStore: $error');
-    }
-
-    try {
-      await Amplify.DataStore.start();
-    } catch (error) {
-      print('Error starting DataStore: $error');
     }
   }
 
@@ -147,6 +153,7 @@ class _MyAppState extends State<MyApp> {
               ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
+          UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
         },
       ),
     );

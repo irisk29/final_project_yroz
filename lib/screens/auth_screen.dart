@@ -66,6 +66,7 @@ class _AuthCardState extends State<AuthCard>
   @override
   void initState() {
     super.initState();
+
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _heightAnimation = Tween<Size>(
