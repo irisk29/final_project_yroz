@@ -114,6 +114,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
       });
       setState(() {
         dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
+        widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(widget.storeID!);
         // Update your UI with the desired changes.
       });
     }();
@@ -160,6 +161,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     double cashback = 0.0;
+    widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(widget.storeID!);
 
     return Card(
       shape: RoundedRectangleBorder(

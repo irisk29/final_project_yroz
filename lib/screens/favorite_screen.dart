@@ -1,3 +1,4 @@
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
@@ -34,14 +35,16 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         ResultInterface res =
             await StoreStorageProxy().getOnlineStore(store.item1);
         if (res.getTag()) {
-          favoriteStores.add(res.getValue() as OnlineStoreDTO);
+          if(favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+            favoriteStores.add(res.getValue() as OnlineStoreDTO);
         }
       } else //physical store
       {
         ResultInterface res =
             await StoreStorageProxy().getPhysicalStore(store.item1);
         if (res.getTag()) {
-          favoriteStores.add(res.getValue() as StoreDTO);
+          if(favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+            favoriteStores.add(res.getValue() as StoreDTO);
         }
       }
     }
@@ -51,7 +54,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       ResultInterface res =
           await StoreStorageProxy().getOnlineStoreProduct(product);
       if (res.getTag()) {
-        favoriteProducts.add(res.getValue() as ProductDTO);
+        if(favoriteProducts.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+          favoriteProducts.add(res.getValue() as ProductDTO);
       }
     }
   }
