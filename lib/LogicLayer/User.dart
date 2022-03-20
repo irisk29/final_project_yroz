@@ -94,6 +94,7 @@ class User extends ChangeNotifier {
 
   Future<void> signIn(AuthProvider authProvider, BuildContext context) async {
     try {
+      await UserAuthenticator().signOut();
       Tuple2<UserModel?, bool> currUser =
           await UserAuthenticator().signIn(authProvider);
       isSignedIn = currUser.item1 != null;

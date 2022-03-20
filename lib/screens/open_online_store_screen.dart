@@ -626,6 +626,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                     children: <Widget>[
                       TextFormField(
                           initialValue: "",
+                          textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
                             labelText: 'BANK NAME',
                             hintStyle: const TextStyle(color: Colors.black),
@@ -641,6 +642,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       ),
                       TextFormField(
                         initialValue: "",
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
                           hintStyle: const TextStyle(color: Colors.black),
                           labelStyle: const TextStyle(color: Colors.black),
@@ -662,6 +664,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       ),
                       TextFormField(
                         initialValue: "",
+                        textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
                           hintStyle: const TextStyle(color: Colors.black),
                           labelStyle: const TextStyle(color: Colors.black),

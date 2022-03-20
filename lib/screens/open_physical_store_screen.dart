@@ -562,6 +562,9 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                           onSaved: (value) {
                             bankName = value;
                           }),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       TextFormField(
                         initialValue: "",
                         decoration: InputDecoration(
@@ -579,6 +582,9 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                           return null;
                         },
                         onSaved: (value) => branchNumber = value,
+                      ),
+                      const SizedBox(
+                        height: 20,
                       ),
                       TextFormField(
                         initialValue: "",
