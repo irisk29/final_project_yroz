@@ -14,6 +14,8 @@ import 'package:final_project_yroz/models/ModelProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../DTOs/BankAccountDTO.dart';
+
 class StoreOwnerState {
   String _storeOwnerID;
   OnlineStoreDTO? onlineStore;
@@ -186,5 +188,55 @@ class StoreOwnerState {
     cancelPurchasesSubscription();
     createPurchasesSubscription();
     UsersStorageProxy().saveLastPurchaseView(date);
+  }
+
+  Future<BankAccountDTO?> getStoreBankAccountDetails() async {
+    try {
+      final storeId = onlineStore != null ? onlineStore!.id : physicalStore!.id;
+      var res = await InternalPaymentGateway()
+          .storeBankAccountDetails(storeId, storeBankAccountToken!);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return null;
+      }
+      final bankAccount = res.getValue()!;
+      final bankInfo = bankAccount[storeBankAccountToken!]!;
+      return BankAccountDTO(bankInfo["bankName"]!, bankInfo["branchNumber"]!,
+          bankInfo["bankAccount"]!, storeBankAccountToken!);
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return null;
+    }
+  }
+
+  Future<void> addStoreBankAccount(String storeID, String bankName,
+      String branchNumber, String bankAccount) async {
+    //now that the user has store account registered, a token for their bank account is generated
+    var storeAccountRes = await InternalPaymentGateway()
+        .addStoreBankAccount(storeID, bankName, branchNumber, bankAccount);
+    if (!storeAccountRes.getTag()) {
+      print(storeAccountRes.getMessage());
+      return;
+    }
+    String token = storeAccountRes.getValue()!;
+    await UsersStorageProxy().saveStoreBankAccount(token);
+    storeBankAccountToken = token;
+  }
+
+  Future<void> editStoreBankAccount(BankAccountDTO bankAccountDTO) async {
+    try {
+      final storeId = onlineStore != null ? onlineStore!.id : physicalStore!.id;
+      var res = await InternalPaymentGateway()
+          .removeStoreBankAccount(storeId, storeBankAccountToken!);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      await UsersStorageProxy().removeStoreBankAccount(storeBankAccountToken!);
+      await addStoreBankAccount(storeId, bankAccountDTO.bankName,
+          bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
   }
 }

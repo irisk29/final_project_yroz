@@ -3,6 +3,7 @@ import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
+import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -97,17 +98,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   final List<String> _selectedItems = [];
 
-  String? accountNumber;
-  String? bankName;
-  String? branchNumber;
-  OutlineInputBorder? border = OutlineInputBorder(
-    borderSide: BorderSide(
-      color: Colors.grey.withOpacity(0.7),
-      width: 2.0,
-    ),
-  );
-  final _bankAccountForm = GlobalKey<FormState>();
-
   var _isInit = true;
   var _isLoading = false;
 
@@ -144,7 +134,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       _editedStore!.categories = _selectedItems;
       try {
         await Provider.of<User>(context, listen: false)
-            .updatePhysicalStore(_editedStore!, new BankAccountDTO(this.bankName!, this.branchNumber!, this.accountNumber!));
+            .updatePhysicalStore(_editedStore!);
       } catch (error) {
         await showDialog(
           context: context,
@@ -166,7 +156,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+    Navigator.of(context).pop();
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -531,76 +521,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           ],
         );
       case 3:
-        return Column(
-          children: <Widget>[
-            const Text(
-              "Store's Bank Account Details",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _bankAccountForm,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                          initialValue: "",
-                          decoration: InputDecoration(
-                            labelText: 'BANK NAME',
-                            hintStyle: const TextStyle(color: Colors.black),
-                            labelStyle: const TextStyle(color: Colors.black),
-                            focusedBorder: border,
-                            enabledBorder: border,
-                          ),
-                          onSaved: (value) {
-                            bankName = value;
-                          }),
-                      TextFormField(
-                        initialValue: "",
-                        decoration: InputDecoration(
-                          hintStyle: const TextStyle(color: Colors.black),
-                          labelStyle: const TextStyle(color: Colors.black),
-                          focusedBorder: border,
-                          enabledBorder: border,
-                          labelText: 'BRANCH NUMBER',
-                          hintText: 'XXX',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.length != 3) {
-                            return "Invalid Branch Number";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => branchNumber = value,
-                      ),
-                      TextFormField(
-                        initialValue: "",
-                        decoration: InputDecoration(
-                          hintStyle: const TextStyle(color: Colors.black),
-                          labelStyle: const TextStyle(color: Colors.black),
-                          focusedBorder: border,
-                          enabledBorder: border,
-                          labelText: 'ACCOUNT NUMBER',
-                          hintText: 'XXXXXXXXX',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.length != 9) {
-                            return "Invalid Account Number";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => accountNumber = value,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      case 4:
         return StorePreview(
             false,
             _editedStore!.name,
@@ -621,7 +541,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           'Edit Store',
         ),
         actions: [
-          IconButton(
+          Tooltip(
+            message: "Downgrade Store",
+            child: IconButton(
               icon: Icon(
                 Icons.arrow_circle_up,
               ),
@@ -631,7 +553,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                 Navigator.of(context)
                     .pushReplacementNamed(EditOnlineStorePipeline.routeName);
               },
-              tooltip: "make the store online"),
+            ),
+          ),
           IconButton(
             icon: Icon(
               Icons.delete,
@@ -655,7 +578,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                       Icon(Icons.info),
                       Icon(Icons.tag),
                       Icon(Icons.access_time),
-                      Icon(Icons.account_balance_wallet_outlined),
                       Icon(Icons.store),
                     ],
                     // activeStep property set to activeStep variable defined above.
@@ -716,12 +638,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         setState(() => _currentStep += 1);
         break;
       case 3:
-        if (_bankAccountForm.currentState!.validate()) {
-          _bankAccountForm.currentState!.save();
-          setState(() => _currentStep += 1);
-        }
-        break;
-      case 4:
         _saveForm();
         break;
     }

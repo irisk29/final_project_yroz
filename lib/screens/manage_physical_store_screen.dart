@@ -1,5 +1,7 @@
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/edit_bank_account.dart';
+import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,9 +27,8 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final notificationCount = Provider.of<User>(context, listen: true)
-        .storeOwnerState!
-        .newPurchasesNoViewed;
+    final user = Provider.of<User>(context, listen: true);
+    final notificationCount = user.storeOwnerState!.newPurchasesNoViewed;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,9 +68,8 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     ),
                     title: Text("Edit Store Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditPhysicalStorePipeline.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -77,11 +77,10 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                       Icons.account_balance,
                       color: Colors.purple,
                     ),
-                    title: Text("Edit Bank Account"),
+                    title: Text("Edit Bank Account Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditBankAccountScreen.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -125,14 +124,33 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                   _buildDivider(),
                   ListTile(
                     leading: Icon(
+                      Icons.qr_code_2,
+                      color: Colors.purple,
+                    ),
+                    title: Text("Store's QR Code"),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () => showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: Text('QR Code'),
+                              content: Image.network(
+                                widget.store.qrCode!,
+                                fit: BoxFit.cover,
+                                width: 150,
+                                height: 150,
+                              ),
+                            )),
+                  ),
+                  _buildDivider(),
+                  ListTile(
+                    leading: Icon(
                       Icons.arrow_circle_up,
                       color: Colors.purple,
                     ),
                     title: Text("Upgrade to Online Store"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
+                    onTap: () =>
+                        user.convertPhysicalStoreToOnline(widget.store),
                   ),
                 ],
               ),
@@ -153,9 +171,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                   ),
                 ),
               ),
-              onPressed: () {
-                //TODO: ADD FUNCTIONALITY
-              },
+              onPressed: () => user.deleteStore(widget.store.id, false),
             ),
           ],
         ),
