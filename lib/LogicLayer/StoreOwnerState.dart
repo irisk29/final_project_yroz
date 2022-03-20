@@ -8,6 +8,7 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/PurchaseHistoryDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ class StoreOwnerState {
   StoreDTO? physicalStore;
   String? storeBankAccountToken;
 
-  VoidCallback callback; //to notify changes in store owner state
-  //Default Value, everything wil be bigger because this date already passed
+  VoidCallback callback; // to notify changes in store owner state
+  // Default Value, everything wil be bigger because this date already passed
   DateTime lastTimeViewedPurchases =
       DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
   int newPurchasesNoViewed = 0;
@@ -184,5 +185,6 @@ class StoreOwnerState {
     this.lastTimeViewedPurchases = date;
     cancelPurchasesSubscription();
     createPurchasesSubscription();
+    UsersStorageProxy().saveLastPurchaseView(date);
   }
 }

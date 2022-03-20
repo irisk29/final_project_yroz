@@ -1,3 +1,4 @@
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
@@ -28,30 +29,33 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   Future<void> _fetchFavorites() async {
     for (Tuple2<String, bool> store
-        in Provider.of<User>(context, listen: true).favoriteStores) {
+        in Provider.of<User>(context, listen: false).favoriteStores) {
       if (store.item2) //online store
       {
         ResultInterface res =
             await StoreStorageProxy().getOnlineStore(store.item1);
         if (res.getTag()) {
-          favoriteStores.add(res.getValue() as OnlineStoreDTO);
+          if(favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+            favoriteStores.add(res.getValue() as OnlineStoreDTO);
         }
       } else //physical store
       {
         ResultInterface res =
             await StoreStorageProxy().getPhysicalStore(store.item1);
         if (res.getTag()) {
-          favoriteStores.add(res.getValue() as StoreDTO);
+          if(favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+            favoriteStores.add(res.getValue() as StoreDTO);
         }
       }
     }
 
     for (String product
-        in Provider.of<User>(context, listen: true).favoriteProducts) {
+        in Provider.of<User>(context, listen: false).favoriteProducts) {
       ResultInterface res =
           await StoreStorageProxy().getOnlineStoreProduct(product);
       if (res.getTag()) {
-        favoriteProducts.add(res.getValue() as ProductDTO);
+        if(favoriteProducts.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+          favoriteProducts.add(res.getValue() as ProductDTO);
       }
     }
   }
@@ -137,7 +141,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 ].expand((i) => i).toList(),
                                 gridDelegate:
                                     SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: deviceSize.height * 0.3,
+                                  maxCrossAxisExtent: deviceSize.height * 0.2,
                                   crossAxisSpacing: deviceSize.height * 0.025,
                                   mainAxisSpacing: deviceSize.width * 0.025,
                                 ),
@@ -210,7 +214,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 ].expand((i) => i).toList(),
                                 gridDelegate:
                                     SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: deviceSize.height * 0.3,
+                                  maxCrossAxisExtent: deviceSize.height * 0.2,
                                   crossAxisSpacing: deviceSize.height * 0.025,
                                   mainAxisSpacing: deviceSize.width * 0.025,
                                 ),

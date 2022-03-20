@@ -24,8 +24,11 @@ class PurchaseStorageProxy {
     var productsJson =
         products == null ? "" : JsonEncoder.withIndent('  ').convert(products);
     PurchaseHistoryModel purchaseHistoryModel = new PurchaseHistoryModel(
-        date: date, transactionID: transactionID,
-        userID: userID, storeID: storeID, products: productsJson);
+        date: date,
+        transactionID: transactionID,
+        userID: userID,
+        storeID: storeID,
+        products: productsJson);
 
     await Amplify.DataStore.save(purchaseHistoryModel);
     FLog.info(
@@ -45,8 +48,11 @@ class PurchaseStorageProxy {
     PurchaseHistoryModel purchase = purchases.first; //transaction ID is unique
     if (purchase.products == null)
       return new Ok("No products for purchase", []);
-    List<CartProductDTO> products =
-        jsonDecode(purchase.products!).cast<CartProductDTO>();
-    return new Ok("Found products for purchase $transactionID", products);
+    var purchaseProducts = jsonDecode(purchase.products!) as List<dynamic>;
+    var convertedPurchaseProducts = purchaseProducts
+        .map((e) => CartProductDTO.fromJson(e as Map<String, dynamic>))
+        .toList();
+    return new Ok("Found products for purchase $transactionID",
+        convertedPurchaseProducts);
   }
 }

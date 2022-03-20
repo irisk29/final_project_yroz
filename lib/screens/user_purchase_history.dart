@@ -6,18 +6,35 @@ import '../DTOs/PurchaseHistoryDTO.dart';
 import '../LogicLayer/User.dart';
 import '../widgets/purchase_item.dart';
 
-class UserPurchasesScreen extends StatelessWidget {
+class UserPurchasesScreen extends StatefulWidget {
   static const routeName = '/user-purchases';
 
   @override
-  Widget build(BuildContext context) {
-    var start =
-        DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
-    var end = DateTime.now();
-    Future<List<PurchaseHistoryDTO>> purchasesFuture =
-        Provider.of<User>(context, listen: false)
-            .getSuccssefulPurchaseHistoryForUserInRange(start, end);
+  _UserPurchasesScreenState createState() => _UserPurchasesScreenState();
+}
 
+class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
+  late Future<List<PurchaseHistoryDTO>> _purchasesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _purchasesFuture = _initPurchases();
+  }
+
+  Future<List<PurchaseHistoryDTO>> _initPurchases() async {
+    User user = Provider.of<User>(context, listen: false);
+    final start =
+        DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
+    final end = DateTime.now();
+    final purchases =
+        await user.getSuccssefulPurchaseHistoryForUserInRange(start, end);
+    print(purchases.length);
+    return purchases;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -25,7 +42,7 @@ class UserPurchasesScreen extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: purchasesFuture,
+        future: _purchasesFuture,
         builder: (BuildContext context, AsyncSnapshot snap) {
           return snap.connectionState != ConnectionState.done
               ? Center(child: CircularProgressIndicator())

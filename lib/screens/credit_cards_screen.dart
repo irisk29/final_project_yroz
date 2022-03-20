@@ -1,3 +1,4 @@
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
@@ -35,23 +36,28 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
             new DateFormat('MM/yy').parse(creditCard['expiryDate']);
         if (DateTime.now().isBefore(expirationDate)) //not expired
         {
-          activeCards.add(CreditCardWidget(
-              creditCard['cardHolder'],
-              creditCard['cardNumber'].toString().substring(15),
-              creditCard['expiryDate'],
-              Colors.blue,
-              token));
+          if (activeCards.firstWhereOrNull((e) =>
+                  e.fourDigits ==
+                  creditCard['cardNumber'].toString().substring(15)) ==
+              null)
+            activeCards.add(CreditCardWidget(
+                creditCard['cardHolder'],
+                creditCard['cardNumber'].toString().substring(15),
+                creditCard['expiryDate'],
+                Colors.blue,
+                token));
         } else {
-          disabledCards.add(CreditCardWidget(
-              creditCard['cardHolder'],
-              creditCard['cardNumber'].toString().substring(15),
-              creditCard['expiryDate'],
-              Colors.red,
-              token));
+          if (disabledCards.firstWhereOrNull((e) =>
+                  e.fourDigits ==
+                  creditCard['cardNumber'].toString().substring(15)) ==
+              null)
+            disabledCards.add(CreditCardWidget(
+                creditCard['cardHolder'],
+                creditCard['cardNumber'].toString().substring(15),
+                creditCard['expiryDate'],
+                Colors.red,
+                token));
         }
-      });
-      setState(() {
-        // Update your UI with the desired changes.
       });
     }();
     super.didChangeDependencies();
