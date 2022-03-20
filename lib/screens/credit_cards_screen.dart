@@ -29,14 +29,17 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
       disabledCards = [];
 
       Map<String, Map<String, dynamic>> creditCards =
-          await Provider.of<User>(context, listen: true)
+          await Provider.of<User>(context, listen: false)
               .getUserCreditCardDetails();
       creditCards.forEach((token, creditCard) {
         DateTime expirationDate =
             new DateFormat('MM/yy').parse(creditCard['expiryDate']);
         if (DateTime.now().isBefore(expirationDate)) //not expired
         {
-          if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15)) == null)
+          if (activeCards.firstWhereOrNull((e) =>
+                  e.fourDigits ==
+                  creditCard['cardNumber'].toString().substring(15)) ==
+              null)
             activeCards.add(CreditCardWidget(
                 creditCard['cardHolder'],
                 creditCard['cardNumber'].toString().substring(15),
@@ -44,17 +47,17 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                 Colors.blue,
                 token));
         } else {
-          if(disabledCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15)) == null)
+          if (disabledCards.firstWhereOrNull((e) =>
+                  e.fourDigits ==
+                  creditCard['cardNumber'].toString().substring(15)) ==
+              null)
             disabledCards.add(CreditCardWidget(
-              creditCard['cardHolder'],
-              creditCard['cardNumber'].toString().substring(15),
-              creditCard['expiryDate'],
-              Colors.red,
-              token));
+                creditCard['cardHolder'],
+                creditCard['cardNumber'].toString().substring(15),
+                creditCard['expiryDate'],
+                Colors.red,
+                token));
         }
-      });
-      setState(() {
-        // Update your UI with the desired changes.
       });
     }();
     super.didChangeDependencies();

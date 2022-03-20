@@ -694,23 +694,9 @@ class User extends ChangeNotifier {
         return [];
       }
       FLog.info(text: "Got users purchases: ${res.getValue()}");
-      List<PurchaseHistoryDTO> purchasesDTO = [];
-      Iterable<Map<String, Object>>? purchases = res.getValue();
-      if (purchases != null) {
-        purchases.forEach((json) {
-          Map<String, String> info = json['info'] as Map<String, String>;
-          var purchase = PurchaseHistoryDTO(
-              json['userId'] as String,
-              json['storeId'] as String,
-              info['succeeded'] == 'true',
-              double.parse(json['cashBackAmount'] as String),
-              double.parse(json['creditAmount'] as String),
-              DateFormat('dd/MM/yyyy HH:mm:ss')
-                  .parse(json['purchaseDate'] as String),
-              json["purchaseToken"] as String);
-          purchasesDTO.add(purchase);
-        });
-      }
+      List<Map<String, Object>> purchases = res.getValue()!;
+      var purchasesDTO =
+          purchases.map((e) => PurchaseHistoryDTO.fromJson(e)).toList();
       return purchasesDTO;
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);

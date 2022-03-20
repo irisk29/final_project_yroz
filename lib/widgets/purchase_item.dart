@@ -35,52 +35,47 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
       height: _expanded ? (purchaseProducts.length * 30) + 95 : 95,
       child: Card(
         margin: const EdgeInsets.all(10),
-        child: Column(
+        child: ListView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
             ListTile(
               title: Text(
-                  '\€${widget.purchase.cashBackAmount + widget.purchase.cashBackAmount}'),
+                  '\€${widget.purchase.cashBackAmount + widget.purchase.creditAmount}'),
               subtitle: Text(DateFormat('dd/MM/yyyy HH:mm')
                   .format(widget.purchase.purchaseDate)),
               trailing: IconButton(
                 icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                onPressed: () {
+                onPressed: () async {
+                  final productsTemp = await _getProducts();
                   setState(() {
                     _expanded = !_expanded;
+                    purchaseProducts = productsTemp;
                   });
                 },
               ),
             ),
             _expanded
-                ? FutureBuilder(
-                    future: _getProducts(),
-                    builder: (BuildContext context, AsyncSnapshot snap) {
-                      return snap.connectionState != ConnectionState.done
-                          ? Center(child: CircularProgressIndicator())
-                          : AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              curve: Curves.easeIn,
-                              height: purchaseProducts.length * 30,
-                              child: ListView.builder(
-                                itemBuilder: (context, index) {
-                                  var product = purchaseProducts[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Text(product.name),
-                                        Text(
-                                            '${product.amount}X \€${product.price}'),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                itemCount: purchaseProducts.length,
-                              ),
-                            );
-                    })
+                ? AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeIn,
+                    height: purchaseProducts.length * 30,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        var product = purchaseProducts[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(product.name),
+                              Text('${product.amount} X \€${product.price}'),
+                            ],
+                          ),
+                        );
+                      },
+                      itemCount: purchaseProducts.length,
+                    ),
+                  )
                 : Container(),
           ],
         ),
