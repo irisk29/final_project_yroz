@@ -53,19 +53,10 @@ class StoreOwnerState {
         jsonDecode(onlineStoreModel.operationHours);
     var op = parseOperationHours(operationHours);
     List<ProductDTO> products = [];
-    if (onlineStoreModel.storeProductModels == null ||
-        onlineStoreModel.storeProductModels!.isEmpty) {
-      onlineStoreModel.storeProductModels!.forEach((e) async {
-        products.add(new ProductDTO(
-            id: e.id,
-            name: e.name,
-            description: e.description!,
-            category: e.categories,
-            price: e.price,
-            imageUrl: e.imageUrl!,
-            storeID: e.onlinestoremodelID,
-            imageFromPhone: null));
-      });
+    if (onlineStoreModel.storeProductModels != null) {
+      products = onlineStoreModel.storeProductModels!
+          .map((productModel) => ProductDTO.productFromModel(productModel))
+          .toList();
     }
 
     onlineStore = new OnlineStoreDTO(

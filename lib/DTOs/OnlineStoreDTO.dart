@@ -9,7 +9,7 @@ class OnlineStoreDTO extends StoreDTO {
   List<ProductDTO> products;
 
   OnlineStoreDTO(
-  {required String id,
+      {required String id,
       required String name,
       required String address,
       required String phoneNumber,
@@ -20,11 +20,23 @@ class OnlineStoreDTO extends StoreDTO {
       String? qrCode,
       File? imageFromPhone})
       : this.products = products,
-        super(id: id, name: name, phoneNumber: phoneNumber, address: address, categories: categories, operationHours: operationHours,
-            image: image, qrCode: qrCode, imageFromPhone: imageFromPhone) {}
+        super(
+            id: id,
+            name: name,
+            phoneNumber: phoneNumber,
+            address: address,
+            categories: categories,
+            operationHours: operationHours,
+            image: image,
+            qrCode: qrCode,
+            imageFromPhone: imageFromPhone) {}
 
   void addProduct(ProductDTO product) {
     this.products.add(product);
+  }
+
+  void removeProduct(ProductDTO product) {
+    this.products.remove(product);
   }
 
   @override

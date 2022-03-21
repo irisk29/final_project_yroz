@@ -19,7 +19,6 @@ import 'add_product_screen.dart';
 
 class EditOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/edit-online-store';
-  static List<ProductDTO> _products = [];
 
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
@@ -110,7 +109,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           .storeOwnerState!
           .onlineStore;
       _selectedItems.addAll(_editedStore!.categories);
-      EditOnlineStorePipeline._products = _editedStore!.products;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -132,7 +130,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     });
     if (_editedStore!.id.isNotEmpty) {
       _editedStore!.categories = _selectedItems;
-      _editedStore!.products = EditOnlineStorePipeline._products;
       try {
         await Provider.of<User>(context, listen: false).updateOnlineStore(
           _editedStore!,
@@ -191,7 +188,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   }
 
   void _showAddProduct() async {
-    if (EditOnlineStorePipeline._products.length < 5) {
+    if (_editedStore!.products.length < 5) {
       final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
@@ -201,7 +198,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       if (result.item1 != null) {
         setState(() {
           _editedStore = result.item2;
-          EditOnlineStorePipeline._products.add(result.item1!);
+          _editedStore!.addProduct(result.item1!);
         });
       }
     }
@@ -547,7 +544,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
               onPressed: _showAddProduct,
             ),
             Wrap(
-              children: EditOnlineStorePipeline._products
+              children: _editedStore!.products
                   .map((e) => Chip(
                         deleteIcon: Icon(
                           Icons.edit,
@@ -560,11 +557,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                           );
                           if (result != null) {
                             setState(() {
-                              EditOnlineStorePipeline._products.remove(e);
-                              EditOnlineStorePipeline._products.add(result);
+                              _editedStore!.removeProduct(e);
+                              _editedStore!.addProduct(result);
                             });
-                          } else {
-                            EditOnlineStorePipeline._products.remove(e);
                           }
                         },
                         label: Text(e.name),
