@@ -17,6 +17,7 @@ import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/models/ModelProvider.dart';
 import 'package:final_project_yroz/models/OnlineStoreModel.dart';
 import 'package:final_project_yroz/models/ShoppingBagModel.dart';
 import 'package:final_project_yroz/models/UserModel.dart';
@@ -138,8 +139,11 @@ class User extends ChangeNotifier {
       this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
       String storeID = tuple.item1.id;
       await _createStoreAccount(storeID);
-      await _addStoreAccount(storeID, bankAccountDTO.bankName,
-          bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
+      await this.storeOwnerState!.addStoreBankAccount(
+          storeID,
+          bankAccountDTO.bankName,
+          bankAccountDTO.branchNumber,
+          bankAccountDTO.bankAccount);
       this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return new Ok("opened online store", tuple.item1.id);
@@ -164,8 +168,11 @@ class User extends ChangeNotifier {
       this.storeOwnerState!.setPhysicalStore(tuple.item1);
       String storeID = tuple.item1.id;
       await _createStoreAccount(storeID);
-      await _addStoreAccount(storeID, bankAccountDTO.bankName,
-          bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
+      await this.storeOwnerState!.addStoreBankAccount(
+          storeID,
+          bankAccountDTO.bankName,
+          bankAccountDTO.branchNumber,
+          bankAccountDTO.bankAccount);
       this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return res;
@@ -175,14 +182,12 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<ResultInterface> updatePhysicalStore(
-      StoreDTO store, BankAccountDTO bankAccountDTO) async {
+  Future<ResultInterface> updatePhysicalStore(StoreDTO store) async {
     try {
       var res = await StoreStorageProxy().updatePhysicalStore(store);
       if (!res.getTag()) return res; //failure
 
       this.storeOwnerState!.setPhysicalStore(res.getValue());
-      editStoreBankAccount(store.id, bankAccountDTO);
       notifyListeners();
       return res;
     } on Exception catch (e) {
@@ -191,14 +196,12 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<ResultInterface> updateOnlineStore(
-      OnlineStoreDTO store, BankAccountDTO bankAccountDTO) async {
+  Future<ResultInterface> updateOnlineStore(OnlineStoreDTO store) async {
     try {
       var res = await StoreStorageProxy().updateOnlineStore(store);
       if (!res.getTag()) return res; //failure
 
       this.storeOwnerState!.setOnlineStore(res.getValue());
-      editStoreBankAccount(store.id, bankAccountDTO);
       notifyListeners();
       return res;
     } on Exception catch (e) {
@@ -260,8 +263,8 @@ class User extends ChangeNotifier {
 
   Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
     try {
-      var res = await StoreStorageProxy()
-          .convertPhysicalStoreToOnlineStore(physicalStore);
+      var res =
+          await StoreStorageProxy().convertPhysicalStoreToOnline(physicalStore);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
@@ -271,6 +274,26 @@ class User extends ChangeNotifier {
           new StoreOwnerState(retVal.item2, () => notifyListeners());
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
       this.storeOwnerState!.physicalStore = null;
+
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
+  }
+
+  Future<void> convertOnlineStoreToPhysical(OnlineStoreDTO onlineStore) async {
+    try {
+      var res =
+          await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      Tuple2<PhysicalStoreModel, String> retVal = res.getValue();
+      this.storeOwnerState =
+          new StoreOwnerState(retVal.item2, () => notifyListeners());
+      this.storeOwnerState!.setPhysicalStore(retVal.item1);
+      this.storeOwnerState!.onlineStore = null;
 
       notifyListeners();
     } on Exception catch (e) {
@@ -539,21 +562,6 @@ class User extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _addStoreAccount(String storeID, String bankName,
-      String branchNumber, String bankAccount) async {
-    //now that the user has store account registered, a token for their bank account is generated
-    var storeAccountRes = await InternalPaymentGateway()
-        .addStoreBankAccount(storeID, bankName, branchNumber, bankAccount);
-    if (!storeAccountRes.getTag()) {
-      print(storeAccountRes.getMessage());
-      return;
-    }
-    String token = storeAccountRes.getValue()!;
-    await UsersStorageProxy().saveStoreBankAccount(token);
-    this.storeOwnerState!.storeBankAccountToken = token;
-    notifyListeners();
-  }
-
   Future<void> _deleteStoreAccount(String storeID) async {
     //for when deleting a store
     var storeAccountRes =
@@ -582,45 +590,20 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<void> editStoreBankAccount(
-      String storeID, BankAccountDTO bankAccountDTO) async {
-    try {
-      var res = await InternalPaymentGateway().removeStoreBankAccount(
-          storeID, this.storeOwnerState!.storeBankAccountToken!);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
-      }
-      await UsersStorageProxy()
-          .removeStoreBankAccount(this.storeOwnerState!.storeBankAccountToken!);
-
-      await _addStoreAccount(storeID, bankAccountDTO.bankName,
-          bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
+  Future<void> editStoreBankAccount(BankAccountDTO bankAccountDTO) async {
+    if (this.storeOwnerState != null) {
+      await this.storeOwnerState!.editStoreBankAccount(bankAccountDTO);
       notifyListeners();
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
   }
 
-  Future<BankAccountDTO?> getStoreBankAccountDetails(String storeId) async {
-    try {
-      var res = await InternalPaymentGateway().storeBankAccountDetails(
-          storeId, this.storeOwnerState!.storeBankAccountToken!);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return null;
-      }
-      Map<String, dynamic> bankInfo = res.getValue();
-      notifyListeners();
-      return new BankAccountDTO(
-          bankInfo["bankName"] as String,
-          bankInfo["branchNumber"] as String,
-          bankInfo["bankAccount"] as String,
-          this.storeOwnerState!.storeBankAccountToken!);
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return null;
+  Future<BankAccountDTO?> getStoreBankAccountDetails() async {
+    if (this.storeOwnerState != null) {
+      final bankAccountDetails =
+          await storeOwnerState!.getStoreBankAccountDetails();
+      return bankAccountDetails;
     }
+    return null;
   }
 
   Future<String> getEWalletBalance() async {

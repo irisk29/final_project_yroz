@@ -16,7 +16,6 @@ class PhysicalStoreScreen extends StatefulWidget {
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
-
 }
 
 class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
@@ -27,7 +26,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as StoreDTO;
     //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
@@ -35,7 +35,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
 
   String mapAsString() {
     String map = "";
-    for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
+    for (MapEntry<String, List<TimeOfDay>> e
+        in widget.store.operationHours.entries) {
       map = map + e.key + ": ";
       for (int i = 0; i < e.value.length; i++) {
         map = map + e.value[i].format(context) + " ";
@@ -64,7 +65,8 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    for (MapEntry<String, List<TimeOfDay>> e in widget.store.operationHours.entries) {
+    for (MapEntry<String, List<TimeOfDay>> e
+        in widget.store.operationHours.entries) {
       if (e.key == day) {
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
         if (opBigger(time, e.value[0]) && opSmaller(time, e.value[1])) {
@@ -96,7 +98,9 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 height: 150,
                 decoration: BoxDecoration(
                   image: widget.store.image != null
-                      ? DecorationImage(fit: BoxFit.cover, image: NetworkImage(widget.store.image!))
+                      ? DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.store.image!))
                       : DecorationImage(
                           image: AssetImage('assets/images/default-store.png'),
                           fit: BoxFit.cover),
@@ -110,30 +114,30 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               ),
               onTap: () async {
                 Provider.of<User>(context, listen: false)
-                    .favoriteStores
-                    .firstWhereOrNull(
-                        (e) => e.item1 == widget.store.id) ==
-                    null
+                            .favoriteStores
+                            .firstWhereOrNull(
+                                (e) => e.item1 == widget.store.id) ==
+                        null
                     ? await Provider.of<User>(context, listen: false)
-                    .addFavoriteStore(widget.store.id, true)
+                        .addFavoriteStore(widget.store.id, true)
                     : await Provider.of<User>(context, listen: false)
-                    .removeFavoriteStore(widget.store.id, true);
+                        .removeFavoriteStore(widget.store.id, true);
                 setState(() {});
                 //open change language
               },
               trailing: Provider.of<User>(context, listen: false)
-                  .favoriteStores
-                  .firstWhereOrNull(
-                      (e) => e.item1 == widget.store.id) !=
-                  null
+                          .favoriteStores
+                          .firstWhereOrNull(
+                              (e) => e.item1 == widget.store.id) !=
+                      null
                   ? Icon(
-                Icons.favorite,
-                color: Colors.black,
-              )
+                      Icons.favorite,
+                      color: Colors.black,
+                    )
                   : Icon(
-                Icons.favorite_border,
-                color: Colors.black,
-              ),
+                      Icons.favorite_border,
+                      color: Colors.black,
+                    ),
             ),
             ListTile(
               leading: Icon(
@@ -177,12 +181,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               onTap: () {
                 //open change language
               },
-            ),
-            Image.network(
-              widget.store.qrCode!,
-              fit: BoxFit.cover,
-              width: 150,
-              height: 150,
             ),
           ],
         ),

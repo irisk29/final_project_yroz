@@ -254,8 +254,8 @@ class InternalPaymentGateway {
 
   // params: storeId, bankAccountToken - saved bank account token that recived from addUserBankAccount
   // returns: bank account details that was asked
-  Future<ResultInterface> storeBankAccountDetails(
-      String storeId, String bankAccountToken) async {
+  Future<ResultInterface<Map<String, Map<String, String>>>>
+      storeBankAccountDetails(String storeId, String bankAccountToken) async {
     var body = {
       "storeId": storeId,
       "bankAccountToken": bankAccountToken,

@@ -5,6 +5,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
+import 'package:final_project_yroz/screens/edit_bank_account.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/online_payment_screen.dart';
@@ -145,6 +146,7 @@ class _MyAppState extends State<MyApp> {
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
           EditPhysicalStorePipeline.routeName: (ctx) =>
               EditPhysicalStorePipeline(),
+          EditBankAccountScreen.routeName: (ctx) => EditBankAccountScreen(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),

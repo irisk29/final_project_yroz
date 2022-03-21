@@ -5,8 +5,8 @@ import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 class CartProductDTO extends ProductDTO {
   double amount;
 
-  CartProductDTO(String id, String name, double price, String category, String imageUrl, String description,
-      double amount, String storeID)
+  CartProductDTO(String id, String name, double price, String category,
+      String? imageUrl, String? description, double amount, String storeID)
       : this.amount = amount,
         super(
             id: id,
@@ -16,7 +16,7 @@ class CartProductDTO extends ProductDTO {
             imageUrl: imageUrl,
             description: description,
             storeID: storeID,
-            imageFromPhone: File(imageUrl));
+            imageFromPhone: imageUrl != null ? File(imageUrl) : null);
 
   double calculatePricePerQuantity() {
     return price * amount;
@@ -30,7 +30,7 @@ class CartProductDTO extends ProductDTO {
 
   CartProductDTO.fromJson(Map<String, dynamic> json)
       : amount = json['amount'],
-      super(
+        super(
             id: json['id'],
             name: json['name'],
             price: json['price'],
@@ -38,8 +38,15 @@ class CartProductDTO extends ProductDTO {
             imageUrl: json.containsKey('imageUrl') ? json['imageUrl'] : "",
             description: json['description'],
             storeID: json['storeID'],
-            imageFromPhone: json.containsKey('imageUrl') ? File(json['imageUrl']) : null);
+            imageFromPhone:
+                json.containsKey('imageUrl') ? File(json['imageUrl']) : null);
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'price': price, 'description': description, 'amount': amount, 'storeID': storeID};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'price': price,
+        'description': description,
+        'amount': amount,
+        'storeID': storeID
+      };
 }
