@@ -47,16 +47,36 @@ class CategoryItem extends StatelessWidget {
                     bottomRight: Radius.circular(15),
                   ),
                   color: Color.fromRGBO(255, 255, 255, 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.25),
+                      spreadRadius: 5,
+                      blurRadius: 5,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      this.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color.fromRGBO(20, 19, 42, 1),
-                        fontSize: 14,
+                    Container(
+                      height: constraints.maxHeight * 0.14,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text(
+                                this.title,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(20, 19, 42, 1),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

@@ -56,18 +56,6 @@ class ProductDetailScreen extends StatelessWidget {
                 softWrap: true,
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              width: double.infinity,
-              child: Text(
-                "Category: " + loadedProduct.category,
-                textAlign: TextAlign.center,
-                softWrap: true,
-              ),
-            )
           ],
         ),
       ),

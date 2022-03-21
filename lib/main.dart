@@ -126,6 +126,7 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: MaterialColor(0xFFFF9191, color),
           accentColor: Colors.purple,
+          fontFamily: 'Roboto',
         ),
         home: LandingScreen(),
         routes: {

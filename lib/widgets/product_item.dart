@@ -46,29 +46,6 @@ class _ProductItemState extends State<ProductItem> {
             ))),
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: IconButton(
-            icon: Provider.of<User>(context, listen: false)
-                    .favoriteProducts
-                    .contains(widget.product.id)
-                ? Icon(
-                    Icons.favorite,
-                  )
-                : Icon(
-                    Icons.favorite_border,
-                  ),
-            color: Theme.of(context).accentColor,
-            onPressed: () async {
-              Provider.of<User>(context, listen: false)
-                      .favoriteProducts
-                      .contains(widget.product.id)
-                  ? await Provider.of<User>(context, listen: false)
-                      .removeFavoriteProduct(widget.product.id)
-                  : await Provider.of<User>(context, listen: false)
-                      .addFavoriteProduct(widget.product.id);
-              setState(() {});
-              //product.toggleFavoriteStatus(auth.token!, auth.userId!);
-            },
-          ),
           title: Text(
             widget.product.name,
             textAlign: TextAlign.center,
