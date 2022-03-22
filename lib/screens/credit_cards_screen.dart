@@ -39,7 +39,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
       new DateFormat('MM/yy').parse(creditCard['expiryDate']);
       if (DateTime.now().isBefore(expirationDate)) //not expired
           {
-        if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15)) == null)
+        if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
           activeCards.add(CreditCardWidget(
               creditCard['cardHolder'],
               creditCard['cardNumber'].toString().substring(15),
@@ -47,7 +47,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
               Colors.blue,
               token));
       } else {
-        if(disabledCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15)) == null)
+        if(disabledCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
           disabledCards.add(CreditCardWidget(
               creditCard['cardHolder'],
               creditCard['cardNumber'].toString().substring(15),
