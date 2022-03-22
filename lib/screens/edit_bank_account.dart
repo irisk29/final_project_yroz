@@ -64,10 +64,16 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: deviceSize.height * 0.1,
         title: Text(
-          'Edit Bank Account',
+          "Edit Bank Account",
+          style: const TextStyle(
+            fontSize: 22,
+          ),
         ),
       ),
       resizeToAvoidBottomInset: false,

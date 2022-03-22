@@ -29,11 +29,16 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context, listen: true);
     final notificationCount = user.storeOwnerState!.newPurchasesNoViewed;
+    var deviceSize = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: deviceSize.height * 0.1,
         title: Text(
           widget.store.name,
+          style: const TextStyle(
+            fontSize: 22,
+          ),
         ),
       ),
       body: SingleChildScrollView(

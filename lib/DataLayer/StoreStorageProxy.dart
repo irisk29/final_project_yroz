@@ -315,6 +315,22 @@ class StoreStorageProxy {
     return physicalStores.first; //only one physical store per user
   }
 
+  Future<List<StoreDTO>> fetchCategoryStores(String category) async {
+    List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
+        PhysicalStoreModel.classType,
+        where: PhysicalStoreModel.CATEGORIES.contains(category));
+    List<StoreDTO> convertedPhysicalStores =
+        await convertPhysicalStoreModelToDTO(physicalStores);
+    List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
+        where: OnlineStoreModel.CATEGORIES.contains(category));
+    List<StoreDTO> convertedOnlineStores =
+        await convertOnlineStoreModelToDTO(onlineStores);
+
+    convertedPhysicalStores.addAll(convertedOnlineStores);
+    return convertedPhysicalStores;
+  }
+
   Future<List<StoreDTO>> fetchAllPhysicalStores() async {
     try {
       List<PhysicalStoreModel> physicalStores =
