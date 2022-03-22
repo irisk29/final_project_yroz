@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
+import 'credit_cards_screen.dart';
+
 class PhysicalPaymentScreen extends StatefulWidget {
   static const routeName = '/physical-payment';
 
@@ -151,6 +153,28 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
         items.add(Tuple2<String,String>(creditCard['cardNumber'].toString().substring(12), token));
       }
     });
+    if(items.isEmpty){
+      AlertDialog(
+        title: Text("An error occured!"),
+        content: Text("You have no credit cards available! please enter a credit card to proceed!"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(CreditCardsScreen.routeName);
+            },
+          ),
+          FlatButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
+    }
   }
 
   void initCashBack() async {
@@ -246,7 +270,19 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
               FlatButton(
                 child: Text('Confirm Amount'),
                 onPressed: () async {
-                    await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(dropdownvalue, cashback.toString(), (double.parse(amountController.text) - (cashbackController.text.length>0 ? double.parse(cashbackController.text) : 0)).toString(), widget.storeID!);
+                    var res = await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(dropdownvalue, cashback.toString(), (double.parse(amountController.text) - (cashbackController.text.length>0 ? double.parse(cashbackController.text) : 0)).toString(), widget.storeID!);
+                    AlertDialog(
+                      title: Text(res.getTag() ? "Congratulations!" : "An error occured!"),
+                      content: Text(res.getMessage().toString()),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('Okay'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
                     Navigator.of(context).pop();
                 },
               )
