@@ -18,7 +18,7 @@ class Badge extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         child,
-        Positioned(
+        value != "0" ? Positioned(
           right: 8,
           top: 8,
           child: Container(
@@ -41,6 +41,7 @@ class Badge extends StatelessWidget {
             ),
           ),
         )
+        : Container(),
       ],
     );
   }

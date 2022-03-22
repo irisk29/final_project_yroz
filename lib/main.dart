@@ -34,6 +34,7 @@ import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/product_detail_screen.dart';
 import 'screens/tabs_screen.dart';
+import 'screens/tutorial_screen.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -52,8 +53,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _configureAmplify();
+
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      await _configureAmplify();
       await deleteLocalDataStore();
       FlutterNativeSplash.remove();
     });
@@ -68,13 +70,13 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      await Amplify.DataStore.start();
+      //await Amplify.DataStore.start();
     } catch (error) {
       print('Error starting DataStore: $error');
     }
   }
 
-  void _configureAmplify() async {
+  Future<void> _configureAmplify() async {
     if (!mounted) return;
 
     Amplify.addPlugin(AmplifyAuthCognito());
@@ -92,6 +94,7 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         _amplifyConfigured = true;
       });
+      //await deleteLocalDataStore();
     } catch (e) {
       print(e);
     }
@@ -157,6 +160,7 @@ class _MyAppState extends State<MyApp> {
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
+          TutorialScreen.routeName: (ctx) => TutorialScreen(),
         },
       ),
     );

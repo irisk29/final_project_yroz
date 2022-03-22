@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
+import 'credit_cards_screen.dart';
+
 class PhysicalPaymentScreen extends StatefulWidget {
   static const routeName = '/physical-payment';
 
@@ -104,17 +106,6 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   @override
   void didChangeDependencies() {
     () async {
-      items = [];
-
-      Map<String, Map<String, dynamic>> creditCards =
-      await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
-      creditCards.forEach((token, creditCard) {
-        DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
-        if (DateTime.now().isBefore(expirationDate)) //not expired
-            {
-          items.add(Tuple2<String, String>(creditCard['cardNumber'].toString().substring(12), token));
-        }
-      });
       setState(() {
         dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
         // Update your UI with the desired changes.
@@ -143,14 +134,46 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
 
   Future<void> activeCreditCards() async {
     Map<String, Map<String, dynamic>> creditCards =
-        await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+    await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+    items = [];
     creditCards.forEach((token, creditCard) {
-      DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
-      if (DateTime.now().isBefore(expirationDate)) //not expired
+      DateTime expirationDate = new DateFormat('MM/yy').parse(
+          creditCard['expiryDate']);
+      if (DateTime.now().isBefore(expirationDate) && !items
+          .where((element) => element.item1 == token)
+          .isNotEmpty) //not expired
           {
-        items.add(Tuple2<String,String>(creditCard['cardNumber'].toString().substring(12), token));
+        items.add(Tuple2<String, String>(
+            creditCard['cardNumber'].toString().substring(15), token));
       }
     });
+    if (items.length==0) {
+      showDialog(
+          context: context,
+          builder: (ctx) =>
+              AlertDialog(
+                title: Text("An error occured!"),
+                content: Text(
+                    "You have no credit cards available! please enter a credit card to proceed!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed(CreditCardsScreen.routeName);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              )
+      );
+    }
   }
 
   void initCashBack() async {
@@ -164,10 +187,15 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     double cashback = 0.0;
     double amount = 0.0;
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
+    return FutureBuilder(
+      future: activeCreditCards(),
+      builder: (BuildContext context, AsyncSnapshot snap) {
+      return snap.connectionState != ConnectionState.done
+      ? Center(child: CircularProgressIndicator())
+      : Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       elevation: 8.0,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 300),
@@ -246,13 +274,27 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
               FlatButton(
                 child: Text('Confirm Amount'),
                 onPressed: () async {
-                    await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(dropdownvalue, cashback.toString(), (double.parse(amountController.text) - (cashbackController.text.length>0 ? double.parse(cashbackController.text) : 0)).toString(), widget.storeID!);
+                    var res = await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(dropdownvalue, cashback.toString(), (double.parse(amountController.text) - (cashbackController.text.length>0 ? double.parse(cashbackController.text) : 0)).toString(), widget.storeID!);
+                    AlertDialog(
+                      title: Text(res.getTag() ? "Congratulations!" : "An error occured!"),
+                      content: Text(res.getMessage().toString()),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('Okay'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
                     Navigator.of(context).pop();
                 },
               )
             ],
           ),
         ),
+        );
+      }
     );
   }
 }

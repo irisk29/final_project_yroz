@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 
 import '../dummy_data.dart';
+import 'tutorial_screen.dart';
 
 class OpenPhysicalStorePipeline extends StatefulWidget {
   static const routeName = '/open-physical-store';
@@ -154,7 +155,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+    Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked

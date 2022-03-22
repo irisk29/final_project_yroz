@@ -24,65 +24,65 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
 
   @override
   void didChangeDependencies() {
-    () async {
-      activeCards = [];
-      disabledCards = [];
-
-      Map<String, Map<String, dynamic>> creditCards =
-          await Provider.of<User>(context, listen: false)
-              .getUserCreditCardDetails();
-      creditCards.forEach((token, creditCard) {
-        DateTime expirationDate =
-            new DateFormat('MM/yy').parse(creditCard['expiryDate']);
-        if (DateTime.now().isBefore(expirationDate)) //not expired
-        {
-          if (activeCards.firstWhereOrNull((e) =>
-                  e.fourDigits ==
-                  creditCard['cardNumber'].toString().substring(15)) ==
-              null)
-            activeCards.add(CreditCardWidget(
-                creditCard['cardHolder'],
-                creditCard['cardNumber'].toString().substring(15),
-                creditCard['expiryDate'],
-                Colors.blue,
-                token));
-        } else {
-          if (disabledCards.firstWhereOrNull((e) =>
-                  e.fourDigits ==
-                  creditCard['cardNumber'].toString().substring(15)) ==
-              null)
-            disabledCards.add(CreditCardWidget(
-                creditCard['cardHolder'],
-                creditCard['cardNumber'].toString().substring(15),
-                creditCard['expiryDate'],
-                Colors.red,
-                token));
-        }
-      });
-    }();
     super.didChangeDependencies();
+  }
+
+  Future<void> _fetchCreditCards() async {
+    activeCards = [];
+    disabledCards = [];
+
+    Map<String, Map<String, dynamic>> creditCards =
+    await Provider.of<User>(context, listen: false)
+        .getUserCreditCardDetails();
+    creditCards.forEach((token, creditCard) {
+      DateTime expirationDate =
+      new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+      if (DateTime.now().isBefore(expirationDate)) //not expired
+          {
+        if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
+          activeCards.add(CreditCardWidget(
+              creditCard['cardHolder'],
+              creditCard['cardNumber'].toString().substring(15),
+              creditCard['expiryDate'],
+              Colors.blue,
+              token));
+      } else {
+        if(disabledCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
+          disabledCards.add(CreditCardWidget(
+              creditCard['cardHolder'],
+              creditCard['cardNumber'].toString().substring(15),
+              creditCard['expiryDate'],
+              Colors.red,
+              token));
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text("Credit Cards"),
-        actions: [
-          IconButton(
-            icon: Icon(
-              IconData(0xf04b7, fontFamily: 'MaterialIcons'),
-            ),
-            onPressed: () async {
-              await Navigator.of(context)
-                  .pushNamed(AddCreditCardScreen.routeName);
-            },
-          ),
-        ],
+    return FutureBuilder(
+        future: _fetchCreditCards(),
+        builder: (BuildContext context, AsyncSnapshot snap) {
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text("Credit Cards"),
+            actions: [
+              IconButton(
+                icon: Icon(
+                  IconData(0xf04b7, fontFamily: 'MaterialIcons'),
+                ),
+                onPressed: () async {
+                  await Navigator.of(context)
+                      .pushReplacementNamed(AddCreditCardScreen.routeName);
+                },
+              ),
+            ],
       ),
-      body: SingleChildScrollView(
+      body: snap.connectionState != ConnectionState.done
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         child: Container(
           height: height,
           child: Column(
@@ -160,5 +160,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
         ),
       ),
     );
+    });
   }
 }
+

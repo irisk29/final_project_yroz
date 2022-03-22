@@ -6,6 +6,7 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
+import 'package:final_project_yroz/screens/tutorial_screen.dart';
 import 'package:final_project_yroz/widgets/bank_account_form.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -159,7 +160,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+    Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked

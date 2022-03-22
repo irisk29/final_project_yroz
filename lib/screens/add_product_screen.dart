@@ -171,7 +171,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
-                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.done,
                 focusNode: _descriptionFocusNode,
                 validator: (value) {
                   if (value!.isEmpty) {

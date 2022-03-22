@@ -154,12 +154,6 @@ class _StorePreviewState extends State<StorePreview> {
                       //open change language
                     },
                   ),
-                  widget.isOnlineStore
-                      ? ElevatedButton(
-                          onPressed: null,
-                          child: Text('Online Store Shop'),
-                        )
-                      : Container(),
                 ],
               ),
             );
