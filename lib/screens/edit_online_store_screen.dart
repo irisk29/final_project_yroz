@@ -1,9 +1,10 @@
 import 'package:address_search_field/address_search_field.dart';
-import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_product_screen.dart';
+import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -18,7 +19,6 @@ import 'add_product_screen.dart';
 
 class EditOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/edit-online-store';
-  static List<ProductDTO> _products = [];
 
   static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
@@ -99,30 +99,16 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   final List<String> _selectedItems = [];
 
-  String? accountNumber;
-  String? bankName;
-  String? branchNumber;
-  OutlineInputBorder? border = OutlineInputBorder(
-    borderSide: BorderSide(
-      color: Colors.grey.withOpacity(0.7),
-      width: 2.0,
-    ),
-  );
-  final _bankAccountForm = GlobalKey<FormState>();
-
   var _isInit = true;
   var _isLoading = false;
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      // final user = ModalRoute.of(context)!.settings.arguments as User?;
-      // widget.user = user;
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .onlineStore;
       _selectedItems.addAll(_editedStore!.categories);
-      EditOnlineStorePipeline._products = _editedStore!.products;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -144,10 +130,10 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     });
     if (_editedStore!.id.isNotEmpty) {
       _editedStore!.categories = _selectedItems;
-      _editedStore!.products = EditOnlineStorePipeline._products;
       try {
-        await Provider.of<User>(context, listen: false)
-            .updateOnlineStore(_editedStore!, new BankAccountDTO(this.bankName!, this.branchNumber!, this.accountNumber!));
+        await Provider.of<User>(context, listen: false).updateOnlineStore(
+          _editedStore!,
+        );
       } catch (error) {
         await showDialog(
           context: context,
@@ -168,7 +154,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       setState(() {
         _isLoading = false;
       });
-      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+      Navigator.of(context).pop();
     }
   }
 
@@ -202,7 +188,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   }
 
   void _showAddProduct() async {
-    if (EditOnlineStorePipeline._products.length < 5) {
+    if (_editedStore!.products.length < 5) {
       final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
@@ -212,7 +198,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       if (result.item1 != null) {
         setState(() {
           _editedStore = result.item2;
-          EditOnlineStorePipeline._products.add(result.item1!);
+          _editedStore!.addProduct(result.item1!);
         });
       }
     }
@@ -558,7 +544,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
               onPressed: _showAddProduct,
             ),
             Wrap(
-              children: EditOnlineStorePipeline._products
+              children: _editedStore!.products
                   .map((e) => Chip(
                         deleteIcon: Icon(
                           Icons.edit,
@@ -571,11 +557,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                           );
                           if (result != null) {
                             setState(() {
-                              EditOnlineStorePipeline._products.remove(e);
-                              EditOnlineStorePipeline._products.add(result);
+                              _editedStore!.removeProduct(e);
+                              _editedStore!.addProduct(result);
                             });
-                          } else {
-                            EditOnlineStorePipeline._products.remove(e);
                           }
                         },
                         label: Text(e.name),
@@ -585,76 +569,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           ],
         );
       case 4:
-        return Column(
-          children: <Widget>[
-            const Text(
-              "Store's Bank Account Details",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _bankAccountForm,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                          initialValue: "",
-                          decoration: InputDecoration(
-                            labelText: 'BANK NAME',
-                            hintStyle: const TextStyle(color: Colors.black),
-                            labelStyle: const TextStyle(color: Colors.black),
-                            focusedBorder: border,
-                            enabledBorder: border,
-                          ),
-                          onSaved: (value) {
-                            bankName = value;
-                          }),
-                      TextFormField(
-                        initialValue: "",
-                        decoration: InputDecoration(
-                          hintStyle: const TextStyle(color: Colors.black),
-                          labelStyle: const TextStyle(color: Colors.black),
-                          focusedBorder: border,
-                          enabledBorder: border,
-                          labelText: 'BRANCH NUMBER',
-                          hintText: 'XXX',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.length != 3) {
-                            return "Invalid Branch Number";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => branchNumber = value,
-                      ),
-                      TextFormField(
-                        initialValue: "",
-                        decoration: InputDecoration(
-                          hintStyle: const TextStyle(color: Colors.black),
-                          labelStyle: const TextStyle(color: Colors.black),
-                          focusedBorder: border,
-                          enabledBorder: border,
-                          labelText: 'ACCOUNT NUMBER',
-                          hintText: 'XXXXXXXXX',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.length != 9) {
-                            return "Invalid Account Number";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => accountNumber = value,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      case 5:
         return StorePreview(
             true,
             _editedStore!.name,
@@ -675,6 +589,20 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           'Edit Store',
         ),
         actions: [
+          Tooltip(
+            message: "Downgrade Store",
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_circle_down,
+              ),
+              onPressed: () async {
+                await Provider.of<User>(context, listen: false)
+                    .convertOnlineStoreToPhysical(_editedStore!);
+                Navigator.of(context)
+                    .pushReplacementNamed(EditPhysicalStorePipeline.routeName);
+              },
+            ),
+          ),
           IconButton(
             icon: Icon(
               Icons.delete,
@@ -699,7 +627,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                       Icon(Icons.tag),
                       Icon(Icons.access_time),
                       Icon(Icons.add_shopping_cart_rounded),
-                      Icon(Icons.account_balance_wallet_outlined),
                       Icon(Icons.store),
                     ],
                     // activeStep property set to activeStep variable defined above.
@@ -763,12 +690,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
         setState(() => _currentStep += 1);
         break;
       case 4:
-        if (_bankAccountForm.currentState!.validate()) {
-          _bankAccountForm.currentState!.save();
-          setState(() => _currentStep += 1);
-        }
-        break;
-      case 5:
         _saveForm();
         break;
     }

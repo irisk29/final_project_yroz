@@ -1,9 +1,9 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/badge.dart';
+import '../widgets/product_item.dart';
 import './cart_screen.dart';
 
 class OnlineStoreProductsScreen extends StatefulWidget {

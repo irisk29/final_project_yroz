@@ -315,6 +315,22 @@ class StoreStorageProxy {
     return physicalStores.first; //only one physical store per user
   }
 
+  Future<List<StoreDTO>> fetchCategoryStores(String category) async {
+    List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
+        PhysicalStoreModel.classType,
+        where: PhysicalStoreModel.CATEGORIES.contains(category));
+    List<StoreDTO> convertedPhysicalStores =
+        await convertPhysicalStoreModelToDTO(physicalStores);
+    List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
+        where: OnlineStoreModel.CATEGORIES.contains(category));
+    List<StoreDTO> convertedOnlineStores =
+        await convertOnlineStoreModelToDTO(onlineStores);
+
+    convertedPhysicalStores.addAll(convertedOnlineStores);
+    return convertedPhysicalStores;
+  }
+
   Future<List<StoreDTO>> fetchAllPhysicalStores() async {
     try {
       List<PhysicalStoreModel> physicalStores =
@@ -742,7 +758,7 @@ class StoreStorageProxy {
         "Deleted completly Store Owner State", userWithoutStoreOwnerState);
   }
 
-  Future<ResultInterface> convertPhysicalStoreToOnlineStore(
+  Future<ResultInterface> convertPhysicalStoreToOnline(
       StoreDTO physicalStore) async {
     ResultInterface deletePhysicalRes =
         await deletePhysicalStore(physicalStore.id);
@@ -760,6 +776,25 @@ class StoreStorageProxy {
         imageFromPhone: physicalStore.imageFromPhone);
     ResultInterface openOnlineStoreRes = await openOnlineStore(onlineStoreDTO);
     return openOnlineStoreRes;
+  }
+
+  Future<ResultInterface> convertOnlineStoreToPhysical(
+      OnlineStoreDTO onlineStore) async {
+    ResultInterface deleteOnlineRes = await deleteOnlineStore(onlineStore.id);
+    if (!deleteOnlineRes.getTag()) return deleteOnlineRes;
+    StoreDTO physicalStoreDTO = StoreDTO(
+        id: onlineStore.id,
+        name: onlineStore.name,
+        address: onlineStore.address,
+        phoneNumber: onlineStore.phoneNumber,
+        categories: onlineStore.categories,
+        operationHours: onlineStore.operationHours,
+        qrCode: onlineStore.qrCode,
+        image: onlineStore.image,
+        imageFromPhone: onlineStore.imageFromPhone);
+    ResultInterface openPhysicalStoreRes =
+        await openPhysicalStore(physicalStoreDTO);
+    return openPhysicalStoreRes;
   }
 
   Future<ResultInterface> getPhysicalStore(String storeID) async {

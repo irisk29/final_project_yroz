@@ -7,6 +7,7 @@ import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/screens/tutorial_screen.dart';
+import 'package:final_project_yroz/widgets/bank_account_form.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:flutter/material.dart';
@@ -105,16 +106,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   final List<String> _selectedItems = [];
   final List<ProductDTO> _products = [];
 
-  String? accountNumber;
-  String? bankName;
-  String? branchNumber;
-  OutlineInputBorder? border = OutlineInputBorder(
-    borderSide: BorderSide(
-      color: Colors.grey.withOpacity(0.7),
-      width: 2.0,
-    ),
-  );
-  final _bankAccountForm = GlobalKey<FormState>();
+  final bankAccountForm = BankAccountForm();
 
   var _isInit = true;
   var _isLoading = false;
@@ -146,8 +138,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     _editedStore!.categories = _selectedItems;
     _editedStore!.products = _products;
     try {
-      await Provider.of<User>(context, listen: false)
-          .openOnlineStore(_editedStore!, new BankAccountDTO(this.bankName!, this.branchNumber!, this.accountNumber!));
+      await Provider.of<User>(context, listen: false).openOnlineStore(
+          _editedStore!, bankAccountForm.buildBankAccountDTO()!);
     } catch (error) {
       await showDialog(
         context: context,
@@ -611,84 +603,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ],
         );
       case 4:
-        return Column(
-          children: <Widget>[
-            const Text(
-              "Store's Bank Account Details",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Divider(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _bankAccountForm,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                          initialValue: "",
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            labelText: 'BANK NAME',
-                            hintStyle: const TextStyle(color: Colors.black),
-                            labelStyle: const TextStyle(color: Colors.black),
-                            focusedBorder: border,
-                            enabledBorder: border,
-                          ),
-                          onSaved: (value) {
-                            bankName = value;
-                          }),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        initialValue: "",
-                        textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(
-                          hintStyle: const TextStyle(color: Colors.black),
-                          labelStyle: const TextStyle(color: Colors.black),
-                          focusedBorder: border,
-                          enabledBorder: border,
-                          labelText: 'BRANCH NUMBER',
-                          hintText: 'XXX',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.length != 3) {
-                            return "Invalid Branch Number";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => branchNumber = value,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        initialValue: "",
-                        textInputAction: TextInputAction.done,
-                        decoration: InputDecoration(
-                          hintStyle: const TextStyle(color: Colors.black),
-                          labelStyle: const TextStyle(color: Colors.black),
-                          focusedBorder: border,
-                          enabledBorder: border,
-                          labelText: 'ACCOUNT NUMBER',
-                          hintText: 'XXXXXXXXX',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.length != 9) {
-                            return "Invalid Account Number";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => accountNumber = value,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
+        return bankAccountForm;
       case 5:
         return StorePreview(
             true,
@@ -786,10 +701,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         setState(() => _currentStep += 1);
         break;
       case 4:
-        if (_bankAccountForm.currentState!.validate()) {
-          _bankAccountForm.currentState!.save();
-          setState(() => _currentStep += 1);
-        }
+        if (bankAccountForm.saveForm()) setState(() => _currentStep += 1);
         break;
       case 5:
         _saveForm();

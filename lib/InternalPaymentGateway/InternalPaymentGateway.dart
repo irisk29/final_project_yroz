@@ -254,8 +254,8 @@ class InternalPaymentGateway {
 
   // params: storeId, bankAccountToken - saved bank account token that recived from addUserBankAccount
   // returns: bank account details that was asked
-  Future<ResultInterface> storeBankAccountDetails(
-      String storeId, String bankAccountToken) async {
+  Future<ResultInterface<Map<String, Map<String, String>>>>
+      storeBankAccountDetails(String storeId, String bankAccountToken) async {
     var body = {
       "storeId": storeId,
       "bankAccountToken": bankAccountToken,
@@ -307,7 +307,7 @@ class InternalPaymentGateway {
     return await _patchRequest(url, body);
   }
 
-  Future<ResultInterface<Iterable<Map<String, Object>>>> getPurchaseHistory(
+  Future<ResultInterface<List<Map<String, Object>>>> getPurchaseHistory(
       DateTime startDate, DateTime endDate,
       {String userId = "*", String storeId = "*", bool? succeeded}) async {
     final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
@@ -321,9 +321,10 @@ class InternalPaymentGateway {
     var result = await _getRequest(externalPaymentUrl, '/dev/payments', body);
     if (result.getTag()) {
       var purchaseHistory = result.getValue()["purchases"] as List<dynamic>;
-      var convertedPurchaseHistory = purchaseHistory.map((e) =>
-          (e as Map<String, dynamic>)
-              .map((key, value) => MapEntry(key, value as Object)));
+      var convertedPurchaseHistory = purchaseHistory
+          .map((e) => (e as Map<String, dynamic>)
+              .map((key, value) => MapEntry(key, value as Object)))
+          .toList();
       return new Ok(result.getMessage(), convertedPurchaseHistory);
     }
     return new Failure(result.getMessage());

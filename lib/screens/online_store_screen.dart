@@ -192,12 +192,6 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            Image.network(
-              widget.store.qrCode!,
-              fit: BoxFit.cover,
-              width: 150,
-              height: 150,
-            ),
             ElevatedButton(
               onPressed: () => routeToOnlineStoreProducts(context),
               child: Text('Online Store Shop'),

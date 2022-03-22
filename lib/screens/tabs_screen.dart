@@ -3,6 +3,8 @@ import 'package:final_project_yroz/screens/account_screen.dart';
 import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
 import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
 import 'package:final_project_yroz/widgets/badge.dart';
+import 'package:final_project_yroz/widgets/favorites_app_bar.dart';
+import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -38,48 +40,20 @@ class _TabsScreenState extends State<TabsScreen> {
     });
   }
 
-  Widget? buildAction() {
-    final user = Provider.of<User>(context, listen: true);
-
-    if (user.storeOwnerState != null) {
-      var notificationValue = user.storeOwnerState!.newPurchasesNoViewed;
-      var notificationString =
-          notificationValue > 9 ? "9+" : notificationValue.toString();
-      var icon = user.storeOwnerState!.physicalStore != null
-          ? IconButton(
-              icon: Icon(Icons.storefront),
-              onPressed: () => Navigator.of(context)
-                  .pushNamed(ManagePhysicalStoreScreen.routeName),
-            )
-          : IconButton(
-              icon: Icon(Icons.store_outlined),
-              onPressed: () => Navigator.of(context)
-                  .pushNamed(ManageOnlineStoreScreen.routeName));
-      return notificationValue == 0
-          ? icon
-          : Badge(child: icon, value: notificationString);
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-    final action = buildAction();
+    final homeAppBar = HomeAppBar().build(context);
+    final favoritesAppBar = FavoritesAppBar().build(context);
+    List<AppBar> appBars = [
+      homeAppBar,
+      homeAppBar,
+      favoritesAppBar,
+      homeAppBar
+    ];
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.only(
-            left: deviceSize.width * 0.03,
-          ),
-          child: Image.asset('assets/icon/yroz-removebg.png'),
-        ),
-        leadingWidth: deviceSize.width * 0.37,
-        toolbarHeight: deviceSize.height * 0.1,
-        actions: action != null ? List.from([action]) : [],
-      ),
+      appBar: appBars[_selectedPageIndex],
       body: _pages[_selectedPageIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

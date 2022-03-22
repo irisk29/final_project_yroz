@@ -1,81 +1,97 @@
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
-import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/widgets/store_item.dart';
+import 'package:final_project_yroz/widgets/default_store_item.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/secondary_store_item.dart';
 
 class CategoryScreen extends StatefulWidget {
   static const routeName = '/category';
-  String? title;
-  //User? user;
+
+  late String title;
 
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  var _isLoading = true;
   List<StoreDTO> stores = [];
 
-  @override
-  void initState() {
-    super.initState();
-    () async {
-      stores = await StoreStorageProxy().fetchAllStores();
-      if(stores.length==0) {
-        _isLoading = false;
-      }
-      List<StoreDTO> toRemove = [];
-      if(stores.length>0) {
-        for (StoreDTO store in stores) {
-          if (!store.categories.contains(widget.title!))
-              toRemove.add(store);
-        }
-        stores.removeWhere((element) => toRemove.contains(element));
-        _isLoading = false;
-      }
-      setState(() {
-
-      });
-    }();
+  Future<void> _fetchCategoryStores() async {
+    stores = await StoreStorageProxy().fetchCategoryStores(widget.title);
   }
 
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.title = routeArgs['title'] as String;
-    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: deviceSize.height * 0.1,
         title: Text(
-          widget.title!,
+          widget.title + " Category",
+          style: const TextStyle(
+            fontSize: 24,
+          ),
         ),
       ),
-      body: _isLoading
-        ? Center(child: CircularProgressIndicator(),)
-        : GridView(
-          scrollDirection: Axis.vertical,
-          padding: const EdgeInsets.all(25),
-          children: [
-            stores
-              .map(
-                (storeData) => StoreItem(
-                  storeData//, widget.user!
-                ),
-              )
-              .toList(),
-          ].expand((i) => i).toList(),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 1,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20,
-          ),
+      body: FutureBuilder(
+        future: _fetchCategoryStores(),
+        builder: (BuildContext context, AsyncSnapshot snap) {
+          return snap.connectionState != ConnectionState.done
+              ? Center(child: CircularProgressIndicator())
+              : stores.isEmpty
+                  ? Container(
+                      width: deviceSize.width,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 45.0,
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Icon(Icons.category_outlined, size: 40),
+                              radius: 40.0,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(widget.title + " Category",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ),
+                          Text(
+                              "We are sorry, we do not have stores from this category"),
+                        ],
+                      ),
+                    )
+                  : GridView.count(
+                      padding: EdgeInsets.only(
+                          top: deviceSize.height * 0.025,
+                          bottom: deviceSize.height * 0.025,
+                          left: deviceSize.width * 0.075,
+                          right: deviceSize.width * 0.075),
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      crossAxisCount: 1,
+                      childAspectRatio: 1.6,
+                      mainAxisSpacing: deviceSize.height * 0.025,
+                      crossAxisSpacing: deviceSize.width * 0.025,
+                      children: stores
+                          .map((storeData) => SecondaryStoreItem(storeData))
+                          .toList(),
+                    );
+        },
       ),
     );
   }

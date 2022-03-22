@@ -19,17 +19,20 @@ class ProductDetailScreen extends StatelessWidget {
               height: 300,
               width: double.infinity,
               child: Positioned(
-              child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              image: loadedProduct.imageUrl.isNotEmpty 
-                  ? DecorationImage(image: NetworkImage(loadedProduct.imageUrl), fit: BoxFit.cover)
-                  : DecorationImage(
-                      image: AssetImage('assets/images/default_product.png'),
-                      fit: BoxFit.cover),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          )),
+                  child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  image: loadedProduct.imageUrl != null
+                      ? DecorationImage(
+                          image: NetworkImage(loadedProduct.imageUrl!),
+                          fit: BoxFit.cover)
+                      : DecorationImage(
+                          image:
+                              AssetImage('assets/images/default_product.png'),
+                          fit: BoxFit.cover),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              )),
             ),
             SizedBox(height: 10),
             Text(
@@ -46,7 +49,9 @@ class ProductDetailScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               child: Text(
-                loadedProduct.description,
+                loadedProduct.description != null
+                    ? loadedProduct.description!
+                    : "No Product Description",
                 textAlign: TextAlign.center,
                 softWrap: true,
               ),

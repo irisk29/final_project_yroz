@@ -1,8 +1,11 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'edit_bank_account.dart';
 
 class ManageOnlineStoreScreen extends StatefulWidget {
   static const routeName = '/manage-online-store';
@@ -16,11 +19,6 @@ class ManageOnlineStoreScreen extends StatefulWidget {
 
 class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     widget.store =
         Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
@@ -29,22 +27,25 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final notificationCount = Provider.of<User>(context, listen: true)
-        .storeOwnerState!
-        .newPurchasesNoViewed;
+    final user = Provider.of<User>(context, listen: true);
+    final notificationCount = user.storeOwnerState!.newPurchasesNoViewed;
+    var deviceSize = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: deviceSize.height * 0.1,
         title: Text(
           widget.store.name,
+          style: const TextStyle(
+            fontSize: 22,
+          ),
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Center(
-              child: 
-              Container(
+              child: Container(
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
@@ -72,9 +73,8 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     title: Text("Edit Store Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditOnlineStorePipeline.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -82,11 +82,10 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                       Icons.account_balance,
                       color: Colors.purple,
                     ),
-                    title: Text("Edit Bank Account"),
+                    title: Text("Edit Bank Account Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditBankAccountScreen.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -130,14 +129,33 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                   _buildDivider(),
                   ListTile(
                     leading: Icon(
+                      Icons.qr_code_2_sharp,
+                      color: Colors.purple,
+                    ),
+                    title: Text("Store QR Code"),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () => showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: Text('QR Code'),
+                              content: Image.network(
+                                widget.store.qrCode!,
+                                fit: BoxFit.cover,
+                                width: 150,
+                                height: 150,
+                              ),
+                            )),
+                  ),
+                  _buildDivider(),
+                  ListTile(
+                    leading: Icon(
                       Icons.arrow_circle_down,
                       color: Colors.purple,
                     ),
                     title: Text("Downgrade to Physical Store"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () {
-                      //TODO: ADD FUNCTIONALITY
-                    },
+                    onTap: () =>
+                        user.convertOnlineStoreToPhysical(widget.store),
                   ),
                 ],
               ),
@@ -158,9 +176,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                   ),
                 ),
               ),
-              onPressed: () {
-                //TODO: ADD FUNCTIONALITY
-              },
+              onPressed: () => user.deleteStore(widget.store.id, false),
             ),
           ],
         ),
