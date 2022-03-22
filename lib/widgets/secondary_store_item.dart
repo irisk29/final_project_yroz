@@ -1,38 +1,28 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
-import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 
-class StoreItem extends StatelessWidget {
+class SecondaryStoreItem extends StatelessWidget {
   final StoreDTO store;
-  //final User user;
 
-  StoreItem(this.store) {}
+  SecondaryStoreItem(this.store) {}
 
   void selectStore(BuildContext ctx) {
     this.store is OnlineStoreDTO
         ? Navigator.of(ctx).pushNamed(
             OnlineStoreScreen.routeName,
-            arguments: {
-              'store': store,
-              //'user': user
-            },
+            arguments: {'store': store},
           )
         : Navigator.of(ctx).pushNamed(
             PhysicalStoreScreen.routeName,
-            arguments: {
-              'store': store,
-              //'user': user
-            },
+            arguments: {'store': store},
           );
   }
 
   @override
   Widget build(BuildContext context) {
-    var deviceSize = MediaQuery.of(context).size;
-
     return LayoutBuilder(
       builder: (context, constraints) => GestureDetector(
         child: Container(
@@ -57,9 +47,9 @@ class StoreItem extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.25),
-                    spreadRadius: 5,
-                    blurRadius: 5,
-                    offset: Offset(0, 3), // changes position of shadow
+                    blurRadius: 5.0,
+                    spreadRadius: 0,
+                    offset: new Offset(10.0, 0.0),
                   ),
                 ],
               ),
@@ -68,7 +58,7 @@ class StoreItem extends StatelessWidget {
           Positioned(
             top: constraints.maxHeight * 0.75,
             child: Container(
-              height: constraints.maxHeight * 0.28,
+              height: constraints.maxHeight * 0.25,
               width: constraints.maxWidth,
               decoration: BoxDecoration(
                 color: Color.fromRGBO(255, 255, 255, 1),
@@ -81,15 +71,14 @@ class StoreItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    height: constraints.maxHeight * 0.14,
+                    height: constraints.maxHeight * 0.1,
                     child: Column(
                       children: [
                         Expanded(
                           child: FittedBox(
                             fit: BoxFit.contain,
                             child: Text(
-                              this.store.name,
-                              textAlign: TextAlign.center,
+                              this.store.name + " | " + this.store.address,
                               style: TextStyle(
                                   color: Colors.black.withOpacity(0.85)),
                             ),
@@ -99,15 +88,14 @@ class StoreItem extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    height: constraints.maxHeight * 0.09,
-                    child: Column(
+                    height: constraints.maxHeight * 0.075,
+                    child: Row(
                       children: [
                         Expanded(
                           child: FittedBox(
                             fit: BoxFit.contain,
                             child: Text(
-                              this.store.address,
-                              textAlign: TextAlign.center,
+                              this.store.categories.join(', '),
                               style: TextStyle(
                                 color: Colors.black54,
                                 fontSize: 10,

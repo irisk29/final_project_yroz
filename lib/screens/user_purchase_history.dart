@@ -35,10 +35,16 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: deviceSize.height * 0.1,
         title: Text(
           "Latest Purchases",
+          style: const TextStyle(
+            fontSize: 22,
+          ),
         ),
       ),
       body: FutureBuilder(
@@ -52,8 +58,30 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
                       itemCount: snap.data.length,
                       itemBuilder: (context, index) =>
                           HistoryPurchaseItem(snap.data[index]))
-                  : Center(
-                      child: Text("No purchases made yet"),
+                  : Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 45.0,
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Icon(Icons.history, size: 40),
+                              radius: 40.0,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Latest Purchases",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                          ),
+                          Text("No Purchases made yet"),
+                        ],
+                      ),
                     );
         },
       ),

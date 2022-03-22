@@ -8,7 +8,7 @@ import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
-import '../widgets/store_item.dart';
+import '../widgets/secondary_store_item.dart';
 
 class FavoriteScreen extends StatefulWidget {
   @override
@@ -94,8 +94,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       padding: EdgeInsets.only(
                           top: deviceSize.height * 0.025,
                           bottom: deviceSize.height * 0.025,
-                          left: deviceSize.width * 0.12,
-                          right: deviceSize.width * 0.12),
+                          left: deviceSize.width * 0.075,
+                          right: deviceSize.width * 0.075),
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
                       crossAxisCount: 1,
@@ -103,7 +103,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       mainAxisSpacing: deviceSize.height * 0.025,
                       crossAxisSpacing: deviceSize.width * 0.025,
                       children: favoriteStores
-                          .map((storeData) => StoreItem(storeData))
+                          .map((storeData) => SecondaryStoreItem(storeData))
                           .toList(),
                     );
         },
