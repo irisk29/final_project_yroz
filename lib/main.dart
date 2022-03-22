@@ -33,6 +33,7 @@ import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
 import 'screens/product_detail_screen.dart';
 import 'screens/tabs_screen.dart';
+import 'screens/tutorial_screen.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -156,6 +157,7 @@ class _MyAppState extends State<MyApp> {
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
+          TutorialScreen.routeName: (ctx) => TutorialScreen(),
         },
       ),
     );

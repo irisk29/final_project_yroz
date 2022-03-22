@@ -56,9 +56,6 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
               token));
       }
     });
-    setState(() {
-      // Update your UI with the desired changes.
-    });
   }
 
   @override
@@ -78,7 +75,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                 ),
                 onPressed: () async {
                   await Navigator.of(context)
-                      .pushNamed(AddCreditCardScreen.routeName);
+                      .pushReplacementNamed(AddCreditCardScreen.routeName);
                 },
               ),
             ],
