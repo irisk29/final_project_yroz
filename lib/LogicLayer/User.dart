@@ -273,6 +273,26 @@ class User extends ChangeNotifier {
     }
   }
 
+  Future<void> convertOnlineStoreToPhysical(OnlineStoreDTO onlineStore) async {
+    try {
+      var res =
+          await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore);
+      if (!res.getTag()) {
+        print(res.getMessage());
+        return;
+      }
+      Tuple2<PhysicalStoreModel, String> retVal = res.getValue();
+      this.storeOwnerState =
+          new StoreOwnerState(retVal.item2, () => notifyListeners());
+      this.storeOwnerState!.setPhysicalStore(retVal.item1);
+      this.storeOwnerState!.onlineStore = null;
+
+      notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
+  }
+  
   Future<void> addFavoriteStore(String storeID, bool isOnline) async {
     try {
       var res = await UsersStorageProxy().addFavoriteStore(storeID, isOnline);
