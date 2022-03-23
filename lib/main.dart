@@ -53,30 +53,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      await _configureAmplify();
-      await deleteLocalDataStore();
-      FlutterNativeSplash.remove();
-    });
+    _configureAmplify();
+    WidgetsBinding.instance!.addPostFrameCallback((_) =>
+      FlutterNativeSplash.remove());
   }
 
-  Future<void> deleteLocalDataStore() async {
-    //get fresh information from cloud everytime the app starts
-    try {
-      await Amplify.DataStore.clear();
-    } catch (error) {
-      print('Error stopping DataStore: $error');
-    }
-
-    try {
-      //await Amplify.DataStore.start();
-    } catch (error) {
-      print('Error starting DataStore: $error');
-    }
-  }
-
-  Future<void> _configureAmplify() async {
+  void _configureAmplify() async {
     if (!mounted) return;
 
     Amplify.addPlugin(AmplifyAuthCognito());

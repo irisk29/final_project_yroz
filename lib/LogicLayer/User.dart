@@ -24,7 +24,6 @@ import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:intl/intl.dart';
 import 'package:tuple/tuple.dart';
 
 import 'StoreOwnerState.dart';
@@ -34,7 +33,6 @@ class User extends ChangeNotifier {
   String? email;
   String? name;
   List<Tuple2<String, bool>> favoriteStores; //IDs of favorite stores
-  List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
   String? eWallet;
@@ -45,13 +43,11 @@ class User extends ChangeNotifier {
 
   User(this.email, this.name)
       : favoriteStores = <Tuple2<String, bool>>[],
-        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[] {}
 
   User.withNull()
       : favoriteStores = <Tuple2<String, bool>>[],
-        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[] {}
 
@@ -65,10 +61,6 @@ class User extends ChangeNotifier {
       this.name = model.name;
       this.imageUrl = model.imageUrl;
       this.eWallet = model.eWallet;
-      this.favoriteProducts = model.favoriteProducts == null
-          ? []
-          : (jsonDecode(model.favoriteProducts!) as List<dynamic>)
-              .cast<String>();
       this.favoriteStores = model.favoriteStores == null
           ? []
           : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
@@ -275,54 +267,6 @@ class User extends ChangeNotifier {
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
       this.storeOwnerState!.physicalStore = null;
 
-      notifyListeners();
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-    }
-  }
-
-  Future<void> convertOnlineStoreToPhysical(OnlineStoreDTO onlineStore) async {
-    try {
-      var res =
-          await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
-      }
-      Tuple2<PhysicalStoreModel, String> retVal = res.getValue();
-      this.storeOwnerState =
-          new StoreOwnerState(retVal.item2, () => notifyListeners());
-      this.storeOwnerState!.setPhysicalStore(retVal.item1);
-      this.storeOwnerState!.onlineStore = null;
-
-      notifyListeners();
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-    }
-  }
-
-  Future<void> addFavoriteProduct(String prodID) async {
-    try {
-      var res = await UsersStorageProxy().addFavoriteProduct(prodID);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
-      }
-      this.favoriteProducts = res.getValue();
-      notifyListeners();
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-    }
-  }
-
-  Future<void> removeFavoriteProduct(String prodID) async {
-    try {
-      var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
-      }
-      this.favoriteProducts = res.getValue();
       notifyListeners();
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
