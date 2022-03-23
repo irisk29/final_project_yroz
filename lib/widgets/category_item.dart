@@ -1,4 +1,3 @@
-import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:flutter/material.dart';
 import '../screens/category_screen.dart';
 
@@ -6,8 +5,9 @@ class CategoryItem extends StatelessWidget {
   final String id;
   final String title;
   final Color color;
+  final AssetImage image;
 
-  CategoryItem(this.id, this.title, this.color);
+  CategoryItem(this.id, this.title, this.color, this.image);
 
   void selectCategory(BuildContext ctx) {
     Navigator.of(ctx).pushNamed(
@@ -29,9 +29,7 @@ class CategoryItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.black,
               image: DecorationImage(
-                  image: this.title == 'Food'
-                      ? AssetImage("assets/images/food.png")
-                      : AssetImage("assets/images/home.png"),
+                  image: this.image,
                   fit: BoxFit.cover),
               borderRadius: BorderRadius.circular(15),
             ),
