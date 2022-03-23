@@ -15,24 +15,8 @@ class UserAuthenticator {
 
   UserAuthenticator._internal();
 
-  Future<void> refreshLocalData() async {
-    //get fresh information from cloud everytime the app starts
-    try {
-      await Amplify.DataStore.clear();
-    } catch (error) {
-      print('Error stopping DataStore: $error');
-    }
-
-    try {
-      await Amplify.DataStore.start();
-    } catch (error) {
-      print('Error starting DataStore: $error');
-    }
-  }
-
   Future<Tuple2<UserModel?, bool>> signIn(AuthProvider authProvider) async {
     try {
-      await refreshLocalData();
       await Amplify.Auth.signInWithWebUI(provider: authProvider);
       var res = await Amplify.Auth.fetchUserAttributes();
       var email, name, picture;
