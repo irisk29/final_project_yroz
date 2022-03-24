@@ -131,6 +131,8 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
-  - family: Roboto
-    fonts:
-      - asset: assets/fonts/Roboto-Regular.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700
