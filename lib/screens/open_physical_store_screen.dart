@@ -242,6 +242,9 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         if (value!.isEmpty) {
                           return 'Please enter a phone Number.';
                         }
+                        if (!value.startsWith('+') || value.length < 6) {
+                          return 'invalid phone number.';
+                        }
                         return null;
                       },
                       onSaved: (value) {
