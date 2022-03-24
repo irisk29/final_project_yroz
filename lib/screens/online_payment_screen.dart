@@ -117,7 +117,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
       //   }
       // });
       setState(() {
-        dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
+        //dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
         widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(
             widget.storeID!);
         // Update your UI with the desired changes.
@@ -160,6 +160,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
             creditCard['cardNumber'].toString().substring(15), token));
       }
     });
+    dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
     if (items.length==0) {
       showDialog(
           context: context,
@@ -173,7 +174,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                   child: Text('Okay'),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed(CreditCardsScreen.routeName);
+                    Navigator.of(context).pushReplacementNamed(CreditCardsScreen.routeName);
                   },
                 ),
                 FlatButton(

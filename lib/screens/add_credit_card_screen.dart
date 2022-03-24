@@ -7,7 +7,6 @@ import 'package:flutter_credit_card/credit_card_form.dart';
 import 'package:flutter_credit_card/credit_card_model.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -173,11 +172,11 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                             } else {
                               print('invalid!');
                             }
-                            final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
-                            final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
-                            final encrypter = encrypt.Encrypter(encrypt.AES(key));
+                            //final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
+                            //final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
+                            //final encrypter = encrypt.Encrypter(encrypt.AES(key));
 
-                            final encrypted = encrypter.encrypt(cardNumber, iv: iv);
+                            //final encrypted = encrypter.encrypt(cardNumber, iv: iv);
 
                             saveCreditCard();
 
