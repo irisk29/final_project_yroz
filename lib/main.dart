@@ -24,6 +24,7 @@ import 'LogicLayer/User.dart';
 import 'amplifyconfiguration.dart';
 import 'blocs/application_bloc.dart';
 import 'models/ModelProvider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'screens/landing_screen.dart';
 import 'screens/manage_online_store_screen.dart';
@@ -36,9 +37,10 @@ import 'screens/product_detail_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/tutorial_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await dotenv.load();
   runApp(MyApp());
 }
 
