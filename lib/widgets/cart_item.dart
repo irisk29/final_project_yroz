@@ -34,6 +34,8 @@ class _CartItemState extends State<CartItem> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context, listen: false);
+
     return Dismissible(
       key: ValueKey(widget.product!.id),
       background: Container(
@@ -102,42 +104,32 @@ class _CartItemState extends State<CartItem> {
               ),
             ),
             title: Text(widget.title),
-            subtitle: Text('Total: \$${(widget.price * widget.quantity)}'),
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Total: \$${(widget.price * widget.quantity)}'),
+                IconButton(
+                  icon: Icon(Icons.remove_circle),
+                  onPressed: () {
+                    // user.decreaseProductQuantityInBag(
+                    //     widget.product, widget.storeID)),
+
+                    // TODO: call here decrease quantity product local
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.add_circle),
+                  onPressed: () {
+                    // user.addProductToShoppingBag(
+                    //     widget.product, widget.storeID);
+
+                    // TODO: call here add product local
+                  },
+                ),
+              ],
+            ),
             trailing: Text('${widget.quantity} x'),
-            onLongPress: () async {
-              double quantity = 0;
-              await showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                        title: Text('Select quantity'),
-                        content: TextField(
-                          controller: myController,
-                          keyboardType: TextInputType.number,
-                        ),
-                        actions: [
-                          FlatButton(
-                            child: Text('Okay'),
-                            onPressed: () async {
-                              quantity = double.parse(myController.text);
-                              Navigator.of(context).pop();
-                              await Provider.of<User>(context, listen: false)
-                                  .addProductToShoppingBag(
-                                      widget.product!, widget.storeID);
-                              setState(() {
-                                widget.quantity = quantity;
-                                () => widget.update();
-                              });
-                            },
-                          ),
-                          FlatButton(
-                            child: Text('Cancel'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      ));
-            },
           ),
         ),
       ),

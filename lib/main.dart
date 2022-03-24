@@ -32,7 +32,6 @@ import 'screens/physical_payment_screen.dart';
 import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
-import 'screens/product_detail_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/tutorial_screen.dart';
 
@@ -55,9 +54,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(Duration(milliseconds: 1000));
       await refreshLocalData();
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(Duration(milliseconds: 1000));
       FlutterNativeSplash.remove();
     });
   }
@@ -130,30 +129,33 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: MaterialColor(0xFFFF9191, color),
           accentColor: Colors.purple,
-          fontFamily: 'Roboto',
+          fontFamily: 'Montserrat',
         ),
         home: LandingScreen(),
         routes: {
-          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
           TabsScreen.routeName: (ctx) => TabsScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) =>
+              OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) =>
+              OnlineStoreProductsScreen(),
           LandingScreen.routeName: (ctx) => LandingScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) =>
+              EditPhysicalStorePipeline(),
           EditBankAccountScreen.routeName: (ctx) => EditBankAccountScreen(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) =>
+              ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),

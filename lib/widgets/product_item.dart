@@ -130,7 +130,7 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context, listen: false);
+    final myController = TextEditingController();
 
     return LayoutBuilder(
       builder: (context, constraints) => SizedBox(
@@ -170,29 +170,52 @@ class _ProductItemState extends State<ProductItem> {
                         children: [
                           Text('\€${widget.product.price}'),
                           IconButton(
-                              icon: Icon(Icons.remove_shopping_cart_outlined),
-                              onPressed: () =>
-                                  user.decreaseProductQuantityInBag(
-                                      widget.product, widget.storeID)),
-                          IconButton(
                             icon: Icon(Icons.add_shopping_cart),
-                            onPressed: () {
-                              user.addProductToShoppingBag(
-                                  widget.product, widget.storeID);
-                              Scaffold.of(context).hideCurrentSnackBar();
-                              Scaffold.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Added item to cart!',
+                            onPressed: () async {
+                              double quantity = 0;
+                              await showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text('Select quantity'),
+                                  content: TextField(
+                                    controller: myController,
+                                    keyboardType: TextInputType.number,
                                   ),
-                                  duration: Duration(seconds: 3),
-                                  action: SnackBarAction(
-                                    label: 'UNDO',
-                                    onPressed: () {
-                                      user.decreaseProductQuantityInBag(
-                                          widget.product, widget.storeID);
-                                    },
-                                  ),
+                                  actions: [
+                                    FlatButton(
+                                      child: Text('Okay'),
+                                      onPressed: () {
+                                        quantity =
+                                            double.parse(myController.text);
+                                        Navigator.of(context).pop();
+                                        // TODO : call here to updateOrCreate
+                                        Scaffold.of(context)
+                                            .hideCurrentSnackBar();
+                                        Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Added item to cart!',
+                                            ),
+                                            duration: Duration(seconds: 3),
+                                            action: SnackBarAction(
+                                              label: 'UNDO',
+                                              onPressed: () {
+                                                // Provider.of<User>(context, listen: false)
+                                                //     .removeProductFromShoppingBag(
+                                                //         widget.product, widget.storeID);
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
                                 ),
                               );
                             },
