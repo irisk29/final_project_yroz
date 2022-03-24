@@ -33,7 +33,6 @@ import 'screens/physical_payment_screen.dart';
 import 'screens/category_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/edit_product_screen.dart';
-import 'screens/product_detail_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/tutorial_screen.dart';
 
@@ -55,15 +54,16 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
-      await deleteLocalDataStore();
+      await Future.delayed(Duration(milliseconds: 1000));
+      await refreshLocalData();
+      await Future.delayed(Duration(milliseconds: 1000));
       FlutterNativeSplash.remove();
     });
   }
 
-  Future<void> deleteLocalDataStore() async {
+  Future<void> refreshLocalData() async {
     //get fresh information from cloud everytime the app starts
     try {
       await Amplify.DataStore.clear();
@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      //await Amplify.DataStore.start();
+      await Amplify.DataStore.start();
     } catch (error) {
       print('Error starting DataStore: $error');
     }
@@ -131,11 +131,10 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: MaterialColor(0xFFFF9191, color),
           accentColor: Colors.purple,
-          fontFamily: 'Roboto',
+          fontFamily: 'Montserrat',
         ),
         home: LandingScreen(),
         routes: {
-          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
           TabsScreen.routeName: (ctx) => TabsScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),

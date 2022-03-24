@@ -102,7 +102,15 @@ flutter:
      - assets/icon/yroz-removebg.png
      - assets/icon/icon.png
      - assets/images/food.png
-     - assets/images/home.png
+     - assets/images/home.jpeg
+     - assets/images/shoes.jpeg
+     - assets/images/sports.jpeg
+     - assets/images/electronics.jpeg
+     - assets/images/accessories.jpeg
+     - assets/images/cleaning.jpeg
+     - assets/images/sweets.jpeg
+     - assets/images/clothes.png
+     - assets/images/art.png
      - assets/images/shop1.png
      - assets/images/shop2.png
      - assets/images/chip.png
@@ -125,6 +133,8 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
-  - family: Roboto
-    fonts:
-      - asset: assets/fonts/Roboto-Regular.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700

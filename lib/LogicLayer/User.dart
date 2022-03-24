@@ -24,7 +24,6 @@ import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:intl/intl.dart';
 import 'package:tuple/tuple.dart';
 
 import 'StoreOwnerState.dart';
@@ -34,7 +33,6 @@ class User extends ChangeNotifier {
   String? email;
   String? name;
   List<Tuple2<String, bool>> favoriteStores; //IDs of favorite stores
-  List<String> favoriteProducts; //IDs of favorite products
   List<String> creditCards;
   String? imageUrl;
   String? eWallet;
@@ -45,41 +43,30 @@ class User extends ChangeNotifier {
 
   User(this.email, this.name)
       : favoriteStores = <Tuple2<String, bool>>[],
-        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[] {}
 
   User.withNull()
       : favoriteStores = <Tuple2<String, bool>>[],
-        favoriteProducts = <String>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[] {}
 
   void userFromModel(UserModel model) async {
     try {
-      this.creditCards = model.creditCards == null
-          ? []
-          : jsonDecode(model.creditCards!).cast<String>();
+      this.creditCards = model.creditCards == null ? [] : jsonDecode(model.creditCards!).cast<String>();
       this.id = model.id;
       this.email = model.email;
       this.name = model.name;
       this.imageUrl = model.imageUrl;
       this.eWallet = model.eWallet;
-      this.favoriteProducts = model.favoriteProducts == null
-          ? []
-          : (jsonDecode(model.favoriteProducts!) as List<dynamic>)
-              .cast<String>();
-      this.favoriteStores = model.favoriteStores == null
-          ? []
-          : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
+      this.favoriteStores =
+          model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
       this.storeOwnerState = model.storeOwnerModel == null
           ? null
-          : StoreOwnerState.storeOwnerStateFromModel(
-              model.storeOwnerModel!, () => notifyListeners());
+          : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!, () => notifyListeners());
       if (model.shoppingBagModels != null) {
         for (ShoppingBagModel shoppingBagModel in model.shoppingBagModels!) {
-          var res = await UsersStorageProxy()
-              .convertShoppingBagModelToDTO(shoppingBagModel);
+          var res = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBagModel);
           if (!res.getTag()) {
             print(res.getMessage());
             continue;
@@ -95,8 +82,7 @@ class User extends ChangeNotifier {
 
   Future<void> signIn(AuthProvider authProvider, BuildContext context) async {
     try {
-      Tuple2<UserModel?, bool> currUser =
-          await UserAuthenticator().signIn(authProvider);
+      Tuple2<UserModel?, bool> currUser = await UserAuthenticator().signIn(authProvider);
       isSignedIn = currUser.item1 != null;
       if (isSignedIn) {
         userFromModel(currUser.item1!);
@@ -124,26 +110,20 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<ResultInterface> openOnlineStore(
-      OnlineStoreDTO store, BankAccountDTO bankAccountDTO) async {
+  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store, BankAccountDTO bankAccountDTO) async {
     try {
       var res = await StoreStorageProxy().openOnlineStore(store);
       if (!res.getTag()) return res; //failure
-      var tuple =
-          (res.getValue() as Tuple2); //<online store model, store owner id>
+      var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
       if (storeOwnerState == null) {
         //we might already have a store, hence it won't be null
-        this.storeOwnerState =
-            new StoreOwnerState(tuple.item2, () => notifyListeners());
+        this.storeOwnerState = new StoreOwnerState(tuple.item2, () => notifyListeners());
       }
       this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
       String storeID = tuple.item1.id;
       await _createStoreAccount(storeID);
       await this.storeOwnerState!.addStoreBankAccount(
-          storeID,
-          bankAccountDTO.bankName,
-          bankAccountDTO.branchNumber,
-          bankAccountDTO.bankAccount);
+          storeID, bankAccountDTO.bankName, bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
       this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return new Ok("opened online store", tuple.item1.id);
@@ -153,26 +133,20 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<ResultInterface> openPhysicalStore(
-      StoreDTO store, BankAccountDTO bankAccountDTO) async {
+  Future<ResultInterface> openPhysicalStore(StoreDTO store, BankAccountDTO bankAccountDTO) async {
     try {
       var res = await StoreStorageProxy().openPhysicalStore(store);
       if (!res.getTag()) return res; //failure
-      var tuple =
-          (res.getValue() as Tuple2); //<physical store model, store owner id>
+      var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
       if (storeOwnerState == null) {
         //we might already have a store, hence it won't be null
-        this.storeOwnerState =
-            new StoreOwnerState(tuple.item2, () => notifyListeners());
+        this.storeOwnerState = new StoreOwnerState(tuple.item2, () => notifyListeners());
       }
       this.storeOwnerState!.setPhysicalStore(tuple.item1);
       String storeID = tuple.item1.id;
       await _createStoreAccount(storeID);
       await this.storeOwnerState!.addStoreBankAccount(
-          storeID,
-          bankAccountDTO.bankName,
-          bankAccountDTO.branchNumber,
-          bankAccountDTO.bankAccount);
+          storeID, bankAccountDTO.bankName, bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
       this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return res;
@@ -263,15 +237,13 @@ class User extends ChangeNotifier {
 
   Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
     try {
-      var res =
-          await StoreStorageProxy().convertPhysicalStoreToOnline(physicalStore);
+      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(physicalStore);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
       }
       Tuple2<OnlineStoreModel, String> retVal = res.getValue();
-      this.storeOwnerState =
-          new StoreOwnerState(retVal.item2, () => notifyListeners());
+      this.storeOwnerState = new StoreOwnerState(retVal.item2, () => notifyListeners());
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
       this.storeOwnerState!.physicalStore = null;
 
@@ -283,46 +255,16 @@ class User extends ChangeNotifier {
 
   Future<void> convertOnlineStoreToPhysical(OnlineStoreDTO onlineStore) async {
     try {
-      var res =
-          await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore);
+      var res = await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
       }
       Tuple2<PhysicalStoreModel, String> retVal = res.getValue();
-      this.storeOwnerState =
-          new StoreOwnerState(retVal.item2, () => notifyListeners());
+      this.storeOwnerState = new StoreOwnerState(retVal.item2, () => notifyListeners());
       this.storeOwnerState!.setPhysicalStore(retVal.item1);
       this.storeOwnerState!.onlineStore = null;
 
-      notifyListeners();
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-    }
-  }
-
-  Future<void> addFavoriteProduct(String prodID) async {
-    try {
-      var res = await UsersStorageProxy().addFavoriteProduct(prodID);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
-      }
-      this.favoriteProducts = res.getValue();
-      notifyListeners();
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-    }
-  }
-
-  Future<void> removeFavoriteProduct(String prodID) async {
-    try {
-      var res = await UsersStorageProxy().removeFavoriteProduct(prodID);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
-      }
-      this.favoriteProducts = res.getValue();
       notifyListeners();
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -345,8 +287,7 @@ class User extends ChangeNotifier {
 
   Future<void> removeFavoriteStore(String storeID, bool isOnline) async {
     try {
-      var res =
-          await UsersStorageProxy().removeFavoriteStore(storeID, isOnline);
+      var res = await UsersStorageProxy().removeFavoriteStore(storeID, isOnline);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
@@ -358,11 +299,43 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<void> addProductToShoppingBag(
-      ProductDTO productDTO, double quantity, String storeID) async {
+  void addProductToShoppingBagLocally(String storeID, CartProductDTO cartProductDTO) {
+    ShoppingBagDTO? shoppingBagDTO = getShoppingBag(storeID);
+    if (shoppingBagDTO == null) {
+      FLog.error(text: "No shopping bag was found");
+      return;
+    }
+    shoppingBagDTO.addProduct(cartProductDTO);
+    notifyListeners();
+  }
+
+  void decreaseProductQuantityLocally(String storeID, String cartProdID) {
+    ShoppingBagDTO? shoppingBagDTO = getShoppingBag(storeID);
+    if (shoppingBagDTO == null) {
+      FLog.error(text: "No shopping bag was found");
+      return;
+    }
+    shoppingBagDTO.decreaseProductQuantity(cartProdID);
+    notifyListeners();
+  }
+
+  Future<void> removeProductFromShoppingBag(String cartProductID, String storeID) async {
     try {
-      var res = await UsersStorageProxy().addProductToShoppingBag(
-          productDTO, storeID, quantity, this.id!); // <product, shopping bag>
+      ShoppingBagDTO? shoppingBagDTO = getShoppingBag(storeID);
+    if (shoppingBagDTO == null) {
+      FLog.error(text: "No shopping bag was found");
+      return;
+    }
+    shoppingBagDTO.removeProduct(cartProductID);
+    notifyListeners();
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
+  }
+
+  Future<void> updateOrCreateCartProduct(ProductDTO productDTO, String storeID, double newQuantity) async {
+    try {
+      var res = await UsersStorageProxy().updateOrCreateCartProduct(productDTO, storeID, newQuantity, this.id!);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
@@ -375,50 +348,17 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<void> removeProductFromShoppingBag(
-      ProductDTO productDTO, String storeID) async {
+  Future<void> saveShoppingBag(String storeID) async {
     try {
-      var res = await UsersStorageProxy()
-          .removeProductFromShoppingBag(productDTO, storeID, this.id!);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
+      var shoppingBags = this.bagInStores.where((element) => element.onlineStoreID == storeID);
+      if (shoppingBags.isNotEmpty && shoppingBags.first.bagSize() > 0) {
+        var saveRes = await UsersStorageProxy().saveShoppingBag(shoppingBags.first);
+        if (saveRes.getTag()) {
+          shoppingBags.first.id = saveRes.getValue();
+        }
+      } else {
+        await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
       }
-      updateShoppingBag(res.getValue());
-
-      notifyListeners();
-    } on Exception catch (e) {
-      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-    }
-  }
-
-  Future<void> updateProductQuantityInBag(
-      ProductDTO productDTO, String storeID, double newQuantity) async {
-    try {
-      var res = await UsersStorageProxy().updateProductQuantityInBag(
-          productDTO, storeID, newQuantity, this.id!);
-      if (!res.getTag()) {
-        print(res.getMessage());
-        return;
-      }
-
-      var shoppingBag = this.bagInStores.firstWhere(
-          (element) =>
-              element.onlineStoreID == storeID && element.userId == this.id,
-          orElse: null);
-      if (shoppingBag == null) {
-        print("No such shopping bag in store $storeID for user ${this.id}");
-        return;
-      }
-      var shoppingBagCopy = shoppingBag;
-      var cartDTO = UsersStorageProxy()
-          .convertStoreProductToCartProduct(productDTO, newQuantity);
-      shoppingBagCopy.removeProduct(productDTO.id);
-      shoppingBagCopy.addProduct(cartDTO);
-
-      this.bagInStores.remove(shoppingBag);
-      this.bagInStores.add(shoppingBagCopy);
-
       notifyListeners();
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -427,15 +367,13 @@ class User extends ChangeNotifier {
 
   Future<void> clearShoppingBagInStore(String storeID) async {
     try {
-      var res =
-          await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
+      var res = await UsersStorageProxy().clearShoppingBagInStore(storeID, this.id!);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
       }
 
-      this.bagInStores.removeWhere((element) =>
-          element.onlineStoreID == storeID && element.userId == this.id!);
+      this.bagInStores.removeWhere((element) => element.onlineStoreID == storeID && element.userId == this.id!);
       notifyListeners();
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -452,15 +390,22 @@ class User extends ChangeNotifier {
         this.bagInStores = [];
         return;
       }
-      var convertRes =
-          await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
+      var convertRes = await UsersStorageProxy().convertShoppingBagModelToDTO(shoppingBag);
       if (!convertRes.getTag()) {
-        print(convertRes.getMessage());
+        FLog.error(text: convertRes.getMessage());
         return;
       }
       ShoppingBagDTO shoppingBagDTO = convertRes.getValue();
-      if (!this.bagInStores.contains(shoppingBagDTO))
+      if (!this.bagInStores.contains(shoppingBagDTO)) {
         this.bagInStores.add(shoppingBagDTO);
+      } else {
+        //update
+        this.bagInStores.removeWhere((element) =>
+            element.userId == shoppingBag.usermodelID &&
+            element.onlineStoreID == shoppingBag.onlineStoreID);
+        this.bagInStores.add(shoppingBagDTO);
+      }
+      notifyListeners();
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
@@ -468,8 +413,7 @@ class User extends ChangeNotifier {
 
   Future<ShoppingBagDTO?> getCurrShoppingBag(String storeID) async {
     try {
-      var res =
-          await UsersStorageProxy().getCurrentShoppingBag(storeID, this.id!);
+      var res = await UsersStorageProxy().getCurrentShoppingBag(storeID, this.id!);
       if (!res.getTag()) {
         print(res.getMessage());
         return null;
@@ -482,15 +426,13 @@ class User extends ChangeNotifier {
   }
 
   ShoppingBagDTO? getShoppingBag(String storeID) {
-    return bagInStores
-        .firstWhereOrNull((element) => element.onlineStoreID == storeID);
+    return bagInStores.firstWhereOrNull((element) => element.onlineStoreID == storeID);
   }
 
-  Future<String> addCreditCardToken(String cardNumber, String expireDate,
-      String cvv, String cardHolder) async {
+  Future<String> addCreditCardToken(String cardNumber, String expireDate, String cvv, String cardHolder) async {
     try {
-      var internalRes = await InternalPaymentGateway()
-          .addUserCreditCard(this.id!, cardNumber, expireDate, cvv, cardHolder);
+      var internalRes =
+          await InternalPaymentGateway().addUserCreditCard(this.id!, cardNumber, expireDate, cvv, cardHolder);
       if (!internalRes.getTag()) {
         print(internalRes.getMessage());
         return "";
@@ -512,8 +454,7 @@ class User extends ChangeNotifier {
 
   Future<void> removeCreditCardToken(String token) async {
     try {
-      var internalRes =
-          await InternalPaymentGateway().removeUserCreditCard(this.id!, token);
+      var internalRes = await InternalPaymentGateway().removeUserCreditCard(this.id!, token);
       if (!internalRes.getTag()) {
         print(internalRes.getMessage());
         return;
@@ -532,14 +473,12 @@ class User extends ChangeNotifier {
 
   Future<void> createEWallet() async {
     try {
-      var createWalletRes =
-          await InternalPaymentGateway().createUserAccount(this.id!);
+      var createWalletRes = await InternalPaymentGateway().createUserAccount(this.id!);
       if (!createWalletRes.getTag()) {
         print(createWalletRes.getMessage());
         return;
       }
-      var res =
-          await UsersStorageProxy().saveEWallet(createWalletRes.getValue()!);
+      var res = await UsersStorageProxy().saveEWallet(createWalletRes.getValue()!);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
@@ -553,8 +492,7 @@ class User extends ChangeNotifier {
 
   Future<void> _createStoreAccount(String storeID) async {
     //after the user creates a store, we only create an account for it
-    var storeAccountRes =
-        await InternalPaymentGateway().createStoreAccount(storeID);
+    var storeAccountRes = await InternalPaymentGateway().createStoreAccount(storeID);
     if (!storeAccountRes.getTag()) {
       print(storeAccountRes.getMessage());
       return;
@@ -564,8 +502,7 @@ class User extends ChangeNotifier {
 
   Future<void> _deleteStoreAccount(String storeID) async {
     //for when deleting a store
-    var storeAccountRes =
-        await InternalPaymentGateway().deleteStoreAccount(storeID);
+    var storeAccountRes = await InternalPaymentGateway().deleteStoreAccount(storeID);
     if (!storeAccountRes.getTag()) {
       print(storeAccountRes.getMessage());
       return;
@@ -575,8 +512,7 @@ class User extends ChangeNotifier {
 
   Future<Map<String, Map<String, dynamic>>> getUserCreditCardDetails() async {
     try {
-      var res = await InternalPaymentGateway()
-          .userCreditCardDetails(this.id!, this.creditCards);
+      var res = await InternalPaymentGateway().userCreditCardDetails(this.id!, this.creditCards);
       if (!res.getTag()) {
         print(res.getMessage());
         return {};
@@ -599,8 +535,7 @@ class User extends ChangeNotifier {
 
   Future<BankAccountDTO?> getStoreBankAccountDetails() async {
     if (this.storeOwnerState != null) {
-      final bankAccountDetails =
-          await storeOwnerState!.getStoreBankAccountDetails();
+      final bankAccountDetails = await storeOwnerState!.getStoreBankAccountDetails();
       return bankAccountDetails;
     }
     return null;
@@ -608,8 +543,7 @@ class User extends ChangeNotifier {
 
   Future<String> getEWalletBalance() async {
     try {
-      var res = await InternalPaymentGateway()
-          .eWalletBalance(this.id!, this.eWallet!);
+      var res = await InternalPaymentGateway().eWalletBalance(this.id!, this.eWallet!);
       if (!res.getTag()) {
         print(res.getMessage());
         return "";
@@ -622,25 +556,17 @@ class User extends ChangeNotifier {
   }
 
   Future<ResultInterface> makePaymentOnlineStore(
-      String creditCardToken,
-      String cashBackAmount,
-      String creditAmount,
-      ShoppingBagDTO shoppingBagDTO) async {
+      String creditCardToken, String cashBackAmount, String creditAmount, ShoppingBagDTO shoppingBagDTO) async {
     try {
-      var res = await InternalPaymentGateway().makePayment(
-          shoppingBagDTO.userId,
-          shoppingBagDTO.onlineStoreID,
-          this.eWallet!,
-          creditCardToken,
-          cashBackAmount,
-          creditAmount);
+      var res = await InternalPaymentGateway().makePayment(shoppingBagDTO.userId, shoppingBagDTO.onlineStoreID,
+          this.eWallet!, creditCardToken, cashBackAmount, creditAmount);
       if (!res.getTag()) {
         print(res.getMessage());
         return res;
       }
       await clearShoppingBagInStore(shoppingBagDTO.onlineStoreID);
-      await PurchaseStorageProxy().savePurchase(res.getValue()!, this.id!,
-          shoppingBagDTO.onlineStoreID, shoppingBagDTO.products);
+      await PurchaseStorageProxy()
+          .savePurchase(res.getValue()!, this.id!, shoppingBagDTO.onlineStoreID, shoppingBagDTO.products);
       return new Ok("Purchase was succsseful", res.getValue());
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -648,18 +574,17 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<ResultInterface> makePaymentPhysicalStore(String creditCardToken,
-      String cashBackAmount, String creditAmount, String storeID) async {
+  Future<ResultInterface> makePaymentPhysicalStore(
+      String creditCardToken, String cashBackAmount, String creditAmount, String storeID) async {
     try {
-      var res = await InternalPaymentGateway().makePayment(this.id!, storeID,
-          this.eWallet!, creditCardToken, cashBackAmount, creditAmount);
+      var res = await InternalPaymentGateway()
+          .makePayment(this.id!, storeID, this.eWallet!, creditCardToken, cashBackAmount, creditAmount);
       if (!res.getTag()) {
         print(res.getMessage());
         return res;
       }
 
-      await PurchaseStorageProxy()
-          .savePurchase(res.getValue()!, this.id!, storeID, null);
+      await PurchaseStorageProxy().savePurchase(res.getValue()!, this.id!, storeID, null);
       return new Ok("Purchase was successful", res.getValue());
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -667,19 +592,16 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<List<PurchaseHistoryDTO>> getSuccssefulPurchaseHistoryForUserInRange(
-      DateTime start, DateTime end) async {
+  Future<List<PurchaseHistoryDTO>> getSuccssefulPurchaseHistoryForUserInRange(DateTime start, DateTime end) async {
     try {
-      var res = await InternalPaymentGateway()
-          .getPurchaseHistory(start, end, userId: this.id!, succeeded: true);
+      var res = await InternalPaymentGateway().getPurchaseHistory(start, end, userId: this.id!, succeeded: true);
       if (!res.getTag()) {
         print(res.getMessage());
         return [];
       }
       FLog.info(text: "Got users purchases: ${res.getValue()}");
       List<Map<String, Object>> purchases = res.getValue()!;
-      var purchasesDTO =
-          purchases.map((e) => PurchaseHistoryDTO.fromJson(e)).toList();
+      var purchasesDTO = purchases.map((e) => PurchaseHistoryDTO.fromJson(e)).toList();
       return purchasesDTO;
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -687,8 +609,7 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<List<CartProductDTO>> getProductsInPurchaseHistory(
-      String transactionID) async {
+  Future<List<CartProductDTO>> getProductsInPurchaseHistory(String transactionID) async {
     try {
       var res = await PurchaseStorageProxy().getPurchaseProduct(transactionID);
       if (!res.getTag()) {

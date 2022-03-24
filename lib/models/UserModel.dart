@@ -38,7 +38,6 @@ class UserModel extends Model {
   final StoreOwnerModel? _storeOwnerModel;
   final List<ShoppingBagModel>? _shoppingBagModels;
   final String? _favoriteStores;
-  final String? _favoriteProducts;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _userModelStoreOwnerModelId;
@@ -101,10 +100,6 @@ class UserModel extends Model {
     return _favoriteStores;
   }
   
-  String? get favoriteProducts {
-    return _favoriteProducts;
-  }
-  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -117,9 +112,9 @@ class UserModel extends Model {
     return _userModelStoreOwnerModelId;
   }
   
-  const UserModel._internal({required this.id, required email, required name, imageUrl, creditCards, eWallet, storeOwnerModel, shoppingBagModels, favoriteStores, favoriteProducts, createdAt, updatedAt, userModelStoreOwnerModelId}): _email = email, _name = name, _imageUrl = imageUrl, _creditCards = creditCards, _eWallet = eWallet, _storeOwnerModel = storeOwnerModel, _shoppingBagModels = shoppingBagModels, _favoriteStores = favoriteStores, _favoriteProducts = favoriteProducts, _createdAt = createdAt, _updatedAt = updatedAt, _userModelStoreOwnerModelId = userModelStoreOwnerModelId;
+  const UserModel._internal({required this.id, required email, required name, imageUrl, creditCards, eWallet, storeOwnerModel, shoppingBagModels, favoriteStores, createdAt, updatedAt, userModelStoreOwnerModelId}): _email = email, _name = name, _imageUrl = imageUrl, _creditCards = creditCards, _eWallet = eWallet, _storeOwnerModel = storeOwnerModel, _shoppingBagModels = shoppingBagModels, _favoriteStores = favoriteStores, _createdAt = createdAt, _updatedAt = updatedAt, _userModelStoreOwnerModelId = userModelStoreOwnerModelId;
   
-  factory UserModel({String? id, required String email, required String name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, String? favoriteProducts, String? userModelStoreOwnerModelId}) {
+  factory UserModel({String? id, required String email, required String name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, String? userModelStoreOwnerModelId}) {
     return UserModel._internal(
       id: id == null ? UUID.getUUID() : id,
       email: email,
@@ -130,7 +125,6 @@ class UserModel extends Model {
       storeOwnerModel: storeOwnerModel,
       shoppingBagModels: shoppingBagModels != null ? List<ShoppingBagModel>.unmodifiable(shoppingBagModels) : shoppingBagModels,
       favoriteStores: favoriteStores,
-      favoriteProducts: favoriteProducts,
       userModelStoreOwnerModelId: userModelStoreOwnerModelId);
   }
   
@@ -151,7 +145,6 @@ class UserModel extends Model {
       _storeOwnerModel == other._storeOwnerModel &&
       DeepCollectionEquality().equals(_shoppingBagModels, other._shoppingBagModels) &&
       _favoriteStores == other._favoriteStores &&
-      _favoriteProducts == other._favoriteProducts &&
       _userModelStoreOwnerModelId == other._userModelStoreOwnerModelId;
   }
   
@@ -170,7 +163,6 @@ class UserModel extends Model {
     buffer.write("creditCards=" + "$_creditCards" + ", ");
     buffer.write("eWallet=" + "$_eWallet" + ", ");
     buffer.write("favoriteStores=" + "$_favoriteStores" + ", ");
-    buffer.write("favoriteProducts=" + "$_favoriteProducts" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("userModelStoreOwnerModelId=" + "$_userModelStoreOwnerModelId");
@@ -179,7 +171,7 @@ class UserModel extends Model {
     return buffer.toString();
   }
   
-  UserModel copyWith({String? id, String? email, String? name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, String? favoriteProducts, String? userModelStoreOwnerModelId}) {
+  UserModel copyWith({String? id, String? email, String? name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, String? userModelStoreOwnerModelId}) {
     return UserModel._internal(
       id: id ?? this.id,
       email: email ?? this.email,
@@ -190,7 +182,6 @@ class UserModel extends Model {
       storeOwnerModel: storeOwnerModel ?? this.storeOwnerModel,
       shoppingBagModels: shoppingBagModels ?? this.shoppingBagModels,
       favoriteStores: favoriteStores ?? this.favoriteStores,
-      favoriteProducts: favoriteProducts ?? this.favoriteProducts,
       userModelStoreOwnerModelId: userModelStoreOwnerModelId ?? this.userModelStoreOwnerModelId);
   }
   
@@ -211,13 +202,12 @@ class UserModel extends Model {
           .toList()
         : null,
       _favoriteStores = json['favoriteStores'],
-      _favoriteProducts = json['favoriteProducts'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
       _userModelStoreOwnerModelId = json['userModelStoreOwnerModelId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'email': _email, 'name': _name, 'imageUrl': _imageUrl, 'creditCards': _creditCards, 'eWallet': _eWallet, 'storeOwnerModel': _storeOwnerModel?.toJson(), 'shoppingBagModels': _shoppingBagModels?.map((ShoppingBagModel? e) => e?.toJson()).toList(), 'favoriteStores': _favoriteStores, 'favoriteProducts': _favoriteProducts, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userModelStoreOwnerModelId': _userModelStoreOwnerModelId
+    'id': id, 'email': _email, 'name': _name, 'imageUrl': _imageUrl, 'creditCards': _creditCards, 'eWallet': _eWallet, 'storeOwnerModel': _storeOwnerModel?.toJson(), 'shoppingBagModels': _shoppingBagModels?.map((ShoppingBagModel? e) => e?.toJson()).toList(), 'favoriteStores': _favoriteStores, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userModelStoreOwnerModelId': _userModelStoreOwnerModelId
   };
 
   static final QueryField ID = QueryField(fieldName: "userModel.id");
@@ -233,7 +223,6 @@ class UserModel extends Model {
     fieldName: "shoppingBagModels",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (ShoppingBagModel).toString()));
   static final QueryField FAVORITESTORES = QueryField(fieldName: "favoriteStores");
-  static final QueryField FAVORITEPRODUCTS = QueryField(fieldName: "favoriteProducts");
   static final QueryField USERMODELSTOREOWNERMODELID = QueryField(fieldName: "userModelStoreOwnerModelId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "UserModel";
@@ -298,12 +287,6 @@ class UserModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: UserModel.FAVORITESTORES,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: UserModel.FAVORITEPRODUCTS,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));

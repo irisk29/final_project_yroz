@@ -30,13 +30,11 @@ import 'package:flutter/foundation.dart';
 class ShoppingBagModel extends Model {
   static const classType = const _ShoppingBagModelModelType();
   final String id;
-  final String? _productsAndQuantity;
-  final OnlineStoreModel? _onlineStoreModel;
   final String? _usermodelID;
   final List<CartProductModel>? _CartProductModels;
+  final String? _onlineStoreID;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
-  final String? _shoppingBagModelOnlineStoreModelId;
 
   @override
   getInstanceType() => classType;
@@ -44,14 +42,6 @@ class ShoppingBagModel extends Model {
   @override
   String getId() {
     return id;
-  }
-  
-  String? get productsAndQuantity {
-    return _productsAndQuantity;
-  }
-  
-  OnlineStoreModel? get onlineStoreModel {
-    return _onlineStoreModel;
   }
   
   String get usermodelID {
@@ -71,6 +61,10 @@ class ShoppingBagModel extends Model {
     return _CartProductModels;
   }
   
+  String? get onlineStoreID {
+    return _onlineStoreID;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -79,20 +73,14 @@ class ShoppingBagModel extends Model {
     return _updatedAt;
   }
   
-  String? get shoppingBagModelOnlineStoreModelId {
-    return _shoppingBagModelOnlineStoreModelId;
-  }
+  const ShoppingBagModel._internal({required this.id, required usermodelID, CartProductModels, onlineStoreID, createdAt, updatedAt}): _usermodelID = usermodelID, _CartProductModels = CartProductModels, _onlineStoreID = onlineStoreID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  const ShoppingBagModel._internal({required this.id, productsAndQuantity, onlineStoreModel, required usermodelID, CartProductModels, createdAt, updatedAt, shoppingBagModelOnlineStoreModelId}): _productsAndQuantity = productsAndQuantity, _onlineStoreModel = onlineStoreModel, _usermodelID = usermodelID, _CartProductModels = CartProductModels, _createdAt = createdAt, _updatedAt = updatedAt, _shoppingBagModelOnlineStoreModelId = shoppingBagModelOnlineStoreModelId;
-  
-  factory ShoppingBagModel({String? id, String? productsAndQuantity, OnlineStoreModel? onlineStoreModel, required String usermodelID, List<CartProductModel>? CartProductModels, String? shoppingBagModelOnlineStoreModelId}) {
+  factory ShoppingBagModel({String? id, required String usermodelID, List<CartProductModel>? CartProductModels, String? onlineStoreID}) {
     return ShoppingBagModel._internal(
       id: id == null ? UUID.getUUID() : id,
-      productsAndQuantity: productsAndQuantity,
-      onlineStoreModel: onlineStoreModel,
       usermodelID: usermodelID,
       CartProductModels: CartProductModels != null ? List<CartProductModel>.unmodifiable(CartProductModels) : CartProductModels,
-      shoppingBagModelOnlineStoreModelId: shoppingBagModelOnlineStoreModelId);
+      onlineStoreID: onlineStoreID);
   }
   
   bool equals(Object other) {
@@ -104,11 +92,9 @@ class ShoppingBagModel extends Model {
     if (identical(other, this)) return true;
     return other is ShoppingBagModel &&
       id == other.id &&
-      _productsAndQuantity == other._productsAndQuantity &&
-      _onlineStoreModel == other._onlineStoreModel &&
       _usermodelID == other._usermodelID &&
       DeepCollectionEquality().equals(_CartProductModels, other._CartProductModels) &&
-      _shoppingBagModelOnlineStoreModelId == other._shoppingBagModelOnlineStoreModelId;
+      _onlineStoreID == other._onlineStoreID;
   }
   
   @override
@@ -120,32 +106,25 @@ class ShoppingBagModel extends Model {
     
     buffer.write("ShoppingBagModel {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("productsAndQuantity=" + "$_productsAndQuantity" + ", ");
     buffer.write("usermodelID=" + "$_usermodelID" + ", ");
+    buffer.write("onlineStoreID=" + "$_onlineStoreID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
-    buffer.write("shoppingBagModelOnlineStoreModelId=" + "$_shoppingBagModelOnlineStoreModelId");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  ShoppingBagModel copyWith({String? id, String? productsAndQuantity, OnlineStoreModel? onlineStoreModel, String? usermodelID, List<CartProductModel>? CartProductModels, String? shoppingBagModelOnlineStoreModelId}) {
+  ShoppingBagModel copyWith({String? id, String? usermodelID, List<CartProductModel>? CartProductModels, String? onlineStoreID}) {
     return ShoppingBagModel._internal(
       id: id ?? this.id,
-      productsAndQuantity: productsAndQuantity ?? this.productsAndQuantity,
-      onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
       usermodelID: usermodelID ?? this.usermodelID,
       CartProductModels: CartProductModels ?? this.CartProductModels,
-      shoppingBagModelOnlineStoreModelId: shoppingBagModelOnlineStoreModelId ?? this.shoppingBagModelOnlineStoreModelId);
+      onlineStoreID: onlineStoreID ?? this.onlineStoreID);
   }
   
   ShoppingBagModel.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _productsAndQuantity = json['productsAndQuantity'],
-      _onlineStoreModel = json['onlineStoreModel']?['serializedData'] != null
-        ? OnlineStoreModel.fromJson(new Map<String, dynamic>.from(json['onlineStoreModel']['serializedData']))
-        : null,
       _usermodelID = json['usermodelID'],
       _CartProductModels = json['CartProductModels'] is List
         ? (json['CartProductModels'] as List)
@@ -153,24 +132,20 @@ class ShoppingBagModel extends Model {
           .map((e) => CartProductModel.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
+      _onlineStoreID = json['onlineStoreID'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
-      _shoppingBagModelOnlineStoreModelId = json['shoppingBagModelOnlineStoreModelId'];
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'productsAndQuantity': _productsAndQuantity, 'onlineStoreModel': _onlineStoreModel?.toJson(), 'usermodelID': _usermodelID, 'CartProductModels': _CartProductModels?.map((CartProductModel? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'shoppingBagModelOnlineStoreModelId': _shoppingBagModelOnlineStoreModelId
+    'id': id, 'usermodelID': _usermodelID, 'CartProductModels': _CartProductModels?.map((CartProductModel? e) => e?.toJson()).toList(), 'onlineStoreID': _onlineStoreID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "shoppingBagModel.id");
-  static final QueryField PRODUCTSANDQUANTITY = QueryField(fieldName: "productsAndQuantity");
-  static final QueryField ONLINESTOREMODEL = QueryField(
-    fieldName: "onlineStoreModel",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (OnlineStoreModel).toString()));
   static final QueryField USERMODELID = QueryField(fieldName: "usermodelID");
   static final QueryField CARTPRODUCTMODELS = QueryField(
     fieldName: "CartProductModels",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (CartProductModel).toString()));
-  static final QueryField SHOPPINGBAGMODELONLINESTOREMODELID = QueryField(fieldName: "shoppingBagModelOnlineStoreModelId");
+  static final QueryField ONLINESTOREID = QueryField(fieldName: "onlineStoreID");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "ShoppingBagModel";
     modelSchemaDefinition.pluralName = "ShoppingBagModels";
@@ -189,19 +164,6 @@ class ShoppingBagModel extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ShoppingBagModel.PRODUCTSANDQUANTITY,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-      key: ShoppingBagModel.ONLINESTOREMODEL,
-      isRequired: false,
-      ofModelName: (OnlineStoreModel).toString(),
-      associatedKey: OnlineStoreModel.ID
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: ShoppingBagModel.USERMODELID,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
@@ -212,6 +174,12 @@ class ShoppingBagModel extends Model {
       isRequired: false,
       ofModelName: (CartProductModel).toString(),
       associatedKey: CartProductModel.SHOPPINGBAGMODELID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: ShoppingBagModel.ONLINESTOREID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -226,12 +194,6 @@ class ShoppingBagModel extends Model {
       isRequired: false,
       isReadOnly: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
   });
 }
