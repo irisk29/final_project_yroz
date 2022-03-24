@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:encrypt/encrypt.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
@@ -59,7 +61,9 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: Text("Add Credit Card"),
+      ),
       body: _isLoading
         ? Center(child: CircularProgressIndicator())
         : Container(
@@ -172,12 +176,12 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                             } else {
                               print('invalid!');
                             }
-                            final key = encrypt.Key.fromLength(32);
-                            final iv = encrypt.IV.fromLength(8);
-                            final encrypter = encrypt.Encrypter(encrypt.AES(key));
-
-                            final encrypted = encrypter.encrypt(cardNumber, iv: iv);
-                            final decrypted = encrypter.decrypt(encrypted, iv: iv);
+                            // final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
+                            // final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
+                            // final encrypter = encrypt.Encrypter(encrypt.AES(key));
+                            //
+                            // final encrypted = encrypter.encrypt(cardNumber, iv: iv);
+                            // cardNumber = utf8.decode(encrypted.bytes);
 
                             saveCreditCard();
 

@@ -5,6 +5,7 @@ import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class CreditCardsScreen extends StatefulWidget {
   static const routeName = '/credit-cards';
@@ -35,11 +36,16 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
     await Provider.of<User>(context, listen: false)
         .getUserCreditCardDetails();
     creditCards.forEach((token, creditCard) {
+      // final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
+      // final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
+      // final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      // encrypt.Encrypted enc = encrypt.Encrypted.fromUtf8(creditCard['cardNumber']);
+      // String number = encrypter.decrypt(enc, iv: iv);
       DateTime expirationDate =
       new DateFormat('MM/yy').parse(creditCard['expiryDate']);
       if (DateTime.now().isBefore(expirationDate)) //not expired
           {
-        if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
+            if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
           activeCards.add(CreditCardWidget(
               creditCard['cardHolder'],
               creditCard['cardNumber'].toString().substring(15),

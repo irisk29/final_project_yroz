@@ -35,9 +35,10 @@ import 'screens/edit_product_screen.dart';
 import 'screens/tabs_screen.dart';
 import 'screens/tutorial_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  //await dotenv.load();
   runApp(MyApp());
 }
 
