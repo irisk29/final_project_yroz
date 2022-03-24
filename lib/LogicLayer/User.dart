@@ -18,9 +18,6 @@ import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
-import 'package:final_project_yroz/models/OnlineStoreModel.dart';
-import 'package:final_project_yroz/models/ShoppingBagModel.dart';
-import 'package:final_project_yroz/models/UserModel.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -38,18 +35,21 @@ class User extends ChangeNotifier {
   String? eWallet;
   StoreOwnerState? storeOwnerState;
   List<ShoppingBagDTO> bagInStores;
+  bool hideStoreOwnerOptions;
 
   bool isSignedIn = false;
 
   User(this.email, this.name)
       : favoriteStores = <Tuple2<String, bool>>[],
         creditCards = <String>[],
-        bagInStores = <ShoppingBagDTO>[] {}
+        bagInStores = <ShoppingBagDTO>[],
+        hideStoreOwnerOptions = false {}
 
   User.withNull()
       : favoriteStores = <Tuple2<String, bool>>[],
         creditCards = <String>[],
-        bagInStores = <ShoppingBagDTO>[] {}
+        bagInStores = <ShoppingBagDTO>[],
+        hideStoreOwnerOptions = false {}
 
   void userFromModel(UserModel model) async {
     try {
@@ -59,6 +59,7 @@ class User extends ChangeNotifier {
       this.name = model.name;
       this.imageUrl = model.imageUrl;
       this.eWallet = model.eWallet;
+      this.hideStoreOwnerOptions = model.hideStoreOwnerOptions;
       this.favoriteStores =
           model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
       this.storeOwnerState = model.storeOwnerModel == null
@@ -108,6 +109,12 @@ class User extends ChangeNotifier {
       print(e);
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
+  }
+
+  void toggleStoreOwnerViewOption() {
+    this.hideStoreOwnerOptions = !this.hideStoreOwnerOptions;
+    UsersStorageProxy().saveStoreOwnerViewOption(this.hideStoreOwnerOptions);
+    notifyListeners();
   }
 
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store, BankAccountDTO bankAccountDTO) async {
@@ -322,12 +329,12 @@ class User extends ChangeNotifier {
   Future<void> removeProductFromShoppingBag(String cartProductID, String storeID) async {
     try {
       ShoppingBagDTO? shoppingBagDTO = getShoppingBag(storeID);
-    if (shoppingBagDTO == null) {
-      FLog.error(text: "No shopping bag was found");
-      return;
-    }
-    shoppingBagDTO.removeProduct(cartProductID);
-    notifyListeners();
+      if (shoppingBagDTO == null) {
+        FLog.error(text: "No shopping bag was found");
+        return;
+      }
+      shoppingBagDTO.removeProduct(cartProductID);
+      notifyListeners();
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
@@ -401,8 +408,7 @@ class User extends ChangeNotifier {
       } else {
         //update
         this.bagInStores.removeWhere((element) =>
-            element.userId == shoppingBag.usermodelID &&
-            element.onlineStoreID == shoppingBag.onlineStoreID);
+            element.userId == shoppingBag.usermodelID && element.onlineStoreID == shoppingBag.onlineStoreID);
         this.bagInStores.add(shoppingBagDTO);
       }
       notifyListeners();
