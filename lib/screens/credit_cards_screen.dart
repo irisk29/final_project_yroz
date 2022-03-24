@@ -36,10 +36,11 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
     await Provider.of<User>(context, listen: false)
         .getUserCreditCardDetails();
     creditCards.forEach((token, creditCard) {
-      //final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
-      //final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
-      //final encrypter = encrypt.Encrypter(encrypt.AES(key));
-      //String number = encrypter.decrypt(creditCard['cardNumber'], iv: iv);
+      // final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
+      // final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
+      // final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      // encrypt.Encrypted enc = encrypt.Encrypted.fromUtf8(creditCard['cardNumber']);
+      // String number = encrypter.decrypt(enc, iv: iv);
       DateTime expirationDate =
       new DateFormat('MM/yy').parse(creditCard['expiryDate']);
       if (DateTime.now().isBefore(expirationDate)) //not expired
