@@ -27,6 +27,9 @@ class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Physical Store Payment"),
+      ),
       body: Stack(
         children: <Widget>[
           Container(
@@ -255,6 +258,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                   });
                 },
               ),
+              Text("\nChoose Credit Card to pay with:"),
               DropdownButton(
                 value: dropdownvalue,
                 icon: const Icon(Icons.keyboard_arrow_down),

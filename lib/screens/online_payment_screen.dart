@@ -27,6 +27,9 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Online Store Payment"),
+      ),
       body: Stack(
         children: <Widget>[
           Container(
@@ -262,7 +265,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                       });
                     },
                   ),
-                  Text("\nCredit card to pay with if needed:"),
+                  Text("\nChoose Credit Card to pay with:"),
                   DropdownButton(
                     value: dropdownvalue,
                     icon: const Icon(Icons.keyboard_arrow_down),
