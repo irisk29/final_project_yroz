@@ -16,11 +16,10 @@ class CartItem extends StatefulWidget {
   late double quantity;
 
   CartItem(
-    this.product,
-    this.storeID,
-    //this.user,
-    this.update
-  ){
+      this.product,
+      this.storeID,
+      //this.user,
+      this.update) {
     price = product!.price;
     quantity = product!.amount;
     title = product!.name;
@@ -35,6 +34,8 @@ class _CartItemState extends State<CartItem> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context, listen: false);
+
     return Dismissible(
       key: ValueKey(widget.product!.id),
       background: Container(
@@ -56,33 +57,35 @@ class _CartItemState extends State<CartItem> {
         return showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-                title: Text('Are you sure?'),
-                content: Text(
-                  'Do you want to remove the item from the cart?',
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('No'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop(false);
-                    },
-                  ),
-                  FlatButton(
-                    child: Text('Yes'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop(true);
-                    },
-                  ),
-                ],
+            title: Text('Are you sure?'),
+            content: Text(
+              'Do you want to remove the item from the cart?',
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(ctx).pop(false);
+                },
               ),
+              FlatButton(
+                child: Text('Yes'),
+                onPressed: () {
+                  Navigator.of(ctx).pop(true);
+                },
+              ),
+            ],
+          ),
         );
       },
       onDismissed: (direction) async {
-        await Provider.of<User>(context, listen: false).removeProductFromShoppingBag(widget.product!, widget.storeID);
+        await Provider.of<User>(context, listen: false)
+            .removeProductFromShoppingBag(widget.product!, widget.storeID);
         setState(() {
-            () => widget.update();
+          () => widget.update();
         });
-        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID});
+        Navigator.pushReplacementNamed(context, CartScreen.routeName,
+            arguments: {'store': widget.storeID});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -92,50 +95,42 @@ class _CartItemState extends State<CartItem> {
         child: Padding(
           padding: EdgeInsets.all(8),
           child: ListTile(
-              leading: CircleAvatar(
-                child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: FittedBox(
-                    child: Text('\$${widget.price}'),
-                  ),
+            leading: CircleAvatar(
+              child: Padding(
+                padding: EdgeInsets.all(5),
+                child: FittedBox(
+                  child: Text('\$${widget.price}'),
                 ),
               ),
-              title: Text(widget.title),
-              subtitle: Text('Total: \$${(widget.price * widget.quantity)}'),
-              trailing: Text('${widget.quantity} x'),
-              onLongPress: () async {
-                double quantity = 0;
-                await showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: Text('Select quantity'),
-                      content: TextField(
-                        controller: myController,
-                        keyboardType: TextInputType.number,
-                      ),
-                      actions: [
-                        FlatButton(
-                          child: Text('Okay'),
-                          onPressed: () async {
-                            quantity = double.parse(myController.text);
-                            Navigator.of(context).pop();
-                            await Provider.of<User>(context, listen: false).updateProductQuantityInBag(widget.product!, widget.storeID, quantity);
-                            setState(() {
-                              widget.quantity = quantity;
-                              () => widget.update();
-                            });
-                          },
-                        ),
-                        FlatButton(
-                          child: Text('Cancel'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        )
-                      ],
-                    ));
-              },
             ),
+            title: Text(widget.title),
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Total: \$${(widget.price * widget.quantity)}'),
+                IconButton(
+                  icon: Icon(Icons.remove_circle),
+                  onPressed: () {
+                    // user.decreaseProductQuantityInBag(
+                    //     widget.product, widget.storeID)),
+
+                    // TODO: call here decrease quantity product local
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.add_circle),
+                  onPressed: () {
+                    // user.addProductToShoppingBag(
+                    //     widget.product, widget.storeID);
+
+                    // TODO: call here add product local
+                  },
+                ),
+              ],
+            ),
+            trailing: Text('${widget.quantity} x'),
+          ),
         ),
       ),
     );

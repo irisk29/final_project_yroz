@@ -91,21 +91,37 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.store.name,
+        toolbarHeight: deviceSize.height * 0.1,
+        centerTitle: true,
+        title: Column(
+          children: [
+            Text(
+              widget.store.name,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              widget.store.categories.join(", "),
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+            ),
+          ],
         ),
-        actions: [
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Center(
               child: Container(
-                width: 150,
-                height: 150,
+                height: deviceSize.height * 0.35,
                 decoration: BoxDecoration(
                   image: widget.store.image != null
                       ? DecorationImage(
@@ -192,9 +208,95 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 //open change language
               },
             ),
-            ElevatedButton(
-              onPressed: () => routeToOnlineStoreProducts(context),
-              child: Text('Online Store Shop'),
+            ListTile(
+              title: Text(
+                "Promotions",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              onTap: null,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      width: 0.5,
+                      color: Colors.black54,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Cashback",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Text.rich(
+                            TextSpan(
+                              children: <InlineSpan>[
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Icon(
+                                      Icons.circle,
+                                      color: Colors.green,
+                                      size: 10,
+                                    ),
+                                  ),
+                                ),
+                                TextSpan(
+                                    text: 'No Expiration Date',
+                                    style: TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      Text(
+                        "10%",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text(
+                "Shop now",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              onTap: null,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      width: 0.5,
+                      color: Colors.black54,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: ListTile(
+                  title: Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      "Visit Our Online Shop",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  onTap: () => routeToOnlineStoreProducts(context),
+                  trailing: Icon(Icons.keyboard_arrow_right),
+                ),
+              ),
             ),
           ],
         ),
