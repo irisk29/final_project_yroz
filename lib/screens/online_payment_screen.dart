@@ -110,19 +110,7 @@ class _PaymentCardState extends State<PaymentCard>
   @override
   void didChangeDependencies() {
     () async {
-      // items = [];
-      //
-      // Map<String, Map<String, dynamic>> creditCards =
-      // await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
-      // creditCards.forEach((token, creditCard) {
-      //   DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
-      //   if (DateTime.now().isBefore(expirationDate)) //not expired
-      //     {
-      //     items.add(Tuple2<String, String>(creditCard['cardNumber'].toString().substring(12), token));
-      //   }
-      // });
       setState(() {
-        //dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
         widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(
             widget.storeID!);
         // Update your UI with the desired changes.
