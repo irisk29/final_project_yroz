@@ -48,6 +48,7 @@ class BankAccountForm extends StatelessWidget {
                 children: <Widget>[
                   TextFormField(
                       initialValue: bankName,
+                      textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         labelText: 'BANK NAME',
                         hintStyle: const TextStyle(color: Colors.black),
@@ -63,6 +64,7 @@ class BankAccountForm extends StatelessWidget {
                   ),
                   TextFormField(
                     initialValue: branchNumber,
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       hintStyle: const TextStyle(color: Colors.black),
                       labelStyle: const TextStyle(color: Colors.black),
@@ -84,6 +86,7 @@ class BankAccountForm extends StatelessWidget {
                   ),
                   TextFormField(
                     initialValue: accountNumber,
+                    textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
                       hintStyle: const TextStyle(color: Colors.black),
                       labelStyle: const TextStyle(color: Colors.black),
@@ -91,6 +94,14 @@ class BankAccountForm extends StatelessWidget {
                       enabledBorder: border,
                       labelText: 'ACCOUNT NUMBER',
                     ),
+                    validator: (value) {
+                      if (value == null ||
+                          value.length < 9 ||
+                          value.length > 12) {
+                        return "Invalid Branch Number";
+                      }
+                      return null;
+                    },
                     onSaved: (value) => accountNumber = value,
                   ),
                 ],
