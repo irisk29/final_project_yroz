@@ -119,9 +119,9 @@ class _PaymentCardState extends State<PaymentCard>
       //   }
       // });
       setState(() {
-        dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
-        widget.bag = Provider.of<User>(context, listen: false)
-            .getShoppingBag(widget.storeID!);
+        //dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
+        widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(
+            widget.storeID!);
         // Update your UI with the desired changes.
       });
     }();
@@ -163,31 +163,33 @@ class _PaymentCardState extends State<PaymentCard>
             creditCard['cardNumber'].toString().substring(15), token));
       }
     });
-    if (items.length == 0) {
+    dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
+    if (items.length==0) {
       showDialog(
           context: context,
-          builder: (ctx) => AlertDialog(
-                title: Text("An error occured!"),
-                content: Text(
-                    "You have no credit cards available! please enter a credit card to proceed!"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('Okay'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context)
-                          .pushNamed(CreditCardsScreen.routeName);
-                    },
-                  ),
-                  FlatButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ));
+          builder: (ctx) =>
+            AlertDialog(
+              title: Text("An error occured!"),
+              content: Text(
+                  "You have no credit cards available! please enter a credit card to proceed!"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushReplacementNamed(CreditCardsScreen.routeName);
+                  },
+                ),
+                FlatButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            )
+      );
     }
   }
 

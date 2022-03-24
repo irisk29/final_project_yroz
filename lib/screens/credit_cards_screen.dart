@@ -3,7 +3,6 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -37,15 +36,15 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
     await Provider.of<User>(context, listen: false)
         .getUserCreditCardDetails();
     creditCards.forEach((token, creditCard) {
-      final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
-      final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key));
-      String number = encrypter.decrypt(creditCard['cardNumber'], iv: iv);
+      //final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
+      //final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
+      //final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      //String number = encrypter.decrypt(creditCard['cardNumber'], iv: iv);
       DateTime expirationDate =
       new DateFormat('MM/yy').parse(creditCard['expiryDate']);
       if (DateTime.now().isBefore(expirationDate)) //not expired
           {
-            if(activeCards.firstWhereOrNull((e) => e.fourDigits == number.substring(15) && e.expiration == creditCard['expiryDate']) == null)
+            if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
           activeCards.add(CreditCardWidget(
               creditCard['cardHolder'],
               creditCard['cardNumber'].toString().substring(15),
@@ -53,7 +52,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
               Colors.blue,
               token));
       } else {
-        if(disabledCards.firstWhereOrNull((e) => e.fourDigits == number.substring(15) && e.expiration == creditCard['expiryDate']) == null)
+        if(disabledCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
           disabledCards.add(CreditCardWidget(
               creditCard['cardHolder'],
               creditCard['cardNumber'].toString().substring(15),
