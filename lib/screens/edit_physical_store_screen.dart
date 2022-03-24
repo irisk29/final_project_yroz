@@ -240,6 +240,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         if (value!.isEmpty) {
                           return 'Please enter a phone Number.';
                         }
+                        if (!value.startsWith('+') || value.length < 6) {
+                          return 'invalid phone number.';
+                        }
                         return null;
                       },
                       onSaved: (value) {
@@ -286,19 +289,18 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Divider(),
-            SingleChildScrollView(
-              child: ListBody(
-                children: DUMMY_CATEGORIES
-                    .map((e) => e.title)
-                    .toList()
-                    .map((item) => CheckboxListTile(
-                          value: _selectedItems.contains(item),
-                          title: Text(item),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (isChecked) =>
-                              _itemChange(item, isChecked!),
-                        ))
-                    .toList(),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: DUMMY_CATEGORIES.length,
+                itemBuilder: (context, index) => CheckboxListTile(
+                  value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
+                  title: Text(DUMMY_CATEGORIES[index].title),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (isChecked) =>
+                      _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
+                ),
               ),
             ),
             Wrap(
@@ -540,32 +542,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         title: Text(
           'Edit Store',
         ),
-        actions: [
-          Tooltip(
-            message: "Downgrade Store",
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_circle_up,
-              ),
-              onPressed: () async {
-                await Provider.of<User>(context, listen: false)
-                    .convertPhysicalStoreToOnline(_editedStore!);
-                Navigator.of(context)
-                    .pushReplacementNamed(EditOnlineStorePipeline.routeName);
-              },
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.delete,
-            ),
-            onPressed: () async {
-              await Provider.of<User>(context, listen: false)
-                  .deleteStore(_editedStore!.id, false);
-              Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
-            },
-          ),
-        ],
       ),
       resizeToAvoidBottomInset: false,
       body: _isLoading

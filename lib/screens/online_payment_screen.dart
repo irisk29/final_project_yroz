@@ -77,7 +77,8 @@ class PaymentCard extends StatefulWidget {
   _PaymentCardState createState() => _PaymentCardState();
 }
 
-class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStateMixin {
+class _PaymentCardState extends State<PaymentCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   var _isLoading = false;
   AnimationController? _controller;
@@ -97,17 +98,18 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _heightAnimation = Tween<Size>(
-        end: Size(double.infinity, 320.0), begin: Size(double.infinity, 260.0))
+            end: Size(double.infinity, 320.0),
+            begin: Size(double.infinity, 260.0))
         .animate(
-        CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
+            CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
     initCashBack();
-    widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(
-        widget.storeID!);
+    widget.bag = Provider.of<User>(context, listen: false)
+        .getShoppingBag(widget.storeID!);
   }
 
   @override
   void didChangeDependencies() {
-        () async {
+    () async {
       // items = [];
       //
       // Map<String, Map<String, dynamic>> creditCards =
@@ -132,33 +134,34 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (ctx) =>
-          AlertDialog(
-            title: Text('An Error Occurred!'),
-            content: Text(message),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Okay'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              )
-            ],
-          ),
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
     );
   }
 
   Future<void> activeCreditCards() async {
     Map<String, Map<String, dynamic>> creditCards =
-    await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+        await Provider.of<User>(context, listen: false)
+            .getUserCreditCardDetails();
     items = [];
     creditCards.forEach((token, creditCard) {
-      DateTime expirationDate = new DateFormat('MM/yy').parse(
-          creditCard['expiryDate']);
-      if (DateTime.now().isBefore(expirationDate) && !items
-          .where((element) => element.item1 == token)
-          .isNotEmpty) //not expired
-          {
+      DateTime expirationDate =
+          new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+      if (DateTime.now().isBefore(expirationDate) &&
+          !items
+              .where((element) => element.item1 == token)
+              .isNotEmpty) //not expired
+      {
         items.add(Tuple2<String, String>(
             creditCard['cardNumber'].toString().substring(15), token));
       }
@@ -194,19 +197,17 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   }
 
   void initCashBack() async {
-    String cb = await Provider.of<User>(context, listen: false)
-        .getEWalletBalance();
+    String cb =
+        await Provider.of<User>(context, listen: false).getEWalletBalance();
     _initValues['cashback'] = double.parse(cb);
   }
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery
-        .of(context)
-        .size;
+    final deviceSize = MediaQuery.of(context).size;
     double cashback = 0.0;
-    widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(
-        widget.storeID!);
+    widget.bag = Provider.of<User>(context, listen: false)
+        .getShoppingBag(widget.storeID!);
 
     return FutureBuilder(
         future: activeCreditCards(),
