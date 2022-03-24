@@ -44,7 +44,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<User>(context, listen: false);
 
     return FutureBuilder(
       future: user.getEWalletBalance(),
@@ -75,6 +75,31 @@ class _AccountScreenState extends State<AccountScreen> {
                         leading: CircleAvatar(
                           radius: 30.0,
                           backgroundImage: Image.network(user.imageUrl!).image,
+                        ),
+                        trailing: Column(
+                          children: [
+                            Consumer<User>(
+                              builder: (context, user, child) => Container(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 15),
+                                  child: SwitchListTile(
+                                      activeColor: Colors.purple,
+                                      value: user.hideStoreOwnerOptions,
+                                      controlAffinity:
+                                          ListTileControlAffinity.trailing,
+                                      onChanged: (_) =>
+                                          user.toggleStoreOwnerViewOption()),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "Consumer View",
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -140,43 +165,49 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                     ),
                   ),
-                  _physicalStoreOwner || _onlineStoreOwner
-                      ? Container()
-                      : Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Card(
-                            elevation: 4.0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Column(
-                              children: <Widget>[
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.storefront,
-                                    color: Colors.purple,
+                  Consumer<User>(
+                    builder: (context, user, child) => _physicalStoreOwner ||
+                            _onlineStoreOwner ||
+                            user.hideStoreOwnerOptions
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Card(
+                              elevation: 4.0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.storefront,
+                                      color: Colors.purple,
+                                    ),
+                                    title: Text("Open Physical Store"),
+                                    trailing: Icon(Icons.keyboard_arrow_right),
+                                    onTap: () =>
+                                        Navigator.of(context).pushNamed(
+                                      OpenPhysicalStorePipeline.routeName,
+                                    ),
                                   ),
-                                  title: Text("Open Physical Store"),
-                                  trailing: Icon(Icons.keyboard_arrow_right),
-                                  onTap: () => Navigator.of(context).pushNamed(
-                                    OpenPhysicalStorePipeline.routeName,
+                                  _buildDivider(),
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.store_outlined,
+                                      color: Colors.purple,
+                                    ),
+                                    title: Text("Open Online Store"),
+                                    trailing: Icon(Icons.keyboard_arrow_right),
+                                    onTap: () =>
+                                        Navigator.of(context).pushNamed(
+                                      OpenOnlineStorePipeline.routeName,
+                                    ),
                                   ),
-                                ),
-                                _buildDivider(),
-                                ListTile(
-                                  leading: Icon(
-                                    Icons.store_outlined,
-                                    color: Colors.purple,
-                                  ),
-                                  title: Text("Open Online Store"),
-                                  trailing: Icon(Icons.keyboard_arrow_right),
-                                  onTap: () => Navigator.of(context).pushNamed(
-                                    OpenOnlineStorePipeline.routeName,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Card(
