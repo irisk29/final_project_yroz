@@ -337,44 +337,47 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ],
         );
       case 1:
-        return Column(
-          children: [
-            const Text(
-              'Select Store Categories',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Divider(),
-            SingleChildScrollView(
-              child: ListBody(
-                children: DUMMY_CATEGORIES
-                    .map((e) => e.title)
-                    .toList()
-                    .map((item) => CheckboxListTile(
-                          value: _selectedItems.contains(item),
-                          title: Text(item),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (isChecked) =>
-                              _itemChange(item, isChecked!),
+        return Expanded(
+          flex: 6,
+          child: Column(
+            children: [
+              const Text(
+                'Select Store Categories',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Divider(),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: DUMMY_CATEGORIES.length,
+                  itemBuilder: (context, index) => CheckboxListTile(
+                    value:
+                        _selectedItems.contains(DUMMY_CATEGORIES[index].title),
+                    title: Text(DUMMY_CATEGORIES[index].title),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    onChanged: (isChecked) =>
+                        _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
+                  ),
+                ),
+              ),
+              Wrap(
+                children: _selectedItems
+                    .map((e) => Chip(
+                          deleteIcon: Icon(
+                            Icons.close,
+                          ),
+                          onDeleted: () {
+                            setState(() {
+                              _selectedItems.remove(e);
+                            });
+                          },
+                          label: Text(e),
                         ))
                     .toList(),
               ),
-            ),
-            Wrap(
-              children: _selectedItems
-                  .map((e) => Chip(
-                        deleteIcon: Icon(
-                          Icons.close,
-                        ),
-                        onDeleted: () {
-                          setState(() {
-                            _selectedItems.remove(e);
-                          });
-                        },
-                        label: Text(e),
-                      ))
-                  .toList(),
-            ),
-          ],
+            ],
+          ),
         );
       case 2:
         return Column(

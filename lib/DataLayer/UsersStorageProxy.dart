@@ -224,7 +224,7 @@ class UsersStorageProxy {
     if (!shoppingBagRes.getTag()) return shoppingBagRes;
     ShoppingBagModel shoppingBag = shoppingBagRes.getValue();
     CartProductModel item = CartProductModel(
-        id: productDTO.id,
+        storeProductID: productDTO.id,
         name: productDTO.name,
         categories: JsonEncoder.withIndent('  ').convert(productDTO.category),
         price: productDTO.price,
@@ -236,24 +236,26 @@ class UsersStorageProxy {
     List<CartProductModel> productsList = shoppingBag.CartProductModels == null ? [] : shoppingBag.CartProductModels!;
     productsList.add(item);
     var shoppingBagWithNewItem = shoppingBag.copyWith(CartProductModels: productsList);
+    await Amplify.DataStore.save(shoppingBagWithNewItem);
     FLog.info(text: "Saved shopping bag product(id - ${item.id}) succssesfully");
     return new Ok("Saved shopping bag product(id - ${item.id}) succssesfully", shoppingBagWithNewItem);
   }
 
-  CartProductDTO convertStoreProductToCartProduct(ProductDTO productDTO, double quantity) {
-    return CartProductDTO(productDTO.id, productDTO.name, productDTO.price, productDTO.category, productDTO.imageUrl,
-        productDTO.description, quantity, productDTO.storeID);
+  CartProductDTO converCartProductModelToDTO(
+      CartProductModel model, String storeProductID, String storeID, double quantity) {
+    return CartProductDTO(model.storeProductID!, model.name, model.price, model.categories, model.imageUrl,
+        model.description, quantity, storeID, model.id);
   }
 
   Future<ResultInterface> getOrCreateUserShoppingBagPerStore(String storeID, String userID) async {
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID
             .eq(userID)
-            .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
     if (shoppingBags.isEmpty) {
       //first time we add a product in a specific store we create a shopping bag
       ShoppingBagModel shoppingBagModel =
-          new ShoppingBagModel(usermodelID: userID, shoppingBagModelOnlineStoreModelId: storeID);
+          new ShoppingBagModel(usermodelID: userID, onlineStoreID: storeID);
       await Amplify.DataStore.save(shoppingBagModel);
       FLog.info(text: "Created new shopping bag for store $storeID and user $userID");
       return new Ok("Created new shopping bag for store $storeID and user $userID", shoppingBagModel);
@@ -266,7 +268,7 @@ class UsersStorageProxy {
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID
             .eq(userID)
-            .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
     if (shoppingBags.isEmpty) {
       FLog.error(text: "There is no shopping bag for user $userID");
       return new Failure("There is no shopping bag for user $userID", null);
@@ -290,31 +292,32 @@ class UsersStorageProxy {
     ResultInterface res = await getProductsOfShoppingBag(shoppingBagModel.id);
     if (!res.getTag()) return res;
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
-    ShoppingBagDTO shoppingBag =
-        ShoppingBagDTO(shoppingBagModel.usermodelID, shoppingBagModel.shoppingBagModelOnlineStoreModelId!);
+    ShoppingBagDTO shoppingBag = ShoppingBagDTO(
+        shoppingBagModel.id, shoppingBagModel.usermodelID, shoppingBagModel.onlineStoreID!);
     List<CartProductDTO> shoppingBagProductsDTO =
-        vals.map((e) => convertCartProductModelToDTO(e, shoppingBagModel.shoppingBagModelOnlineStoreModelId!)).toList();
+        vals.map((e) => convertCartProductModelToDTO(e, shoppingBagModel.onlineStoreID!)).toList();
     shoppingBag.products = shoppingBagProductsDTO;
     return new Ok("convert was succsseful", shoppingBag);
   }
 
   CartProductDTO convertCartProductModelToDTO(CartProductModel cartProductModel, String storeID) {
     return CartProductDTO(
-        cartProductModel.id,
+        cartProductModel.storeProductID!,
         cartProductModel.name,
         cartProductModel.price,
         jsonDecode(cartProductModel.categories).toString(),
         cartProductModel.imageUrl == null ? "" : cartProductModel.imageUrl!,
         cartProductModel.description == null ? "" : cartProductModel.description!,
         cartProductModel.amount,
-        storeID);
+        storeID,
+        cartProductModel.id);
   }
 
   Future<ResultInterface> removeProductFromShoppingBag(ProductDTO productDTO, String storeID, String userID) async {
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID
             .eq(userID)
-            .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
 
     if (shoppingBags.isEmpty) {
       FLog.error(text: "No shopping bag was found for store $storeID and user $userID");
@@ -343,48 +346,112 @@ class UsersStorageProxy {
     return new Ok("Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}", newShoppingBag);
   }
 
-  Future<ResultInterface> updateProductQuantityInBag(
+  Future<ResultInterface> updateOrCreateCartProduct(
       ProductDTO productDTO, String storeID, double quantity, String userID) async {
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID
             .eq(userID)
-            .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
 
     if (shoppingBags.isEmpty) {
-      FLog.error(text: "No shopping bag was found for store $storeID and user $userID");
-      return new Failure("No shopping bag was found for store $storeID and user $userID", null);
+      return addProductToShoppingBag(productDTO, storeID, quantity, userID);
     }
 
     var shoppingBag = shoppingBags.first;
     var productsRes = await getProductsOfShoppingBag(shoppingBag.id);
     if (!productsRes.getTag()) return productsRes;
-    var productToUpdate = (productsRes.getValue() as List<CartProductModel>)
-        .firstWhere((element) => element.id == productDTO.id, orElse: null);
+    CartProductModel? productToUpdate = (productsRes.getValue() as List<CartProductModel>)
+        .firstWhereOrNull((element) => element.storeProductID == productDTO.id);
     if (productToUpdate == null) {
-      FLog.error(text: "No Product was found to update");
-      return new Failure("No Product was found to update", null);
+      FLog.error(text: "No product was found to update with store product id ${productDTO.id}");
+      return new Failure("No product was found to update with store product id ${productDTO.id}", null);
     }
 
     var newProd = productToUpdate.copyWith(amount: quantity);
     await Amplify.DataStore.save(newProd);
+    List<CartProductModel> productsList = shoppingBag.CartProductModels == null ? [] : shoppingBag.CartProductModels!;
+    productsList.add(newProd);
+    var shoppingBagWithNewItem = shoppingBag.copyWith(CartProductModels: productsList);
+    await Amplify.DataStore.save(shoppingBagWithNewItem);
     FLog.error(text: "Updated product ${productDTO.id} succssefully");
-    return new Ok("Updated product ${productDTO.id} succssefully", newProd);
+    return new Ok("Updated product ${productDTO.id} succssefully", shoppingBagWithNewItem);
+  }
+
+  Future<ResultInterface> saveShoppingBag(ShoppingBagDTO shoppingBagDTO) async {
+    List<CartProductModel> savedProducts = [];
+    if (shoppingBagDTO.id != null) {
+      ResultInterface res = await getProductsOfShoppingBag(shoppingBagDTO.id!);
+      savedProducts = res.getValue() as List<CartProductModel>;
+    }
+
+    List<int> removeProducts = [];
+    var index = 0;
+    for (var savedProduct in savedProducts) {
+      final products = shoppingBagDTO.products.where((element) => element.id == savedProduct.id);
+      if (products.isEmpty) {
+        removeProducts.add(index);
+        await Amplify.DataStore.delete(savedProduct);
+      }
+      index++;
+    }
+    for (var i in removeProducts) {
+      savedProducts.removeAt(i);
+    }
+
+    var shoppingBagRes = await getOrCreateUserShoppingBagPerStore(shoppingBagDTO.onlineStoreID, shoppingBagDTO.userId);
+    if (!shoppingBagRes.getTag()) return shoppingBagRes;
+    ShoppingBagModel prevShoppingBag = shoppingBagRes.getValue();
+
+    List<CartProductModel> shoppingBagProducts = [];
+    for (var bagProduct in shoppingBagDTO.products) {
+      final products = savedProducts.where((element) => element.id == bagProduct.id);
+      CartProductModel updatedProduct;
+      if (products.isEmpty)
+        updatedProduct = CartProductModel(
+            storeProductID: bagProduct.id,
+            name: bagProduct.name,
+            categories: JsonEncoder.withIndent('  ').convert(bagProduct.category),
+            price: bagProduct.price,
+            imageUrl: bagProduct.imageUrl,
+            description: bagProduct.description,
+            amount: bagProduct.amount,
+            shoppingbagmodelID: prevShoppingBag.id);
+      else
+        updatedProduct = products.first.copyWith(amount: bagProduct.amount);
+      shoppingBagProducts.add(updatedProduct);
+      await Amplify.DataStore.save(updatedProduct);
+    }
+
+    ShoppingBagModel shoppingBagModel = prevShoppingBag.copyWith(CartProductModels: shoppingBagProducts);
+    await Amplify.DataStore.save(shoppingBagModel);
+    return new Ok("saved shopping bag", shoppingBagModel.id);
   }
 
   Future<ResultInterface> clearShoppingBagInStore(String storeID, String userID) async {
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID
             .eq(userID)
-            .and(ShoppingBagModel.SHOPPINGBAGMODELONLINESTOREMODELID.eq(storeID)));
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
 
     if (shoppingBags.isEmpty) {
       FLog.error(text: "No shopping bag was found for store $storeID and user $userID");
       return new Failure("No shopping bag was found for store $storeID and user $userID", null);
     }
-
+    await clearShoppingBagProductsInStore(shoppingBags.first.id);
     await Amplify.DataStore.delete(shoppingBags.first); //only one exists
     FLog.info(text: "Deleted shopping bag ${shoppingBags.first.id}");
     return new Ok("Deleted shopping bag ${shoppingBags.first.id}", shoppingBags.first);
+  }
+
+  Future<ResultInterface> clearShoppingBagProductsInStore(String cartID) async {
+    var res = await getProductsOfShoppingBag(cartID);
+    if (!res.getTag()) return res;
+    List<CartProductModel> models = res.getValue();
+    for (CartProductModel model in models) {
+      await Amplify.DataStore.delete(model);
+    }
+    FLog.info(text: "Deleted all products in shopping bag $cartID");
+    return new Ok("Deleted all products in shopping bag $cartID", null);
   }
 
   Future<void> clearAllShoppingBag(String userID) async {
@@ -392,7 +459,7 @@ class UsersStorageProxy {
         await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(userID));
 
     for (ShoppingBagModel model in shoppingBags) {
-      await Amplify.DataStore.delete(model);
+      await clearShoppingBagInStore(model.onlineStoreID!, model.usermodelID);
     }
   }
 

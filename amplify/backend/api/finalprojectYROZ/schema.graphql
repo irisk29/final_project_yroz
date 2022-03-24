@@ -52,10 +52,9 @@ type PhysicalStoreModel @model @auth(rules: [{allow: public}]) {
 
 type ShoppingBagModel @model @auth(rules: [{allow: public}]) {
   id: ID!
-  productsAndQuantity: AWSJSON
-  onlineStoreModel: OnlineStoreModel @hasOne
   usermodelID: ID! @index(name: "byUserModel")
   CartProductModels: [CartProductModel] @hasMany(indexName: "byShoppingBagModel", fields: ["id"])
+  onlineStoreID: String
 }
 
 type CartProductModel @model @auth(rules: [{allow: public}]) {
@@ -66,6 +65,7 @@ type CartProductModel @model @auth(rules: [{allow: public}]) {
   imageUrl: String
   description: String
   amount: Float!
+  storeProductID: String
   shoppingbagmodelID: ID! @index(name: "byShoppingBagModel")
 }
 

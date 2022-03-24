@@ -18,8 +18,6 @@ class OnlineStoreProductsScreen extends StatefulWidget {
 }
 
 class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
-  String cartSize = "0";
-
   @override
   void didChangeDependencies() {
     final routeArgs =
@@ -30,34 +28,57 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context, listen: true);
+    final shoppingBag = user.getShoppingBag(widget.store.id);
+    final productsAmount =
+        shoppingBag != null ? shoppingBag.bagSize().toInt() : 0;
+    var deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "" + widget.store.name,
+        toolbarHeight: deviceSize.height * 0.1,
+        centerTitle: true,
+        title: Column(
+          children: [
+            Text(
+              widget.store.name,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              widget.store.categories.join(", "),
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+            ),
+          ],
         ),
         actions: [
-          Badge(
-            child: IconButton(
-              icon: Icon(
-                Icons.shopping_cart,
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routeName,
-                    arguments: {'store': widget.store.id});
-              },
-            ),
-            value: Provider.of<User>(context, listen: true).bagInStores.length >
-                    0
-                ? Provider.of<User>(context, listen: true)
-                    .bagInStores
-                    .where(
-                        (element) => element.onlineStoreID == widget.store.id)
-                    .first
-                    .products
-                    .length
-                    .toString()
-                : 0.toString(),
-          ),
+          productsAmount > 0
+              ? Badge(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.shopping_cart,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(CartScreen.routeName,
+                          arguments: {'store': widget.store.id});
+                    },
+                  ),
+                  value: productsAmount.toString(),
+                )
+              : IconButton(
+                  icon: Icon(
+                    Icons.shopping_cart,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(CartScreen.routeName,
+                        arguments: {'store': widget.store.id});
+                  },
+                ),
         ],
       ),
       body: SingleChildScrollView(
@@ -66,7 +87,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
             ListTile(
               title: Text(
                 "Products:",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: TextStyle(fontSize: 20),
               ),
               onTap: () {
                 //open change language
@@ -76,22 +97,18 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
               height: (MediaQuery.of(context).size.height -
                       MediaQuery.of(context).padding.top) *
                   0.5,
-              child: GridView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(5),
-                children: [
-                  widget.store.products
-                      .map(
-                        (storeData) => ProductItem(storeData, widget.store.id),
-                      )
-                      .toList(),
-                ].expand((i) => i).toList(),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
+              child: GridView.count(
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                crossAxisCount: 1,
+                childAspectRatio: 3.3,
+                mainAxisSpacing: deviceSize.height * 0.025,
+                crossAxisSpacing: deviceSize.width * 0.025,
+                children: widget.store.products
+                    .map(
+                      (storeData) => ProductItem(storeData, widget.store.id),
+                    )
+                    .toList(),
               ),
             ),
           ],
