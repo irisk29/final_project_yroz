@@ -11,6 +11,7 @@ class FavoritesAppBar {
         "Favorites",
         style: const TextStyle(
           fontSize: 23,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
