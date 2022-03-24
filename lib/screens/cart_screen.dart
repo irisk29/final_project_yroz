@@ -37,11 +37,7 @@ class _CartScreenState extends State<CartScreen> {
 
     return WillPopScope(
       onWillPop: () async {
-        // Provider.of<User>(context, listen: false)
-        //     .saveShoppingBag(widget.store.id);
-
-        // TODO: call here saveShoppingBag
-
+        provider.saveShoppingBag(widget.storeID);
         return true;
       },
       child: Scaffold(
@@ -125,7 +121,7 @@ class _OrderButtonState extends State<OrderButton> {
                     _isLoading = true;
                   });
 
-                  // TODO: call here saveShoppingBag
+                  Provider.of<User>(context, listen: false).saveShoppingBag(widget.cart!.onlineStoreID);
 
                   Navigator.push(
                       context,

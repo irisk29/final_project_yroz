@@ -150,7 +150,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                       null
                   ? Icon(
                       Icons.favorite,
-                      color: Colors.black,
+                      color: Colors.red,
                     )
                   : Icon(
                       Icons.favorite_border,

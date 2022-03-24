@@ -37,7 +37,7 @@ class _CartItemState extends State<CartItem> {
     final user = Provider.of<User>(context, listen: false);
 
     return Dismissible(
-      key: ValueKey(widget.product!.id),
+      key: UniqueKey(),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -79,13 +79,11 @@ class _CartItemState extends State<CartItem> {
         );
       },
       onDismissed: (direction) async {
-        await Provider.of<User>(context, listen: false)
-            .removeProductFromShoppingBag(widget.product!, widget.storeID);
+        await Provider.of<User>(context, listen: false).removeProductFromShoppingBag(widget.product!.cartID, widget.storeID);
         setState(() {
           () => widget.update();
         });
-        Navigator.pushReplacementNamed(context, CartScreen.routeName,
-            arguments: {'store': widget.storeID});
+        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -114,8 +112,7 @@ class _CartItemState extends State<CartItem> {
                   onPressed: () {
                     // user.decreaseProductQuantityInBag(
                     //     widget.product, widget.storeID)),
-
-                    // TODO: call here decrease quantity product local
+                    user.decreaseProductQuantityLocally(widget.storeID, widget.product!.cartID);
                   },
                 ),
                 IconButton(
@@ -123,8 +120,7 @@ class _CartItemState extends State<CartItem> {
                   onPressed: () {
                     // user.addProductToShoppingBag(
                     //     widget.product, widget.storeID);
-
-                    // TODO: call here add product local
+                    user.addProductToShoppingBagLocally(widget.storeID, widget.product!);
                   },
                 ),
               ],

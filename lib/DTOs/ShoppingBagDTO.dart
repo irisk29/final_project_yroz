@@ -20,7 +20,7 @@ class ShoppingBagDTO {
     return sum;
   }
 
-  void addProduct(ProductDTO productDTO) {
+  void addProduct(CartProductDTO productDTO) {
     final index = products.indexWhere((element) => element.id == productDTO.id);
     var quantity = 1.0;
     if (index >= 0) {
@@ -36,16 +36,17 @@ class ShoppingBagDTO {
         productDTO.imageUrl,
         productDTO.description,
         quantity,
-        productDTO.storeID);
+        productDTO.storeID,
+        productDTO.cartID);
     products.add(updatedProduct);
   }
 
-  void decreaseProductQuantity(String productID) {
-    final index = products.indexWhere((element) => element.id == productID);
+  void decreaseProductQuantity(String cartProductID) {
+    final index = products.indexWhere((element) => element.cartID == cartProductID);
     if (index >= 0) {
       final prevProduct = products[index];
       if (prevProduct.amount - 1 == 0) {
-        removeProduct(productID);
+        removeProduct(cartProductID);
       } else {
         final updatedProduct = CartProductDTO(
             prevProduct.id,
@@ -55,15 +56,16 @@ class ShoppingBagDTO {
             prevProduct.imageUrl,
             prevProduct.description,
             prevProduct.amount - 1,
-            prevProduct.storeID);
+            prevProduct.storeID,
+            prevProduct.cartID);
         products.remove(prevProduct);
         products.add(updatedProduct);
       }
     }
   }
 
-  void removeProduct(String productID) {
-    products.removeWhere((element) => element.id == productID);
+  void removeProduct(String cartProductID) {
+    products.removeWhere((element) => element.cartID == cartProductID);
   }
 
   double bagSize() {

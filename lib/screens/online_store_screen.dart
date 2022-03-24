@@ -158,7 +158,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                       null
                   ? Icon(
                       Icons.favorite,
-                      color: Colors.black,
+                      color: Colors.red,
                     )
                   : Icon(
                       Icons.favorite_border,

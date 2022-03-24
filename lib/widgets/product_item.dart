@@ -161,8 +161,7 @@ class _ProductItemState extends State<ProductItem> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       widget.product.description != null
-                          ? Text(widget.product.description!,
-                              style: TextStyle(color: Colors.black54))
+                          ? Text(widget.product.description!, style: TextStyle(color: Colors.black54))
                           : Container(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -185,12 +184,11 @@ class _ProductItemState extends State<ProductItem> {
                                     FlatButton(
                                       child: Text('Okay'),
                                       onPressed: () {
-                                        quantity =
-                                            double.parse(myController.text);
+                                        quantity = double.parse(myController.text);
                                         Navigator.of(context).pop();
-                                        // TODO : call here to updateOrCreate
-                                        Scaffold.of(context)
-                                            .hideCurrentSnackBar();
+                                        Provider.of<User>(context, listen: false)
+                                            .updateOrCreateCartProduct(widget.product, widget.storeID, quantity);
+                                        Scaffold.of(context).hideCurrentSnackBar();
                                         Scaffold.of(context).showSnackBar(
                                           SnackBar(
                                             content: Text(
@@ -203,6 +201,7 @@ class _ProductItemState extends State<ProductItem> {
                                                 // Provider.of<User>(context, listen: false)
                                                 //     .removeProductFromShoppingBag(
                                                 //         widget.product, widget.storeID);
+                                                //TODO: call remove cart item
                                               },
                                             ),
                                           ),
@@ -229,18 +228,15 @@ class _ProductItemState extends State<ProductItem> {
               Expanded(
                 flex: 4,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.only(right: 20, top: 10, bottom: 10),
+                  padding: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
                   child: FittedBox(
                     child: Container(
                       height: constraints.maxHeight,
                       width: constraints.maxWidth * 0.45,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        image: DecorationImage(
-                            image:
-                                AssetImage('assets/images/default_product.png'),
-                            fit: BoxFit.cover),
+                        image:
+                            DecorationImage(image: AssetImage('assets/images/default_product.png'), fit: BoxFit.cover),
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),

@@ -34,6 +34,7 @@ class CartProductModel extends Model {
   final String? _imageUrl;
   final String? _description;
   final double? _amount;
+  final String? _storeProductID;
   final String? _shoppingbagmodelID;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
@@ -106,6 +107,10 @@ class CartProductModel extends Model {
     }
   }
   
+  String? get storeProductID {
+    return _storeProductID;
+  }
+  
   String get shoppingbagmodelID {
     try {
       return _shoppingbagmodelID!;
@@ -127,9 +132,9 @@ class CartProductModel extends Model {
     return _updatedAt;
   }
   
-  const CartProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required amount, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _amount = amount, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const CartProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required amount, storeProductID, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _amount = amount, _storeProductID = storeProductID, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory CartProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required double amount, required String shoppingbagmodelID}) {
+  factory CartProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required double amount, String? storeProductID, required String shoppingbagmodelID}) {
     return CartProductModel._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -138,6 +143,7 @@ class CartProductModel extends Model {
       imageUrl: imageUrl,
       description: description,
       amount: amount,
+      storeProductID: storeProductID,
       shoppingbagmodelID: shoppingbagmodelID);
   }
   
@@ -156,6 +162,7 @@ class CartProductModel extends Model {
       _imageUrl == other._imageUrl &&
       _description == other._description &&
       _amount == other._amount &&
+      _storeProductID == other._storeProductID &&
       _shoppingbagmodelID == other._shoppingbagmodelID;
   }
   
@@ -174,6 +181,7 @@ class CartProductModel extends Model {
     buffer.write("imageUrl=" + "$_imageUrl" + ", ");
     buffer.write("description=" + "$_description" + ", ");
     buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
+    buffer.write("storeProductID=" + "$_storeProductID" + ", ");
     buffer.write("shoppingbagmodelID=" + "$_shoppingbagmodelID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
@@ -182,7 +190,7 @@ class CartProductModel extends Model {
     return buffer.toString();
   }
   
-  CartProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, double? amount, String? shoppingbagmodelID}) {
+  CartProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, double? amount, String? storeProductID, String? shoppingbagmodelID}) {
     return CartProductModel._internal(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -191,6 +199,7 @@ class CartProductModel extends Model {
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
       amount: amount ?? this.amount,
+      storeProductID: storeProductID ?? this.storeProductID,
       shoppingbagmodelID: shoppingbagmodelID ?? this.shoppingbagmodelID);
   }
   
@@ -202,12 +211,13 @@ class CartProductModel extends Model {
       _imageUrl = json['imageUrl'],
       _description = json['description'],
       _amount = (json['amount'] as num?)?.toDouble(),
+      _storeProductID = json['storeProductID'],
       _shoppingbagmodelID = json['shoppingbagmodelID'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'categories': _categories, 'price': _price, 'imageUrl': _imageUrl, 'description': _description, 'amount': _amount, 'shoppingbagmodelID': _shoppingbagmodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'categories': _categories, 'price': _price, 'imageUrl': _imageUrl, 'description': _description, 'amount': _amount, 'storeProductID': _storeProductID, 'shoppingbagmodelID': _shoppingbagmodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "cartProductModel.id");
@@ -217,6 +227,7 @@ class CartProductModel extends Model {
   static final QueryField IMAGEURL = QueryField(fieldName: "imageUrl");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
   static final QueryField AMOUNT = QueryField(fieldName: "amount");
+  static final QueryField STOREPRODUCTID = QueryField(fieldName: "storeProductID");
   static final QueryField SHOPPINGBAGMODELID = QueryField(fieldName: "shoppingbagmodelID");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "CartProductModel";
@@ -269,6 +280,12 @@ class CartProductModel extends Model {
       key: CartProductModel.AMOUNT,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: CartProductModel.STOREPRODUCTID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(

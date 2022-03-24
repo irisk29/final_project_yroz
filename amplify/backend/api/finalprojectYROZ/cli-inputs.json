@@ -3,7 +3,7 @@
   "serviceConfiguration": {
     "apiName": "finalprojectYROZ",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-e97a3153-5887-47dd-93d9-a0cd49f98bc9/amplify/backend/api/finalprojectYROZ/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-14bb3806-431c-48cf-9cb6-486c9484b447/amplify/backend/api/finalprojectYROZ/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
       "keyDescription": "api key description",

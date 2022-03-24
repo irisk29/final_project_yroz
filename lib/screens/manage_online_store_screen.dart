@@ -137,14 +137,16 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     onTap: () => showDialog(
                         context: context,
                         builder: (_) => AlertDialog(
-                              title: Text('QR Code'),
-                              content: Image.network(
-                                widget.store.qrCode!,
-                                fit: BoxFit.cover,
-                                width: 150,
-                                height: 150,
-                              ),
-                            )),
+                              title: Text('QR Code', style: TextStyle(fontSize: 25),),
+                              content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                  Image.network(
+                                      widget.store.qrCode!,
+                                      fit: BoxFit.cover,
+                                  )
+                              ],
+                          ),)),
                   ),
                   _buildDivider(),
                   ListTile(
