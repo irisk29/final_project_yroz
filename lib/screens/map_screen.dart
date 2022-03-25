@@ -73,24 +73,10 @@ class _MapScreenState extends State<MapScreen> {
             : SingleChildScrollView(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _locationController,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          suffixIcon: Icon(Icons.search),
-                        ),
-                        onChanged: (value) =>
-                            applicationBloc.searchPlaces(value),
-                        onTap: () => applicationBloc.clearSelectedLocation(),
-                      ),
-                    ),
                     Stack(
                       children: [
                         Container(
-                          height: MediaQuery.of(context).size.height - 200,
+                          height: MediaQuery.of(context).size.height - 160,
                           child: GoogleMap(
                             mapType: MapType.normal,
                             myLocationEnabled: true,

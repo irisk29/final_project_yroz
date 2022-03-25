@@ -59,7 +59,6 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   final GlobalKey<FormState> _formKey = GlobalKey();
   var _isLoading = false;
   AnimationController? _controller;
-  Animation<Size>? _heightAnimation;
   final myController = TextEditingController();
   final _initValues = {
     'cashback': 0.0,
@@ -69,9 +68,6 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _heightAnimation = Tween<Size>(end: Size(double.infinity, 320.0), begin: Size(double.infinity, 260.0))
-        .animate(CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
-    _heightAnimation!.addListener(() => setState(() {}));
     initCashBack();
   }
 

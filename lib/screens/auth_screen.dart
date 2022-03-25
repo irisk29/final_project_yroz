@@ -60,7 +60,6 @@ class _AuthCardState extends State<AuthCard>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   late AnimationController _controller;
-  late Animation<Size> _heightAnimation;
   late bool _isLoading = false;
 
   @override
@@ -69,12 +68,6 @@ class _AuthCardState extends State<AuthCard>
 
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _heightAnimation = Tween<Size>(
-            end: Size(double.infinity, 320.0),
-            begin: Size(double.infinity, 260.0))
-        .animate(
-            CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn));
-    _heightAnimation.addListener(() => setState(() {}));
   }
 
   void _showErrorDialog(String message) {

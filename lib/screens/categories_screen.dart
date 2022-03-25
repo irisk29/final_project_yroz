@@ -117,7 +117,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       ].expand((i) => i).toList(),
                                       gridDelegate:
                                           SliverGridDelegateWithMaxCrossAxisExtent(
-                                        maxCrossAxisExtent: 200,
+                                        maxCrossAxisExtent: MediaQuery.of(context).size.width*0.3,
                                         childAspectRatio: 1,
                                         crossAxisSpacing: 20,
                                         mainAxisSpacing: 20,
@@ -155,7 +155,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       ].expand((i) => i).toList(),
                                       gridDelegate:
                                           SliverGridDelegateWithMaxCrossAxisExtent(
-                                        maxCrossAxisExtent: 200,
+                                        maxCrossAxisExtent: MediaQuery.of(context).size.width*0.3,
                                         childAspectRatio: 1,
                                         crossAxisSpacing: 20,
                                         mainAxisSpacing: 20,

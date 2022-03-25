@@ -101,16 +101,6 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                   backgroundImage: useBackgroundImage ? 'assets/card_bg.png' : null,
                   isSwipeGestureEnabled: true,
                   onCreditCardWidgetChange: (CreditCardBrand creditCardBrand) {},
-                  customCardTypeIcons: <CustomCardTypeIcon>[
-                    CustomCardTypeIcon(
-                      cardType: CardType.mastercard,
-                      cardImage: Image.asset(
-                        'assets/mastercard.png',
-                        height: 48,
-                        width: 48,
-                      ),
-                    ),
-                  ],
                 ),
                 Expanded(
                   child: SingleChildScrollView(
