@@ -39,13 +39,13 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
     Map<String, Map<String, dynamic>> creditCards =
     await Provider.of<User>(context, listen: false)
         .getUserCreditCardDetails();
-    Secret secret = await SecretLoader(secretPath: "secrets.json").load();
+    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
     creditCards.forEach((token, creditCard) {
 
        final key = encrypt.Key.fromUtf8(secret.KEY);
        final iv = encrypt.IV.fromUtf8(secret.IV);
        final encrypter = encrypt.Encrypter(encrypt.AES(key));
-       encrypt.Encrypted enc = encrypt.Encrypted.fromUtf8(creditCard['cardNumber']);
+       encrypt.Encrypted enc = encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
        String number = encrypter.decrypt(enc, iv: iv);
       DateTime expirationDate =
       new DateFormat('MM/yy').parse(creditCard['expiryDate']);
