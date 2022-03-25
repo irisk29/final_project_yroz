@@ -57,7 +57,9 @@ class _AccountScreenState extends State<AccountScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Card(
+                Container(
+                height: MediaQuery.of(context).size.height * 0.12,
+                child: Card(
                     elevation: 8.0,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0)),
@@ -82,7 +84,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               builder: (context, user, child) => Container(
                                 width: MediaQuery.of(context).size.width * 0.3,
                                 height:
-                                    MediaQuery.of(context).size.height * 0.06,
+                                    MediaQuery.of(context).size.height * 0.05,
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 15),
                                   child: SwitchListTile(
@@ -104,6 +106,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                     ),
                   ),
+                ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Card(

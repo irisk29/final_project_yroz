@@ -12,6 +12,9 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
+
 class AddCreditCardScreen extends StatefulWidget {
   static const routeName = '/add-credit-card';
 
@@ -32,6 +35,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
   OutlineInputBorder? border;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? token;
+  late Secret secret;
 
   var _isLoading = false;
 
@@ -50,8 +54,18 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
     setState(() {
       _isLoading = true;
     });
-    this.token = await Provider.of<User>(context, listen: false)
-        .addCreditCardToken(cardNumber, expiryDate, cvvCode, cardHolderName);
+    secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+
+    final key = encrypt.Key.fromUtf8(secret.KEY);
+    final iv = encrypt.IV.fromUtf8(secret.IV);
+    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+
+    final encrypted = encrypter.encrypt(cardNumber, iv: iv);
+    print(encrypted.base16);
+    cardNumber = encrypted.base16;
+    token = await Provider.of<User>(context, listen: false)
+        .addCreditCardToken(cardNumber.toString(), expiryDate, cvvCode, cardHolderName);
+
     setState(() {
       _isLoading = false;
     });
@@ -87,16 +101,6 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                   backgroundImage: useBackgroundImage ? 'assets/card_bg.png' : null,
                   isSwipeGestureEnabled: true,
                   onCreditCardWidgetChange: (CreditCardBrand creditCardBrand) {},
-                  customCardTypeIcons: <CustomCardTypeIcon>[
-                    CustomCardTypeIcon(
-                      cardType: CardType.mastercard,
-                      cardImage: Image.asset(
-                        'assets/mastercard.png',
-                        height: 48,
-                        width: 48,
-                      ),
-                    ),
-                  ],
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -176,12 +180,6 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                             } else {
                               print('invalid!');
                             }
-                            // final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
-                            // final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
-                            // final encrypter = encrypt.Encrypter(encrypt.AES(key));
-                            //
-                            // final encrypted = encrypter.encrypt(cardNumber, iv: iv);
-                            // cardNumber = utf8.decode(encrypted.bytes);
 
                             saveCreditCard();
 

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 import 'credit_cards_screen.dart';
 
 class PhysicalPaymentScreen extends StatefulWidget {
@@ -83,7 +86,6 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   AnimationController? _controller;
   final cashbackController = TextEditingController();
   final amountController = TextEditingController();
-  Animation<Size>? _heightAnimation;
   final _initValues = {
     'cashback': 0.0,
   };
@@ -97,11 +99,6 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     super.initState();
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _heightAnimation = Tween<Size>(
-        end: Size(double.infinity, 320.0),
-        begin: Size(double.infinity, 260.0))
-        .animate(
-        CurvedAnimation(parent: _controller!, curve: Curves.fastOutSlowIn));
     initCashBack();
     //activeCreditCards();
   }
@@ -139,7 +136,13 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     Map<String, Map<String, dynamic>> creditCards =
     await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
     items = [];
+    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
     creditCards.forEach((token, creditCard) {
+      final key = encrypt.Key.fromUtf8(secret.KEY);
+      final iv = encrypt.IV.fromUtf8(secret.IV);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      encrypt.Encrypted enc = encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
+      String number = encrypter.decrypt(enc, iv: iv);
       DateTime expirationDate = new DateFormat('MM/yy').parse(
           creditCard['expiryDate']);
       if (DateTime.now().isBefore(expirationDate) && !items
@@ -147,7 +150,7 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
           .isNotEmpty) //not expired
           {
         items.add(Tuple2<String, String>(
-            creditCard['cardNumber'].toString().substring(15), token));
+            number.substring(15), token));
       }
     });
     if (items.length==0) {
