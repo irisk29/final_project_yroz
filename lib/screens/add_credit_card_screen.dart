@@ -12,6 +12,9 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
+
 class AddCreditCardScreen extends StatefulWidget {
   static const routeName = '/add-credit-card';
 
@@ -32,6 +35,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
   OutlineInputBorder? border;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? token;
+  late Secret secret;
 
   var _isLoading = false;
 
@@ -50,8 +54,9 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
     setState(() {
       _isLoading = true;
     });
-    this.token = await Provider.of<User>(context, listen: false)
+    token = await Provider.of<User>(context, listen: false)
         .addCreditCardToken(cardNumber, expiryDate, cvvCode, cardHolderName);
+    secret = await SecretLoader(secretPath: "secrets.json").load();
     setState(() {
       _isLoading = false;
     });
@@ -176,12 +181,12 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                             } else {
                               print('invalid!');
                             }
-                            // final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
-                            // final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
-                            // final encrypter = encrypt.Encrypter(encrypt.AES(key));
-                            //
-                            // final encrypted = encrypter.encrypt(cardNumber, iv: iv);
-                            // cardNumber = utf8.decode(encrypted.bytes);
+                            final key = encrypt.Key.fromUtf8(secret.KEY);
+                            final iv = encrypt.IV.fromUtf8(secret.IV);
+                            final encrypter = encrypt.Encrypter(encrypt.AES(key));
+
+                            final encrypted = encrypter.encrypt(cardNumber, iv: iv);
+                            cardNumber = utf8.decode(encrypted.bytes);
 
                             saveCreditCard();
 

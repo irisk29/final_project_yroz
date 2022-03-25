@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 
 class CreditCardsScreen extends StatefulWidget {
   static const routeName = '/credit-cards';
@@ -35,28 +39,30 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
     Map<String, Map<String, dynamic>> creditCards =
     await Provider.of<User>(context, listen: false)
         .getUserCreditCardDetails();
+    Secret secret = await SecretLoader(secretPath: "secrets.json").load();
     creditCards.forEach((token, creditCard) {
-      // final key = encrypt.Key.fromUtf8(dotenv.env['KEY']!);
-      // final iv = encrypt.IV.fromUtf8(dotenv.env['IV']!);
-      // final encrypter = encrypt.Encrypter(encrypt.AES(key));
-      // encrypt.Encrypted enc = encrypt.Encrypted.fromUtf8(creditCard['cardNumber']);
-      // String number = encrypter.decrypt(enc, iv: iv);
+
+       final key = encrypt.Key.fromUtf8(secret.KEY);
+       final iv = encrypt.IV.fromUtf8(secret.IV);
+       final encrypter = encrypt.Encrypter(encrypt.AES(key));
+       encrypt.Encrypted enc = encrypt.Encrypted.fromUtf8(creditCard['cardNumber']);
+       String number = encrypter.decrypt(enc, iv: iv);
       DateTime expirationDate =
       new DateFormat('MM/yy').parse(creditCard['expiryDate']);
       if (DateTime.now().isBefore(expirationDate)) //not expired
           {
-            if(activeCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
+            if(activeCards.firstWhereOrNull((e) => e.fourDigits == number.substring(15) && e.expiration == creditCard['expiryDate']) == null)
           activeCards.add(CreditCardWidget(
               creditCard['cardHolder'],
-              creditCard['cardNumber'].toString().substring(15),
+              number.substring(15),
               creditCard['expiryDate'],
               Colors.blue,
               token));
       } else {
-        if(disabledCards.firstWhereOrNull((e) => e.fourDigits == creditCard['cardNumber'].toString().substring(15) && e.expiration == creditCard['expiryDate']) == null)
+        if(disabledCards.firstWhereOrNull((e) => e.fourDigits == number.substring(15) && e.expiration == creditCard['expiryDate']) == null)
           disabledCards.add(CreditCardWidget(
               creditCard['cardHolder'],
-              creditCard['cardNumber'].toString().substring(15),
+              number.substring(15),
               creditCard['expiryDate'],
               Colors.red,
               token));
