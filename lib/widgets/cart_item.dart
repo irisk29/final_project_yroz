@@ -79,11 +79,14 @@ class _CartItemState extends State<CartItem> {
         );
       },
       onDismissed: (direction) async {
-        await Provider.of<User>(context, listen: false).removeProductFromShoppingBag(widget.product!.cartID, widget.storeID);
+        await Provider.of<User>(context, listen: false)
+            .removeProductFromShoppingBag(
+                widget.product!.cartID, widget.storeID);
         setState(() {
           () => widget.update();
         });
-        Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID});
+        Navigator.pushReplacementNamed(context, CartScreen.routeName,
+            arguments: {'store': widget.storeID});
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -91,13 +94,13 @@ class _CartItemState extends State<CartItem> {
           vertical: 4,
         ),
         child: Padding(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: ListTile(
             leading: CircleAvatar(
               child: Padding(
                 padding: EdgeInsets.all(5),
                 child: FittedBox(
-                  child: Text('\$${widget.price}'),
+                  child: Text('\€${widget.price}'),
                 ),
               ),
             ),
@@ -106,22 +109,25 @@ class _CartItemState extends State<CartItem> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Total: \$${(widget.price * widget.quantity)}'),
-                IconButton(
-                  icon: Icon(Icons.remove_circle),
-                  onPressed: () {
-                    // user.decreaseProductQuantityInBag(
-                    //     widget.product, widget.storeID)),
-                    user.decreaseProductQuantityLocally(widget.storeID, widget.product!.cartID);
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.add_circle),
-                  onPressed: () {
-                    // user.addProductToShoppingBag(
-                    //     widget.product, widget.storeID);
-                    user.addProductToShoppingBagLocally(widget.storeID, widget.product!);
-                  },
+                Text('Total: \€${(widget.price * widget.quantity)}'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.remove_circle),
+                      onPressed: () {
+                        user.decreaseProductQuantityLocally(
+                            widget.storeID, widget.product!.cartID);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add_circle),
+                      onPressed: () {
+                        user.addProductToShoppingBagLocally(
+                            widget.storeID, widget.product!);
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

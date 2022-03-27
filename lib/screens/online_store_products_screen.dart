@@ -81,39 +81,52 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                 ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListTile(
-              title: Text(
-                "Products:",
-                style: TextStyle(fontSize: 20),
+      body: widget.store.products.length > 0
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  ListTile(
+                    title: Text(
+                      "Products:",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    onTap: () {
+                      //open change language
+                    },
+                  ),
+                  SizedBox(
+                    height: (MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.5,
+                    child: GridView.count(
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      crossAxisCount: 1,
+                      childAspectRatio: 3.3,
+                      mainAxisSpacing: deviceSize.height * 0.025,
+                      crossAxisSpacing: deviceSize.width * 0.025,
+                      children: widget.store.products
+                          .map(
+                            (storeData) =>
+                                ProductItem(storeData, widget.store.id),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ],
               ),
-              onTap: () {
-                //open change language
-              },
-            ),
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.5,
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                crossAxisCount: 1,
-                childAspectRatio: 3.3,
-                mainAxisSpacing: deviceSize.height * 0.025,
-                crossAxisSpacing: deviceSize.width * 0.025,
-                children: widget.store.products
-                    .map(
-                      (storeData) => ProductItem(storeData, widget.store.id),
-                    )
-                    .toList(),
+            )
+          : Container(
+              width: deviceSize.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("This store does not offer any products for sale",
+                      textAlign: TextAlign.center),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

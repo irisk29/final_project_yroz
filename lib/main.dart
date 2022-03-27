@@ -38,7 +38,6 @@ import 'screens/tutorial_screen.dart';
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  //await dotenv.load();
   runApp(MyApp());
 }
 

@@ -9,8 +9,6 @@ class CartScreen extends StatefulWidget {
   static const routeName = '/cart';
 
   late String storeID;
-  //late User user;
-  //late ShoppingBagDTO? cart;
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -34,6 +32,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<User>(context, listen: true);
+    var deviceSize = MediaQuery.of(context).size;
 
     return WillPopScope(
       onWillPop: () async {
@@ -44,7 +43,12 @@ class _CartScreenState extends State<CartScreen> {
         appBar: AppBar(
           title: Text(
             'Your Cart',
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          toolbarHeight: deviceSize.height * 0.1,
         ),
         body: Column(
           children: <Widget>[
@@ -62,7 +66,7 @@ class _CartScreenState extends State<CartScreen> {
                     Spacer(),
                     Chip(
                       label: Text(
-                        '\$${provider.getShoppingBag(widget.storeID) != null ? provider.getShoppingBag(widget.storeID)!.calculateTotalPrice().toStringAsFixed(2) : 0.toStringAsFixed(2)}',
+                        '\€${provider.getShoppingBag(widget.storeID) != null ? provider.getShoppingBag(widget.storeID)!.calculateTotalPrice().toStringAsFixed(2) : 0.toStringAsFixed(2)}',
                       ),
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
@@ -121,7 +125,8 @@ class _OrderButtonState extends State<OrderButton> {
                     _isLoading = true;
                   });
 
-                  Provider.of<User>(context, listen: false).saveShoppingBag(widget.cart!.onlineStoreID);
+                  Provider.of<User>(context, listen: false)
+                      .saveShoppingBag(widget.cart!.onlineStoreID);
 
                   Navigator.push(
                       context,
