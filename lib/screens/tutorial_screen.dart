@@ -1,3 +1,4 @@
+import 'package:final_project_yroz/screens/categories_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:widget_arrows/widget_arrows.dart';
@@ -10,12 +11,13 @@ class TutorialScreen extends StatefulWidget {
 }
 
 class _TutorialScreenState extends State<TutorialScreen> {
-
   bool showArrows = true;
 
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+    final categoriesScreen = CategoriesScreen();
+
     return ArrowContainer(
       child: Scaffold(
         appBar: AppBar(
@@ -30,8 +32,6 @@ class _TutorialScreenState extends State<TutorialScreen> {
           actions: [
             ArrowElement(
               id: 'action',
-              targetAnchor: Alignment.topCenter,
-              sourceAnchor: Alignment.bottomCenter,
               child: IconButton(
                 icon: Icon(Icons.storefront),
                 onPressed: () {},
@@ -40,38 +40,41 @@ class _TutorialScreenState extends State<TutorialScreen> {
           ],
         ),
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: Stack(
             children: [
-              ArrowElement(
-                show: showArrows,
-                id: 'text2',
-                sourceAnchor: Alignment.topCenter,
-                //targetAnchor: Alignment.centerLeft,
-                targetId: 'action',
-                color: Colors.purple,
-                child: AlertDialog(
-                  title: Text('Congratulations!'),
-                  content: Text(
-                      "You can now manage your store from this button"),
-                  actions: [
-                    FlatButton(
-                      child: Text('Okay'),
-                      onPressed: () {
-                        setState(() {
-                          showArrows = !showArrows;
-                        });
-                        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
-                      }
+              categoriesScreen,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ArrowElement(
+                    show: showArrows,
+                    id: 'arrow',
+                    sourceAnchor: Alignment.topCenter,
+                    targetId: 'action',
+                    color: Colors.purple,
+                    child: AlertDialog(
+                      title: Text('Congratulations!'),
+                      content: Text(
+                          "You can now manage your store from this button"),
+                      actions: [
+                        FlatButton(
+                            child: Text('Okay'),
+                            onPressed: () {
+                              setState(() {
+                                showArrows = !showArrows;
+                              });
+                              Navigator.of(context)
+                                  .pushReplacementNamed(TabsScreen.routeName);
+                            }),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
-
       ),
     );
   }

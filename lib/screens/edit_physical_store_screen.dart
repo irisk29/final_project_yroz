@@ -537,63 +537,66 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Edit Store',
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Edit Store',
+          ),
         ),
-      ),
-      resizeToAvoidBottomInset: false,
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Container(
-              child: Column(
-                children: [
-                  IconStepper(
-                    icons: [
-                      Icon(Icons.info),
-                      Icon(Icons.tag),
-                      Icon(Icons.access_time),
-                      Icon(Icons.store),
-                    ],
-                    // activeStep property set to activeStep variable defined above.
-                    activeStep: _currentStep,
-                    steppingEnabled: false,
-                    enableStepTapping: false,
-                    enableNextPreviousButtons: false,
-                    activeStepColor: Theme.of(context).primaryColor,
-                    // This ensures step-tapping updates the activeStep.
-                    onStepReached: (index) {
-                      setState(() {
-                        _currentStep = index;
-                      });
-                    },
-                  ),
-                  currentStepWidget()!,
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: cancel,
-                              child: Text('Prev'),
-                            ),
-                            ElevatedButton(
-                              onPressed: continued,
-                              child: Text('Next'),
-                            ),
-                          ],
+        resizeToAvoidBottomInset: false,
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Container(
+                child: Column(
+                  children: [
+                    IconStepper(
+                      icons: [
+                        Icon(Icons.info),
+                        Icon(Icons.tag),
+                        Icon(Icons.access_time),
+                        Icon(Icons.storefront),
+                      ],
+                      // activeStep property set to activeStep variable defined above.
+                      activeStep: _currentStep,
+                      steppingEnabled: false,
+                      enableStepTapping: false,
+                      enableNextPreviousButtons: false,
+                      activeStepColor: Theme.of(context).primaryColor,
+                      // This ensures step-tapping updates the activeStep.
+                      onStepReached: (index) {
+                        setState(() {
+                          _currentStep = index;
+                        });
+                      },
+                    ),
+                    currentStepWidget()!,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: cancel,
+                                child: Text('Prev'),
+                              ),
+                              ElevatedButton(
+                                onPressed: continued,
+                                child: Text('Next'),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 

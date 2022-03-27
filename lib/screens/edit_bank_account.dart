@@ -1,4 +1,3 @@
-import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/bank_account_form.dart';
 import 'package:flutter/material.dart';
@@ -66,58 +65,61 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: deviceSize.height * 0.1,
-        title: Text(
-          "Edit Bank Account",
-          style: const TextStyle(
-            fontSize: 22,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
+          title: Text(
+            "Edit Bank Account",
+            style: const TextStyle(
+              fontSize: 22,
+            ),
           ),
         ),
-      ),
-      resizeToAvoidBottomInset: false,
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : FutureBuilder(
-              future: bankAccountFuture,
-              builder: (BuildContext context, AsyncSnapshot snap) {
-                return snap.connectionState != ConnectionState.done
-                    ? Center(child: CircularProgressIndicator())
-                    : snap.data == null
-                        ? Center(
-                            child: Text(
-                                "Sorry, we could not find your bank account details at the moment...",
-                                textAlign: TextAlign.center),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              children: [
-                                snap.data,
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  child: ElevatedButton(
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(18.0),
-                                              side: BorderSide(
-                                                  color: Colors.red))),
+        resizeToAvoidBottomInset: false,
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : FutureBuilder(
+                future: bankAccountFuture,
+                builder: (BuildContext context, AsyncSnapshot snap) {
+                  return snap.connectionState != ConnectionState.done
+                      ? Center(child: CircularProgressIndicator())
+                      : snap.data == null
+                          ? Center(
+                              child: Text(
+                                  "Sorry, we could not find your bank account details at the moment...",
+                                  textAlign: TextAlign.center),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                children: [
+                                  snap.data,
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(18.0),
+                                                side: BorderSide(
+                                                    color: Colors.red))),
+                                      ),
+                                      onPressed: () => _saveForm(
+                                          snap.data as BankAccountForm),
+                                      child: Text('Submit'),
                                     ),
-                                    onPressed: () =>
-                                        _saveForm(snap.data as BankAccountForm),
-                                    child: Text('Submit'),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-              },
-            ),
+                                ],
+                              ),
+                            );
+                },
+              ),
+      ),
     );
   }
 }
