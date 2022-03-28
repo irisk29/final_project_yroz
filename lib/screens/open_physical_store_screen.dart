@@ -13,6 +13,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
 import 'tutorial_screen.dart';
 
@@ -35,11 +37,22 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  //User? user;
+  static late Secret secret;
+
+  OpenPhysicalStorePipeline() {
+    () async {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    }();
+  }
 
   @override
-  _OpenPhysicalStorePipelineState createState() =>
-      _OpenPhysicalStorePipelineState();
+  _OpenPhysicalStorePipelineState createState() {
+    () async {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    }();
+    return _OpenPhysicalStorePipelineState();
+  }
+
 }
 
 class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
@@ -52,7 +65,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
       geoMethods: GeoMethods(
-        googleApiKey: 'AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg',
+        googleApiKey: OpenPhysicalStorePipeline.secret.API_KEY,
         language: 'en',
         countryCode: 'il',
       ),
