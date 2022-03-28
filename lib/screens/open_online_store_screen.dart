@@ -55,7 +55,6 @@ class OpenOnlineStorePipeline extends StatefulWidget {
     }();
     return _OpenOnlineStorePipelineState();
   }
-
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -623,13 +622,17 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
           title: Text(
             'Open Online Store',
+            style: const TextStyle(fontSize: 22),
           ),
         ),
         body: _isLoading

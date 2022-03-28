@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/credit_cards_screen.dart';
+import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,47 +22,49 @@ class OnlinePaymentScreen extends StatefulWidget {
 
 class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   @override
-  void didChangeDependencies() {}
-
-  @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Online Store Payment"),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.5),
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.9),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0, 1],
+    return LayoutBuilder(
+      builder: (context, constraints) => Scaffold(
+        appBar: AppBar(
+          toolbarHeight: constraints.maxHeight * 0.1,
+          title: Text(
+            'Payment',
+            style: const TextStyle(fontSize: 22),
+          ),
+        ),
+        body: Stack(
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).primaryColor.withOpacity(0.4),
+                    Theme.of(context).primaryColor.withOpacity(0.9),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0, 1],
+                ),
               ),
             ),
-          ),
-          SingleChildScrollView(
-            child: Container(
-              height: deviceSize.height / 1.3,
-              width: deviceSize.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(
-                    flex: deviceSize.width > 600 ? 2 : 1,
-                    child: PaymentCard(widget.storeID),
-                  ),
-                ],
+            SingleChildScrollView(
+              child: Container(
+                height: constraints.maxHeight / 1.3,
+                width: constraints.maxWidth,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(
+                      flex: constraints.maxWidth > 600 ? 2 : 1,
+                      child: PaymentCard(widget.storeID),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -104,18 +104,6 @@ class _PaymentCardState extends State<PaymentCard>
         .getShoppingBag(widget.storeID!);
   }
 
-  @override
-  void didChangeDependencies() {
-    () async {
-      setState(() {
-        widget.bag = Provider.of<User>(context, listen: false)
-            .getShoppingBag(widget.storeID!);
-        // Update your UI with the desired changes.
-      });
-    }();
-    super.didChangeDependencies();
-  }
-
   Future<void> activeCreditCards() async {
     Map<String, Map<String, dynamic>> creditCards =
         await Provider.of<User>(context, listen: false)
@@ -143,29 +131,32 @@ class _PaymentCardState extends State<PaymentCard>
     dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
     if (items.length == 0) {
       showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: Text("Missing Credit Card"),
-                content: Text(
-                    "You have no credit cards available, please enter a credit card to proceed"),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('Okay'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context)
-                          .pushReplacementNamed(CreditCardsScreen.routeName);
-                    },
-                  ),
-                  FlatButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ));
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: Text("Missing Credit Card"),
+          content: Text(
+              "You have no credit cards available, please enter a credit card to proceed"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Okay'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushNamed(AddCreditCardScreen.routeName)
+                    .then((_) => setState(() {}));
+              },
+            ),
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        ),
+      );
     }
   }
 
@@ -177,17 +168,15 @@ class _PaymentCardState extends State<PaymentCard>
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
     double cashback = 0.0;
-    widget.bag = Provider.of<User>(context, listen: false)
-        .getShoppingBag(widget.storeID!);
 
     return FutureBuilder(
-        future: activeCreditCards(),
-        builder: (BuildContext context, AsyncSnapshot snap) {
-          return snap.connectionState != ConnectionState.done
-              ? Center(child: CircularProgressIndicator())
-              : Card(
+      future: activeCreditCards(),
+      builder: (BuildContext context, AsyncSnapshot snap) {
+        return snap.connectionState != ConnectionState.done
+            ? Center(child: CircularProgressIndicator())
+            : LayoutBuilder(
+                builder: (context, constraints) => Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -197,7 +186,7 @@ class _PaymentCardState extends State<PaymentCard>
                     curve: Curves.easeIn,
                     height: 320,
                     constraints: BoxConstraints(minHeight: 320),
-                    width: deviceSize.width * 0.75,
+                    width: constraints.maxWidth * 0.75,
                     padding: EdgeInsets.all(16.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -297,7 +286,9 @@ class _PaymentCardState extends State<PaymentCard>
                       ],
                     ),
                   ),
-                );
-        });
+                ),
+              );
+      },
+    );
   }
 }

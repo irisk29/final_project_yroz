@@ -43,10 +43,7 @@ class _CartScreenState extends State<CartScreen> {
         appBar: AppBar(
           title: Text(
             'Your Cart',
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 22),
           ),
           toolbarHeight: deviceSize.height * 0.1,
         ),

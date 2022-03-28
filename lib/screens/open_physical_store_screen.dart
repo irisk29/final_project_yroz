@@ -52,7 +52,6 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
     }();
     return _OpenPhysicalStorePipelineState();
   }
-
 }
 
 class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
@@ -560,12 +559,16 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
           title: Text(
             'Open Physical Store',
+            style: const TextStyle(fontSize: 22),
           ),
         ),
         resizeToAvoidBottomInset: false,
