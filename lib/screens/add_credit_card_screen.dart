@@ -62,9 +62,9 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
 
     final encrypted = encrypter.encrypt(cardNumber, iv: iv);
     print(encrypted.base16);
-    cardNumber = encrypted.base16;
+    String num = encrypted.base16.toString();
     token = await Provider.of<User>(context, listen: false)
-        .addCreditCardToken(cardNumber.toString(), expiryDate, cvvCode, cardHolderName);
+        .addCreditCardToken(num, expiryDate, cvvCode, cardHolderName);
 
     setState(() {
       _isLoading = false;

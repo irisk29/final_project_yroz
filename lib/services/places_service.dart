@@ -7,8 +7,11 @@ import 'package:google_geocoding/google_geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
+
 class PlacesService {
-  final key = 'AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg';
+  final key = 'AIzaSyCQYKveUIwWydl7SmP5uoSb55qcL2-m3ag';
 
   Future<List<PlaceSearch>> getAutocomplete(String search) async {
     var url =
@@ -45,7 +48,8 @@ class PlacesService {
       physicalStores = physicalStores.where((element) => element.categories.contains(placeType)).toList();
       onlineStores = onlineStores.where((element) => element.categories.contains(placeType)).toList();
     }
-    var googleGeocoding = GoogleGeocoding("AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg");
+    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    var googleGeocoding = GoogleGeocoding(secret.API_KEY);
     List<Place> places = [];
     for(StoreDTO store in physicalStores){
       GeocodingResponse? address = await googleGeocoding.geocoding.get(store.address, []);
