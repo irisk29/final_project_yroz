@@ -606,8 +606,8 @@ class User extends ChangeNotifier {
 
   Future<ResultInterface> makePaymentOnlineStore(
       String creditCardToken,
-      String cashBackAmount,
-      String creditAmount,
+      double cashBackAmount,
+      double creditAmount,
       ShoppingBagDTO shoppingBagDTO) async {
     try {
       var res = await InternalPaymentGateway().makePayment(
@@ -615,8 +615,8 @@ class User extends ChangeNotifier {
           shoppingBagDTO.onlineStoreID,
           this.eWallet!,
           creditCardToken,
-          cashBackAmount,
-          creditAmount);
+          cashBackAmount.toString(),
+          creditAmount.toString());
       if (!res.getTag()) {
         print(res.getMessage());
         return res;

@@ -2,10 +2,7 @@ import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_product_screen.dart';
-import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
-import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +51,6 @@ class EditOnlineStorePipeline extends StatefulWidget {
     }();
     return _EditOnlineStorePipelineState();
   }
-
 }
 
 class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {

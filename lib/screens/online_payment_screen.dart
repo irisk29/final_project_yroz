@@ -1,6 +1,7 @@
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
+import 'package:final_project_yroz/widgets/cashback_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -82,29 +83,26 @@ class PaymentCard extends StatefulWidget {
 
 class _PaymentCardState extends State<PaymentCard>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  var _isLoading = false;
   AnimationController? _controller;
-  final myController = TextEditingController();
-  final _initValues = {
-    'cashback': 0.0,
-  };
-
+  var _cashback;
   String dropdownvalue = '';
-
   List<Tuple2<String, String>> items = [];
+  late bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    initCashBack();
     widget.bag = Provider.of<User>(context, listen: false)
         .getShoppingBag(widget.storeID!);
   }
 
-  Future<void> activeCreditCards() async {
+  Future<void> initCreditAndCashback() async {
+    String cb =
+        await Provider.of<User>(context, listen: false).getEWalletBalance();
+    _cashback = double.parse(cb);
+
     Map<String, Map<String, dynamic>> creditCards =
         await Provider.of<User>(context, listen: false)
             .getUserCreditCardDetails();
@@ -160,134 +158,165 @@ class _PaymentCardState extends State<PaymentCard>
     }
   }
 
-  void initCashBack() async {
-    String cb =
-        await Provider.of<User>(context, listen: false).getEWalletBalance();
-    _initValues['cashback'] = double.parse(cb);
+  Future<void> _makePayment(
+      double totalPrice, CashbackSelection cashbackSelection) async {
+    setState(() => _isLoading = true);
+
+    if (cashbackSelection.form.currentState == null ||
+        cashbackSelection.form.currentState!.validate()) {
+      var res = await Provider.of<User>(context, listen: false)
+          .makePaymentOnlineStore(
+              dropdownvalue,
+              cashbackSelection.cashbackAmount,
+              totalPrice - cashbackSelection.cashbackAmount,
+              widget.bag!);
+      if (!res.getTag()) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("An error occured!"),
+            content: Text(res.getMessage().toString()),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+        );
+      }
+
+      Navigator.of(context).pop();
+    }
+
+    setState(() => _isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    double cashback = 0.0;
+    final totalPrice = widget.bag!.calculateTotalPrice();
+    var cashbackSelection;
 
     return FutureBuilder(
-      future: activeCreditCards(),
+      future: initCreditAndCashback(),
       builder: (BuildContext context, AsyncSnapshot snap) {
-        return snap.connectionState != ConnectionState.done
-            ? Center(child: CircularProgressIndicator())
-            : LayoutBuilder(
-                builder: (context, constraints) => Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  elevation: 8.0,
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                    height: 320,
-                    constraints: BoxConstraints(minHeight: 320),
-                    width: constraints.maxWidth * 0.75,
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Text(
-                            "Purchase amount: ${widget.bag!.calculateTotalPrice().toString()}",
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 20.0)),
-                        RichText(
-                          text: TextSpan(
+        if (snap.connectionState != ConnectionState.done) {
+          return Center(
+              child: CircularProgressIndicator(
+            color: Colors.white,
+          ));
+        } else {
+          cashbackSelection = CashbackSelection(_cashback);
+          return LayoutBuilder(
+            builder: (context, constraints) => Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        elevation: 8.0,
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          width: constraints.maxWidth * 0.8,
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
                             children: [
-                              WidgetSpan(
-                                child: Icon(Icons.payments_outlined),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "PURCHASE AMOUNT",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    "\€${totalPrice.toString()}",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
                               ),
-                              TextSpan(
-                                  text: "Cashback available: " +
-                                      _initValues['cashback'].toString(),
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 16.0)),
+                              Divider(),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 10.0),
+                                child: cashbackSelection,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 10.0),
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeIn,
+                                  width: constraints.maxWidth * 0.8,
+                                  child: Column(
+                                    children: <Widget>[
+                                      ListTile(
+                                        title: Text(
+                                          'CREDIT CARD',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Center(
+                                        child: DropdownButton(
+                                          value: dropdownvalue,
+                                          icon: const Icon(
+                                              Icons.keyboard_arrow_down),
+                                          items: items.map(
+                                              (Tuple2<String, String> item) {
+                                            return DropdownMenuItem(
+                                              value: item.item2,
+                                              child: Text("XXXX-XXXX-XXXX-" +
+                                                  item.item1),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String? newValue) {
+                                            dropdownvalue = newValue!;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        TextFormField(
-                          decoration:
-                              InputDecoration(labelText: 'Cashback to use'),
-                          keyboardType: TextInputType.number,
-                          controller: myController,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter a number.';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              if (value != "")
-                                cashback = double.parse(value);
-                              else
-                                cashback = 0;
-                            });
-                          },
-                        ),
-                        Text("\nChoose Credit Card to pay with:"),
-                        DropdownButton(
-                          value: dropdownvalue,
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          items: items.map((Tuple2<String, String> item) {
-                            return DropdownMenuItem(
-                              value: item.item2,
-                              child: Text(item.item1),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownvalue = newValue!;
-                            });
-                          },
-                        ),
-                        Text('Amount left to pay: ' +
-                            (widget.bag!.calculateTotalPrice() -
-                                    (myController.text.length > 0
-                                        ? double.parse(myController.text)
-                                        : 0))
-                                .toString()),
-                        FlatButton(
-                          child: Text('Confirm Amount'),
-                          onPressed: () async {
-                            var res =
-                                await Provider.of<User>(context, listen: false)
-                                    .makePaymentOnlineStore(
-                                        dropdownvalue,
-                                        cashback.toString(),
-                                        (widget.bag!.calculateTotalPrice() -
-                                                (myController.text.length > 0
-                                                    ? double.parse(
-                                                        myController.text)
-                                                    : 0.0))
-                                            .toString(),
-                                        widget.bag!);
-                            AlertDialog(
-                              title: Text(res.getTag()
-                                  ? "Congratulations!"
-                                  : "An error occured!"),
-                              content: Text(res.getMessage().toString()),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text('Okay'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              ],
-                            );
-                            Navigator.of(context).pop();
-                          },
-                        )
-                      ],
+                      ),
+                Container(
+                  width: constraints.maxWidth * 0.75,
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: ElevatedButton(
+                    child: Text(
+                      'Pay',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
                     ),
+                    onPressed: () =>
+                        _makePayment(totalPrice, cashbackSelection),
                   ),
                 ),
-              );
+              ],
+            ),
+          );
+        }
       },
     );
   }
