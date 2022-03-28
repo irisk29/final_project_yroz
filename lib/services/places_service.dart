@@ -11,11 +11,11 @@ import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
 
 class PlacesService {
-  final key = 'AIzaSyCQYKveUIwWydl7SmP5uoSb55qcL2-m3ag';
 
   Future<List<PlaceSearch>> getAutocomplete(String search) async {
+    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
     var url =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$search&types=(cities)&key=$key';
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$search&types=(cities)&key=$secret.API_KEY';
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
     var jsonResults = json['predictions'] as List;
@@ -23,8 +23,9 @@ class PlacesService {
   }
 
   Future<Place> getPlace(String placeId) async {
+    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
     var url =
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$key';
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$secret.API_KEY';
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
     var jsonResult = json['result'] as Map<String, dynamic>;
@@ -32,9 +33,10 @@ class PlacesService {
   }
 
   Future<List<Place>> getPlaces(double lat, double lng, String placeType) async {
+    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
     placeType = placeType.toLowerCase();
     var url =
-        'https://maps.googleapis.com/maps/api/place/textsearch/json?location=$lat,$lng&type=$placeType&rankby=distance&key=$key';
+        'https://maps.googleapis.com/maps/api/place/textsearch/json?location=$lat,$lng&type=$placeType&rankby=distance&key=$secret.API_KEY';
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
     var jsonResults = json['results'] as List;
