@@ -2,6 +2,8 @@ import 'package:final_project_yroz/LogicModels/place.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 import 'geolocator_service.dart';
 
 class MarkerService {
@@ -42,7 +44,8 @@ class MarkerService {
           String dest_lng = place.geometry.location.lng as String;
           String origin_lat = (await GeolocatorService().getCurrentLocation()).latitude as String;
           String origin_lng = (await GeolocatorService().getCurrentLocation()).longitude as String;
-          String googleUrl = 'https://maps.googleapis.com/maps/api/directions/json?origin=$origin_lat,$origin_lng&destination=$dest_lat,$dest_lng&key=AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg';
+          Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+          String googleUrl = 'https://maps.googleapis.com/maps/api/directions/json?origin=$origin_lat,$origin_lng&destination=$dest_lat,$dest_lng&key=${secret.API_KEY}';
           if (await canLaunch(googleUrl)) {
             await launch(googleUrl);
           } else {

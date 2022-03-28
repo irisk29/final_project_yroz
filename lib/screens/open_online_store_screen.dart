@@ -14,6 +14,8 @@ import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:tuple/tuple.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
 
@@ -36,11 +38,24 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
+  static late Secret secret;
+
+  OpenOnlineStorePipeline() {
+    () async {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    }();
+  }
+
   //User? user;
 
   @override
-  _OpenOnlineStorePipelineState createState() =>
-      _OpenOnlineStorePipelineState();
+  _OpenOnlineStorePipelineState createState() {
+    () async {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    }();
+    return _OpenOnlineStorePipelineState();
+  }
+
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -53,7 +68,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
       geoMethods: GeoMethods(
-        googleApiKey: 'AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg',
+        googleApiKey: OpenOnlineStorePipeline.secret.API_KEY,
         language: 'en',
         countryCode: 'il',
       ),

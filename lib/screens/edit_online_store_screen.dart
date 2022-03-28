@@ -14,6 +14,8 @@ import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:tuple/tuple.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
 
@@ -37,9 +39,22 @@ class EditOnlineStorePipeline extends StatefulWidget {
 
   static TextEditingController _controller = TextEditingController();
 
+  static late Secret secret;
+
+  EditOnlineStorePipeline() {
+    () async {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    }();
+  }
+
   @override
-  _EditOnlineStorePipelineState createState() =>
-      _EditOnlineStorePipelineState();
+  _EditOnlineStorePipelineState createState() {
+    () async {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    }();
+    return _EditOnlineStorePipelineState();
+  }
+
 }
 
 class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
@@ -50,7 +65,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
       geoMethods: GeoMethods(
-        googleApiKey: 'AIzaSyAfdPcHbriyq8QOw4hoCMz8sFp3dt8oqHg',
+        googleApiKey: EditOnlineStorePipeline.secret.API_KEY,
         language: 'en',
         countryCode: 'il',
       ),

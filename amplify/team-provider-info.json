@@ -16,5 +16,23 @@
         "finalprojectYROZ": {}
       }
     }
+  },
+  "testenv": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-finalprojectyroz-testenv-211312-authRole",
+      "UnauthRoleArn": "arn:aws:iam::210566832033:role/amplify-finalprojectyroz-testenv-211312-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::210566832033:role/amplify-finalprojectyroz-testenv-211312-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-finalprojectyroz-testenv-211312-deployment",
+      "UnauthRoleName": "amplify-finalprojectyroz-testenv-211312-unauthRole",
+      "StackName": "amplify-finalprojectyroz-testenv-211312",
+      "StackId": "arn:aws:cloudformation:us-east-1:210566832033:stack/amplify-finalprojectyroz-testenv-211312/96b3caf0-adf9-11ec-88b8-127dfa5eb70f",
+      "AmplifyAppId": "d1btmbctt8q741"
+    },
+    "categories": {
+      "auth": {
+        "finalprojectYROZ": {}
+      }
+    }
   }
 }
