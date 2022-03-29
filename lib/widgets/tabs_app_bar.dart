@@ -15,7 +15,6 @@ class TabsAppBar {
         title,
         style: const TextStyle(
           fontSize: 23,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );

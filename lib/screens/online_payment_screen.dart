@@ -1,6 +1,7 @@
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
+import 'package:final_project_yroz/screens/invoice_screen.dart';
 import 'package:final_project_yroz/widgets/cashback_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -73,6 +74,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
 
 class PaymentCard extends StatefulWidget {
   String? storeID;
+  late String userName;
   late ShoppingBagDTO? bag;
 
   PaymentCard(this.storeID);
@@ -94,8 +96,10 @@ class _PaymentCardState extends State<PaymentCard>
     super.initState();
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    widget.bag = Provider.of<User>(context, listen: false)
-        .getShoppingBag(widget.storeID!);
+
+    final user = Provider.of<User>(context, listen: false);
+    widget.userName = user.name!;
+    widget.bag = user.getShoppingBag(widget.storeID!);
   }
 
   Future<void> initCreditAndCashback() async {
@@ -160,17 +164,28 @@ class _PaymentCardState extends State<PaymentCard>
 
   Future<void> _makePayment(
       double totalPrice, CashbackSelection cashbackSelection) async {
-    setState(() => _isLoading = true);
-
     if (cashbackSelection.form.currentState == null ||
         cashbackSelection.form.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
       var res = await Provider.of<User>(context, listen: false)
           .makePaymentOnlineStore(
               dropdownvalue,
               cashbackSelection.cashbackAmount,
               totalPrice - cashbackSelection.cashbackAmount,
               widget.bag!);
-      if (!res.getTag()) {
+      if (res.getTag()) {
+        Navigator.of(context).pushReplacementNamed(
+          InvoiceScreen.routeName,
+          arguments: {
+            'userName': widget.userName,
+            'purchaseDate': DateTime.now(),
+            'shoppingBag': widget.bag,
+            'cashbackAmount': cashbackSelection.cashbackAmount,
+            'creditAmount': totalPrice - cashbackSelection.cashbackAmount
+          },
+        );
+      } else {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -188,10 +203,8 @@ class _PaymentCardState extends State<PaymentCard>
         );
       }
 
-      Navigator.of(context).pop();
+      setState(() => _isLoading = false);
     }
-
-    setState(() => _isLoading = false);
   }
 
   @override
@@ -210,12 +223,12 @@ class _PaymentCardState extends State<PaymentCard>
         } else {
           cashbackSelection = CashbackSelection(_cashback);
           return LayoutBuilder(
-            builder: (context, constraints) => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Card(
+            builder: (context, constraints) => _isLoading
+                ? CircularProgressIndicator(color: Colors.white)
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -232,18 +245,18 @@ class _PaymentCardState extends State<PaymentCard>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "PURCHASE AMOUNT",
+                                    "AMOUNT TO PAY",
                                     style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w600),
+                                      color: Colors.black,
+                                      fontSize: 22.0,
+                                    ),
                                   ),
                                   Text(
                                     "\€${totalPrice.toString()}",
                                     style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w600),
+                                      color: Colors.black,
+                                      fontSize: 22.0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -297,24 +310,24 @@ class _PaymentCardState extends State<PaymentCard>
                           ),
                         ),
                       ),
-                Container(
-                  width: constraints.maxWidth * 0.75,
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: ElevatedButton(
-                    child: Text(
-                      'Pay',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                      Container(
+                        width: constraints.maxWidth * 0.75,
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: ElevatedButton(
+                          child: Text(
+                            'Pay',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onPressed: () =>
+                              _makePayment(totalPrice, cashbackSelection),
+                        ),
                       ),
-                    ),
-                    onPressed: () =>
-                        _makePayment(totalPrice, cashbackSelection),
+                    ],
                   ),
-                ),
-              ],
-            ),
           );
         }
       },

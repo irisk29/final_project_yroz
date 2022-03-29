@@ -35,9 +35,10 @@ class _CashbackSelectionState extends State<CashbackSelection> {
             trailing: IconButton(
               icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
               onPressed: () async {
-                setState(() {
-                  _expanded = !_expanded;
-                });
+                if (!_expanded || (_expanded && myController.text.isEmpty))
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
               },
             ),
           ),
@@ -60,7 +61,7 @@ class _CashbackSelectionState extends State<CashbackSelection> {
                                     style: TextStyle(fontSize: 15.0)),
                               ],
                             ),
-                            Text(widget.cashbackAvailable.toString(),
+                            Text("\€" + widget.cashbackAvailable.toString(),
                                 style: TextStyle(fontSize: 15.0)),
                           ],
                         ),

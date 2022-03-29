@@ -8,6 +8,7 @@ import 'package:final_project_yroz/screens/credit_cards_screen.dart';
 import 'package:final_project_yroz/screens/edit_bank_account.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
+import 'package:final_project_yroz/screens/invoice_screen.dart';
 import 'package:final_project_yroz/screens/online_payment_screen.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
@@ -160,6 +161,7 @@ class _MyAppState extends State<MyApp> {
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
           TutorialScreen.routeName: (ctx) => TutorialScreen(),
+          InvoiceScreen.routeName: (ctx) => InvoiceScreen(ctx),
         },
       ),
     );
