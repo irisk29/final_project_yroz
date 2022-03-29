@@ -470,27 +470,27 @@ class User extends ChangeNotifier {
         .firstWhereOrNull((element) => element.onlineStoreID == storeID);
   }
 
-  Future<String> addCreditCardToken(String cardNumber, String expireDate,
+  Future<ResultInterface> addCreditCard(String cardNumber, String expireDate,
       String cvv, String cardHolder) async {
     try {
       var internalRes = await InternalPaymentGateway()
           .addUserCreditCard(this.id!, cardNumber, expireDate, cvv, cardHolder);
       if (!internalRes.getTag()) {
         print(internalRes.getMessage());
-        return "";
+        return internalRes;
       }
       String creditCardToken = internalRes.getValue()!;
       var res = await UsersStorageProxy().addCreditCardToken(creditCardToken);
       if (!res.getTag()) {
         print(res.getMessage());
-        return "";
+        return res;
       }
       this.creditCards = res.getValue();
       notifyListeners();
-      return creditCardToken;
+      return new Ok("added new credit card successfully");
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return "";
+      return new Failure(e.toString());
     }
   }
 
@@ -565,7 +565,6 @@ class User extends ChangeNotifier {
         print(res.getMessage());
         return {};
       }
-      notifyListeners();
       FLog.info(text: "Credit cards details: ${res.getValue()}");
       return res.getValue()!;
     } on Exception catch (e) {
@@ -607,8 +606,8 @@ class User extends ChangeNotifier {
 
   Future<ResultInterface> makePaymentOnlineStore(
       String creditCardToken,
-      String cashBackAmount,
-      String creditAmount,
+      double cashBackAmount,
+      double creditAmount,
       ShoppingBagDTO shoppingBagDTO) async {
     try {
       var res = await InternalPaymentGateway().makePayment(
@@ -616,8 +615,8 @@ class User extends ChangeNotifier {
           shoppingBagDTO.onlineStoreID,
           this.eWallet!,
           creditCardToken,
-          cashBackAmount,
-          creditAmount);
+          cashBackAmount.toString(),
+          creditAmount.toString());
       if (!res.getTag()) {
         print(res.getMessage());
         return res;

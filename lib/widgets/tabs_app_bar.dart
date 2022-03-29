@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-class FavoritesAppBar {
+class TabsAppBar {
+  final String title;
+
+  TabsAppBar(this.title);
+
   AppBar build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
 
@@ -8,10 +12,9 @@ class FavoritesAppBar {
       automaticallyImplyLeading: false,
       toolbarHeight: deviceSize.height * 0.1,
       title: Text(
-        "Favorites",
+        title,
         style: const TextStyle(
           fontSize: 23,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );

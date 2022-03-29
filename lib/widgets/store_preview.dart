@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -56,7 +54,7 @@ class _StorePreviewState extends State<StorePreview> {
     return 2;
   }
 
-  String mapAsString(BuildContext context) {
+  String mapAsString() {
     String map = "";
     for (MapEntry<String, List<TimeOfDay>> e in widget.operationHours.entries) {
       map = map + e.key + ": ";
@@ -71,21 +69,23 @@ class _StorePreviewState extends State<StorePreview> {
 
   @override
   Widget build(BuildContext context) {
+    var deviceSize = MediaQuery.of(context).size;
+
     return FutureBuilder<Uint8List>(
-        future: widget.image == null
-            ? null
-            : File(widget.image!.path).readAsBytes(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done ||
-              snapshot.connectionState == ConnectionState.none) {
-            final imgBytes = snapshot.data;
-            return SingleChildScrollView(
+      future:
+          widget.image == null ? null : File(widget.image!.path).readAsBytes(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done ||
+            snapshot.connectionState == ConnectionState.none) {
+          final imgBytes = snapshot.data;
+          return Expanded(
+            flex: 5,
+            child: SingleChildScrollView(
               child: Column(
                 children: [
                   Center(
                     child: Container(
-                      width: 150,
-                      height: 150,
+                      height: deviceSize.height * 0.3,
                       decoration: BoxDecoration(
                         image: imgBytes != null
                             ? DecorationImage(
@@ -103,9 +103,7 @@ class _StorePreviewState extends State<StorePreview> {
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-                    onTap: () {
-                      //open change language
-                    },
+                    onTap: null,
                     trailing: Icon(
                       Icons.favorite_border,
                       color: Colors.black,
@@ -130,7 +128,7 @@ class _StorePreviewState extends State<StorePreview> {
                           context: context,
                           builder: (_) => AlertDialog(
                                 title: Text('Opening hours'),
-                                content: Text(mapAsString(context)),
+                                content: Text(mapAsString()),
                               ));
                     },
                   ),
@@ -140,9 +138,7 @@ class _StorePreviewState extends State<StorePreview> {
                       color: Colors.grey,
                     ),
                     title: Text(widget.address),
-                    onTap: () {
-                      //open change location
-                    },
+                    onTap: null,
                   ),
                   ListTile(
                     leading: Icon(
@@ -150,16 +146,77 @@ class _StorePreviewState extends State<StorePreview> {
                       color: Colors.grey,
                     ),
                     title: Text(widget.phoneNumber),
-                    onTap: () {
-                      //open change language
-                    },
+                    onTap: null,
+                  ),
+                  ListTile(
+                    title: Text(
+                      "Promotions",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    onTap: null,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            width: 0.5,
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Cashback",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                Text.rich(
+                                  TextSpan(
+                                    children: <InlineSpan>[
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(5),
+                                          child: Icon(
+                                            Icons.circle,
+                                            color: Colors.green,
+                                            size: 10,
+                                          ),
+                                        ),
+                                      ),
+                                      TextSpan(
+                                          text: 'No Expiration Date',
+                                          style: TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            Text(
+                              "10%",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-            );
-          } else {
-            return CircularProgressIndicator();
-          }
-        });
+            ),
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 }

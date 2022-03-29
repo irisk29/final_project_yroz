@@ -14,16 +14,14 @@ class HomeAppBar {
       var notificationValue = user.storeOwnerState!.newPurchasesNoViewed;
       var notificationString =
           notificationValue > 9 ? "9+" : notificationValue.toString();
-      var icon = user.storeOwnerState!.physicalStore != null
-          ? IconButton(
-              icon: Icon(Icons.storefront),
-              onPressed: () => Navigator.of(context)
-                  .pushNamed(ManagePhysicalStoreScreen.routeName),
-            )
-          : IconButton(
-              icon: Icon(Icons.store_outlined),
-              onPressed: () => Navigator.of(context)
-                  .pushNamed(ManageOnlineStoreScreen.routeName));
+      var icon = IconButton(
+        icon: Icon(Icons.storefront),
+        onPressed: () => user.storeOwnerState!.physicalStore != null
+            ? Navigator.of(context)
+                .pushNamed(ManagePhysicalStoreScreen.routeName)
+            : Navigator.of(context)
+                .pushNamed(ManageOnlineStoreScreen.routeName),
+      );
       return notificationValue == 0
           ? icon
           : Badge(child: icon, value: notificationString);
