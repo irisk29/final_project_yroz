@@ -28,16 +28,8 @@ class ShoppingBagDTO {
       quantity += prevProduct.amount;
       products.remove(prevProduct);
     }
-    final updatedProduct = CartProductDTO(
-        productDTO.id,
-        productDTO.name,
-        productDTO.price,
-        productDTO.category,
-        productDTO.imageUrl,
-        productDTO.description,
-        quantity,
-        productDTO.storeID,
-        productDTO.cartID);
+    final updatedProduct = CartProductDTO(productDTO.id, productDTO.name, productDTO.price, productDTO.category,
+        productDTO.imageUrl, productDTO.description, quantity, productDTO.storeID, productDTO.cartID);
     products.add(updatedProduct);
   }
 
@@ -58,8 +50,7 @@ class ShoppingBagDTO {
             prevProduct.amount - 1,
             prevProduct.storeID,
             prevProduct.cartID);
-        products.remove(prevProduct);
-        products.add(updatedProduct);
+        products[index] = updatedProduct;
       }
     }
   }
@@ -69,8 +60,7 @@ class ShoppingBagDTO {
   }
 
   double bagSize() {
-    return products.fold(
-        0, (previousValue, element) => previousValue + element.amount);
+    return products.fold(0, (previousValue, element) => previousValue + element.amount);
   }
 
   void clearBag() {
@@ -79,9 +69,7 @@ class ShoppingBagDTO {
 
   @override
   bool operator ==(other) {
-    if (other is ShoppingBagDTO)
-      return this.userId == other.userId &&
-          this.onlineStoreID == other.onlineStoreID;
+    if (other is ShoppingBagDTO) return this.userId == other.userId && this.onlineStoreID == other.onlineStoreID;
     return false;
   }
 }

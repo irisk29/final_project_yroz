@@ -200,7 +200,7 @@ class User extends ChangeNotifier {
       var res = await StoreStorageProxy().updateOnlineStore(store);
       if (!res.getTag()) return res; //failure
 
-      this.storeOwnerState!.setOnlineStore(res.getValue());
+      this.storeOwnerState!.setOnlineStoreFromModel(res.getValue());
       notifyListeners();
       return res;
     } on Exception catch (e) {
