@@ -33,7 +33,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     return FutureBuilder(
-        future: _storesFuture,
+        future: _fetchStores(),
         builder: (BuildContext context, AsyncSnapshot snap) {
           return snap.connectionState != ConnectionState.done
               ? Center(child: CircularProgressIndicator())
@@ -117,7 +117,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       ].expand((i) => i).toList(),
                                       gridDelegate:
                                           SliverGridDelegateWithMaxCrossAxisExtent(
-                                        maxCrossAxisExtent: MediaQuery.of(context).size.width*0.3,
+                                        maxCrossAxisExtent: 200,
                                         childAspectRatio: 1,
                                         crossAxisSpacing: 20,
                                         mainAxisSpacing: 20,
@@ -155,7 +155,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                       ].expand((i) => i).toList(),
                                       gridDelegate:
                                           SliverGridDelegateWithMaxCrossAxisExtent(
-                                        maxCrossAxisExtent: MediaQuery.of(context).size.width*0.3,
+                                        maxCrossAxisExtent: 200,
                                         childAspectRatio: 1,
                                         crossAxisSpacing: 20,
                                         mainAxisSpacing: 20,

@@ -582,7 +582,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.6,
                       child: Text(
-                          "We are opening your store, it's might take a few seconds...",
+                          "We are opening your store, it might take a few seconds...",
                           textAlign: TextAlign.center),
                     )
                   ],

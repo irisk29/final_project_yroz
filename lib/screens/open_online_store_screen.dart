@@ -645,7 +645,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.6,
                       child: Text(
-                          "We are opening your store, it's might take a few seconds...",
+                          "We are opening your store, it might take a few seconds...",
                           textAlign: TextAlign.center),
                     )
                   ],

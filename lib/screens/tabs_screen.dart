@@ -26,12 +26,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   void initState() {
     super.initState();
-    _pages = [
-      CategoriesScreen(),
-      MapScreen(),
-      FavoriteScreen(),
-      AccountScreen()
-    ];
+    //_pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
   }
 
   void _selectPage(int index) {
@@ -42,17 +37,12 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final homeAppBar = HomeAppBar().build(context);
+    _pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
+    final homeAppBar = HomeAppBar().build(context, () => setState(() {}));
     final favoritesAppBar = TabsAppBar("Favorites").build(context);
     final nearbyAppBar = TabsAppBar("Nearby").build(context);
     final accountAppBar = TabsAppBar("My Account").build(context);
-    List<AppBar> appBars = [
-      homeAppBar,
-      nearbyAppBar,
-      favoritesAppBar,
-      accountAppBar
-    ];
-
+    List<AppBar> appBars = [homeAppBar, nearbyAppBar, favoritesAppBar, accountAppBar];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: appBars[_selectedPageIndex],
