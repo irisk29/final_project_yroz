@@ -129,13 +129,14 @@ class InvoiceScreen extends StatelessWidget {
                                                 children: [
                                                   Text(product.name),
                                                   Text("\€" +
-                                                      product.price.toString()),
+                                                      product.price
+                                                          .toStringAsFixed(1)),
                                                   Text(product.amount
                                                       .toString()),
                                                   Text("\€" +
                                                       (product.price *
                                                               product.amount)
-                                                          .toString())
+                                                          .toStringAsFixed(1))
                                                 ],
                                               ),
                                             );
@@ -162,7 +163,8 @@ class InvoiceScreen extends StatelessWidget {
                                                           FontWeight.bold)),
                                               Text(
                                                   "\€" +
-                                                      cashbackAmount.toString(),
+                                                      cashbackAmount
+                                                          .toStringAsFixed(1),
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
@@ -183,7 +185,8 @@ class InvoiceScreen extends StatelessWidget {
                                                           FontWeight.bold)),
                                               Text(
                                                   "\€" +
-                                                      creditAmount.toString(),
+                                                      creditAmount
+                                                          .toStringAsFixed(1),
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
@@ -206,7 +209,7 @@ class InvoiceScreen extends StatelessWidget {
                                                   "\€" +
                                                       (cashbackAmount +
                                                               creditAmount)
-                                                          .toString(),
+                                                          .toStringAsFixed(1),
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
@@ -263,8 +266,8 @@ class InvoiceScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   "\€" +
-                                      ((cashbackAmount + creditAmount) * 0.1)
-                                          .toString(),
+                                      ((cashbackAmount + creditAmount) * 0.07)
+                                          .toStringAsFixed(2),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
@@ -272,7 +275,7 @@ class InvoiceScreen extends StatelessWidget {
                                 Text(
                                   "\€" +
                                       (cashbackAmount + creditAmount)
-                                          .toString(),
+                                          .toStringAsFixed(2),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
