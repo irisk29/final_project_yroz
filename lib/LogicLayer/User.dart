@@ -250,6 +250,7 @@ class User extends ChangeNotifier {
         print(res.getMessage());
         return;
       }
+      await UsersStorageProxy().saveStoreBankAccount(bankToken!);
       Tuple2<OnlineStoreModel, String> retVal = res.getValue();
       this.storeOwnerState = new StoreOwnerState(retVal.item2, () => notifyListeners(), bankToken);
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
@@ -269,6 +270,7 @@ class User extends ChangeNotifier {
         print(res.getMessage());
         return;
       }
+      await UsersStorageProxy().saveStoreBankAccount(bankToken!);
       Tuple2<PhysicalStoreModel, String> retVal = res.getValue();
       this.storeOwnerState = new StoreOwnerState(retVal.item2, () => notifyListeners(), bankToken);
       this.storeOwnerState!.setPhysicalStore(retVal.item1);
