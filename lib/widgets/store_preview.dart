@@ -201,7 +201,7 @@ class _StorePreviewState extends State<StorePreview> {
                               ],
                             ),
                             Text(
-                              "10%",
+                              "7%",
                               style: TextStyle(fontSize: 18),
                             ),
                           ],

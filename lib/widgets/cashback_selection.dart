@@ -13,7 +13,7 @@ class CashbackSelection extends StatefulWidget {
 
 class _CashbackSelectionState extends State<CashbackSelection> {
   final myController = TextEditingController();
-  var _expanded = false;
+  var _expanded = true;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _CashbackSelectionState extends State<CashbackSelection> {
             title: Text(
               'CASHBACK',
               style: TextStyle(
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.bold,
                 fontSize: 18.0,
               ),
             ),
@@ -71,14 +71,15 @@ class _CashbackSelectionState extends State<CashbackSelection> {
                           keyboardType: TextInputType.number,
                           controller: myController,
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter amount';
-                            }
-                            if (double.parse(value) < 0) {
+                            if (value != null &&
+                                value.isNotEmpty &&
+                                double.parse(value) < 0) {
                               return 'Please enter a positive amount';
                             }
-                            if (double.parse(value) >
-                                widget.cashbackAvailable) {
+                            if (value != null &&
+                                value.isNotEmpty &&
+                                double.parse(value) >
+                                    widget.cashbackAvailable) {
                               return 'You do not have enough cashback';
                             }
                             return null;

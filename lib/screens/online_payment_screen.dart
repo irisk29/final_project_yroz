@@ -34,38 +34,21 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
             style: const TextStyle(fontSize: 22),
           ),
         ),
-        body: Stack(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).primaryColor.withOpacity(0.4),
-                    Theme.of(context).primaryColor.withOpacity(0.9),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0, 1],
+        body: SingleChildScrollView(
+          child: Container(
+            height: constraints.maxHeight / 1.3,
+            width: constraints.maxWidth,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                  flex: constraints.maxWidth > 600 ? 2 : 1,
+                  child: PaymentCard(widget.storeID),
                 ),
-              ),
+              ],
             ),
-            SingleChildScrollView(
-              child: Container(
-                height: constraints.maxHeight / 1.3,
-                width: constraints.maxWidth,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Flexible(
-                      flex: constraints.maxWidth > 600 ? 2 : 1,
-                      child: PaymentCard(widget.storeID),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -216,15 +199,12 @@ class _PaymentCardState extends State<PaymentCard>
       future: initCreditAndCashback(),
       builder: (BuildContext context, AsyncSnapshot snap) {
         if (snap.connectionState != ConnectionState.done) {
-          return Center(
-              child: CircularProgressIndicator(
-            color: Colors.white,
-          ));
+          return Center(child: CircularProgressIndicator());
         } else {
           cashbackSelection = CashbackSelection(_cashback);
           return LayoutBuilder(
             builder: (context, constraints) => _isLoading
-                ? CircularProgressIndicator(color: Colors.white)
+                ? CircularProgressIndicator()
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -238,6 +218,18 @@ class _PaymentCardState extends State<PaymentCard>
                           curve: Curves.easeIn,
                           width: constraints.maxWidth * 0.8,
                           padding: EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            gradient: LinearGradient(
+                              colors: [
+                                Theme.of(context).primaryColor.withOpacity(0.4),
+                                Theme.of(context).primaryColor.withOpacity(0.9),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              stops: [0, 1],
+                            ),
+                          ),
                           child: Column(
                             children: [
                               Row(
@@ -247,16 +239,16 @@ class _PaymentCardState extends State<PaymentCard>
                                   Text(
                                     "AMOUNT TO PAY",
                                     style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 22.0,
-                                    ),
+                                        color: Colors.black,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   Text(
                                     "\€${totalPrice.toString()}",
                                     style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 22.0,
-                                    ),
+                                        color: Colors.black,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -279,7 +271,7 @@ class _PaymentCardState extends State<PaymentCard>
                                         title: Text(
                                           'CREDIT CARD',
                                           style: TextStyle(
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 18.0,
                                           ),
                                         ),
@@ -318,8 +310,7 @@ class _PaymentCardState extends State<PaymentCard>
                             'Pay',
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           onPressed: () =>

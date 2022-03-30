@@ -50,7 +50,6 @@ class EditPhysicalStorePipeline extends StatefulWidget {
     }();
     return _EditPhysicalStorePipelineState();
   }
-
 }
 
 class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
@@ -210,7 +209,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               'Enter Store Details',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Form(
@@ -301,7 +300,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               'Select Store Categories',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Container(
               height: MediaQuery.of(context).size.height * 0.5,
               child: ListView.builder(
@@ -340,7 +339,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               'Select Store Opening Hours',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -593,14 +592,29 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ElevatedButton(
-                                onPressed: cancel,
-                                child: Text('Prev'),
-                              ),
-                              ElevatedButton(
-                                onPressed: continued,
-                                child: Text('Next'),
-                              ),
+                              _currentStep > 0
+                                  ? CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      child: IconButton(
+                                        color: Colors.black54,
+                                        onPressed: cancel,
+                                        icon: Icon(Icons.arrow_back),
+                                      ),
+                                    )
+                                  : Container(),
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: IconButton(
+                                  color: Colors.black54,
+                                  onPressed: continued,
+                                  icon: Icon(_currentStep < 3
+                                      ? Icons.arrow_forward
+                                      : Icons.done),
+                                ),
+                              )
                             ],
                           ),
                         ),

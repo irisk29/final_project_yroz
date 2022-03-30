@@ -8,6 +8,7 @@ import 'package:final_project_yroz/screens/tutorial_screen.dart';
 import 'package:final_project_yroz/widgets/bank_account_form.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
+import 'package:final_project_yroz/widgets/terms.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -121,6 +122,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   final bankAccountForm = BankAccountForm();
 
   var _isLoading = false;
+  var _acceptTerms = false;
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
@@ -219,7 +221,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               'Enter Store Details',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Form(
@@ -347,7 +349,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               'Select Store Categories',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Container(
               height: MediaQuery.of(context).size.height * 0.5,
               child: ListView.builder(
@@ -386,7 +388,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               'Select Store Opening Hours',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -623,6 +625,13 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (!_acceptTerms) {
+        showDialog(context: context, builder: (ctx) => Terms());
+        _acceptTerms = true;
+      }
+    });
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
