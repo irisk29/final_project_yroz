@@ -685,10 +685,10 @@ class StoreStorageProxy {
     await Amplify.DataStore.delete(storeOwnerModel); //no store left
     UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
     if (currUser == null) return Failure("No such user", null);
-    UserModel userWithoutStoreOwnerState = currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
-    await Amplify.DataStore.save(userWithoutStoreOwnerState);
+    currUser = currUser.copyWith(userModelStoreOwnerModelId: "", storeOwnerModel: null);
+    await Amplify.DataStore.save(currUser);
     FLog.info(text: "Deleted completly Store Owner State");
-    return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
+    return new Ok("Deleted completly Store Owner State", currUser);
   }
 
   Future<ResultInterface> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {

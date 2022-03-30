@@ -29,7 +29,7 @@ class StoreOwnerState {
   int newPurchasesNoViewed = 0;
   StreamSubscription<QuerySnapshot<PurchaseHistoryModel>>? purchasesMonitor;
 
-  StoreOwnerState(this._storeOwnerID, this.callback);
+  StoreOwnerState(this._storeOwnerID, this.callback, [String? bankToken]) : storeBankAccountToken = bankToken;
   StoreOwnerState.storeOwnerStateFromModel(StoreOwnerModel model, this.callback)
       : _storeOwnerID = model.id {
     if (model.onlineStoreModel != null) {
