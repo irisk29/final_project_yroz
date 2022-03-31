@@ -43,9 +43,10 @@ void main() {
       }
   }
 
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
   group('end-to-end test', () {
-    final binding = IntegrationTestWidgetsFlutterBinding();
-    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
 
     setUp(() async {
       await _configureAmplify();
@@ -58,8 +59,13 @@ void main() {
       await tester.pumpWidget(app.OpenPhysicalStorePipeline().wrapWithMaterial());
       await tester.pumpAndSettle();
 
+      //agree to the terms
+      Finder fab = find.widgetWithText(ElevatedButton, "Agree");
+      await tester.tap(fab);
+      await tester.pump();
+      
       //start to fill the form
-      Finder fab = find.byKey(Key('storeName'));
+      fab = find.byKey(Key('storeName'));
       await tester.enterText(fab, "physical store test");
       await tester.pump();
       //await takeScreenshot(tester, binding);
@@ -71,13 +77,12 @@ void main() {
 
       fab = find.byKey(Key('storeAddress'));
       await tester.enterText(fab, "Ashdod, Israel");
-      await tester.pump();
-      //await takeScreenshot(tester, binding);
+      await tester.pumpAndSettle();
+      await takeScreenshot(tester, binding);
 
       fab = find.widgetWithIcon(IconButton, Icons.arrow_forward); //move forward from one form to another
       await tester.tap(fab);
-      await tester.pump();
-      //await takeScreenshot(tester, binding);
+      await tester.pumpAndSettle();
 
       fab = find.byKey(Key('store_category_0'));
       await tester.tap(fab);
