@@ -199,7 +199,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   }
 
   void _showAddProduct() async {
-    if (_products.length < 5) {
+    if (_products.length <= 10) {
       final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
