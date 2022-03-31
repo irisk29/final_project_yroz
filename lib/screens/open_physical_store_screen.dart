@@ -593,85 +593,98 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         ),
         resizeToAvoidBottomInset: false,
         body: _isLoading
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      child: Text(
-                          "We are opening your store, it might take a few seconds...",
-                          textAlign: TextAlign.center),
-                    )
-                  ],
-                ),
-              )
-            : Container(
-                child: Column(
-                  children: [
-                    IconStepper(
-                      icons: [
-                        Icon(Icons.info),
-                        Icon(Icons.tag),
-                        Icon(Icons.access_time),
-                        Icon(Icons.account_balance),
-                        Icon(Icons.storefront),
+            ? ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              children: [Center(
+                  child: SizedBox(
+                    height: 200,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(
+                              "We are opening your store, it might take a few seconds...",
+                              textAlign: TextAlign.center),
+                        )
                       ],
-                      // activeStep property set to activeStep variable defined above.
-                      activeStep: _currentStep,
-                      steppingEnabled: false,
-                      enableStepTapping: false,
-                      enableNextPreviousButtons: false,
-                      activeStepColor: Theme.of(context).primaryColor,
-                      // This ensures step-tapping updates the activeStep.
-                      onStepReached: (index) {
-                        setState(() {
-                          _currentStep = index;
-                        });
-                      },
                     ),
-                    currentStepWidget()!,
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _currentStep > 0
-                                  ? CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      child: IconButton(
-                                        color: Colors.black54,
-                                        onPressed: cancel,
-                                        icon: Icon(Icons.arrow_back),
-                                      ),
-                                    )
-                                  : Container(),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: IconButton(
-                                  color: Colors.black54,
-                                  onPressed: continued,
-                                  icon: Icon(_currentStep < 4
-                                      ? Icons.arrow_forward
-                                      : Icons.done),
-                                ),
-                              )
-                            ],
+                  ),
+                )],
+            )
+            : ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              children: [Container(
+                  child: SizedBox(
+                    height: 700,
+                    child: Column(
+                      children: [
+                        IconStepper(
+                          icons: [
+                            Icon(Icons.info),
+                            Icon(Icons.tag),
+                            Icon(Icons.access_time),
+                            Icon(Icons.account_balance),
+                            Icon(Icons.storefront),
+                          ],
+                          // activeStep property set to activeStep variable defined above.
+                          activeStep: _currentStep,
+                          steppingEnabled: false,
+                          enableStepTapping: false,
+                          enableNextPreviousButtons: false,
+                          activeStepColor: Theme.of(context).primaryColor,
+                          // This ensures step-tapping updates the activeStep.
+                          onStepReached: (index) {
+                            setState(() {
+                              _currentStep = index;
+                            });
+                          },
+                        ),
+                        currentStepWidget()!,
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _currentStep > 0
+                                      ? CircleAvatar(
+                                          radius: 25,
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                          child: IconButton(
+                                            color: Colors.black54,
+                                            onPressed: cancel,
+                                            icon: Icon(Icons.arrow_back),
+                                          ),
+                                        )
+                                      : Container(),
+                                  CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor: Theme.of(context).primaryColor,
+                                    child: IconButton(
+                                      key: const Key("continue_button"),
+                                      color: Colors.black54,
+                                      onPressed: continued,
+                                      icon: Icon(_currentStep < 4
+                                          ? Icons.arrow_forward
+                                          : Icons.done),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                )],
+            ),
       ),
     );
   }

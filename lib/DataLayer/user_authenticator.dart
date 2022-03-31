@@ -51,4 +51,8 @@ class UserAuthenticator {
   String getCurrentUserId() {
     return _currentUserId;
   }
+
+  void setCurrentUserId(String email) {
+    this._currentUserId = email;
+  }
 }
