@@ -42,6 +42,19 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   _OpenPhysicalStorePipelineState createState() {
     return _OpenPhysicalStorePipelineState();
   }
+
+  Widget wrapWithMaterial() => MaterialApp(
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User("test@gmail.com", "test name"),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+  );
 }
 
 class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
@@ -214,6 +227,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                     ImageInput(
                         _selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
+                      key: const Key('storeName'),
                       controller: _nameController,
                       decoration: InputDecoration(labelText: 'Store Name'),
                       textInputAction: TextInputAction.next,
@@ -242,6 +256,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('phoneNumber'),
                       decoration: InputDecoration(labelText: 'phoneNumber'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.phone,
@@ -271,6 +286,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('storeAddress'),
                       decoration: InputDecoration(labelText: 'Address'),
                       controller: OpenPhysicalStorePipeline._controller,
                       onTap: () => showDialog(
@@ -311,6 +327,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
                 itemBuilder: (context, index) => CheckboxListTile(
+                  key: Key("store_category_$index"),
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
