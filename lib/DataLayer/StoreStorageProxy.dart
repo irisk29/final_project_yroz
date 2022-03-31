@@ -35,9 +35,10 @@ class StoreStorageProxy {
 
   StoreStorageProxy._internal();
 
-  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store) async {
+  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store, [String? storeID]) async {
     String? qrCode = store.qrCode;
     OnlineStoreModel onlineStoreModel = OnlineStoreModel(
+        id: storeID,
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
@@ -148,9 +149,10 @@ class StoreStorageProxy {
     return file;
   }
 
-  Future<ResultInterface> openPhysicalStore(StoreDTO store) async {
+  Future<ResultInterface> openPhysicalStore(StoreDTO store, [String? storeID]) async {
     String? qrCode = store.qrCode;
     PhysicalStoreModel physicalModelNotComplete = PhysicalStoreModel(
+        id: storeID,
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
@@ -201,7 +203,7 @@ class StoreStorageProxy {
       FLog.error(text: "User already has physical store - only one is allowed!");
       return new Failure("User already has physical store - only one is allowed!", "");
     }
-    FLog.info(text: "open online store ${physicalModel.id} for store owner ${storeOwner!.id}");
+    FLog.info(text: "open physical store ${physicalModel.id} for store owner ${storeOwner!.id}");
     return new Ok("open physical store succsseded", Tuple2<PhysicalStoreModel, String>(physicalModel, storeOwner.id));
   }
 
@@ -705,7 +707,7 @@ class StoreStorageProxy {
         qrCode: physicalStore.qrCode,
         image: physicalStore.image,
         imageFromPhone: physicalStore.imageFromPhone);
-    ResultInterface openOnlineStoreRes = await openOnlineStore(onlineStoreDTO);
+    ResultInterface openOnlineStoreRes = await openOnlineStore(onlineStoreDTO, physicalStore.id);
     return openOnlineStoreRes;
   }
 
@@ -722,7 +724,7 @@ class StoreStorageProxy {
         qrCode: onlineStore.qrCode,
         image: onlineStore.image,
         imageFromPhone: onlineStore.imageFromPhone);
-    ResultInterface openPhysicalStoreRes = await openPhysicalStore(physicalStoreDTO);
+    ResultInterface openPhysicalStoreRes = await openPhysicalStore(physicalStoreDTO, onlineStore.id);
     return openPhysicalStoreRes;
   }
 
