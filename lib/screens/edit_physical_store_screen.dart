@@ -35,22 +35,10 @@ class EditPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  static late Secret secret;
-
-  EditPhysicalStorePipeline() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
-  }
-
   @override
   _EditPhysicalStorePipelineState createState() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
     return _EditPhysicalStorePipelineState();
   }
-
 }
 
 class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
@@ -59,15 +47,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   final destCtrl = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
-  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
-      geoMethods: GeoMethods(
-        googleApiKey: EditPhysicalStorePipeline.secret.API_KEY,
-        language: 'en',
-        countryCode: 'il',
-      ),
-      controller: EditPhysicalStorePipeline._controller,
-      builder: AddressDialogBuilder(),
-      onDone: (Address address) => address);
+  late AddressSearchBuilder destinationBuilder;
   XFile? _pickedImage = null;
   StoreDTO? _editedStore = StoreDTO(
       id: "",
@@ -111,15 +91,24 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   final List<String> _selectedItems = [];
 
+  late Secret secret;
+
   var _isInit = true;
   var _isLoading = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
-      // final user = ModalRoute.of(context)!.settings.arguments as User?;
-      // widget.user = user;
-      // _editedStore = user!.storeOwnerState!.physicalStore;
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      destinationBuilder = AddressSearchBuilder.deft(
+          geoMethods: GeoMethods(
+            googleApiKey: secret.API_KEY,
+            language: 'en',
+            countryCode: 'il',
+          ),
+          controller: EditPhysicalStorePipeline._controller,
+          builder: AddressDialogBuilder(),
+          onDone: (Address address) => address);
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .physicalStore;
@@ -210,7 +199,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               'Enter Store Details',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Form(
@@ -301,7 +290,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               'Select Store Categories',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Container(
               height: MediaQuery.of(context).size.height * 0.5,
               child: ListView.builder(
@@ -340,7 +329,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               'Select Store Opening Hours',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -593,14 +582,29 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ElevatedButton(
-                                onPressed: cancel,
-                                child: Text('Prev'),
-                              ),
-                              ElevatedButton(
-                                onPressed: continued,
-                                child: Text('Next'),
-                              ),
+                              _currentStep > 0
+                                  ? CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      child: IconButton(
+                                        color: Colors.black54,
+                                        onPressed: cancel,
+                                        icon: Icon(Icons.arrow_back),
+                                      ),
+                                    )
+                                  : Container(),
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: IconButton(
+                                  color: Colors.black54,
+                                  onPressed: continued,
+                                  icon: Icon(_currentStep < 3
+                                      ? Icons.arrow_forward
+                                      : Icons.done),
+                                ),
+                              )
                             ],
                           ),
                         ),

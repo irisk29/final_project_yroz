@@ -248,7 +248,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                         ],
                       ),
                       Text(
-                        "10%",
+                        "7%",
                         style: TextStyle(fontSize: 18),
                       ),
                     ],

@@ -8,6 +8,7 @@ import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/bank_account_form.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
+import 'package:final_project_yroz/widgets/terms.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -37,19 +38,8 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  static late Secret secret;
-
-  OpenPhysicalStorePipeline() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
-  }
-
   @override
   _OpenPhysicalStorePipelineState createState() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
     return _OpenPhysicalStorePipelineState();
   }
 
@@ -75,15 +65,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
-  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
-      geoMethods: GeoMethods(
-        googleApiKey: OpenPhysicalStorePipeline.secret.API_KEY,
-        language: 'en',
-        countryCode: 'il',
-      ),
-      controller: OpenPhysicalStorePipeline._controller,
-      builder: AddressDialogBuilder(),
-      onDone: (Address address) => address);
+  late AddressSearchBuilder destinationBuilder;
+
   XFile? _pickedImage = null;
   StoreDTO? _editedStore = StoreDTO(
       id: "",
@@ -127,14 +110,27 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
 
   final List<String> _selectedItems = [];
 
+  late Secret secret;
+
   final bankAccountForm = BankAccountForm();
 
   var _isInit = true;
   var _isLoading = false;
+  var _acceptTerms = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      destinationBuilder = AddressSearchBuilder.deft(
+          geoMethods: GeoMethods(
+            googleApiKey: secret.API_KEY,
+            language: 'en',
+            countryCode: 'il',
+          ),
+          controller: OpenPhysicalStorePipeline._controller,
+          builder: AddressDialogBuilder(),
+          onDone: (Address address) => address);
       // final user = ModalRoute.of(context)!.settings.arguments as User?;
       // widget.user = user;
     }
@@ -221,7 +217,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               'Enter Store Details',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Form(
@@ -324,7 +320,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               'Select Store Categories',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Container(
               height: MediaQuery.of(context).size.height * 0.5,
               child: ListView.builder(
@@ -364,7 +360,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               'Select Store Opening Hours',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -578,6 +574,13 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
 
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (!_acceptTerms) {
+        showDialog(context: context, builder: (ctx) => Terms());
+        _acceptTerms = true;
+      }
+    });
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -656,7 +659,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                                 child: IconButton(
                                   color: Colors.black54,
                                   onPressed: continued,
-                                  icon: Icon(_currentStep < 5
+                                  icon: Icon(_currentStep < 4
                                       ? Icons.arrow_forward
                                       : Icons.done),
                                 ),

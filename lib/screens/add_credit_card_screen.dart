@@ -190,12 +190,13 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                    primary:
-                                        Color.fromARGB(255, 104, 120, 206)),
+                                    primary: Theme.of(context).primaryColor),
                                 child: Container(
+                                  width: deviceSize.width * 0.3,
                                   margin: const EdgeInsets.all(12),
                                   child: const Text(
                                     'Save',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
                                       package: 'flutter_credit_card',

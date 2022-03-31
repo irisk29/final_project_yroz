@@ -260,7 +260,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                         ],
                       ),
                       Text(
-                        "10%",
+                        "7%",
                         style: TextStyle(fontSize: 18),
                       ),
                     ],

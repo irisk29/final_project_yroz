@@ -36,19 +36,8 @@ class EditOnlineStorePipeline extends StatefulWidget {
 
   static TextEditingController _controller = TextEditingController();
 
-  static late Secret secret;
-
-  EditOnlineStorePipeline() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
-  }
-
   @override
   _EditOnlineStorePipelineState createState() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
     return _EditOnlineStorePipelineState();
   }
 }
@@ -59,15 +48,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   final destCtrl = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
-  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
-      geoMethods: GeoMethods(
-        googleApiKey: EditOnlineStorePipeline.secret.API_KEY,
-        language: 'en',
-        countryCode: 'il',
-      ),
-      controller: EditOnlineStorePipeline._controller,
-      builder: AddressDialogBuilder(),
-      onDone: (Address address) => address);
+  late AddressSearchBuilder destinationBuilder;
   XFile? _pickedImage = null;
   OnlineStoreDTO? _editedStore = OnlineStoreDTO(
       id: "",
@@ -110,12 +91,24 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   final List<String> _selectedItems = [];
 
+  late Secret secret;
+
   var _isInit = true;
   var _isLoading = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      destinationBuilder = AddressSearchBuilder.deft(
+          geoMethods: GeoMethods(
+            googleApiKey: secret.API_KEY,
+            language: 'en',
+            countryCode: 'il',
+          ),
+          controller: EditOnlineStorePipeline._controller,
+          builder: AddressDialogBuilder(),
+          onDone: (Address address) => address);
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .onlineStore;
@@ -224,7 +217,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
               'Enter Store Details',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Form(
@@ -315,7 +308,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
               'Select Store Categories',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Container(
               height: MediaQuery.of(context).size.height * 0.5,
               child: ListView.builder(
@@ -354,7 +347,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
               'Select Store Opening Hours',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -640,14 +633,29 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ElevatedButton(
-                                onPressed: cancel,
-                                child: Text('Prev'),
-                              ),
-                              ElevatedButton(
-                                onPressed: continued,
-                                child: Text('Next'),
-                              ),
+                              _currentStep > 0
+                                  ? CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      child: IconButton(
+                                        color: Colors.black54,
+                                        onPressed: cancel,
+                                        icon: Icon(Icons.arrow_back),
+                                      ),
+                                    )
+                                  : Container(),
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: IconButton(
+                                  color: Colors.black54,
+                                  onPressed: continued,
+                                  icon: Icon(_currentStep < 4
+                                      ? Icons.arrow_forward
+                                      : Icons.done),
+                                ),
+                              )
                             ],
                           ),
                         ),
