@@ -4,7 +4,6 @@ import 'package:final_project_yroz/widgets/tabs_app_bar.dart';
 import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
 
-
 import 'favorite_screen.dart';
 import 'map_screen.dart';
 
@@ -33,12 +32,22 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
+    _pages = [
+      CategoriesScreen(),
+      MapScreen(),
+      FavoriteScreen(),
+      AccountScreen()
+    ];
     final homeAppBar = HomeAppBar().build(context, () => setState(() {}));
     final favoritesAppBar = TabsAppBar("Favorites").build(context);
     final nearbyAppBar = TabsAppBar("Nearby").build(context);
     final accountAppBar = TabsAppBar("My Account").build(context);
-    List<AppBar> appBars = [homeAppBar, nearbyAppBar, favoritesAppBar, accountAppBar];
+    List<AppBar> appBars = [
+      homeAppBar,
+      nearbyAppBar,
+      favoritesAppBar,
+      accountAppBar
+    ];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: appBars[_selectedPageIndex],
