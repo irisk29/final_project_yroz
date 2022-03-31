@@ -3,6 +3,7 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/edit_bank_account.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,16 +13,13 @@ class ManagePhysicalStoreScreen extends StatefulWidget {
   late StoreDTO store;
 
   @override
-  _ManagePhysicalStoreScreenState createState() =>
-      _ManagePhysicalStoreScreenState();
+  _ManagePhysicalStoreScreenState createState() => _ManagePhysicalStoreScreenState();
 }
 
 class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
-    widget.store = Provider.of<User>(context, listen: false)
-        .storeOwnerState!
-        .physicalStore!;
+    widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!;
     super.didChangeDependencies();
   }
 
@@ -50,20 +48,15 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                 height: 150,
                 decoration: BoxDecoration(
                   image: widget.store.image != null
-                      ? DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(widget.store.image!))
-                      : DecorationImage(
-                          image: AssetImage('assets/images/default-store.png'),
-                          fit: BoxFit.cover),
+                      ? DecorationImage(fit: BoxFit.cover, image: NetworkImage(widget.store.image!))
+                      : DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                 ),
               ),
             ),
             Card(
               elevation: 4.0,
               margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
               child: Column(
                 children: <Widget>[
                   ListTile(
@@ -73,8 +66,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     ),
                     title: Text("Edit Store Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(EditPhysicalStorePipeline.routeName),
+                    onTap: () => Navigator.of(context).pushNamed(EditPhysicalStorePipeline.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -84,8 +76,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     ),
                     title: Text("Edit Bank Account Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(EditBankAccountScreen.routeName),
+                    onTap: () => Navigator.of(context).pushNamed(EditBankAccountScreen.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -123,8 +114,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     ),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     title: Text("View Store Purchases"),
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(StorePurchasesScreen.routeName),
+                    onTap: () => Navigator.of(context).pushNamed(StorePurchasesScreen.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -137,28 +127,33 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     onTap: () => showDialog(
                         context: context,
                         builder: (_) => AlertDialog(
-                              title: Text('QR Code', style: TextStyle(fontSize: 25),),
+                              title: Text(
+                                'QR Code',
+                                style: TextStyle(fontSize: 25),
+                              ),
                               content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                   Image.network(
-                                      widget.store.qrCode!,
-                                      fit: BoxFit.cover,
+                                    widget.store.qrCode!,
+                                    fit: BoxFit.cover,
                                   )
-                              ],
-                          ),)),
+                                ],
+                              ),
+                            )),
                   ),
                   _buildDivider(),
                   ListTile(
-                    leading: Icon(
-                      Icons.arrow_circle_up,
-                      color: Colors.purple,
-                    ),
-                    title: Text("Upgrade to Online Store"),
-                    trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () =>
-                        user.convertPhysicalStoreToOnline(widget.store),
-                  ),
+                      leading: Icon(
+                        Icons.arrow_circle_up,
+                        color: Colors.purple,
+                      ),
+                      title: Text("Upgrade to Online Store"),
+                      trailing: Icon(Icons.keyboard_arrow_right),
+                      onTap: () {
+                        user.convertPhysicalStoreToOnline(widget.store);
+                        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+                      }),
                 ],
               ),
             ),
@@ -178,7 +173,10 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                   ),
                 ),
               ),
-              onPressed: () => user.deleteStore(widget.store.id, false),
+              onPressed: () {
+                user.deleteStore(widget.store.id, false);
+                Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+              },
             ),
           ],
         ),

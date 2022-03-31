@@ -1,8 +1,8 @@
-import 'dart:convert';
-
 import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/credit_cards_screen.dart';
+import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
+import 'package:final_project_yroz/screens/invoice_screen.dart';
+import 'package:final_project_yroz/widgets/cashback_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,47 +24,32 @@ class OnlinePaymentScreen extends StatefulWidget {
 
 class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   @override
-  void didChangeDependencies() {}
-
-  @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Online Store Payment"),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.5),
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.9),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0, 1],
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) => Scaffold(
+        appBar: AppBar(
+          toolbarHeight: constraints.maxHeight * 0.1,
+          title: Text(
+            'Payment',
+            style: const TextStyle(fontSize: 22),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            height: constraints.maxHeight / 1.3,
+            width: constraints.maxWidth,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                  flex: constraints.maxWidth > 600 ? 2 : 1,
+                  child: PaymentCard(widget.storeID),
+                ),
+              ],
             ),
           ),
-          SingleChildScrollView(
-            child: Container(
-              height: deviceSize.height / 1.3,
-              width: deviceSize.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(
-                    flex: deviceSize.width > 600 ? 2 : 1,
-                    child: PaymentCard(widget.storeID),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -72,6 +57,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
 
 class PaymentCard extends StatefulWidget {
   String? storeID;
+  late String userName;
   late ShoppingBagDTO? bag;
 
   PaymentCard(this.storeID);
@@ -82,69 +68,40 @@ class PaymentCard extends StatefulWidget {
 
 class _PaymentCardState extends State<PaymentCard>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  var _isLoading = false;
   AnimationController? _controller;
-  final myController = TextEditingController();
-  final _initValues = {
-    'cashback': 0.0,
-  };
-
+  var _cashback;
   String dropdownvalue = '';
-
   List<Tuple2<String, String>> items = [];
+  late bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    initCashBack();
-    widget.bag = Provider.of<User>(context, listen: false)
-        .getShoppingBag(widget.storeID!);
+
+    final user = Provider.of<User>(context, listen: false);
+    widget.userName = user.name!;
+    widget.bag = user.getShoppingBag(widget.storeID!);
   }
 
-  @override
-  void didChangeDependencies() {
-    () async {
-      setState(() {
-        widget.bag = Provider.of<User>(context, listen: false).getShoppingBag(
-            widget.storeID!);
-        // Update your UI with the desired changes.
-      });
-    }();
-    super.didChangeDependencies();
-  }
+  Future<void> initCreditAndCashback() async {
+    String cb =
+        await Provider.of<User>(context, listen: false).getEWalletBalance();
+    _cashback = double.parse(cb);
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('An Error Occurred!'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Okay'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  Future<void> activeCreditCards() async {
     Map<String, Map<String, dynamic>> creditCards =
         await Provider.of<User>(context, listen: false)
             .getUserCreditCardDetails();
     items = [];
-    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    Secret secret =
+        await SecretLoader(secretPath: "assets/secrets.json").load();
     creditCards.forEach((token, creditCard) {
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
       final encrypter = encrypt.Encrypter(encrypt.AES(key));
-      encrypt.Encrypted enc = encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
+      encrypt.Encrypted enc =
+          encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
       String number = encrypter.decrypt(enc, iv: iv);
       DateTime expirationDate =
           new DateFormat('MM/yy').parse(creditCard['expiryDate']);
@@ -153,165 +110,218 @@ class _PaymentCardState extends State<PaymentCard>
               .where((element) => element.item1 == token)
               .isNotEmpty) //not expired
       {
-        items.add(Tuple2<String, String>(
-            number.substring(15), token));
+        items.add(Tuple2<String, String>(number.substring(15), token));
       }
     });
     dropdownvalue = items.isNotEmpty ? items.first.item2 : "";
-    if (items.length==0) {
+    if (items.length == 0) {
       showDialog(
-          context: context,
-          builder: (ctx) =>
-            AlertDialog(
-              title: Text("An error occured!"),
-              content: Text(
-                  "You have no credit cards available! please enter a credit card to proceed!"),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Okay'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushReplacementNamed(CreditCardsScreen.routeName);
-                  },
-                ),
-                FlatButton(
-                  child: Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: Text("Missing Credit Card"),
+          content: Text(
+              "You have no credit cards available, please enter a credit card to proceed"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Okay'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushNamed(AddCreditCardScreen.routeName)
+                    .then((_) => setState(() {}));
+              },
+            ),
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
             )
+          ],
+        ),
       );
     }
   }
 
-  void initCashBack() async {
-    String cb =
-        await Provider.of<User>(context, listen: false).getEWalletBalance();
-    _initValues['cashback'] = double.parse(cb);
+  Future<void> _makePayment(
+      double totalPrice, CashbackSelection cashbackSelection) async {
+    if (cashbackSelection.form.currentState == null ||
+        cashbackSelection.form.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      var res = await Provider.of<User>(context, listen: false)
+          .makePaymentOnlineStore(
+              dropdownvalue,
+              cashbackSelection.cashbackAmount,
+              totalPrice - cashbackSelection.cashbackAmount,
+              widget.bag!);
+      if (res.getTag()) {
+        Navigator.of(context).pushReplacementNamed(
+          InvoiceScreen.routeName,
+          arguments: {
+            'userName': widget.userName,
+            'purchaseDate': DateTime.now(),
+            'shoppingBag': widget.bag,
+            'cashbackAmount': cashbackSelection.cashbackAmount,
+            'creditAmount': totalPrice - cashbackSelection.cashbackAmount
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("An error occured!"),
+            content: Text(res.getMessage().toString()),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+        );
+      }
+
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-    double cashback = 0.0;
-    widget.bag = Provider.of<User>(context, listen: false)
-        .getShoppingBag(widget.storeID!);
+    final totalPrice = widget.bag!.calculateTotalPrice();
+    var cashbackSelection;
 
     return FutureBuilder(
-        future: activeCreditCards(),
-        builder: (BuildContext context, AsyncSnapshot snap) {
-          return snap.connectionState != ConnectionState.done
-              ? Center(child: CircularProgressIndicator())
-              : Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            elevation: 8.0,
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeIn,
-              height: 320,
-              constraints: BoxConstraints(minHeight: 320),
-              width: deviceSize.width * 0.75,
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text("Purchase amount: ${widget.bag!
-                      .calculateTotalPrice()
-                      .toString()}",
-                      style: TextStyle(color: Colors.black, fontSize: 20.0)),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(
-                          child: Icon(Icons.payments_outlined),
+      future: initCreditAndCashback(),
+      builder: (BuildContext context, AsyncSnapshot snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          cashbackSelection = CashbackSelection(_cashback);
+          return LayoutBuilder(
+            builder: (context, constraints) => _isLoading
+                ? CircularProgressIndicator()
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                        TextSpan(
-                            text: "Cashback available: " +
-                                _initValues['cashback'].toString(),
-                            style: TextStyle(color: Colors.black,
-                                fontSize: 16.0)),
-                      ],
-                    ),
+                        elevation: 8.0,
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                          width: constraints.maxWidth * 0.8,
+                          padding: EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            gradient: LinearGradient(
+                              colors: [
+                                Theme.of(context).primaryColor.withOpacity(0.4),
+                                Theme.of(context).primaryColor.withOpacity(0.9),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              stops: [0, 1],
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "AMOUNT TO PAY",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "\€${totalPrice.toString()}",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              Divider(),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 10.0),
+                                child: cashbackSelection,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 10.0),
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeIn,
+                                  width: constraints.maxWidth * 0.8,
+                                  child: Column(
+                                    children: <Widget>[
+                                      ListTile(
+                                        title: Text(
+                                          'CREDIT CARD',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Center(
+                                        child: DropdownButton(
+                                          value: dropdownvalue,
+                                          icon: const Icon(
+                                              Icons.keyboard_arrow_down),
+                                          items: items.map(
+                                              (Tuple2<String, String> item) {
+                                            return DropdownMenuItem(
+                                              value: item.item2,
+                                              child: Text("XXXX-XXXX-XXXX-" +
+                                                  item.item1),
+                                            );
+                                          }).toList(),
+                                          onChanged: (String? newValue) {
+                                            dropdownvalue = newValue!;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: constraints.maxWidth * 0.75,
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: ElevatedButton(
+                          child: Text(
+                            'Pay',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onPressed: () =>
+                              _makePayment(totalPrice, cashbackSelection),
+                        ),
+                      ),
+                    ],
                   ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: 'Cashback to use'),
-                    keyboardType: TextInputType.number,
-                    controller: myController,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a number.';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        if (value != "")
-                          cashback = double.parse(value);
-                        else
-                          cashback = 0;
-                      });
-                    },
-                  ),
-                  Text("\nChoose Credit Card to pay with:"),
-                  DropdownButton(
-                    value: dropdownvalue,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: items.map((Tuple2<String, String> item) {
-                      return DropdownMenuItem(
-                        value: item.item2,
-                        child: Text(item.item1),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownvalue = newValue!;
-                      });
-                    },
-                  ),
-                  Text('Amount left to pay: ' +
-                      (widget.bag!.calculateTotalPrice() -
-                          (myController.text.length > 0 ? double.parse(
-                              myController.text) : 0))
-                          .toString()),
-                  FlatButton(
-                    child: Text('Confirm Amount'),
-                    onPressed: () async {
-                      var res = await Provider.of<User>(context, listen: false)
-                          .makePaymentOnlineStore(
-                          dropdownvalue,
-                          cashback.toString(),
-                          (widget.bag!.calculateTotalPrice() -
-                              (myController.text.length > 0 ? double.parse(
-                                  myController.text) : 0.0))
-                              .toString(),
-                          widget.bag!);
-                      AlertDialog(
-                        title: Text(res.getTag()
-                            ? "Congratulations!"
-                            : "An error occured!"),
-                        content: Text(res.getMessage().toString()),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('Okay'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      );
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ),
-            ),
           );
         }
+      },
     );
   }
 }

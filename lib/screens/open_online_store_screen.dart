@@ -1,15 +1,14 @@
 import 'dart:io';
 
 import 'package:address_search_field/address_search_field.dart';
-import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/screens/tutorial_screen.dart';
 import 'package:final_project_yroz/widgets/bank_account_form.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
+import 'package:final_project_yroz/widgets/terms.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +43,6 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   _OpenOnlineStorePipelineState createState() {
     return _OpenOnlineStorePipelineState();
   }
-
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -107,6 +105,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _acceptTerms = false;
 
   @override
   void didChangeDependencies() async {
@@ -225,7 +224,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               'Enter Store Details',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Form(
@@ -347,47 +346,43 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ],
         );
       case 1:
-        return Expanded(
-          flex: 6,
-          child: Column(
-            children: [
-              const Text(
-                'Select Store Categories',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Divider(),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: DUMMY_CATEGORIES.length,
-                  itemBuilder: (context, index) => CheckboxListTile(
-                    value:
-                        _selectedItems.contains(DUMMY_CATEGORIES[index].title),
-                    title: Text(DUMMY_CATEGORIES[index].title),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (isChecked) =>
-                        _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
-                  ),
+        return Column(
+          children: [
+            const Text(
+              'Select Store Categories',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Divider(height: 0),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: DUMMY_CATEGORIES.length,
+                itemBuilder: (context, index) => CheckboxListTile(
+                  value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
+                  title: Text(DUMMY_CATEGORIES[index].title),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (isChecked) =>
+                      _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
                 ),
               ),
-              Wrap(
-                children: _selectedItems
-                    .map((e) => Chip(
-                          deleteIcon: Icon(
-                            Icons.close,
-                          ),
-                          onDeleted: () {
-                            setState(() {
-                              _selectedItems.remove(e);
-                            });
-                          },
-                          label: Text(e),
-                        ))
-                    .toList(),
-              ),
-            ],
-          ),
+            ),
+            Wrap(
+              children: _selectedItems
+                  .map((e) => Chip(
+                        deleteIcon: Icon(
+                          Icons.close,
+                        ),
+                        onDeleted: () {
+                          setState(() {
+                            _selectedItems.remove(e);
+                          });
+                        },
+                        label: Text(e),
+                      ))
+                  .toList(),
+            ),
+          ],
         );
       case 2:
         return Column(
@@ -396,7 +391,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               'Select Store Opening Hours',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Divider(),
+            Divider(height: 0),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -632,65 +627,108 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text(
-          'Open Online Store',
+    final deviceSize = MediaQuery.of(context).size;
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (!_acceptTerms) {
+        showDialog(context: context, builder: (ctx) => Terms());
+        _acceptTerms = true;
+      }
+    });
+
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
+          title: Text(
+            'Open Online Store',
+            style: const TextStyle(fontSize: 22),
+          ),
         ),
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Container(
-              child: Column(
-                children: [
-                  IconStepper(
-                    icons: [
-                      Icon(Icons.info),
-                      Icon(Icons.tag),
-                      Icon(Icons.access_time),
-                      Icon(Icons.add_shopping_cart_rounded),
-                      Icon(Icons.account_balance),
-                      Icon(Icons.store),
-                    ],
-                    // activeStep property set to activeStep variable defined above.
-                    activeStep: _currentStep,
-                    steppingEnabled: false,
-                    enableStepTapping: false,
-                    enableNextPreviousButtons: false,
-                    activeStepColor: Theme.of(context).primaryColor,
-                    // This ensures step-tapping updates the activeStep.
-                    onStepReached: (index) {
-                      setState(() {
-                        _currentStep = index;
-                      });
-                    },
-                  ),
-                  currentStepWidget()!,
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: cancel,
-                              child: Text('Prev'),
-                            ),
-                            ElevatedButton(
-                              onPressed: continued,
-                              child: Text('Next'),
-                            ),
-                          ],
+        body: _isLoading
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                          "We are opening your store, it might take a few seconds...",
+                          textAlign: TextAlign.center),
+                    )
+                  ],
+                ),
+              )
+            : Container(
+                child: Column(
+                  children: [
+                    IconStepper(
+                      icons: [
+                        Icon(Icons.info),
+                        Icon(Icons.tag),
+                        Icon(Icons.access_time),
+                        Icon(Icons.add_shopping_cart_rounded),
+                        Icon(Icons.account_balance),
+                        Icon(Icons.storefront),
+                      ],
+                      // activeStep property set to activeStep variable defined above.
+                      activeStep: _currentStep,
+                      steppingEnabled: false,
+                      enableStepTapping: false,
+                      enableNextPreviousButtons: false,
+                      activeStepColor: Theme.of(context).primaryColor,
+                      // This ensures step-tapping updates the activeStep.
+                      onStepReached: (index) {
+                        setState(() {
+                          _currentStep = index;
+                        });
+                      },
+                    ),
+                    currentStepWidget()!,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _currentStep > 0
+                                  ? CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      child: IconButton(
+                                        color: Colors.black54,
+                                        onPressed: cancel,
+                                        icon: Icon(Icons.arrow_back),
+                                      ),
+                                    )
+                                  : Container(),
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: IconButton(
+                                  color: Colors.black54,
+                                  onPressed: continued,
+                                  icon: Icon(_currentStep < 5
+                                      ? Icons.arrow_forward
+                                      : Icons.done),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 

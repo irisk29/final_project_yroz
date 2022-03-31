@@ -7,23 +7,21 @@ import '../screens/manage_online_store_screen.dart';
 import '../screens/manage_physical_store_screen.dart';
 
 class HomeAppBar {
-  Widget? buildAction(BuildContext context) {
+  Widget? buildAction(BuildContext context, VoidCallback callback) {
     final user = Provider.of<User>(context, listen: true);
 
     if (user.storeOwnerState != null) {
       var notificationValue = user.storeOwnerState!.newPurchasesNoViewed;
       var notificationString =
           notificationValue > 9 ? "9+" : notificationValue.toString();
-      var icon = user.storeOwnerState!.physicalStore != null
-          ? IconButton(
-              icon: Icon(Icons.storefront),
-              onPressed: () => Navigator.of(context)
-                  .pushNamed(ManagePhysicalStoreScreen.routeName),
-            )
-          : IconButton(
-              icon: Icon(Icons.store_outlined),
-              onPressed: () => Navigator.of(context)
-                  .pushNamed(ManageOnlineStoreScreen.routeName));
+      var icon = IconButton(
+        icon: Icon(Icons.storefront),
+        onPressed: () => user.storeOwnerState!.physicalStore != null
+            ? Navigator.of(context)
+                .pushNamed(ManagePhysicalStoreScreen.routeName).then((value) => callback())
+            : Navigator.of(context)
+                .pushNamed(ManageOnlineStoreScreen.routeName).then((value) => callback()),
+      );
       return notificationValue == 0
           ? icon
           : Badge(child: icon, value: notificationString);
@@ -31,9 +29,9 @@ class HomeAppBar {
     return null;
   }
 
-  AppBar build(BuildContext context) {
+  AppBar build(BuildContext context, VoidCallback callback) {
     final deviceSize = MediaQuery.of(context).size;
-    final action = buildAction(context);
+    final action = buildAction(context, callback);
 
     return AppBar(
       leading: Padding(

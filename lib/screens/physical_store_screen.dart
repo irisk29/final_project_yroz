@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:ui';
 import 'package:collection/src/iterable_extensions.dart';
 
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
@@ -12,7 +10,6 @@ class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
 
   late StoreDTO store;
-  //late User user;
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
@@ -29,7 +26,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
     final routeArgs =
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as StoreDTO;
-    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
@@ -252,7 +248,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                         ],
                       ),
                       Text(
-                        "10%",
+                        "7%",
                         style: TextStyle(fontSize: 18),
                       ),
                     ],

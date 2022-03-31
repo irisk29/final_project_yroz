@@ -57,56 +57,65 @@ class _AccountScreenState extends State<AccountScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                Container(
-                height: MediaQuery.of(context).size.height * 0.12,
-                child: Card(
-                    elevation: 8.0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ListTile(
-                        onTap: null,
-                        title: Text(
-                          user.name!,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.12,
+                    child: Card(
+                      elevation: 8.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          onTap: null,
+                          title: Text(
+                            user.name!,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        leading: CircleAvatar(
-                          radius: 30.0,
-                          backgroundImage: Image.network(user.imageUrl!).image,
-                        ),
-                        trailing: Column(
-                          children: [
-                            Consumer<User>(
-                              builder: (context, user, child) => Container(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.05,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 15),
-                                  child: SwitchListTile(
-                                      activeColor: Colors.purple,
-                                      value: user.hideStoreOwnerOptions,
-                                      controlAffinity:
-                                          ListTileControlAffinity.trailing,
-                                      onChanged: (_) =>
-                                          user.toggleStoreOwnerViewOption()),
-                                ),
-                              ),
-                            ),
-                            Text(
-                              "Consumer View",
-                              style: TextStyle(fontSize: 10),
-                            ),
-                          ],
+                          leading: CircleAvatar(
+                            radius: 30.0,
+                            backgroundImage:
+                                Image.network(user.imageUrl!).image,
+                          ),
+                          trailing: !_physicalStoreOwner && !_onlineStoreOwner
+                              ? Column(
+                                  children: [
+                                    Consumer<User>(
+                                      builder: (context, user, child) =>
+                                          Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.055,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 15),
+                                          child: SwitchListTile(
+                                              activeColor: Colors.purple,
+                                              value: user.hideStoreOwnerOptions,
+                                              controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .trailing,
+                                              onChanged: (_) => user
+                                                  .toggleStoreOwnerViewOption()),
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      "Consumer View",
+                                      style: TextStyle(fontSize: 10),
+                                    ),
+                                  ],
+                                )
+                              : null,
                         ),
                       ),
                     ),
                   ),
-                ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Card(

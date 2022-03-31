@@ -355,8 +355,10 @@ class UsersStorageProxy {
       ProductDTO productDTO, String storeID, double quantity, String userID) async {
     List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
         where: ShoppingBagModel.USERMODELID.eq(userID).and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
-
-    if (shoppingBags.isEmpty) {
+    List<CartProductModel> cartProducts = await Amplify.DataStore.query(CartProductModel.classType,
+        where: CartProductModel.STOREPRODUCTID
+            .eq(productDTO.id)); // check if this product exists in shopping bag in case we already have one
+    if (shoppingBags.isEmpty || cartProducts.isEmpty) {
       return addProductToShoppingBag(productDTO, storeID, quantity, userID);
     }
 
@@ -384,21 +386,21 @@ class UsersStorageProxy {
     List<CartProductModel> savedProducts = [];
     if (shoppingBagDTO.id != null) {
       ResultInterface res = await getProductsOfShoppingBag(shoppingBagDTO.id!);
-      savedProducts = res.getValue() as List<CartProductModel>;
+      if (res.getTag()) {
+        savedProducts = res.getValue() as List<CartProductModel>;
+      }
     }
 
-    List<int> removeProducts = [];
-    var index = 0;
+    List<CartProductModel> removeProducts = [];
     for (var savedProduct in savedProducts) {
       final products = shoppingBagDTO.products.where((element) => element.id == savedProduct.id);
       if (products.isEmpty) {
-        removeProducts.add(index);
+        removeProducts.add(savedProduct);
         await Amplify.DataStore.delete(savedProduct);
       }
-      index++;
     }
-    for (var i in removeProducts) {
-      savedProducts.removeAt(i);
+    for (var p in removeProducts) {
+      savedProducts.remove(p);
     }
 
     var shoppingBagRes = await getOrCreateUserShoppingBagPerStore(shoppingBagDTO.onlineStoreID, shoppingBagDTO.userId);

@@ -177,9 +177,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   if (value!.isEmpty) {
                     return 'Please enter a description.';
                   }
-                  if (value.length < 10) {
-                    return 'Should be at least 10 characters long.';
-                  }
                   return null;
                 },
                 onSaved: (value) {

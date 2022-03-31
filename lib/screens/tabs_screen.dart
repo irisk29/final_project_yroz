@@ -3,7 +3,7 @@ import 'package:final_project_yroz/screens/account_screen.dart';
 import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
 import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
 import 'package:final_project_yroz/widgets/badge.dart';
-import 'package:final_project_yroz/widgets/favorites_app_bar.dart';
+import 'package:final_project_yroz/widgets/tabs_app_bar.dart';
 import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,12 +26,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   void initState() {
     super.initState();
-    _pages = [
-      CategoriesScreen(),
-      MapScreen(),
-      FavoriteScreen(),
-      AccountScreen()
-    ];
+    //_pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
   }
 
   void _selectPage(int index) {
@@ -42,15 +37,12 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final homeAppBar = HomeAppBar().build(context);
-    final favoritesAppBar = FavoritesAppBar().build(context);
-    List<AppBar> appBars = [
-      homeAppBar,
-      homeAppBar,
-      favoritesAppBar,
-      homeAppBar
-    ];
-
+    _pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
+    final homeAppBar = HomeAppBar().build(context, () => setState(() {}));
+    final favoritesAppBar = TabsAppBar("Favorites").build(context);
+    final nearbyAppBar = TabsAppBar("Nearby").build(context);
+    final accountAppBar = TabsAppBar("My Account").build(context);
+    List<AppBar> appBars = [homeAppBar, nearbyAppBar, favoritesAppBar, accountAppBar];
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: appBars[_selectedPageIndex],
