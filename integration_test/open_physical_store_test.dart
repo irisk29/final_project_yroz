@@ -41,7 +41,7 @@ void main() {
       }
   }
 
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
 
   group('end-to-end test', () {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
