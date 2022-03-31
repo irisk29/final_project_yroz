@@ -35,19 +35,8 @@ class EditPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  static late Secret secret;
-
-  EditPhysicalStorePipeline() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
-  }
-
   @override
   _EditPhysicalStorePipelineState createState() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
     return _EditPhysicalStorePipelineState();
   }
 }
@@ -58,15 +47,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   final destCtrl = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
-  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
-      geoMethods: GeoMethods(
-        googleApiKey: EditPhysicalStorePipeline.secret.API_KEY,
-        language: 'en',
-        countryCode: 'il',
-      ),
-      controller: EditPhysicalStorePipeline._controller,
-      builder: AddressDialogBuilder(),
-      onDone: (Address address) => address);
+  late AddressSearchBuilder destinationBuilder;
   XFile? _pickedImage = null;
   StoreDTO? _editedStore = StoreDTO(
       id: "",
@@ -110,15 +91,24 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   final List<String> _selectedItems = [];
 
+  late Secret secret;
+
   var _isInit = true;
   var _isLoading = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
-      // final user = ModalRoute.of(context)!.settings.arguments as User?;
-      // widget.user = user;
-      // _editedStore = user!.storeOwnerState!.physicalStore;
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      destinationBuilder = AddressSearchBuilder.deft(
+          geoMethods: GeoMethods(
+            googleApiKey: secret.API_KEY,
+            language: 'en',
+            countryCode: 'il',
+          ),
+          controller: EditPhysicalStorePipeline._controller,
+          builder: AddressDialogBuilder(),
+          onDone: (Address address) => address);
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .physicalStore;

@@ -38,19 +38,8 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  static late Secret secret;
-
-  OpenPhysicalStorePipeline() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
-  }
-
   @override
   _OpenPhysicalStorePipelineState createState() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
     return _OpenPhysicalStorePipelineState();
   }
 }
@@ -63,15 +52,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
-  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
-      geoMethods: GeoMethods(
-        googleApiKey: OpenPhysicalStorePipeline.secret.API_KEY,
-        language: 'en',
-        countryCode: 'il',
-      ),
-      controller: OpenPhysicalStorePipeline._controller,
-      builder: AddressDialogBuilder(),
-      onDone: (Address address) => address);
+  late AddressSearchBuilder destinationBuilder;
+
   XFile? _pickedImage = null;
   StoreDTO? _editedStore = StoreDTO(
       id: "",
@@ -115,6 +97,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
 
   final List<String> _selectedItems = [];
 
+  late Secret secret;
+
   final bankAccountForm = BankAccountForm();
 
   var _isInit = true;
@@ -122,8 +106,18 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   var _acceptTerms = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      destinationBuilder = AddressSearchBuilder.deft(
+          geoMethods: GeoMethods(
+            googleApiKey: secret.API_KEY,
+            language: 'en',
+            countryCode: 'il',
+          ),
+          controller: OpenPhysicalStorePipeline._controller,
+          builder: AddressDialogBuilder(),
+          onDone: (Address address) => address);
       // final user = ModalRoute.of(context)!.settings.arguments as User?;
       // widget.user = user;
     }
