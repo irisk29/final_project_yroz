@@ -40,21 +40,8 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
-  static late Secret secret;
-
-  OpenOnlineStorePipeline() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
-  }
-
-  //User? user;
-
   @override
   _OpenOnlineStorePipelineState createState() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
     return _OpenOnlineStorePipelineState();
   }
 
@@ -68,15 +55,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   final _phoneNumberController = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
-  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
-      geoMethods: GeoMethods(
-        googleApiKey: OpenOnlineStorePipeline.secret.API_KEY,
-        language: 'en',
-        countryCode: 'il',
-      ),
-      controller: OpenOnlineStorePipeline._controller,
-      builder: AddressDialogBuilder(),
-      onDone: (Address address) => address);
+  late AddressSearchBuilder destinationBuilder;
+
   XFile? _pickedImage = null;
   OnlineStoreDTO? _editedStore = OnlineStoreDTO(
       id: "",
@@ -123,12 +103,24 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   final bankAccountForm = BankAccountForm();
 
+  late Secret secret;
+
   var _isInit = true;
   var _isLoading = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      destinationBuilder = AddressSearchBuilder.deft(
+          geoMethods: GeoMethods(
+            googleApiKey: secret.API_KEY,
+            language: 'en',
+            countryCode: 'il',
+          ),
+          controller: OpenOnlineStorePipeline._controller,
+          builder: AddressDialogBuilder(),
+          onDone: (Address address) => address);
       // final user = ModalRoute.of(context)!.settings.arguments as User?;
       // widget.user = user;
     }

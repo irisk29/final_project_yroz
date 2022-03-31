@@ -39,19 +39,8 @@ class EditOnlineStorePipeline extends StatefulWidget {
 
   static TextEditingController _controller = TextEditingController();
 
-  static late Secret secret;
-
-  EditOnlineStorePipeline() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
-  }
-
   @override
   _EditOnlineStorePipelineState createState() {
-    () async {
-      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-    }();
     return _EditOnlineStorePipelineState();
   }
 
@@ -63,15 +52,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   final destCtrl = TextEditingController();
   final _detailsform = GlobalKey<FormState>();
 
-  AddressSearchBuilder destinationBuilder = AddressSearchBuilder.deft(
-      geoMethods: GeoMethods(
-        googleApiKey: EditOnlineStorePipeline.secret.API_KEY,
-        language: 'en',
-        countryCode: 'il',
-      ),
-      controller: EditOnlineStorePipeline._controller,
-      builder: AddressDialogBuilder(),
-      onDone: (Address address) => address);
+  late AddressSearchBuilder destinationBuilder;
   XFile? _pickedImage = null;
   OnlineStoreDTO? _editedStore = OnlineStoreDTO(
       id: "",
@@ -114,12 +95,24 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   final List<String> _selectedItems = [];
 
+  late Secret secret;
+
   var _isInit = true;
   var _isLoading = false;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     if (_isInit) {
+      secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      destinationBuilder = AddressSearchBuilder.deft(
+          geoMethods: GeoMethods(
+            googleApiKey: secret.API_KEY,
+            language: 'en',
+            countryCode: 'il',
+          ),
+          controller: EditOnlineStorePipeline._controller,
+          builder: AddressDialogBuilder(),
+          onDone: (Address address) => address);
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .onlineStore;
