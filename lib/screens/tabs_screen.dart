@@ -1,12 +1,7 @@
-import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/account_screen.dart';
-import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
-import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
-import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:final_project_yroz/widgets/tabs_app_bar.dart';
 import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../screens/categories_screen.dart';
 import 'favorite_screen.dart';
@@ -20,13 +15,21 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  late List<Widget> _pages;
-  int _selectedPageIndex = 0;
+  late int _selectedPageIndex;
+  var _init = false;
 
   @override
-  void initState() {
-    super.initState();
-    //_pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
+  void didChangeDependencies() {
+    if (!_init) {
+      final routeArgs = ModalRoute.of(context)!.settings.arguments;
+      _selectedPageIndex = routeArgs != null &&
+              routeArgs is Map<String, Object> &&
+              routeArgs.containsKey("index")
+          ? routeArgs['index'] as int
+          : 0;
+      _init = true;
+      super.didChangeDependencies();
+    }
   }
 
   void _selectPage(int index) {
@@ -37,46 +40,58 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
     final homeAppBar = HomeAppBar().build(context, () => setState(() {}));
     final favoritesAppBar = TabsAppBar("Favorites").build(context);
     final nearbyAppBar = TabsAppBar("Nearby").build(context);
     final accountAppBar = TabsAppBar("My Account").build(context);
-    List<AppBar> appBars = [homeAppBar, nearbyAppBar, favoritesAppBar, accountAppBar];
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: appBars[_selectedPageIndex],
-      body: _pages[_selectedPageIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        onTap: _selectPage,
-        backgroundColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Theme.of(context).primaryColor,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        currentIndex: _selectedPageIndex,
-        items: [
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.location_on_outlined),
-            label: 'Nearby',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.favorite_border),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.account_circle),
-            label: 'Account',
-          ),
-        ],
+    List<AppBar> appBars = [
+      homeAppBar,
+      nearbyAppBar,
+      favoritesAppBar,
+      accountAppBar
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) => Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: appBars[_selectedPageIndex],
+        body: const [
+          CategoriesScreen(),
+          MapScreen(),
+          FavoriteScreen(),
+          AccountScreen()
+        ][_selectedPageIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          onTap: _selectPage,
+          backgroundColor: Colors.white,
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: Theme.of(context).primaryColor,
+          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+          currentIndex: _selectedPageIndex,
+          items: [
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.location_on_outlined),
+              label: 'Nearby',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.favorite_border),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.account_circle),
+              label: 'Account',
+            ),
+          ],
+        ),
       ),
     );
   }

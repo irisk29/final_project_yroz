@@ -90,20 +90,17 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                       "Products:",
                       style: TextStyle(fontSize: 20),
                     ),
-                    onTap: () {
-                      //open change language
-                    },
                   ),
                   SizedBox(
                     height: (MediaQuery.of(context).size.height -
                             MediaQuery.of(context).padding.top) *
-                        0.5,
+                        0.8,
                     child: GridView.count(
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
                       crossAxisCount: 1,
-                      childAspectRatio: 3.3,
-                      mainAxisSpacing: deviceSize.height * 0.025,
+                      childAspectRatio: 3.5,
+                      mainAxisSpacing: deviceSize.height * 0.01,
                       crossAxisSpacing: deviceSize.width * 0.025,
                       children: widget.store.products
                           .map(

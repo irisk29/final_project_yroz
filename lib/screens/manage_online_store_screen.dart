@@ -14,13 +14,15 @@ class ManageOnlineStoreScreen extends StatefulWidget {
   late OnlineStoreDTO store;
 
   @override
-  _ManageOnlineStoreScreenState createState() => _ManageOnlineStoreScreenState();
+  _ManageOnlineStoreScreenState createState() =>
+      _ManageOnlineStoreScreenState();
 }
 
 class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
   @override
   void didChangeDependencies() {
-    widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
+    widget.store =
+        Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
     super.didChangeDependencies();
   }
 
@@ -33,11 +35,24 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: deviceSize.height * 0.1,
-        title: Text(
-          widget.store.name,
-          style: const TextStyle(
-            fontSize: 22,
-          ),
+        centerTitle: true,
+        title: Column(
+          children: [
+            Text(
+              widget.store.name,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              widget.store.categories.join(", "),
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -49,15 +64,20 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                 height: 150,
                 decoration: BoxDecoration(
                   image: widget.store.image != null
-                      ? DecorationImage(fit: BoxFit.cover, image: NetworkImage(widget.store.image!))
-                      : DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
+                      ? DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.store.image!))
+                      : DecorationImage(
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
                 ),
               ),
             ),
             Card(
               elevation: 4.0,
               margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
               child: Column(
                 children: <Widget>[
                   ListTile(
@@ -67,7 +87,8 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     title: Text("Edit Store Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context).pushNamed(EditOnlineStorePipeline.routeName),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditOnlineStorePipeline.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -77,7 +98,8 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     title: Text("Edit Bank Account Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context).pushNamed(EditBankAccountScreen.routeName),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditBankAccountScreen.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -115,7 +137,8 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     title: Text("View Store Purchases"),
-                    onTap: () => Navigator.of(context).pushNamed(StorePurchasesScreen.routeName),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(StorePurchasesScreen.routeName),
                   ),
                   _buildDivider(),
                   ListTile(
@@ -152,8 +175,9 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                       title: Text("Downgrade to Physical Store"),
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
-                        user.convertOnlineStoreToPhysical(widget.store);
-                        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+                        user.convertOnlineStoreToPhysical(widget.store).then(
+                            (_) => Navigator.of(context)
+                                .pushReplacementNamed(TabsScreen.routeName));
                       }),
                 ],
               ),
@@ -175,8 +199,9 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                 ),
               ),
               onPressed: () {
-                user.deleteStore(widget.store.id, true);
-                Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+                user.deleteStore(widget.store.id, true).then((_) =>
+                    Navigator.of(context)
+                        .pushReplacementNamed(TabsScreen.routeName));
               },
             ),
           ],

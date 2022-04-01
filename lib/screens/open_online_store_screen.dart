@@ -195,20 +195,39 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     }
   }
 
+  static const productsLimitation = 10;
   void _showAddProduct() async {
-    if (_products.length < 5) {
+    if (_products.length < productsLimitation) {
       final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
-
-      // Update UI
       if (result.item1 != null) {
         setState(() {
           _editedStore = result.item2;
           _products.add(result.item1!);
         });
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            "Store's Products Limitation",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          content: Text(
+              "We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Ok"),
+            ),
+          ],
+        ),
+      );
     }
   }
 
