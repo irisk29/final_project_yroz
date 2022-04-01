@@ -12,6 +12,23 @@ class TabsScreen extends StatefulWidget {
 
   @override
   _TabsScreenState createState() => _TabsScreenState();
+
+   //for test purposes
+  Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User("test@gmail.com", "test name"),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
+  );
 }
 
 class _TabsScreenState extends State<TabsScreen> {
