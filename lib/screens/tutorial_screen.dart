@@ -89,6 +89,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                           "You can now manage your store from this button"),
                       actions: [
                         FlatButton(
+                            key: const Key("tutorial_okay_button"),
                             child: Text('Okay'),
                             onPressed: () {
                               setState(() {

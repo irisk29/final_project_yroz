@@ -133,9 +133,9 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                                 (e) => e.item1 == widget.store.id) ==
                         null
                     ? await Provider.of<User>(context, listen: false)
-                        .addFavoriteStore(widget.store.id, true)
+                        .addFavoriteStore(widget.store.id, false)
                     : await Provider.of<User>(context, listen: false)
-                        .removeFavoriteStore(widget.store.id, true);
+                        .removeFavoriteStore(widget.store.id, false);
                 setState(() {});
                 //open change language
               },

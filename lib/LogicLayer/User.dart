@@ -250,11 +250,13 @@ class User extends ChangeNotifier {
         print(res.getMessage());
         return;
       }
+      await UsersStorageProxy().saveStoreBankAccount(bankToken!);
       Tuple2<OnlineStoreModel, String> retVal = res.getValue();
       this.storeOwnerState = new StoreOwnerState(retVal.item2, () => notifyListeners(), bankToken);
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
       this.storeOwnerState!.physicalStore = null;
-
+      this.storeOwnerState!.createPurchasesSubscription();
+      
       notifyListeners();
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -269,10 +271,12 @@ class User extends ChangeNotifier {
         print(res.getMessage());
         return;
       }
+      await UsersStorageProxy().saveStoreBankAccount(bankToken!);
       Tuple2<PhysicalStoreModel, String> retVal = res.getValue();
       this.storeOwnerState = new StoreOwnerState(retVal.item2, () => notifyListeners(), bankToken);
       this.storeOwnerState!.setPhysicalStore(retVal.item1);
       this.storeOwnerState!.onlineStore = null;
+      this.storeOwnerState!.createPurchasesSubscription();
 
       notifyListeners();
     } on Exception catch (e) {

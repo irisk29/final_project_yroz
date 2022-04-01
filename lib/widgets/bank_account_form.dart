@@ -47,6 +47,7 @@ class BankAccountForm extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   TextFormField(
+                      key: const Key("bank_name"),
                       initialValue: bankName,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
@@ -63,6 +64,7 @@ class BankAccountForm extends StatelessWidget {
                     height: 20,
                   ),
                   TextFormField(
+                    key: const Key("branch_number"),
                     initialValue: branchNumber,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
@@ -85,6 +87,7 @@ class BankAccountForm extends StatelessWidget {
                     height: 20,
                   ),
                   TextFormField(
+                    key: const Key("account_number"),
                     initialValue: accountNumber,
                     textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
