@@ -19,6 +19,7 @@ import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
+import 'tabs_screen.dart';
 
 class OpenOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/open-online-store';
@@ -43,6 +44,27 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   _OpenOnlineStorePipelineState createState() {
     return _OpenOnlineStorePipelineState();
   }
+
+  //for test purposes
+  Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
+    routes: {
+      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      TutorialScreen.routeName: (ctx) => TutorialScreen(),
+    },
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User("test@gmail.com", "test name"),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
+  );
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -251,6 +273,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                     ImageInput(
                         _selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
+                      key: const Key('storeName'),
                       controller: _nameController,
                       decoration: InputDecoration(labelText: 'Store Name'),
                       textInputAction: TextInputAction.next,
@@ -293,6 +316,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('phoneNumber'),
                       decoration: InputDecoration(labelText: 'phoneNumber'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.phone,
@@ -336,6 +360,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('storeAddress'),
                       decoration: InputDecoration(labelText: 'Address'),
                       controller: OpenOnlineStorePipeline._controller,
                       onTap: () => showDialog(
@@ -376,6 +401,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
                 itemBuilder: (context, index) => CheckboxListTile(
+                  key: Key("store_category_$index"),
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
@@ -607,6 +633,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         return Column(
           children: [
             ElevatedButton(
+              key: const Key('add_product'),
               child: const Text('Add Product'),
               onPressed: _showAddProduct,
             ),
@@ -695,18 +722,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                         Icon(Icons.account_balance),
                         Icon(Icons.storefront),
                       ],
-                      // activeStep property set to activeStep variable defined above.
-                      activeStep: _currentStep,
-                      steppingEnabled: false,
-                      enableStepTapping: false,
-                      enableNextPreviousButtons: false,
-                      activeStepColor: Theme.of(context).primaryColor,
-                      // This ensures step-tapping updates the activeStep.
-                      onStepReached: (index) {
-                        setState(() {
-                          _currentStep = index;
-                        });
-                      },
                     ),
                     currentStepWidget(deviceSize)!,
                     Expanded(
@@ -745,10 +760,12 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
+         ],
+        ),
       ),
     );
   }
