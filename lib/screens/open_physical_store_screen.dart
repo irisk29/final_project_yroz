@@ -626,7 +626,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [Container(
                   child: SizedBox(
-                    height: deviceSize.height * 0.9,
+                    height: Platform.isAndroid ? deviceSize.height * 0.9 : deviceSize.height * 0.8,
                     child: Column(
                       children: [
                         IconStepper(
