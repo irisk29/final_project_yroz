@@ -43,7 +43,12 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
     return _OpenPhysicalStorePipelineState();
   }
 
-  Widget wrapWithMaterial() => MaterialApp(
+  //for test purposes
+  Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
+    routes: {
+      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      TutorialScreen.routeName: (ctx) => TutorialScreen(),
+    },
     home: MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
@@ -54,6 +59,9 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
         body: this,
       ),
     ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
   );
 }
 

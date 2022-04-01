@@ -61,17 +61,7 @@ void main() {
     });
 
     testWidgets('open physical store - positive scenerio', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: app.OpenPhysicalStorePipeline().wrapWithMaterial(),
-        routes: {
-          TabsScreen.routeName: (ctx) => TabsScreen(),
-          CategoryScreen.routeName: (ctx) => CategoryScreen(),
-          TutorialScreen.routeName: (ctx) => TutorialScreen(),
-        },
-        // This mocked observer will now receive all navigation events
-        // that happen in our app.
-        navigatorObservers: [mockObserver],
-      ));
+      await tester.pumpWidget(app.OpenPhysicalStorePipeline().wrapWithMaterial([mockObserver]));
       await tester.pumpAndSettle();
 
       //agree to the terms
@@ -83,17 +73,14 @@ void main() {
       fab = find.byKey(Key('storeName'));
       await tester.enterText(fab, "physical store test");
       await tester.pump();
-      //await takeScreenshot(tester, binding);
 
       fab = find.byKey(Key('phoneNumber'));
       await tester.enterText(fab, "+972123456789");
       await tester.pump();
-      //await takeScreenshot(tester, binding);
 
       fab = find.byKey(Key('storeAddress'));
       await tester.enterText(fab, "Ashdod, Israel");
       await tester.pumpAndSettle();
-      //await takeScreenshot(tester, binding);
 
       fab = find.widgetWithIcon(IconButton, Icons.arrow_forward); //move forward from one form to another
       await tester.tap(fab);
@@ -102,12 +89,10 @@ void main() {
       fab = find.byKey(Key('store_category_0'));
       await tester.tap(fab);
       await tester.pumpAndSettle();
-      //await takeScreenshot(tester, binding);
 
       fab = find.byKey(Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
-      //await takeScreenshot(tester, binding);
 
       //operations hours
       fab = find.byKey(Key("continue_button")); //move forward from one form to another
@@ -117,31 +102,25 @@ void main() {
       fab = find.byKey(Key('bank_name'));
       await tester.enterText(fab, "leumi");
       await tester.pump();
-      //await takeScreenshot(tester, binding);
 
       fab = find.byKey(Key('branch_number'));
       await tester.enterText(fab, "123");
       await tester.pump();
-      //await takeScreenshot(tester, binding);
 
       fab = find.byKey(Key('account_number'));
       await tester.enterText(fab, "123456789");
       await tester.pump();
-      //await takeScreenshot(tester, binding);
 
       fab = find.byKey(Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
-      //await takeScreenshot(tester, binding);
 
       fab = find.byKey(Key("continue_button")); //when pressing this button it creates the store
       await tester.tap(fab);
       await tester.pumpAndSettle();
-      //await takeScreenshot(tester, binding);
 
       await tester.tap(find.byKey(Key("tutorial_okay_button"))); //tap the alert dialog for the store owner
       await tester.pumpAndSettle();
-      //await takeScreenshot(tester, binding);
 
       // Verify the store was created
       expect(find.byType(StoreItem), findsOneWidget);
