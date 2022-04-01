@@ -57,7 +57,7 @@ void main() {
       return Future(() => print("starting test.."));
     });
 
-    testWidgets('open physical store - positive scenerio', (WidgetTester tester) async {
+    testWidgets('open physical store - positive scenario', (WidgetTester tester) async {
       await tester.pumpWidget(app.OpenPhysicalStorePipeline().wrapWithMaterial([mockObserver]));
       await tester.pumpAndSettle();
 
@@ -73,6 +73,83 @@ void main() {
 
       fab = find.byKey(Key('phoneNumber'));
       await tester.enterText(fab, "+972123456789");
+      await tester.pump();
+
+      fab = find.byKey(Key('storeAddress'));
+      await tester.enterText(fab, "Ashdod, Israel");
+      await tester.pumpAndSettle();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key('store_category_0'));
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      //operations hours
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key('bank_name'));
+      await tester.enterText(fab, "leumi");
+      await tester.pump();
+
+      fab = find.byKey(Key('branch_number'));
+      await tester.enterText(fab, "123");
+      await tester.pump();
+
+      fab = find.byKey(Key('account_number'));
+      await tester.enterText(fab, "123456789");
+      await tester.pump();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //when pressing this button it creates the store
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(Key("tutorial_okay_button"))); //tap the alert dialog for the store owner
+      await tester.pumpAndSettle();
+
+      // Verify the store was created
+      expect(find.byType(StoreItem), findsOneWidget);
+      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
+      assert(storeOwnerRes.getTag() == true);
+      StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
+      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null);
+      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!.isNotEmpty);
+    });
+
+    testWidgets('open physical store - sad scenario', (WidgetTester tester) async {
+      await tester.pumpWidget(app.OpenPhysicalStorePipeline().wrapWithMaterial([mockObserver]));
+      await tester.pumpAndSettle();
+
+      //agree to the terms
+      Finder fab = find.widgetWithText(ElevatedButton, "Agree");
+      await tester.tap(fab);
+      await tester.pump();
+
+      //start to fill the form
+      fab = find.byKey(Key('storeName'));
+      await tester.enterText(fab, "physical store test");
+      await tester.pump();
+
+      fab = find.byKey(Key('phoneNumber'));
+      await tester.enterText(fab, "0123456789");
       await tester.pump();
 
       fab = find.byKey(Key('storeAddress'));
