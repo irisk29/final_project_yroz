@@ -105,7 +105,7 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 10));
 
       // Verify the store was created
       ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
