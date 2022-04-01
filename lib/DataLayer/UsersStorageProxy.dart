@@ -558,4 +558,21 @@ class UsersStorageProxy {
         storeOwnerModel.copyWith(lastPurchasesView: TemporalDateTime.fromString(date.toDateTimeIso8601String()));
     await Amplify.DataStore.save(storeOwnerModel);
   }
+
+  Future<ResultInterface> deleteUser(String email) async {
+    var user = await getUser(email);
+    if (user == null) return new Failure("No such user $email", null);
+
+    var res = await getStoreOwnerState(email);
+    if (!res.getTag()) return res;
+    StoreOwnerModel storeOwnerModel = res.getValue();
+    if (storeOwnerModel.storeOwnerModelOnlineStoreModelId != null)
+      StoreStorageProxy().deleteStore(storeOwnerModel.storeOwnerModelOnlineStoreModelId!, true);
+    if (storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null)
+      StoreStorageProxy().deleteStore(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!, false);
+
+    clearAllShoppingBag(user.id);
+    await Amplify.DataStore.delete(user);
+    return new Ok("Deleted User $email", user.id);
+  }
 }
