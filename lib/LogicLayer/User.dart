@@ -51,6 +51,29 @@ class User extends ChangeNotifier {
         bagInStores = <ShoppingBagDTO>[],
         hideStoreOwnerOptions = false {}
 
+  User.fromModel(UserModel model): favoriteStores = <Tuple2<String, bool>>[],
+        creditCards = <String>[],
+        bagInStores = <ShoppingBagDTO>[],
+        hideStoreOwnerOptions = false {
+    try {
+      this.creditCards = model.creditCards == null ? [] : jsonDecode(model.creditCards!).cast<String>();
+      this.id = model.id;
+      this.email = model.email;
+      this.name = model.name;
+      this.imageUrl = model.imageUrl;
+      this.eWallet = model.eWallet;
+      this.hideStoreOwnerOptions = model.hideStoreOwnerOptions;
+      this.favoriteStores =
+      model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
+      this.storeOwnerState = model.storeOwnerModel == null
+          ? null
+          : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!, () => notifyListeners());
+      this.bagInStores = [];
+    } on Exception catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+    }
+  }
+
   void userFromModel(UserModel model) async {
     try {
       this.creditCards = model.creditCards == null ? [] : jsonDecode(model.creditCards!).cast<String>();

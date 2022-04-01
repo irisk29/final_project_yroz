@@ -19,6 +19,7 @@ import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
+import 'tabs_screen.dart';
 
 class OpenOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/open-online-store';
@@ -43,6 +44,27 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   _OpenOnlineStorePipelineState createState() {
     return _OpenOnlineStorePipelineState();
   }
+
+  //for test purposes
+  Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
+    routes: {
+      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      TutorialScreen.routeName: (ctx) => TutorialScreen(),
+    },
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User("test@gmail.com", "test name"),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
+  );
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -234,6 +256,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                     ImageInput(
                         _selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
+                      key: const Key('storeName'),
                       controller: _nameController,
                       decoration: InputDecoration(labelText: 'Store Name'),
                       textInputAction: TextInputAction.next,
@@ -276,6 +299,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('phoneNumber'),
                       decoration: InputDecoration(labelText: 'phoneNumber'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.phone,
@@ -319,6 +343,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('storeAddress'),
                       decoration: InputDecoration(labelText: 'Address'),
                       controller: OpenOnlineStorePipeline._controller,
                       onTap: () => showDialog(
@@ -359,6 +384,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
                 itemBuilder: (context, index) => CheckboxListTile(
+                  key: Key("store_category_$index"),
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
@@ -590,6 +616,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         return Column(
           children: [
             ElevatedButton(
+              key: const Key('add_product'),
               child: const Text('Add Product'),
               onPressed: _showAddProduct,
             ),
@@ -648,86 +675,101 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ),
         ),
         body: _isLoading
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      child: Text(
-                          "We are opening your store, it might take a few seconds...",
-                          textAlign: TextAlign.center),
-                    )
-                  ],
-                ),
-              )
-            : Container(
-                child: Column(
-                  children: [
-                    IconStepper(
-                      icons: [
-                        Icon(Icons.info),
-                        Icon(Icons.tag),
-                        Icon(Icons.access_time),
-                        Icon(Icons.add_shopping_cart_rounded),
-                        Icon(Icons.account_balance),
-                        Icon(Icons.storefront),
+            ? ListView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                children: [Center(
+                  child: SizedBox(
+                    height: deviceSize.height * 0.3,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(
+                              "We are opening your store, it might take a few seconds...",
+                              textAlign: TextAlign.center),
+                        )
                       ],
-                      // activeStep property set to activeStep variable defined above.
-                      activeStep: _currentStep,
-                      steppingEnabled: false,
-                      enableStepTapping: false,
-                      enableNextPreviousButtons: false,
-                      activeStepColor: Theme.of(context).primaryColor,
-                      // This ensures step-tapping updates the activeStep.
-                      onStepReached: (index) {
-                        setState(() {
-                          _currentStep = index;
-                        });
-                      },
                     ),
-                    currentStepWidget()!,
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _currentStep > 0
-                                  ? CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      child: IconButton(
-                                        color: Colors.black54,
-                                        onPressed: cancel,
-                                        icon: Icon(Icons.arrow_back),
-                                      ),
-                                    )
-                                  : Container(),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: IconButton(
-                                  color: Colors.black54,
-                                  onPressed: continued,
-                                  icon: Icon(_currentStep < 5
-                                      ? Icons.arrow_forward
-                                      : Icons.done),
-                                ),
-                              )
-                            ],
+                  ),
+                ),
+              ],
+            )
+            : ListView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                children: [ Container(
+                child: SizedBox(
+                  height: deviceSize.height * 0.8,
+                  child: Column(
+                    children: [
+                      IconStepper(
+                        icons: [
+                          Icon(Icons.info),
+                          Icon(Icons.tag),
+                          Icon(Icons.access_time),
+                          Icon(Icons.add_shopping_cart_rounded),
+                          Icon(Icons.account_balance),
+                          Icon(Icons.storefront),
+                        ],
+                        // activeStep property set to activeStep variable defined above.
+                        activeStep: _currentStep,
+                        steppingEnabled: false,
+                        enableStepTapping: false,
+                        enableNextPreviousButtons: false,
+                        activeStepColor: Theme.of(context).primaryColor,
+                        // This ensures step-tapping updates the activeStep.
+                        onStepReached: (index) {
+                          setState(() {
+                            _currentStep = index;
+                          });
+                        },
+                      ),
+                      currentStepWidget()!,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _currentStep > 0
+                                    ? CircleAvatar(
+                                        radius: 25,
+                                        backgroundColor:
+                                            Theme.of(context).primaryColor,
+                                        child: IconButton(
+                                          color: Colors.black54,
+                                          onPressed: cancel,
+                                          icon: Icon(Icons.arrow_back),
+                                        ),
+                                      )
+                                    : Container(),
+                                CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor: Theme.of(context).primaryColor,
+                                  child: IconButton(
+                                    key: const Key("continue_button"),
+                                    color: Colors.black54,
+                                    onPressed: continued,
+                                    icon: Icon(_currentStep < 5
+                                        ? Icons.arrow_forward
+                                        : Icons.done),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
+         ],
+        ),
       ),
     );
   }

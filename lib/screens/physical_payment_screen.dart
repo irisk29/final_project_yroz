@@ -250,6 +250,16 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                   if (value!.isEmpty) {
                     return 'Please enter a number.';
                   }
+                  if (value != null &&
+                      value.isNotEmpty &&
+                      double.parse(value) < 0) {
+                    return 'Please enter a positive amount';
+                  }
+                  if (value != null &&
+                      value.isNotEmpty &&
+                      double.parse(value) > _initValues['cashback']!) {
+                    return 'You do not have enough cashback';
+                  }
                   return null;
                 },
                 onChanged: (value) {
