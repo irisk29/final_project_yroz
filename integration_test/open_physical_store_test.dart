@@ -82,7 +82,10 @@ void main() {
       await tester.enterText(fab, "Ashdod, Israel");
       await tester.pumpAndSettle();
 
-      fab = find.widgetWithIcon(IconButton, Icons.arrow_forward); //move forward from one form to another
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
@@ -110,6 +113,9 @@ void main() {
       fab = find.byKey(Key('account_number'));
       await tester.enterText(fab, "123456789");
       await tester.pump();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
 
       fab = find.byKey(Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);

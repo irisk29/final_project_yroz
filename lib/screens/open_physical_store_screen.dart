@@ -605,7 +605,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [Center(
                   child: SizedBox(
-                    height: 200,
+                    height: deviceSize.height * 0.3,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -626,7 +626,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               children: [Container(
                   child: SizedBox(
-                    height: 700,
+                    height: deviceSize.height * 0.9,
                     child: Column(
                       children: [
                         IconStepper(

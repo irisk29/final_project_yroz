@@ -3,7 +3,9 @@ import 'package:final_project_yroz/screens/categories_screen.dart';
 import 'package:final_project_yroz/widgets/tabs_app_bar.dart';
 import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../LogicLayer/User.dart';
 import 'favorite_screen.dart';
 import 'map_screen.dart';
 
