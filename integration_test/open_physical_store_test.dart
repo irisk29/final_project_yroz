@@ -1,14 +1,18 @@
 import 'dart:io';
 
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
+import 'package:final_project_yroz/models/PhysicalStoreModel.dart';
 import 'package:final_project_yroz/widgets/default_store_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +24,7 @@ import 'package:mockito/mockito.dart';
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
 void main() {
+  bool configured = false;
   takeScreenshot(tester, binding) async {
     if (Platform.isAndroid) {
       await binding.convertFlutterSurfaceToImage();
@@ -29,16 +34,19 @@ void main() {
   }
 
   Future<void> _configureAmplify() async {
-    Amplify.addPlugin(AmplifyAuthCognito());
-    Amplify.addPlugin(AmplifyStorageS3());
-    Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
-    //Amplify.addPlugin(AmplifyAPI());
+    if (!configured) {
+      Amplify.addPlugin(AmplifyAuthCognito());
+      Amplify.addPlugin(AmplifyStorageS3());
+      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
+      Amplify.addPlugin(AmplifyAPI());
 
-    // Amplify can only be configured once.
-    try {
-      await Amplify.configure(amplifyconfig);
-    } on AmplifyAlreadyConfiguredException {
-      print("Amplify was already configured. Was the app restarted?");
+      // Amplify can only be configured once.
+      try {
+        await Amplify.configure(amplifyconfig);
+        configured = true;
+      } on AmplifyAlreadyConfiguredException {
+        print("Amplify was already configured. Was the app restarted?");
+      }
     }
   }
 
@@ -55,6 +63,11 @@ void main() {
       await Amplify.DataStore.save(currUser);
       mockObserver = MockNavigatorObserver();
       return Future(() => print("starting test.."));
+    });
+
+    tearDown(() async {
+      var res = await UsersStorageProxy().deleteUser("test@gmail.com");
+      print("in tear down: ${res.getMessage()}");
     });
 
     testWidgets('open physical store - positive scenario', (WidgetTester tester) async {
@@ -149,7 +162,7 @@ void main() {
       await tester.pump();
 
       fab = find.byKey(Key('phoneNumber'));
-      await tester.enterText(fab, "0123456789");
+      await tester.enterText(fab, "+1234567"); //wrong phone format
       await tester.pump();
 
       fab = find.byKey(Key('storeAddress'));
@@ -199,16 +212,25 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
+      await Amplify.DataStore.clear();
+      await Amplify.DataStore.start();
+      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
+        if (msg.eventName == 'ready') {
+          print("ready to check");
+          List<StoreDTO> physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
+          assert(physicalStores.isEmpty);
+          print("finished check");
+        } else {
+          print("Not ready yet");
+        }
+      });
+      await Future.delayed(Duration(seconds: 10));
+
       await tester.tap(find.byKey(Key("tutorial_okay_button"))); //tap the alert dialog for the store owner
       await tester.pumpAndSettle();
 
-      // Verify the store was created
-      expect(find.byType(StoreItem), findsOneWidget);
-      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
-      assert(storeOwnerRes.getTag() == true);
-      StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
-      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null);
-      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!.isNotEmpty);
+      expect(find.byType(StoreItem), findsNothing); // no store should apear because the open was not succssefull
+      
     });
   });
 }
