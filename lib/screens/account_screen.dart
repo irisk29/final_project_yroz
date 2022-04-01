@@ -8,6 +8,8 @@ import 'open_online_store_screen.dart';
 import 'open_physical_store_screen.dart';
 
 class AccountScreen extends StatefulWidget {
+  const AccountScreen();
+
   @override
   _AccountScreenState createState() => _AccountScreenState();
 }

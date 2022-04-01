@@ -98,49 +98,80 @@ class InvoiceScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("Product"),
-                                      Text("Price"),
-                                      Text("Amount"),
-                                      Text("Subtotal")
+                                      Container(
+                                        width: constraints.maxWidth * 0.35,
+                                        child: Text("Product"),
+                                      ),
+                                      Container(
+                                        width: constraints.maxWidth * 0.13,
+                                        child: Text("Price"),
+                                      ),
+                                      Container(
+                                        width: constraints.maxWidth * 0.18,
+                                        child: Text("Amount"),
+                                      ),
+                                      Text("Subtotal"),
                                     ],
                                   ),
                                   Divider(height: 0),
                                   shoppingBag != null
-                                      ? ListView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          shrinkWrap: true,
-                                          itemCount:
-                                              shoppingBag!.products.length,
-                                          itemBuilder: (context, index) {
-                                            final product =
-                                                shoppingBag!.products[index];
-                                            return Padding(
-                                              padding: EdgeInsets.only(
-                                                  bottom:
-                                                      constraints.maxHeight *
-                                                          0.02),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(product.name),
-                                                  Text("\€" +
-                                                      product.price
-                                                          .toStringAsFixed(1)),
-                                                  Text(product.amount
-                                                      .toString()),
-                                                  Text("\€" +
-                                                      (product.price *
-                                                              product.amount)
-                                                          .toStringAsFixed(1))
-                                                ],
-                                              ),
-                                            );
-                                          },
+                                      ? ConstrainedBox(
+                                          constraints: new BoxConstraints(
+                                            minHeight:
+                                                constraints.maxHeight * 0.3,
+                                            maxHeight:
+                                                constraints.maxHeight * 0.3,
+                                          ),
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.vertical,
+                                            physics:
+                                                AlwaysScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                shoppingBag!.products.length,
+                                            itemBuilder: (context, index) {
+                                              final product =
+                                                  shoppingBag!.products[index];
+                                              return Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom:
+                                                        constraints.maxHeight *
+                                                            0.02),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                        width: constraints
+                                                                .maxWidth *
+                                                            0.35,
+                                                        child:
+                                                            Text(product.name)),
+                                                    Container(
+                                                      width:
+                                                          constraints.maxWidth *
+                                                              0.14,
+                                                      child: Text("\€" +
+                                                          product.price
+                                                              .toStringAsFixed(
+                                                                  1)),
+                                                    ),
+                                                    Container(
+                                                      width:
+                                                          constraints.maxWidth *
+                                                              0.18,
+                                                      child: Text(product.amount
+                                                          .toString()),
+                                                    ),
+                                                    Text("\€" +
+                                                        (product.price *
+                                                                product.amount)
+                                                            .toStringAsFixed(
+                                                                1)),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         )
                                       : Container(),
                                   Container(
@@ -302,7 +333,10 @@ class InvoiceScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).popUntil((route) => false);
-                        Navigator.of(context).pushNamed(TabsScreen.routeName);
+                        Navigator.of(context).pushNamed(
+                          TabsScreen.routeName,
+                          arguments: {'index': 3},
+                        );
                       },
                       child: Icon(Icons.close, color: Colors.white, size: 20),
                       style: ElevatedButton.styleFrom(

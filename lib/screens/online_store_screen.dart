@@ -12,7 +12,6 @@ class OnlineStoreScreen extends StatefulWidget {
   static const routeName = '/online-store';
 
   late OnlineStoreDTO store;
-  //late User user;
 
   @override
   _OnlineStoreScreenState createState() => _OnlineStoreScreenState();
@@ -20,16 +19,10 @@ class OnlineStoreScreen extends StatefulWidget {
 
 class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     final routeArgs =
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
-    //widget.user = routeArgs['user'] as User;
     super.didChangeDependencies();
   }
 
