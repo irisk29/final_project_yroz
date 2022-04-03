@@ -40,7 +40,9 @@ class HomeAppBar {
         padding: EdgeInsets.only(
           left: deviceSize.width * 0.03,
         ),
-        child: Image.asset('assets/icon/yroz-removebg.png'),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Image.asset('assets/icon/yroz-removebg.png')),
       ),
       leadingWidth: deviceSize.width * 0.37,
       toolbarHeight: deviceSize.height * 0.1,

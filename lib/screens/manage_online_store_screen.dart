@@ -60,8 +60,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
           children: [
             Center(
               child: Container(
-                width: 150,
-                height: 150,
+                height: deviceSize.height * 0.3,
                 decoration: BoxDecoration(
                   image: widget.store.image != null
                       ? DecorationImage(
@@ -90,7 +89,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     onTap: () => Navigator.of(context)
                         .pushNamed(EditOnlineStorePipeline.routeName),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                     leading: Icon(
                       Icons.account_balance,
@@ -101,7 +100,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     onTap: () => Navigator.of(context)
                         .pushNamed(EditBankAccountScreen.routeName),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                     leading: Stack(
                       children: <Widget>[
@@ -140,7 +139,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     onTap: () => Navigator.of(context)
                         .pushNamed(StorePurchasesScreen.routeName),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                     leading: Icon(
                       Icons.qr_code_2_sharp,
@@ -166,7 +165,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                               ),
                             )),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                       leading: Icon(
                         Icons.arrow_circle_down,
@@ -190,7 +189,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                 primary: Colors.red,
               ),
               child: Container(
-                margin: const EdgeInsets.all(12),
+                margin: EdgeInsets.all(deviceSize.width * 0.025),
                 child: const Text(
                   'DELETE STORE',
                   style: TextStyle(
@@ -210,10 +209,10 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
     );
   }
 
-  Container _buildDivider() {
+  Container _buildDivider(Size deviceSize) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 8.0,
+      margin: EdgeInsets.symmetric(
+        horizontal: deviceSize.width * 0.03,
       ),
       width: double.infinity,
       height: 1.0,

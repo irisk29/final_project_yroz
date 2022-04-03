@@ -16,6 +16,12 @@ class _CashbackSelectionState extends State<CashbackSelection> {
   var _expanded = true;
 
   @override
+  void initState() {
+    myController.text = widget.cashbackAmount.toStringAsFixed(1);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
@@ -35,10 +41,9 @@ class _CashbackSelectionState extends State<CashbackSelection> {
             trailing: IconButton(
               icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
               onPressed: () async {
-                if (!_expanded || (_expanded && myController.text.isEmpty))
-                  setState(() {
-                    _expanded = !_expanded;
-                  });
+                setState(() {
+                  _expanded = !_expanded;
+                });
               },
             ),
           ),

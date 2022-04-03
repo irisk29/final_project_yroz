@@ -10,6 +10,7 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+
     return AnimatedSplashScreen(
       splash: 'assets/icon/icon.png',
       animationDuration: Duration(milliseconds: 1500),

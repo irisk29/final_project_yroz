@@ -1,6 +1,5 @@
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
-import 'package:final_project_yroz/widgets/default_store_item.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/secondary_store_item.dart';
@@ -36,10 +35,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: deviceSize.height * 0.1,
-        title: Text(
-          widget.title + " Category",
-          style: const TextStyle(
-            fontSize: 24,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            widget.title + " Category",
+            style: const TextStyle(
+              fontSize: 24,
+            ),
           ),
         ),
       ),
@@ -56,16 +58,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            radius: 45.0,
+                            radius: deviceSize.width * 0.11,
                             backgroundColor: Theme.of(context).primaryColor,
                             child: CircleAvatar(
                               backgroundColor: Colors.white,
                               child: Icon(Icons.category_outlined, size: 40),
-                              radius: 40.0,
+                              radius: deviceSize.width * 0.1,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(deviceSize.height * 0.01),
                             child: Text(widget.title + " Category",
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),

@@ -2,11 +2,9 @@ import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
-import 'package:final_project_yroz/widgets/badge.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'cart_screen.dart';
 
 class OnlineStoreScreen extends StatefulWidget {
   static const routeName = '/online-store';
@@ -58,7 +56,6 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    //String hour = DateFormat('Hm').format(DateTime.now());
     for (MapEntry<String, List<TimeOfDay>> e
         in widget.store.operationHours.entries) {
       if (e.key == day) {
@@ -209,7 +206,9 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               onTap: null,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
+              padding: EdgeInsets.only(
+                  left: deviceSize.width * 0.02,
+                  right: deviceSize.width * 0.02),
               child: Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -219,7 +218,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                     ),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(deviceSize.width * 0.03),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -235,17 +234,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                               children: <InlineSpan>[
                                 WidgetSpan(
                                   alignment: PlaceholderAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Icon(
-                                      Icons.circle,
-                                      color: Colors.green,
-                                      size: 10,
-                                    ),
+                                  child: Icon(
+                                    Icons.circle,
+                                    color: Colors.green,
+                                    size: 10,
                                   ),
                                 ),
                                 TextSpan(
-                                    text: 'No Expiration Date',
+                                    text: ' No Expiration Date',
                                     style: TextStyle(fontSize: 12)),
                               ],
                             ),
@@ -269,7 +265,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               onTap: null,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+              padding: EdgeInsets.only(
+                  left: deviceSize.width * 0.02,
+                  right: deviceSize.width * 0.02,
+                  bottom: deviceSize.width * 0.02),
               child: Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -279,12 +278,9 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                     ),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      "Visit Our Online Shop",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                  title: Text(
+                    "Visit Our Online Shop",
+                    style: TextStyle(fontSize: 16),
                   ),
                   onTap: () => routeToOnlineStoreProducts(context),
                   trailing: Icon(Icons.keyboard_arrow_right),

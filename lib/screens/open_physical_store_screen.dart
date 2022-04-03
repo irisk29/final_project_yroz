@@ -45,24 +45,24 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
 
   //for test purposes
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
-    routes: {
-      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-      TutorialScreen.routeName: (ctx) => TutorialScreen(),
-    },
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User("test@gmail.com", "test name"),
+        routes: {
+          TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+          TutorialScreen.routeName: (ctx) => TutorialScreen(),
+        },
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User("test@gmail.com", "test name"),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-    // This mocked observer will now receive all navigation events
-    // that happen in our app.
-    navigatorObservers: nav,
-  );
+        // This mocked observer will now receive all navigation events
+        // that happen in our app.
+        navigatorObservers: nav,
+      );
 }
 
 class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
@@ -139,8 +139,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           controller: OpenPhysicalStorePipeline._controller,
           builder: AddressDialogBuilder(),
           onDone: (Address address) => address);
-      // final user = ModalRoute.of(context)!.settings.arguments as User?;
-      // widget.user = user;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -216,7 +214,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     }
   }
 
-  Widget? currentStepWidget() {
+  Widget? currentStepWidget(Size deviceSize) {
     switch (_currentStep) {
       case 0:
         return Column(
@@ -227,7 +225,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Form(
                 key: _detailsform,
                 child: Column(
@@ -330,7 +328,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
             ),
             Divider(height: 0),
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: deviceSize.height * 0.5,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
@@ -370,7 +368,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Column(
                 children: [
                   Row(
@@ -594,105 +592,118 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
-          title: Text(
-            'Open Physical Store',
-            style: const TextStyle(fontSize: 22),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Open Physical Store',
+              style: const TextStyle(fontSize: 22),
+            ),
           ),
         ),
         resizeToAvoidBottomInset: false,
         body: _isLoading
             ? ListView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: [Center(
-                  child: SizedBox(
-                    height: deviceSize.height * 0.3,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          child: Text(
-                              "We are opening your store, it might take a few seconds...",
-                              textAlign: TextAlign.center),
-                        )
-                      ],
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      height: deviceSize.height * 0.3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          Container(
+                            width: deviceSize.width * 0.6,
+                            child: Text(
+                                "We are opening your store, it might take a few seconds...",
+                                textAlign: TextAlign.center),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                )],
-            )
+                  )
+                ],
+              )
             : ListView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: [Container(
-                  child: SizedBox(
-                    height: deviceSize.height * 0.8,
-                    child: Column(
-                      children: [
-                        IconStepper(
-                          icons: [
-                            Icon(Icons.info),
-                            Icon(Icons.tag),
-                            Icon(Icons.access_time),
-                            Icon(Icons.account_balance),
-                            Icon(Icons.storefront),
-                          ],
-                          // activeStep property set to activeStep variable defined above.
-                          activeStep: _currentStep,
-                          steppingEnabled: false,
-                          enableStepTapping: false,
-                          enableNextPreviousButtons: false,
-                          activeStepColor: Theme.of(context).primaryColor,
-                          // This ensures step-tapping updates the activeStep.
-                          onStepReached: (index) {
-                            setState(() {
-                              _currentStep = index;
-                            });
-                          },
-                        ),
-                        currentStepWidget()!,
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                children: [
+                  Container(
+                    child: SizedBox(
+                      height: deviceSize.height * 0.8,
+                      child: Column(
+                        children: [
+                          IconStepper(
+                            icons: [
+                              Icon(Icons.info),
+                              Icon(Icons.tag),
+                              Icon(Icons.access_time),
+                              Icon(Icons.account_balance),
+                              Icon(Icons.storefront),
+                            ],
+                            // activeStep property set to activeStep variable defined above.
+                            activeStep: _currentStep,
+                            steppingEnabled: false,
+                            enableStepTapping: false,
+                            enableNextPreviousButtons: false,
+                            activeStepColor: Theme.of(context).primaryColor,
+                            // This ensures step-tapping updates the activeStep.
+                            onStepReached: (index) {
+                              setState(() {
+                                _currentStep = index;
+                              });
+                            },
+                          ),
+                          currentStepWidget(deviceSize)!,
+                          Expanded(
                             child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _currentStep > 0
-                                      ? CircleAvatar(
-                                          radius: 25,
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
-                                          child: IconButton(
-                                            color: Colors.black54,
-                                            onPressed: cancel,
-                                            icon: Icon(Icons.arrow_back),
-                                          ),
-                                        )
-                                      : Container(),
-                                  CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor: Theme.of(context).primaryColor,
-                                    child: IconButton(
-                                      key: const Key("continue_button"),
-                                      color: Colors.black54,
-                                      onPressed: continued,
-                                      icon: Icon(_currentStep < 4
-                                          ? Icons.arrow_forward
-                                          : Icons.done),
-                                    ),
-                                  )
-                                ],
+                              alignment: FractionalOffset.bottomCenter,
+                              child: Padding(
+                                padding:
+                                    EdgeInsets.all(deviceSize.height * 0.025),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    _currentStep > 0
+                                        ? CircleAvatar(
+                                            radius: 25,
+                                            backgroundColor:
+                                                Theme.of(context).primaryColor,
+                                            child: IconButton(
+                                              color: Colors.black54,
+                                              onPressed: cancel,
+                                              icon: Icon(Icons.arrow_back),
+                                            ),
+                                          )
+                                        : Container(),
+                                    CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      child: IconButton(
+                                        key: const Key("continue_button"),
+                                        color: Colors.black54,
+                                        onPressed: continued,
+                                        icon: Icon(_currentStep < 4
+                                            ? Icons.arrow_forward
+                                            : Icons.done),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                )],
-            ),
+                  )
+                ],
+              ),
       ),
     );
   }

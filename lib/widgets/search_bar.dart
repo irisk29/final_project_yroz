@@ -26,7 +26,6 @@ class _SearchBarState extends State<SearchBar> {
       borderRadius: BorderRadius.circular(20.0),
       automaticallyImplyDrawerHamburger: false,
       automaticallyImplyBackButton: false,
-      scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
       transitionCurve: Curves.easeInOut,
       physics: const BouncingScrollPhysics(),
       openAxisAlignment: 0.0,

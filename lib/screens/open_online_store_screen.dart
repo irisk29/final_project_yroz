@@ -120,8 +120,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           controller: OpenOnlineStorePipeline._controller,
           builder: AddressDialogBuilder(),
           onDone: (Address address) => address);
-      // final user = ModalRoute.of(context)!.settings.arguments as User?;
-      // widget.user = user;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -201,11 +199,11 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   static const productsLimitation = 10;
   void _showAddProduct() async {
     if (_products.length < productsLimitation) {
-      final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
+      final Tuple2<ProductDTO?, OnlineStoreDTO?>? result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
-      if (result.item1 != null) {
+      if (result != null && result.item1 != null) {
         setState(() {
           _editedStore = result.item2;
           _products.add(result.item1!);
@@ -234,7 +232,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     }
   }
 
-  Widget? currentStepWidget() {
+  Widget? currentStepWidget(Size deviceSize) {
     switch (_currentStep) {
       case 0:
         return Column(
@@ -245,7 +243,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Form(
                 key: _detailsform,
                 child: Column(
@@ -373,7 +371,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: deviceSize.height * 0.5,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
@@ -412,7 +410,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Column(
                 children: [
                   Row(
@@ -661,9 +659,12 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
-          title: Text(
-            'Open Online Store',
-            style: const TextStyle(fontSize: 22),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Open Online Store',
+              style: const TextStyle(fontSize: 22),
+            ),
           ),
         ),
         body: _isLoading
@@ -674,7 +675,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                   children: [
                     CircularProgressIndicator(),
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
+                      width: deviceSize.width * 0.6,
                       child: Text(
                           "We are opening your store, it might take a few seconds...",
                           textAlign: TextAlign.center),
@@ -707,13 +708,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                         });
                       },
                     ),
-                    currentStepWidget()!,
+                    currentStepWidget(deviceSize)!,
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
+                      child: Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: Padding(
+                          padding: EdgeInsets.all(deviceSize.height * 0.025),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _currentStep > 0
@@ -738,7 +740,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                       ? Icons.arrow_forward
                                       : Icons.done),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),

@@ -21,17 +21,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _descriptionFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   XFile? _pickedImage = null;
-  
+
   ProductDTO? _editedProduct = ProductDTO(
-    id: '',
-    name: '',
-    price: 0,
-    description: '',
-    imageUrl: '',
-    category: '',
-    storeID: '',
-    imageFromPhone: null
-  );
+      id: '',
+      name: '',
+      price: 0,
+      description: '',
+      imageUrl: '',
+      category: '',
+      storeID: '',
+      imageFromPhone: null);
 
   var _isInit = true;
   var _isLoading = false;
@@ -69,27 +68,33 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   Future<void> _saveForm() async {
-    final isValid = _form.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
-    _form.currentState!.save();
     setState(() {
       _isLoading = true;
     });
 
+    final isValid = _form.currentState!.validate();
+    if (isValid) {
+      _form.currentState!.save();
+      Navigator.of(context).pop(_editedProduct);
+    }
+
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop(_editedProduct);
   }
 
   @override
   Widget build(BuildContext context) {
+    var deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Edit Product',
+        toolbarHeight: deviceSize.height * 0.1,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Edit Product',
+          ),
         ),
         actions: <Widget>[
           IconButton(
@@ -111,12 +116,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
               child: CircularProgressIndicator(),
             )
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Form(
                 key: _form,
                 child: ListView(
                   children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage, _pickedImage, false),
+                    ImageInput(
+                        _selectImage, _unselectImage, _pickedImage, false),
                     TextFormField(
                       initialValue: _editedProduct!.name,
                       decoration: InputDecoration(labelText: 'Title'),
@@ -139,7 +145,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -173,7 +181,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -186,22 +196,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         if (value!.isEmpty) {
                           return 'Please enter a description.';
                         }
-                        if (value.length < 10) {
-                          return 'Should be at least 10 characters long.';
-                        }
                         return null;
                       },
                       onSaved: (value) {
                         _editedProduct = ProductDTO(
-                          name: _editedProduct!.name,
-                          price: _editedProduct!.price,
-                          description: value!,
-                          imageUrl: _editedProduct!.imageUrl,
-                          id: _editedProduct!.id,
-                          category: '',
-                          storeID: '',
-                          imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path)
-                        );
+                            name: _editedProduct!.name,
+                            price: _editedProduct!.price,
+                            description: value!,
+                            imageUrl: _editedProduct!.imageUrl,
+                            id: _editedProduct!.id,
+                            category: '',
+                            storeID: '',
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
                       },
                     ),
                   ],
