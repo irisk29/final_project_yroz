@@ -23,26 +23,36 @@ class UsersStorageProxy {
 
   UsersStorageProxy._internal();
 
-  Future<Tuple2<UserModel, bool>> createUser(String email, String name, String imageUrl) async {
-    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
+  Future<Tuple2<UserModel, bool>> createUser(
+      String email, String name, String imageUrl) async {
+    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType,
+        where: UserModel.EMAIL.eq(email));
 
     if (users.isEmpty) //no such user in the DB
     {
-      UserModel userModel = UserModel(email: email, name: name, imageUrl: imageUrl, hideStoreOwnerOptions: false);
+      UserModel userModel = UserModel(
+          email: email,
+          name: name,
+          imageUrl: imageUrl,
+          hideStoreOwnerOptions: true);
       await Amplify.DataStore.save(userModel);
       print("Created user and saved to DB");
       FLog.info(text: "Created user with id ${userModel.id}");
       return Tuple2<UserModel, bool>(userModel, true);
     }
     var user = users.first;
-    return Tuple2<UserModel, bool>(await createFullUser(user, user.name, user.imageUrl), false);
+    return Tuple2<UserModel, bool>(
+        await createFullUser(user, user.name, user.imageUrl), false);
   }
 
-  Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
+  Future<UserModel> createFullUser(
+      UserModel user, String name, String? imageUrl) async {
     var resStoreOwner = await getStoreOwnerState(user.email);
-    StoreOwnerModel? storeOwner = resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
-    List<ShoppingBagModel> shoppingBags =
-        await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
+    StoreOwnerModel? storeOwner =
+        resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID.eq(user.id));
 
     UserModel fullUser = user.copyWith(
         id: user.id,
@@ -59,7 +69,8 @@ class UsersStorageProxy {
   }
 
   Future<UserModel?> getUser(String email) async {
-    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
+    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType,
+        where: UserModel.EMAIL.eq(email));
 
     return users.isEmpty ? null : users.first;
   }
@@ -93,21 +104,28 @@ class UsersStorageProxy {
       FLog.error(text: "No such user - $emailCurrUser");
       return new Failure("current user model is null", emailCurrUser);
     }
-    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(StoreOwnerModel.classType,
+    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
+        StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
     if (storeOwners.isEmpty) {
-      FLog.warning(text: "The current user $emailCurrUser does not have store owner state");
+      FLog.warning(
+          text:
+              "The current user $emailCurrUser does not have store owner state");
       return new Failure("There is no store owner state", null);
     }
     var storeOwner = storeOwners.first;
-    var onlinestore = await StoreStorageProxy().fetchOnlineStore(storeOwner.storeOwnerModelOnlineStoreModelId);
-    var physicalstore = await StoreStorageProxy().fetchPhysicalStore(storeOwner.storeOwnerModelPhysicalStoreModelId);
+    var onlinestore = await StoreStorageProxy()
+        .fetchOnlineStore(storeOwner.storeOwnerModelOnlineStoreModelId);
+    var physicalstore = await StoreStorageProxy()
+        .fetchPhysicalStore(storeOwner.storeOwnerModelPhysicalStoreModelId);
 
     var fullStoreOwner = storeOwner.copyWith(
       onlineStoreModel: onlinestore,
       physicalStoreModel: physicalstore,
-      storeOwnerModelPhysicalStoreModelId: physicalstore == null ? null : physicalstore.id,
-      storeOwnerModelOnlineStoreModelId: onlinestore == null ? null : onlinestore.id,
+      storeOwnerModelPhysicalStoreModelId:
+          physicalstore == null ? null : physicalstore.id,
+      storeOwnerModelOnlineStoreModelId:
+          onlinestore == null ? null : onlinestore.id,
     );
     return new Ok("Got store owner succssefully", fullStoreOwner);
   }
@@ -119,11 +137,14 @@ class UsersStorageProxy {
       FLog.error(text: "No such user - $emailCurrUser");
       return new Failure("current user model is null ", emailCurrUser);
     }
-    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(StoreOwnerModel.classType,
+    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
+        StoreOwnerModel.classType,
         where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
     var storeOwner = storeOwners.isEmpty ? null : storeOwners.first;
     if (storeOwner == null) {
-      FLog.warning(text: "The current user $emailCurrUser does not have store owner state");
+      FLog.warning(
+          text:
+              "The current user $emailCurrUser does not have store owner state");
       return new Failure("No store owner state", emailCurrUser);
     }
     await Amplify.DataStore.delete(storeOwner);
@@ -131,18 +152,22 @@ class UsersStorageProxy {
     return new Ok("Deleted store owner state succssefully", storeOwner.id);
   }
 
-  Future<ResultInterface> updateUserNameOrUrl(String newName, String newImageUrl) async {
+  Future<ResultInterface> updateUserNameOrUrl(
+      String newName, String newImageUrl) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
-      FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+      FLog.error(
+          text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
       return new Failure("No user was found", null);
     }
     var nameUpdate = newName.isEmpty ? user.name : newName;
     var urlUpdate = newImageUrl.isEmpty ? user.imageUrl : newImageUrl;
     var fullUser = await createFullUser(user, nameUpdate, urlUpdate);
     await Amplify.DataStore.save(fullUser);
-    FLog.info(text: "new name $newName or new image url $newImageUrl was updated");
-    return new Ok("new name $newName or new image url $newImageUrl was updated", user.id);
+    FLog.info(
+        text: "new name $newName or new image url $newImageUrl was updated");
+    return new Ok(
+        "new name $newName or new image url $newImageUrl was updated", user.id);
   }
 
   static String toJsonFromTupleList(List<Tuple2<String, bool>> tuples) {
@@ -174,19 +199,24 @@ class UsersStorageProxy {
     return newTuples;
   }
 
-  Future<ResultInterface> addFavoriteStore(String storeID, bool isOnline) async {
+  Future<ResultInterface> addFavoriteStore(
+      String storeID, bool isOnline) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
-      FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+      FLog.error(
+          text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
       return new Failure("No user was found", null);
     }
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
-      List<Tuple2<String, bool>> fav = fromJsonToTupleList(user.favoriteStores!);
+      List<Tuple2<String, bool>> fav =
+          fromJsonToTupleList(user.favoriteStores!);
       if (fav.isNotEmpty) {
-        if (fav.firstWhereOrNull((element) => element.item1 == storeID) != null) {
+        if (fav.firstWhereOrNull((element) => element.item1 == storeID) !=
+            null) {
           FLog.error(text: "The store $storeID is already a favorite");
-          return new Failure("The store $storeID is already a favorite", storeID);
+          return new Failure(
+              "The store $storeID is already a favorite", storeID);
         }
       }
       fav.add(Tuple2<String, bool>(storeID, isOnline));
@@ -195,25 +225,31 @@ class UsersStorageProxy {
       );
       await Amplify.DataStore.save(updatedUser);
       FLog.info(text: "Added succssefully store $storeID to user's favorite");
-      return new Ok("Added succssefully store $storeID to user's favorite", fav);
+      return new Ok(
+          "Added succssefully store $storeID to user's favorite", fav);
     }
     var updatedUser = user.copyWith(
-      favoriteStores: toJsonFromTupleList([Tuple2<String, bool>(storeID, isOnline)]),
+      favoriteStores:
+          toJsonFromTupleList([Tuple2<String, bool>(storeID, isOnline)]),
     );
     await Amplify.DataStore.save(updatedUser);
     FLog.info(text: "Added succssefully store $storeID to user's favorite");
-    return new Ok("Added succssefully store $storeID to user's favorite", [Tuple2<String, bool>(storeID, isOnline)]);
+    return new Ok("Added succssefully store $storeID to user's favorite",
+        [Tuple2<String, bool>(storeID, isOnline)]);
   }
 
-  Future<ResultInterface> removeFavoriteStore(String storeID, bool isOnline) async {
+  Future<ResultInterface> removeFavoriteStore(
+      String storeID, bool isOnline) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
-      FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+      FLog.error(
+          text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
       return new Failure("No user was found", null);
     }
     var favoriteStores = user.favoriteStores;
     if (favoriteStores != null) {
-      List<Tuple2<String, bool>> fav = fromJsonToTupleList(user.favoriteStores!);
+      List<Tuple2<String, bool>> fav =
+          fromJsonToTupleList(user.favoriteStores!);
       if (fav.firstWhereOrNull((element) => element.item1 == storeID) == null) {
         FLog.error(text: "The store $storeID is not a favorite");
         return new Failure("The store $storeID is not a favorite", storeID);
@@ -223,16 +259,21 @@ class UsersStorageProxy {
         favoriteStores: toJsonFromTupleList(fav),
       );
       await Amplify.DataStore.save(updatedUser);
-      FLog.info(text: "Removed succssefully store $storeID from user's favorite");
-      return new Ok("Removed succssefully store $storeID from user's favorite", fav);
+      FLog.info(
+          text: "Removed succssefully store $storeID from user's favorite");
+      return new Ok(
+          "Removed succssefully store $storeID from user's favorite", fav);
     }
-    FLog.error(text: "There is no favorite stores list from current user ${user.id}");
-    return Failure("There is no favorite stores list from current user ${user.id}", null);
+    FLog.error(
+        text: "There is no favorite stores list from current user ${user.id}");
+    return Failure(
+        "There is no favorite stores list from current user ${user.id}", null);
   }
 
-  Future<ResultInterface> addProductToShoppingBag(
-      ProductDTO productDTO, String storeID, double quantity, String userID) async {
-    var shoppingBagRes = await getOrCreateUserShoppingBagPerStore(storeID, userID);
+  Future<ResultInterface> addProductToShoppingBag(ProductDTO productDTO,
+      String storeID, double quantity, String userID) async {
+    var shoppingBagRes =
+        await getOrCreateUserShoppingBagPerStore(storeID, userID);
     if (!shoppingBagRes.getTag()) return shoppingBagRes;
     ShoppingBagModel shoppingBag = shoppingBagRes.getValue();
     CartProductModel item = CartProductModel(
@@ -245,37 +286,63 @@ class UsersStorageProxy {
         amount: quantity,
         shoppingbagmodelID: shoppingBag.id);
     await Amplify.DataStore.save(item);
-    List<CartProductModel> productsList = shoppingBag.CartProductModels == null ? [] : shoppingBag.CartProductModels!;
+    List<CartProductModel> productsList = shoppingBag.CartProductModels == null
+        ? []
+        : shoppingBag.CartProductModels!;
     productsList.add(item);
-    var shoppingBagWithNewItem = shoppingBag.copyWith(CartProductModels: productsList);
+    var shoppingBagWithNewItem =
+        shoppingBag.copyWith(CartProductModels: productsList);
     await Amplify.DataStore.save(shoppingBagWithNewItem);
-    FLog.info(text: "Saved shopping bag product(id - ${item.id}) succssesfully");
-    return new Ok("Saved shopping bag product(id - ${item.id}) succssesfully", shoppingBagWithNewItem);
+    FLog.info(
+        text: "Saved shopping bag product(id - ${item.id}) succssesfully");
+    return new Ok("Saved shopping bag product(id - ${item.id}) succssesfully",
+        shoppingBagWithNewItem);
   }
 
-  CartProductDTO converCartProductModelToDTO(
-      CartProductModel model, String storeProductID, String storeID, double quantity) {
-    return CartProductDTO(model.storeProductID!, model.name, model.price, model.categories, model.imageUrl,
-        model.description, quantity, storeID, model.id);
+  CartProductDTO converCartProductModelToDTO(CartProductModel model,
+      String storeProductID, String storeID, double quantity) {
+    return CartProductDTO(
+        model.storeProductID!,
+        model.name,
+        model.price,
+        model.categories,
+        model.imageUrl,
+        model.description,
+        quantity,
+        storeID,
+        model.id);
   }
 
-  Future<ResultInterface> getOrCreateUserShoppingBagPerStore(String storeID, String userID) async {
-    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
-        where: ShoppingBagModel.USERMODELID.eq(userID).and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
+  Future<ResultInterface> getOrCreateUserShoppingBagPerStore(
+      String storeID, String userID) async {
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID
+            .eq(userID)
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
     if (shoppingBags.isEmpty) {
       //first time we add a product in a specific store we create a shopping bag
-      ShoppingBagModel shoppingBagModel = new ShoppingBagModel(usermodelID: userID, onlineStoreID: storeID);
+      ShoppingBagModel shoppingBagModel =
+          new ShoppingBagModel(usermodelID: userID, onlineStoreID: storeID);
       await Amplify.DataStore.save(shoppingBagModel);
-      FLog.info(text: "Created new shopping bag for store $storeID and user $userID");
-      return new Ok("Created new shopping bag for store $storeID and user $userID", shoppingBagModel);
+      FLog.info(
+          text: "Created new shopping bag for store $storeID and user $userID");
+      return new Ok(
+          "Created new shopping bag for store $storeID and user $userID",
+          shoppingBagModel);
     }
     FLog.info(text: "Found shopping bag for store $storeID and user $userID");
-    return new Ok("Found shopping bag for store $storeID and user $userID", shoppingBags[0]);
+    return new Ok("Found shopping bag for store $storeID and user $userID",
+        shoppingBags[0]);
   }
 
-  Future<ResultInterface> getCurrentShoppingBag(String storeID, String userID) async {
-    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
-        where: ShoppingBagModel.USERMODELID.eq(userID).and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
+  Future<ResultInterface> getCurrentShoppingBag(
+      String storeID, String userID) async {
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID
+            .eq(userID)
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
     if (shoppingBags.isEmpty) {
       FLog.error(text: "There is no shopping bag for user $userID");
       return new Failure("There is no shopping bag for user $userID", null);
@@ -285,55 +352,72 @@ class UsersStorageProxy {
   }
 
   Future<ResultInterface> getProductsOfShoppingBag(String shoppingBagID) async {
-    List<CartProductModel> items = await Amplify.DataStore.query(CartProductModel.classType,
+    List<CartProductModel> items = await Amplify.DataStore.query(
+        CartProductModel.classType,
         where: CartProductModel.SHOPPINGBAGMODELID.eq(shoppingBagID));
     if (items.isEmpty) {
       FLog.error(text: "No products in shoppingbag $shoppingBagID");
-      return new Failure("No products in shoppingbag $shoppingBagID", shoppingBagID);
+      return new Failure(
+          "No products in shoppingbag $shoppingBagID", shoppingBagID);
     }
     FLog.info(text: "Found products in shopping bag $shoppingBagID");
     return new Ok("Found products in shopping bag $shoppingBagID", items);
   }
 
-  Future<ResultInterface> convertShoppingBagModelToDTO(ShoppingBagModel shoppingBagModel) async {
+  Future<ResultInterface> convertShoppingBagModelToDTO(
+      ShoppingBagModel shoppingBagModel) async {
     ResultInterface res = await getProductsOfShoppingBag(shoppingBagModel.id);
     if (!res.getTag()) return res;
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
-    ShoppingBagDTO shoppingBag =
-        ShoppingBagDTO(shoppingBagModel.id, shoppingBagModel.usermodelID, shoppingBagModel.onlineStoreID!);
-    List<CartProductDTO> shoppingBagProductsDTO =
-        vals.map((e) => convertCartProductModelToDTO(e, shoppingBagModel.onlineStoreID!)).toList();
+    ShoppingBagDTO shoppingBag = ShoppingBagDTO(shoppingBagModel.id,
+        shoppingBagModel.usermodelID, shoppingBagModel.onlineStoreID!);
+    List<CartProductDTO> shoppingBagProductsDTO = vals
+        .map((e) =>
+            convertCartProductModelToDTO(e, shoppingBagModel.onlineStoreID!))
+        .toList();
     shoppingBag.products = shoppingBagProductsDTO;
     return new Ok("convert was succsseful", shoppingBag);
   }
 
-  CartProductDTO convertCartProductModelToDTO(CartProductModel cartProductModel, String storeID) {
+  CartProductDTO convertCartProductModelToDTO(
+      CartProductModel cartProductModel, String storeID) {
     return CartProductDTO(
         cartProductModel.storeProductID!,
         cartProductModel.name,
         cartProductModel.price,
         jsonDecode(cartProductModel.categories).toString(),
         cartProductModel.imageUrl == null ? "" : cartProductModel.imageUrl!,
-        cartProductModel.description == null ? "" : cartProductModel.description!,
+        cartProductModel.description == null
+            ? ""
+            : cartProductModel.description!,
         cartProductModel.amount,
         storeID,
         cartProductModel.id);
   }
 
-  Future<ResultInterface> removeProductFromShoppingBag(ProductDTO productDTO, String storeID, String userID) async {
-    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
-        where: ShoppingBagModel.USERMODELID.eq(userID).and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
+  Future<ResultInterface> removeProductFromShoppingBag(
+      ProductDTO productDTO, String storeID, String userID) async {
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID
+            .eq(userID)
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
 
     if (shoppingBags.isEmpty) {
-      FLog.error(text: "No shopping bag was found for store $storeID and user $userID");
-      return new Failure("No shopping bag was found for store $storeID and user $userID", null);
+      FLog.error(
+          text:
+              "No shopping bag was found for store $storeID and user $userID");
+      return new Failure(
+          "No shopping bag was found for store $storeID and user $userID",
+          null);
     }
 
     var shoppingBag = shoppingBags.first; //one shopping bag per user per store
     ResultInterface res = await getProductsOfShoppingBag(shoppingBag.id);
     if (!res.getTag()) return res;
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
-    CartProductModel? prodToRemove = vals.firstWhereOrNull((element) => element.id == productDTO.id);
+    CartProductModel? prodToRemove =
+        vals.firstWhereOrNull((element) => element.id == productDTO.id);
     vals.removeWhere((element) => element.id == productDTO.id);
     if (prodToRemove != null) {
       await Amplify.DataStore.delete(prodToRemove);
@@ -342,22 +426,34 @@ class UsersStorageProxy {
     if (vals.isEmpty) // no more products in bag - need to remove bag
     {
       await Amplify.DataStore.delete(shoppingBag);
-      FLog.info(text: "Removed product ${productDTO.id} and shopping bag ${shoppingBag.id}");
-      return Ok("Removed product ${productDTO.id} and shopping bag ${shoppingBag.id}", null);
+      FLog.info(
+          text:
+              "Removed product ${productDTO.id} and shopping bag ${shoppingBag.id}");
+      return Ok(
+          "Removed product ${productDTO.id} and shopping bag ${shoppingBag.id}",
+          null);
     }
     var newShoppingBag = shoppingBag.copyWith(CartProductModels: vals);
     await Amplify.DataStore.save(newShoppingBag);
-    FLog.info(text: "Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}");
-    return new Ok("Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}", newShoppingBag);
+    FLog.info(
+        text:
+            "Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}");
+    return new Ok(
+        "Succssesfully removed product ${productDTO.id} from shopping bag ${shoppingBag.id}",
+        newShoppingBag);
   }
 
-  Future<ResultInterface> updateOrCreateCartProduct(
-      ProductDTO productDTO, String storeID, double quantity, String userID) async {
-    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
-        where: ShoppingBagModel.USERMODELID.eq(userID).and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
-    List<CartProductModel> cartProducts = await Amplify.DataStore.query(CartProductModel.classType,
-        where: CartProductModel.STOREPRODUCTID
-            .eq(productDTO.id)); // check if this product exists in shopping bag in case we already have one
+  Future<ResultInterface> updateOrCreateCartProduct(ProductDTO productDTO,
+      String storeID, double quantity, String userID) async {
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID
+            .eq(userID)
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
+    List<CartProductModel> cartProducts = await Amplify.DataStore.query(
+        CartProductModel.classType,
+        where: CartProductModel.STOREPRODUCTID.eq(productDTO
+            .id)); // check if this product exists in shopping bag in case we already have one
     if (shoppingBags.isEmpty || cartProducts.isEmpty) {
       return addProductToShoppingBag(productDTO, storeID, quantity, userID);
     }
@@ -365,21 +461,30 @@ class UsersStorageProxy {
     var shoppingBag = shoppingBags.first;
     var productsRes = await getProductsOfShoppingBag(shoppingBag.id);
     if (!productsRes.getTag()) return productsRes;
-    CartProductModel? productToUpdate = (productsRes.getValue() as List<CartProductModel>)
+    CartProductModel? productToUpdate = (productsRes.getValue()
+            as List<CartProductModel>)
         .firstWhereOrNull((element) => element.storeProductID == productDTO.id);
     if (productToUpdate == null) {
-      FLog.error(text: "No product was found to update with store product id ${productDTO.id}");
-      return new Failure("No product was found to update with store product id ${productDTO.id}", null);
+      FLog.error(
+          text:
+              "No product was found to update with store product id ${productDTO.id}");
+      return new Failure(
+          "No product was found to update with store product id ${productDTO.id}",
+          null);
     }
 
     var newProd = productToUpdate.copyWith(amount: quantity);
     await Amplify.DataStore.save(newProd);
-    List<CartProductModel> productsList = shoppingBag.CartProductModels == null ? [] : shoppingBag.CartProductModels!;
+    List<CartProductModel> productsList = shoppingBag.CartProductModels == null
+        ? []
+        : shoppingBag.CartProductModels!;
     productsList.add(newProd);
-    var shoppingBagWithNewItem = shoppingBag.copyWith(CartProductModels: productsList);
+    var shoppingBagWithNewItem =
+        shoppingBag.copyWith(CartProductModels: productsList);
     await Amplify.DataStore.save(shoppingBagWithNewItem);
     FLog.error(text: "Updated product ${productDTO.id} succssefully");
-    return new Ok("Updated product ${productDTO.id} succssefully", shoppingBagWithNewItem);
+    return new Ok("Updated product ${productDTO.id} succssefully",
+        shoppingBagWithNewItem);
   }
 
   Future<ResultInterface> saveShoppingBag(ShoppingBagDTO shoppingBagDTO) async {
@@ -393,7 +498,8 @@ class UsersStorageProxy {
 
     List<CartProductModel> removeProducts = [];
     for (var savedProduct in savedProducts) {
-      final products = shoppingBagDTO.products.where((element) => element.id == savedProduct.id);
+      final products = shoppingBagDTO.products
+          .where((element) => element.id == savedProduct.id);
       if (products.isEmpty) {
         removeProducts.add(savedProduct);
         await Amplify.DataStore.delete(savedProduct);
@@ -403,19 +509,22 @@ class UsersStorageProxy {
       savedProducts.remove(p);
     }
 
-    var shoppingBagRes = await getOrCreateUserShoppingBagPerStore(shoppingBagDTO.onlineStoreID, shoppingBagDTO.userId);
+    var shoppingBagRes = await getOrCreateUserShoppingBagPerStore(
+        shoppingBagDTO.onlineStoreID, shoppingBagDTO.userId);
     if (!shoppingBagRes.getTag()) return shoppingBagRes;
     ShoppingBagModel prevShoppingBag = shoppingBagRes.getValue();
 
     List<CartProductModel> shoppingBagProducts = [];
     for (var bagProduct in shoppingBagDTO.products) {
-      final products = savedProducts.where((element) => element.id == bagProduct.id);
+      final products =
+          savedProducts.where((element) => element.id == bagProduct.id);
       CartProductModel updatedProduct;
       if (products.isEmpty)
         updatedProduct = CartProductModel(
             storeProductID: bagProduct.id,
             name: bagProduct.name,
-            categories: JsonEncoder.withIndent('  ').convert(bagProduct.category),
+            categories:
+                JsonEncoder.withIndent('  ').convert(bagProduct.category),
             price: bagProduct.price,
             imageUrl: bagProduct.imageUrl,
             description: bagProduct.description,
@@ -427,23 +536,33 @@ class UsersStorageProxy {
       await Amplify.DataStore.save(updatedProduct);
     }
 
-    ShoppingBagModel shoppingBagModel = prevShoppingBag.copyWith(CartProductModels: shoppingBagProducts);
+    ShoppingBagModel shoppingBagModel =
+        prevShoppingBag.copyWith(CartProductModels: shoppingBagProducts);
     await Amplify.DataStore.save(shoppingBagModel);
     return new Ok("saved shopping bag", shoppingBagModel.id);
   }
 
-  Future<ResultInterface> clearShoppingBagInStore(String storeID, String userID) async {
-    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(ShoppingBagModel.classType,
-        where: ShoppingBagModel.USERMODELID.eq(userID).and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
+  Future<ResultInterface> clearShoppingBagInStore(
+      String storeID, String userID) async {
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID
+            .eq(userID)
+            .and(ShoppingBagModel.ONLINESTOREID.eq(storeID)));
 
     if (shoppingBags.isEmpty) {
-      FLog.error(text: "No shopping bag was found for store $storeID and user $userID");
-      return new Failure("No shopping bag was found for store $storeID and user $userID", null);
+      FLog.error(
+          text:
+              "No shopping bag was found for store $storeID and user $userID");
+      return new Failure(
+          "No shopping bag was found for store $storeID and user $userID",
+          null);
     }
     await clearShoppingBagProductsInStore(shoppingBags.first.id);
     await Amplify.DataStore.delete(shoppingBags.first); //only one exists
     FLog.info(text: "Deleted shopping bag ${shoppingBags.first.id}");
-    return new Ok("Deleted shopping bag ${shoppingBags.first.id}", shoppingBags.first);
+    return new Ok(
+        "Deleted shopping bag ${shoppingBags.first.id}", shoppingBags.first);
   }
 
   Future<ResultInterface> clearShoppingBagProductsInStore(String cartID) async {
@@ -458,8 +577,9 @@ class UsersStorageProxy {
   }
 
   Future<void> clearAllShoppingBag(String userID) async {
-    List<ShoppingBagModel> shoppingBags =
-        await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(userID));
+    List<ShoppingBagModel> shoppingBags = await Amplify.DataStore.query(
+        ShoppingBagModel.classType,
+        where: ShoppingBagModel.USERMODELID.eq(userID));
 
     for (ShoppingBagModel model in shoppingBags) {
       await clearShoppingBagInStore(model.onlineStoreID!, model.usermodelID);
@@ -474,12 +594,14 @@ class UsersStorageProxy {
       return new Failure("No such user - $emailCurrUser", null);
     }
 
-    List<String> creditCards = currUser.creditCards != null && currUser.creditCards!.isNotEmpty
-        ? jsonDecode(currUser.creditCards!).cast<String>()
-        : [];
+    List<String> creditCards =
+        currUser.creditCards != null && currUser.creditCards!.isNotEmpty
+            ? jsonDecode(currUser.creditCards!).cast<String>()
+            : [];
 
     creditCards.add(token);
-    UserModel updatedUser = currUser.copyWith(creditCards: JsonEncoder.withIndent('  ').convert(creditCards));
+    UserModel updatedUser = currUser.copyWith(
+        creditCards: JsonEncoder.withIndent('  ').convert(creditCards));
     await Amplify.DataStore.save(updatedUser);
     FLog.info(text: "Succssefully added credit card token $token");
     return new Ok("Succssefully added credit card token $token", creditCards);
@@ -493,21 +615,27 @@ class UsersStorageProxy {
       return new Failure("No such user - $emailCurrUser", null);
     }
 
-    List<String> creditCards = currUser.creditCards != null && currUser.creditCards!.isNotEmpty
-        ? jsonDecode(currUser.creditCards!).cast<String>()
-        : [];
+    List<String> creditCards =
+        currUser.creditCards != null && currUser.creditCards!.isNotEmpty
+            ? jsonDecode(currUser.creditCards!).cast<String>()
+            : [];
 
     if (creditCards.isEmpty) {
-      FLog.error(text: "No credit card tokens were found for user $emailCurrUser");
-      return new Failure("No credit card tokens were found for user $emailCurrUser", null);
+      FLog.error(
+          text: "No credit card tokens were found for user $emailCurrUser");
+      return new Failure(
+          "No credit card tokens were found for user $emailCurrUser", null);
     }
 
     bool res = creditCards.remove(token);
     if (!res) {
-      FLog.error(text: "Removal of credit card token $token was not successful");
-      return new Failure("Removal of credit card token $token was not successful", null);
+      FLog.error(
+          text: "Removal of credit card token $token was not successful");
+      return new Failure(
+          "Removal of credit card token $token was not successful", null);
     }
-    UserModel updatedUser = currUser.copyWith(creditCards: JsonEncoder.withIndent('  ').convert(creditCards));
+    UserModel updatedUser = currUser.copyWith(
+        creditCards: JsonEncoder.withIndent('  ').convert(creditCards));
     await Amplify.DataStore.save(updatedUser);
     FLog.info(text: "Succssefully removed credit card token $token");
     return new Ok("Succssefully removed credit card token $token", creditCards);
@@ -528,7 +656,8 @@ class UsersStorageProxy {
   }
 
   Future<void> saveStoreBankAccount(String token) async {
-    var storeOwnerRes = await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
+    var storeOwnerRes =
+        await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     if (!storeOwnerRes.getTag()) {
       FLog.error(text: storeOwnerRes.getMessage());
     }
@@ -538,7 +667,8 @@ class UsersStorageProxy {
   }
 
   Future<void> removeStoreBankAccount(String token) async {
-    var storeOwnerRes = await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
+    var storeOwnerRes =
+        await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     if (!storeOwnerRes.getTag()) {
       FLog.error(text: storeOwnerRes.getMessage());
     }
@@ -548,14 +678,16 @@ class UsersStorageProxy {
   }
 
   Future<void> saveLastPurchaseView(DateTime date) async {
-    var storeOwnerRes = await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
+    var storeOwnerRes =
+        await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     if (!storeOwnerRes.getTag()) {
       FLog.error(text: storeOwnerRes.getMessage());
       return;
     }
     StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
-    storeOwnerModel =
-        storeOwnerModel.copyWith(lastPurchasesView: TemporalDateTime.fromString(date.toDateTimeIso8601String()));
+    storeOwnerModel = storeOwnerModel.copyWith(
+        lastPurchasesView:
+            TemporalDateTime.fromString(date.toDateTimeIso8601String()));
     await Amplify.DataStore.save(storeOwnerModel);
   }
 
@@ -567,9 +699,11 @@ class UsersStorageProxy {
     if (!res.getTag()) return res;
     StoreOwnerModel storeOwnerModel = res.getValue();
     if (storeOwnerModel.storeOwnerModelOnlineStoreModelId != null)
-      StoreStorageProxy().deleteStore(storeOwnerModel.storeOwnerModelOnlineStoreModelId!, true);
+      StoreStorageProxy().deleteStore(
+          storeOwnerModel.storeOwnerModelOnlineStoreModelId!, true);
     if (storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null)
-      StoreStorageProxy().deleteStore(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!, false);
+      StoreStorageProxy().deleteStore(
+          storeOwnerModel.storeOwnerModelPhysicalStoreModelId!, false);
 
     clearAllShoppingBag(user.id);
     await Amplify.DataStore.delete(user);

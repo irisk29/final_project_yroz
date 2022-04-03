@@ -9,7 +9,8 @@ class ImageInput extends StatefulWidget {
   XFile? image;
   bool isStore = true;
 
-  ImageInput(this.onSelectImage, this.onUnselectImage, this.image, this.isStore);
+  ImageInput(
+      this.onSelectImage, this.onUnselectImage, this.image, this.isStore);
 
   @override
   _ImageInputState createState() => _ImageInputState(image);
@@ -20,7 +21,9 @@ class _ImageInputState extends State<ImageInput> {
   String? imagePath;
 
   _ImageInputState(this._storedImage) {
-    this._storedImage == null ? this.imagePath = null : this.imagePath = this._storedImage!.path;
+    this._storedImage == null
+        ? this.imagePath = null
+        : this.imagePath = this._storedImage!.path;
   }
 
   Future<void> _takePicture() async {
@@ -37,7 +40,8 @@ class _ImageInputState extends State<ImageInput> {
   }
 
   Future<void> _choosePicture() async {
-    final imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final imageFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (imageFile == null) {
       return;
     }
@@ -57,17 +61,22 @@ class _ImageInputState extends State<ImageInput> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return Row(
       children: <Widget>[
         Container(
-          width: 150,
-          height: 100,
+          width: deviceSize.width * 0.35,
+          height: deviceSize.height * 0.175,
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
           ),
           child: _storedImage != null
               ? Image.file(File(imagePath!))
-              : Image(image: widget.isStore ? AssetImage('assets/images/default-store.png') : AssetImage('assets/images/default_product.png')),
+              : Image(
+                  image: widget.isStore
+                      ? AssetImage('assets/images/default-store.png')
+                      : AssetImage('assets/images/default_product.png')),
           alignment: Alignment.center,
         ),
         SizedBox(

@@ -43,13 +43,13 @@ class User extends ChangeNotifier {
       : favoriteStores = <Tuple2<String, bool>>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
-        hideStoreOwnerOptions = false {}
+        hideStoreOwnerOptions = true {}
 
   User.withNull()
       : favoriteStores = <Tuple2<String, bool>>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
-        hideStoreOwnerOptions = false {}
+        hideStoreOwnerOptions = true {}
 
   void userFromModel(UserModel model) async {
     try {

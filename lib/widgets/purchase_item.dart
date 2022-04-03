@@ -29,12 +29,16 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeIn,
-      height: _expanded ? (purchaseProducts.length * 30) + 95 : 95,
+      height: _expanded
+          ? (purchaseProducts.length * 30) + deviceSize.height * 0.14
+          : deviceSize.height * 0.14,
       child: Card(
-        margin: const EdgeInsets.all(10),
+        margin: EdgeInsets.all(deviceSize.width * 0.025),
         child: ListView(
           physics: NeverScrollableScrollPhysics(),
           children: [
@@ -63,7 +67,7 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
                       itemBuilder: (context, index) {
                         var product = purchaseProducts[index];
                         return Padding(
-                          padding: const EdgeInsets.all(5),
+                          padding: EdgeInsets.all(deviceSize.width * 0.01),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
