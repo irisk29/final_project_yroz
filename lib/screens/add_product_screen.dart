@@ -2,10 +2,15 @@ import 'dart:io';
 
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
+
+import '../LogicLayer/User.dart';
+import 'open_online_store_screen.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const routeName = '/add-product';
@@ -18,6 +23,27 @@ class AddProductScreen extends StatefulWidget {
 
   @override
   _AddProductScreenState createState() => _AddProductScreenState();
+
+  //for test purposes
+  Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
+    routes: {
+      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline().wrapWithMaterial(nav),
+    },
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User("test@gmail.com", "test name"),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
+  );
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
@@ -84,6 +110,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
         actions: <Widget>[
           IconButton(
+            key: const Key('save'),
             icon: Icon(Icons.save),
             onPressed: _saveForm,
           ),
@@ -102,6 +129,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     ImageInput(
                         _selectImage, _unselectImage, _pickedImage, false),
                     TextFormField(
+                      key: const Key('title'),
                       decoration: InputDecoration(labelText: 'Title'),
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) {
@@ -128,6 +156,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('price'),
                       decoration: InputDecoration(labelText: 'Price'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
@@ -163,6 +192,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('description'),
                       decoration: InputDecoration(labelText: 'Description'),
                       maxLines: 3,
                       textInputAction: TextInputAction.done,

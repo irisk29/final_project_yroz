@@ -3,6 +3,7 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/edit_product_screen.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:tuple/tuple.dart';
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
+import '../models/UserModel.dart';
 import 'add_product_screen.dart';
 
 class EditOnlineStorePipeline extends StatefulWidget {
@@ -40,6 +42,25 @@ class EditOnlineStorePipeline extends StatefulWidget {
   _EditOnlineStorePipelineState createState() {
     return _EditOnlineStorePipelineState();
   }
+
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) => MaterialApp(
+    routes: {
+      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+    },
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User.fromModel(user),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
+  );
 }
 
 class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
@@ -95,6 +116,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _editedStore = Provider.of<User>(context, listen: false)
+        .storeOwnerState!
+        .onlineStore;
+  }
 
   @override
   void didChangeDependencies() async {
@@ -248,6 +277,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                     ImageInput(
                         _selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
+                      key: const Key('storeName'),
                       initialValue: _editedStore!.name,
                       decoration: InputDecoration(labelText: 'Store Name'),
                       textInputAction: TextInputAction.next,
@@ -273,6 +303,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('phoneNumber'),
                       initialValue: _editedStore!.phoneNumber,
                       decoration: InputDecoration(labelText: 'phoneNumber'),
                       textInputAction: TextInputAction.next,
@@ -299,6 +330,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                       },
                     ),
                     TextFormField(
+                      key: const Key('storeAddress'),
                       initialValue: _editedStore!.address,
                       decoration: InputDecoration(labelText: 'Address'),
                       onTap: () => showDialog(
@@ -336,6 +368,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
                 itemBuilder: (context, index) => CheckboxListTile(
+                  key: Key("store_category_$index"),
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
@@ -627,9 +660,13 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
         resizeToAvoidBottomInset: false,
         body: _isLoading
             ? Center(child: CircularProgressIndicator())
-            : Container(
-                child: Column(
-                  children: [
+            : ListView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                children: [Center(
+                  child: SizedBox(
+                  height: deviceSize.height * 0.8,
+                    child: Column(
+                    children: [
                     IconStepper(
                       icons: [
                         Icon(Icons.info),
@@ -677,6 +714,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                                 radius: 25,
                                 backgroundColor: Theme.of(context).primaryColor,
                                 child: IconButton(
+                                  key: const Key("continue_button"),
                                   color: Colors.black54,
                                   onPressed: continued,
                                   icon: Icon(_currentStep < 4
@@ -692,6 +730,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                   ],
                 ),
               ),
+            ),
+          ],
+        ),
       ),
     );
   }
