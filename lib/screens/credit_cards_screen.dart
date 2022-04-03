@@ -77,9 +77,12 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               toolbarHeight: deviceSize.height * 0.1,
-              title: Text(
-                "Credit Cards",
-                style: const TextStyle(fontSize: 22),
+              title: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Credit Cards",
+                  style: const TextStyle(fontSize: 22),
+                ),
               ),
               actions: [
                 IconButton(
@@ -98,22 +101,22 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                 ? Center(child: CircularProgressIndicator())
                 : activeCards.isEmpty && disabledCards.isEmpty
                     ? Container(
-                        width: MediaQuery.of(context).size.width,
+                        width: deviceSize.width,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             CircleAvatar(
-                              radius: 45.0,
+                              radius: deviceSize.width * 0.11,
                               backgroundColor: Theme.of(context).primaryColor,
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
                                 child: Icon(Icons.credit_card, size: 40),
-                                radius: 40.0,
+                                radius: deviceSize.width * 0.1,
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(deviceSize.height * 0.01),
                               child: Text("Credit Cards",
                                   style: TextStyle(
                                       fontSize: 20,
@@ -146,8 +149,9 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                                       Align(
                                         alignment: Alignment.topLeft,
                                         child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 15.0, top: 15.0),
+                                          padding: EdgeInsets.only(
+                                              left: deviceSize.width * 0.05,
+                                              top: deviceSize.height * 0.025),
                                           child: Text(
                                             "Active",
                                             style: TextStyle(
@@ -157,18 +161,16 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: deviceSize.height * 0.35,
+                                        height: deviceSize.height * 0.3,
                                         child: GridView.count(
                                           padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.03,
-                                              right: deviceSize.width * 0.03),
+                                              left: deviceSize.width * 0.025,
+                                              right: deviceSize.width * 0.025),
                                           scrollDirection: Axis.horizontal,
                                           shrinkWrap: true,
                                           physics: ScrollPhysics(),
                                           crossAxisCount: 1,
-                                          childAspectRatio: 1,
-                                          mainAxisSpacing:
-                                              deviceSize.height * 0.025,
+                                          childAspectRatio: 0.825,
                                           crossAxisSpacing:
                                               deviceSize.width * 0.025,
                                           children: activeCards,
@@ -184,8 +186,9 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                                       Align(
                                         alignment: Alignment.topLeft,
                                         child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 15.0, top: 15.0),
+                                          padding: EdgeInsets.only(
+                                              left: deviceSize.width * 0.05,
+                                              top: deviceSize.height * 0.025),
                                           child: Text(
                                             "Disabled",
                                             style: TextStyle(
@@ -195,18 +198,16 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: deviceSize.height * 0.35,
+                                        height: deviceSize.height * 0.3,
                                         child: GridView.count(
                                           padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.03,
-                                              right: deviceSize.width * 0.03),
+                                              left: deviceSize.width * 0.025,
+                                              right: deviceSize.width * 0.025),
                                           scrollDirection: Axis.horizontal,
                                           shrinkWrap: true,
                                           physics: ScrollPhysics(),
                                           crossAxisCount: 1,
-                                          childAspectRatio: 1,
-                                          mainAxisSpacing:
-                                              deviceSize.height * 0.025,
+                                          childAspectRatio: 0.825,
                                           crossAxisSpacing:
                                               deviceSize.width * 0.025,
                                           children: disabledCards,

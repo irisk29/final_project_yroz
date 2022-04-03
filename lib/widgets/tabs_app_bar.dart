@@ -11,10 +11,13 @@ class TabsAppBar {
     return AppBar(
       automaticallyImplyLeading: false,
       toolbarHeight: deviceSize.height * 0.1,
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 23,
+      title: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 23,
+          ),
         ),
       ),
     );

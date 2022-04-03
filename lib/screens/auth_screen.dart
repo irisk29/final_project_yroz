@@ -33,10 +33,7 @@ class AuthScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Flexible(
-                    flex: deviceSize.width > 600 ? 2 : 1,
-                    child: AuthCard(),
-                  ),
+                  AuthCard(),
                 ],
               ),
             ),
@@ -59,6 +56,7 @@ class AuthCard extends StatefulWidget {
 class _AuthCardState extends State<AuthCard>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  GlobalKey stickyKey = GlobalKey();
   late AnimationController _controller;
   late bool _isLoading = false;
 
@@ -108,18 +106,20 @@ class _AuthCardState extends State<AuthCard>
             ),
             elevation: 8.0,
             child: AnimatedContainer(
+              key: stickyKey,
               duration: Duration(milliseconds: 300),
               curve: Curves.easeIn,
-              constraints: BoxConstraints(minHeight: deviceSize.height * 0.4),
               width: deviceSize.width * 0.75,
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(deviceSize.width * 0.05),
               child: Form(
                 key: _formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      Image.asset('assets/icon/yroz.png'),
-                      Column(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset('assets/icon/yroz.png'),
+                    Padding(
+                      padding: EdgeInsets.all(deviceSize.width * 0.025),
+                      child: Column(
                         children: [
                           SignInButton(
                             Buttons.Google,
@@ -132,8 +132,8 @@ class _AuthCardState extends State<AuthCard>
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -152,19 +152,25 @@ class _AuthCardState extends State<AuthCard>
                       child: AnimatedContainer(
                         duration: Duration(milliseconds: 300),
                         curve: Curves.easeIn,
-                        constraints:
-                            BoxConstraints(maxHeight: deviceSize.height * 0.4),
                         width: deviceSize.width * 0.75,
-                        padding: EdgeInsets.all(16.0),
+                        padding: EdgeInsets.all(deviceSize.width * 0.05),
+                        constraints: BoxConstraints(
+                            minHeight: (stickyKey.currentContext!
+                                    .findRenderObject() as RenderBox)
+                                .size
+                                .height),
                       ),
                     ),
                   ),
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(15, 0, 0, 15),
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
+                  Container(
+                    padding: EdgeInsets.all(deviceSize.width * 0.05),
+                    constraints: BoxConstraints(
+                        minHeight: (stickyKey.currentContext!.findRenderObject()
+                                as RenderBox)
+                            .size
+                            .height),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
                 ],
               )
             : SizedBox()

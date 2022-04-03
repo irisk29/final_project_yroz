@@ -20,13 +20,7 @@ class _CartScreenState extends State<CartScreen> {
     final routeArgs =
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.storeID = routeArgs['store'] as String;
-  }
-
-  void _update() {
-    setState(() {
-      //build(context);
-      //widget.cart = widget.user.bagInStores.length > 0 ? widget.user.bagInStores.where((element) => element.onlineStoreID == widget.store.id).first : ShoppingBagDTO(widget.user.id!, widget.store.id);
-    });
+    super.didChangeDependencies();
   }
 
   @override
@@ -41,18 +35,21 @@ class _CartScreenState extends State<CartScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Your Cart',
-            style: const TextStyle(fontSize: 22),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Your Cart',
+              style: const TextStyle(fontSize: 22),
+            ),
           ),
           toolbarHeight: deviceSize.height * 0.1,
         ),
         body: Column(
           children: <Widget>[
             Card(
-              margin: EdgeInsets.all(15),
+              margin: EdgeInsets.all(deviceSize.height * 0.02),
               child: Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(deviceSize.height * 0.01),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -72,7 +69,6 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
                 itemCount: provider.getShoppingBag(widget.storeID) != null
@@ -84,7 +80,7 @@ class _CartScreenState extends State<CartScreen> {
                         .products
                         .toList()[i],
                     widget.storeID,
-                    _update),
+                    () => setState(() {})),
               ),
             )
           ],

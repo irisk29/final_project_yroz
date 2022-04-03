@@ -70,10 +70,13 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
-          title: Text(
-            "Edit Bank Account",
-            style: const TextStyle(
-              fontSize: 22,
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Edit Bank Account",
+              style: const TextStyle(
+                fontSize: 22,
+              ),
             ),
           ),
         ),
@@ -92,13 +95,12 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
                                   textAlign: TextAlign.center),
                             )
                           : Padding(
-                              padding: const EdgeInsets.all(15.0),
+                              padding: EdgeInsets.all(deviceSize.width * 0.03),
                               child: Column(
                                 children: [
                                   snap.data,
                                   SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.8,
+                                    width: deviceSize.width * 0.8,
                                     child: ElevatedButton(
                                       style: ButtonStyle(
                                         shape: MaterialStateProperty.all<

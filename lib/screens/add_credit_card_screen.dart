@@ -24,7 +24,6 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
   String cvvCode = '';
   bool isCvvFocused = false;
   bool useGlassMorphism = false;
-  bool useBackgroundImage = false;
   OutlineInputBorder? border;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late Secret secret;
@@ -93,9 +92,12 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
-          title: Text(
-            "New Credit Card",
-            style: const TextStyle(fontSize: 22),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "New Credit Card",
+              style: const TextStyle(fontSize: 22),
+            ),
           ),
         ),
         body: _isLoading
@@ -116,9 +118,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                         obscureCardNumber: true,
                         obscureCardCvv: true,
                         isHolderNameVisible: true,
-                        cardBgColor: Colors.indigo,
-                        backgroundImage:
-                            useBackgroundImage ? 'assets/card_bg.png' : null,
+                        cardBgColor: Colors.blue,
                         isSwipeGestureEnabled: true,
                         onCreditCardWidgetChange:
                             (CreditCardBrand creditCardBrand) {},
@@ -182,35 +182,39 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                 onCreditCardModelChange:
                                     onCreditCardModelChange,
                               ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    primary: Theme.of(context).primaryColor),
-                                child: Container(
-                                  width: deviceSize.width * 0.3,
-                                  margin: const EdgeInsets.all(12),
-                                  child: const Text(
-                                    'Save',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      package: 'flutter_credit_card',
+                              Padding(
+                                padding:
+                                    EdgeInsets.all(deviceSize.height * 0.01),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      primary: Colors.blue),
+                                  child: Container(
+                                    width: deviceSize.width * 0.3,
+                                    margin: EdgeInsets.all(
+                                        deviceSize.width * 0.025),
+                                    child: const Text(
+                                      'SAVE',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        package: 'flutter_credit_card',
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
+                                  onPressed: () {
+                                    if (formKey.currentState!.validate()) {
+                                      print('valid!');
+                                      saveCreditCard();
+                                    } else {
+                                      print('invalid!');
+                                    }
+                                  },
                                 ),
-                                onPressed: () {
-                                  if (formKey.currentState!.validate()) {
-                                    print('valid!');
-                                    saveCreditCard();
-                                  } else {
-                                    print('invalid!');
-                                  }
-                                },
                               ),
                             ],
                           ),

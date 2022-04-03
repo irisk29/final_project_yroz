@@ -48,7 +48,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 15.0),
+                                  padding: EdgeInsets.only(
+                                      left: constraints.maxWidth * 0.04),
                                   child: Text(
                                     "Categories",
                                     style: TextStyle(
@@ -75,10 +76,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   ].expand((i) => i).toList(),
                                   gridDelegate:
                                       SliverGridDelegateWithMaxCrossAxisExtent(
-                                    maxCrossAxisExtent: 200,
+                                    maxCrossAxisExtent: constraints.maxHeight,
                                     childAspectRatio: 1,
-                                    crossAxisSpacing: 20,
-                                    mainAxisSpacing: 20,
+                                    mainAxisSpacing:
+                                        constraints.maxWidth * 0.035,
                                   ),
                                 ),
                               ),
@@ -86,7 +87,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 15.0),
+                                  padding: EdgeInsets.only(
+                                      left: constraints.maxWidth * 0.04),
                                   child: Text(
                                     "Physical Stores",
                                     style: TextStyle(
@@ -119,10 +121,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                         ].expand((i) => i).toList(),
                                         gridDelegate:
                                             SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 200,
+                                          maxCrossAxisExtent:
+                                              constraints.maxHeight,
                                           childAspectRatio: 1,
-                                          crossAxisSpacing: 20,
-                                          mainAxisSpacing: 20,
+                                          mainAxisSpacing:
+                                              constraints.maxWidth * 0.035,
                                         ),
                                       ),
                                     ),
@@ -130,7 +133,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 15.0),
+                                  padding: EdgeInsets.only(
+                                      left: constraints.maxWidth * 0.04),
                                   child: Text(
                                     "Online Stores",
                                     style: TextStyle(
@@ -155,18 +159,18 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                         children: [
                                           onlineStores
                                               .map(
-                                                (storeData) => StoreItem(
-                                                    storeData //, widget.user!
-                                                    ),
+                                                (storeData) =>
+                                                    StoreItem(storeData),
                                               )
                                               .toList(),
                                         ].expand((i) => i).toList(),
                                         gridDelegate:
                                             SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 200,
+                                          maxCrossAxisExtent:
+                                              constraints.maxHeight,
                                           childAspectRatio: 1,
-                                          crossAxisSpacing: 20,
-                                          mainAxisSpacing: 20,
+                                          mainAxisSpacing:
+                                              constraints.maxWidth * 0.035,
                                         ),
                                       ),
                                     ),

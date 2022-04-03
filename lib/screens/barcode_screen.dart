@@ -5,8 +5,6 @@ import 'package:final_project_yroz/screens/physical_payment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 
 class QRViewExample extends StatefulWidget {
   static const routeName = '/barcode-screen';
@@ -33,78 +31,49 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(flex: 4, child: _buildQrView(context)),
-          Expanded(
-            flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  if (result != null)
-                    _openUrl(result!).build(context) // to change for another action
-                  else
-                    Text('Scan a code'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+      body: Stack(
+        children: [
+          Column(
+            children: <Widget>[
+              Expanded(flex: 4, child: _buildQrView(context, deviceSize)),
+              Center(
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
+                      if (result != null)
+                        _openUrl(result!)
+                            .build(context) // to change for another action
+                      else
+                        Container(
+                          margin: EdgeInsets.all(deviceSize.width * 0.05),
+                          child: ElevatedButton(
                             onPressed: () async {
-                              await controller?.toggleFlash();
-                              setState(() {});
+                              await controller?.pauseCamera();
                             },
-                            child: FutureBuilder(
-                              future: controller?.getFlashStatus(),
-                              builder: (context, snapshot) {
-                                return Text('Flash: ${snapshot.data}');
-                              },
-                            )),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.flipCamera();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getCameraInfo(),
-                              builder: (context, snapshot) {
-                                if (snapshot.data != null) {
-                                  return Text(
-                                      'Camera facing ${describeEnum(snapshot.data!)}');
-                                } else {
-                                  return Text('loading');
-                                }
-                              },
-                            ),
+                            child: Text('SCAN', style: TextStyle(fontSize: 18)),
+                          ),
                         ),
-                      )
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await controller?.pauseCamera();
-                          },
-                          child: Text('Pay', style: TextStyle(fontSize: 20)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              )
+            ],
+          ),
+          Container(
+            alignment: Alignment.topLeft,
+            padding: EdgeInsets.only(top: deviceSize.height * 0.025),
+            child: IconButton(
+              onPressed: () async {
+                await controller?.flipCamera();
+                setState(() {});
+              },
+              icon: Icon(Icons.flip_camera_ios_outlined,
+                  color: Theme.of(context).primaryColor),
             ),
           )
         ],
@@ -112,12 +81,9 @@ class _QRViewExampleState extends State<QRViewExample> {
     );
   }
 
-  Widget _buildQrView(BuildContext context) {
+  Widget _buildQrView(BuildContext context, Size deviceSize) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
-    var scanArea = (MediaQuery.of(context).size.width < 400 ||
-        MediaQuery.of(context).size.height < 400)
-        ? 150.0
-        : 300.0;
+    var scanArea = deviceSize.width * 0.7;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
@@ -160,14 +126,14 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 }
 
-
 class _openUrl {
   final Barcode result;
 
   _openUrl(this.result);
 
   void _launchPayment(context, url) async =>
-      Navigator.of(context).pushNamed(PhysicalPaymentScreen.routeName, arguments: {'store': url.toString()});
+      Navigator.of(context).pushNamed(PhysicalPaymentScreen.routeName,
+          arguments: {'store': url.toString()});
 
   @override
   Widget build(BuildContext context) {

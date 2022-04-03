@@ -204,7 +204,9 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               onTap: null,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
+              padding: EdgeInsets.only(
+                  left: deviceSize.width * 0.02,
+                  right: deviceSize.width * 0.02),
               child: Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -214,7 +216,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                     ),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(deviceSize.width * 0.03),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -230,17 +232,14 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                               children: <InlineSpan>[
                                 WidgetSpan(
                                   alignment: PlaceholderAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Icon(
-                                      Icons.circle,
-                                      color: Colors.green,
-                                      size: 10,
-                                    ),
+                                  child: Icon(
+                                    Icons.circle,
+                                    color: Colors.green,
+                                    size: 10,
                                   ),
                                 ),
                                 TextSpan(
-                                    text: 'No Expiration Date',
+                                    text: ' No Expiration Date',
                                     style: TextStyle(fontSize: 12)),
                               ],
                             ),

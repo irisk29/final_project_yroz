@@ -46,12 +46,20 @@ class StoreItem extends StatelessWidget {
                     : DecorationImage(
                         image: AssetImage('assets/images/default-store.png'),
                         fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+          ),
+          Positioned(
+            top: constraints.maxHeight * 0.75,
+            child: Container(
+              height: constraints.maxHeight * 0.25,
+              width: constraints.maxWidth,
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(255, 255, 255, 1),
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20.0),
-                  bottomRight: Radius.circular(20.0),
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
+                    bottomRight: Radius.circular(15),
+                    bottomLeft: Radius.circular(15)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.25),
@@ -60,19 +68,6 @@ class StoreItem extends StatelessWidget {
                     offset: new Offset(10.0, 0.0),
                   ),
                 ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: constraints.maxHeight * 0.75,
-            child: Container(
-              height: constraints.maxHeight * 0.28,
-              width: constraints.maxWidth,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(255, 255, 255, 1),
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(20.0),
-                    bottomLeft: Radius.circular(20.0)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +84,7 @@ class StoreItem extends StatelessWidget {
                               this.store.name,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.black.withOpacity(0.85)),
+                                  color: Color.fromRGBO(20, 19, 42, 1)),
                             ),
                           ),
                         ),
