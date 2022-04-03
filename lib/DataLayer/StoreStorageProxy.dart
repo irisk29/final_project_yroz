@@ -612,6 +612,7 @@ class StoreStorageProxy {
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     for (var prod in products) {
       await Amplify.DataStore.delete(prod);
+      await deletePicture(prod.id);
     }
   }
 
@@ -623,11 +624,6 @@ class StoreStorageProxy {
         FLog.error(text: "No such store $id");
         return new Failure("No such store", id);
       }
-      List<String> prodsID =
-          stores[0].storeProductModels == null ? [] : stores[0].storeProductModels!.map((e) => e.id).toList();
-      prodsID.forEach((element) {
-        deletePicture(element);
-      });
       await deleteOnlineStoreProducts(stores[0].id);
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
       deletePicture(id); // in s3 - for store picutre

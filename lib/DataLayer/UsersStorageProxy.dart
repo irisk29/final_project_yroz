@@ -130,30 +130,7 @@ class UsersStorageProxy {
     return new Ok("Got store owner succssefully", fullStoreOwner);
   }
 
-  Future<ResultInterface> deleteStoreOwnerState() async {
-    String emailCurrUser = UserAuthenticator().getCurrentUserId();
-    UserModel? currUser = await getUser(emailCurrUser);
-    if (currUser == null) {
-      FLog.error(text: "No such user - $emailCurrUser");
-      return new Failure("current user model is null ", emailCurrUser);
-    }
-    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
-        StoreOwnerModel.classType,
-        where: StoreOwnerModel.ID.eq(currUser.userModelStoreOwnerModelId));
-    var storeOwner = storeOwners.isEmpty ? null : storeOwners.first;
-    if (storeOwner == null) {
-      FLog.warning(
-          text:
-              "The current user $emailCurrUser does not have store owner state");
-      return new Failure("No store owner state", emailCurrUser);
-    }
-    await Amplify.DataStore.delete(storeOwner);
-    FLog.info(text: "Deleted store owner ${storeOwner.id} succssefully");
-    return new Ok("Deleted store owner state succssefully", storeOwner.id);
-  }
-
-  Future<ResultInterface> updateUserNameOrUrl(
-      String newName, String newImageUrl) async {
+  Future<ResultInterface> updateUserNameOrUrl(String newName, String newImageUrl) async {
     var user = await getUser(UserAuthenticator().getCurrentUserId());
     if (user == null) {
       FLog.error(
@@ -385,7 +362,7 @@ class UsersStorageProxy {
         cartProductModel.storeProductID!,
         cartProductModel.name,
         cartProductModel.price,
-        jsonDecode(cartProductModel.categories).toString(),
+        cartProductModel.categories.isEmpty ? "" : jsonDecode(cartProductModel.categories).toString(),
         cartProductModel.imageUrl == null ? "" : cartProductModel.imageUrl!,
         cartProductModel.description == null
             ? ""
@@ -416,11 +393,12 @@ class UsersStorageProxy {
     ResultInterface res = await getProductsOfShoppingBag(shoppingBag.id);
     if (!res.getTag()) return res;
     List<CartProductModel> vals = res.getValue() as List<CartProductModel>;
-    CartProductModel? prodToRemove =
-        vals.firstWhereOrNull((element) => element.id == productDTO.id);
-    vals.removeWhere((element) => element.id == productDTO.id);
+    CartProductModel? prodToRemove = vals.firstWhereOrNull((element) => element.storeProductID == productDTO.id);
     if (prodToRemove != null) {
+      vals.removeWhere((element) => element.id == productDTO.id);
       await Amplify.DataStore.delete(prodToRemove);
+    } else {
+      return new Failure("No such cart product ${productDTO.id} to remove", null);
     }
 
     if (vals.isEmpty) // no more products in bag - need to remove bag
@@ -696,8 +674,7 @@ class UsersStorageProxy {
     if (user == null) return new Failure("No such user $email", null);
 
     var res = await getStoreOwnerState(email);
-    if(res.getTag())
-    {
+    if (res.getTag()) {
       StoreOwnerModel storeOwnerModel = res.getValue();
       if (storeOwnerModel.storeOwnerModelOnlineStoreModelId != null)
         StoreStorageProxy().deleteStore(storeOwnerModel.storeOwnerModelOnlineStoreModelId!, true);
@@ -707,5 +684,16 @@ class UsersStorageProxy {
     clearAllShoppingBag(user.id);
     await Amplify.DataStore.delete(user);
     return new Ok("Deleted User $email", user.id);
+  }
+
+  Future<List<ShoppingBagDTO>> getUserShoppingBags(String userID) async {
+    List<ShoppingBagModel> bags =
+        await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(userID));
+    List<ShoppingBagDTO> dtos = [];
+    for (var bag in bags) {
+      var res = await convertShoppingBagModelToDTO(bag);
+      if (res.getTag()) dtos.add(res.getValue());
+    }
+    return dtos;
   }
 }
