@@ -13,6 +13,8 @@ import '../widgets/secondary_store_item.dart';
 class FavoriteScreen extends StatefulWidget {
   static const routeName = '/favorite';
 
+  const FavoriteScreen();
+
   @override
   State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
@@ -63,16 +65,16 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            radius: 45.0,
+                            radius: deviceSize.width * 0.11,
                             backgroundColor: Theme.of(context).primaryColor,
                             child: CircleAvatar(
                               backgroundColor: Colors.white,
                               child: Icon(Icons.favorite_border, size: 35),
-                              radius: 40.0,
+                              radius: deviceSize.width * 0.1,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(deviceSize.height * 0.01),
                             child: Text("Favorites",
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),

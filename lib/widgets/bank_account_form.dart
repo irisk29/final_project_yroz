@@ -32,6 +32,8 @@ class BankAccountForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return Column(
       children: <Widget>[
         const Text(
@@ -40,7 +42,7 @@ class BankAccountForm extends StatelessWidget {
         ),
         Divider(),
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(deviceSize.width * 0.05),
           child: SingleChildScrollView(
             child: Form(
               key: _bankAccountForm,
@@ -60,8 +62,8 @@ class BankAccountForm extends StatelessWidget {
                       onSaved: (value) {
                         bankName = value;
                       }),
-                  const SizedBox(
-                    height: 20,
+                  SizedBox(
+                    height: deviceSize.height * 0.035,
                   ),
                   TextFormField(
                     key: const Key("branch_number"),
@@ -83,8 +85,8 @@ class BankAccountForm extends StatelessWidget {
                     },
                     onSaved: (value) => branchNumber = value,
                   ),
-                  const SizedBox(
-                    height: 20,
+                  SizedBox(
+                    height: deviceSize.height * 0.035,
                   ),
                   TextFormField(
                     key: const Key("account_number"),

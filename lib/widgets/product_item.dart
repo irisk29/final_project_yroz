@@ -28,8 +28,8 @@ class _ProductItemState extends State<ProductItem> {
           semanticContainer: true,
           elevation: 2,
           margin: EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 4,
+            horizontal: constraints.maxWidth * 0.03,
+            vertical: constraints.maxHeight * 0.025,
           ),
           shape: RoundedRectangleBorder(
               side: BorderSide(
@@ -44,7 +44,10 @@ class _ProductItemState extends State<ProductItem> {
               Expanded(
                 flex: 5,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 15.0, top: 15.0),
+                  padding: EdgeInsets.only(
+                    left: constraints.maxWidth * 0.04,
+                    top: constraints.maxHeight * 0.075,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -117,8 +120,10 @@ class _ProductItemState extends State<ProductItem> {
               Expanded(
                 flex: 4,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.only(right: 20, top: 10, bottom: 10),
+                  padding: EdgeInsets.only(
+                      right: constraints.maxWidth * 0.05,
+                      top: constraints.maxHeight * 0.06,
+                      bottom: constraints.maxHeight * 0.06),
                   child: FittedBox(
                     child: Container(
                       height: constraints.maxHeight,

@@ -220,24 +220,45 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     }
   }
 
+  static const productsLimitation = 10;
   void _showAddProduct() async {
-    if (_editedStore!.products.length < 5) {
-      final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
+    if (_editedStore!.products.length < productsLimitation) {
+      final Tuple2<ProductDTO?, OnlineStoreDTO?>? result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
 
       // Update UI
-      if (result.item1 != null) {
+      if (result != null && result.item1 != null) {
         setState(() {
           _editedStore = result.item2;
           _editedStore!.addProduct(result.item1!);
         });
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            "Store's Products Limitation",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          content: Text(
+              "We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Ok"),
+            ),
+          ],
+        ),
+      );
     }
   }
 
-  Widget? currentStepWidget() {
+  Widget? currentStepWidget(Size deviceSize) {
     switch (_currentStep) {
       case 0:
         return Column(
@@ -248,7 +269,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Form(
                 key: _detailsform,
                 child: Column(
@@ -342,7 +363,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: deviceSize.height * 0.5,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
@@ -382,7 +403,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Column(
                 children: [
                   Row(
@@ -628,8 +649,12 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Edit Store',
+          toolbarHeight: deviceSize.height * 0.1,
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Edit Store',
+            ),
           ),
         ),
         resizeToAvoidBottomInset: false,
@@ -663,13 +688,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         });
                       },
                     ),
-                    currentStepWidget()!,
+                    currentStepWidget(deviceSize)!,
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
+                      child: Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: Padding(
+                          padding: EdgeInsets.all(deviceSize.height * 0.025),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _currentStep > 0

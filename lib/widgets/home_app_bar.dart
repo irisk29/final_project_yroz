@@ -18,9 +18,11 @@ class HomeAppBar {
         icon: Icon(Icons.storefront),
         onPressed: () => user.storeOwnerState!.physicalStore != null
             ? Navigator.of(context)
-                .pushNamed(ManagePhysicalStoreScreen.routeName).then((value) => callback())
+                .pushNamed(ManagePhysicalStoreScreen.routeName)
+                .then((value) => callback())
             : Navigator.of(context)
-                .pushNamed(ManageOnlineStoreScreen.routeName).then((value) => callback()),
+                .pushNamed(ManageOnlineStoreScreen.routeName)
+                .then((value) => callback()),
       );
       return notificationValue == 0
           ? icon
@@ -38,7 +40,9 @@ class HomeAppBar {
         padding: EdgeInsets.only(
           left: deviceSize.width * 0.03,
         ),
-        child: Image.asset('assets/icon/yroz-removebg.png'),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Image.asset('assets/icon/yroz-removebg.png')),
       ),
       leadingWidth: deviceSize.width * 0.37,
       toolbarHeight: deviceSize.height * 0.1,

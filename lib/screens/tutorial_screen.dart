@@ -25,7 +25,10 @@ class _TutorialScreenState extends State<TutorialScreen> {
             padding: EdgeInsets.only(
               left: deviceSize.width * 0.03,
             ),
-            child: Image.asset('assets/icon/yroz-removebg.png'),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Image.asset('assets/icon/yroz-removebg.png'),
+            ),
           ),
           leadingWidth: deviceSize.width * 0.37,
           toolbarHeight: deviceSize.height * 0.1,
@@ -39,11 +42,41 @@ class _TutorialScreenState extends State<TutorialScreen> {
             ),
           ],
         ),
-        body: Center(
-          child: Stack(
-            children: [
-              categoriesScreen,
-              Column(
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: Theme.of(context).primaryColor,
+          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+          currentIndex: 0,
+          items: [
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.location_on_outlined),
+              label: 'Nearby',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.favorite_border),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.account_circle),
+              label: 'Account',
+            ),
+          ],
+        ),
+        body: Stack(
+          children: [
+            categoriesScreen,
+            Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -73,8 +106,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

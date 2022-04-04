@@ -13,13 +13,16 @@ class ManagePhysicalStoreScreen extends StatefulWidget {
   late StoreDTO store;
 
   @override
-  _ManagePhysicalStoreScreenState createState() => _ManagePhysicalStoreScreenState();
+  _ManagePhysicalStoreScreenState createState() =>
+      _ManagePhysicalStoreScreenState();
 }
 
 class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
-    widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!;
+    widget.store = Provider.of<User>(context, listen: false)
+        .storeOwnerState!
+        .physicalStore!;
     super.didChangeDependencies();
   }
 
@@ -32,11 +35,24 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: deviceSize.height * 0.1,
-        title: Text(
-          widget.store.name,
-          style: const TextStyle(
-            fontSize: 22,
-          ),
+        centerTitle: true,
+        title: Column(
+          children: [
+            Text(
+              widget.store.name,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              widget.store.categories.join(", "),
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -44,19 +60,23 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
           children: [
             Center(
               child: Container(
-                width: 150,
-                height: 150,
+                height: deviceSize.height * 0.3,
                 decoration: BoxDecoration(
                   image: widget.store.image != null
-                      ? DecorationImage(fit: BoxFit.cover, image: NetworkImage(widget.store.image!))
-                      : DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
+                      ? DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.store.image!))
+                      : DecorationImage(
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
                 ),
               ),
             ),
             Card(
               elevation: 4.0,
               margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
               child: Column(
                 children: <Widget>[
                   ListTile(
@@ -66,9 +86,10 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     ),
                     title: Text("Edit Store Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context).pushNamed(EditPhysicalStorePipeline.routeName),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditPhysicalStorePipeline.routeName),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                     leading: Icon(
                       Icons.account_balance,
@@ -76,9 +97,10 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     ),
                     title: Text("Edit Bank Account Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context).pushNamed(EditBankAccountScreen.routeName),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(EditBankAccountScreen.routeName),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                     leading: Stack(
                       children: <Widget>[
@@ -114,9 +136,10 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                     ),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     title: Text("View Store Purchases"),
-                    onTap: () => Navigator.of(context).pushNamed(StorePurchasesScreen.routeName),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(StorePurchasesScreen.routeName),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                     leading: Icon(
                       Icons.qr_code_2,
@@ -142,7 +165,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                               ),
                             )),
                   ),
-                  _buildDivider(),
+                  _buildDivider(deviceSize),
                   ListTile(
                       leading: Icon(
                         Icons.arrow_circle_up,
@@ -151,8 +174,9 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                       title: Text("Upgrade to Online Store"),
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
-                        user.convertPhysicalStoreToOnline(widget.store);
-                        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+                        user.convertPhysicalStoreToOnline(widget.store).then(
+                            (_) => Navigator.of(context)
+                                .pushReplacementNamed(TabsScreen.routeName));
                       }),
                 ],
               ),
@@ -165,7 +189,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                 primary: Colors.red,
               ),
               child: Container(
-                margin: const EdgeInsets.all(12),
+                margin: EdgeInsets.all(deviceSize.width * 0.025),
                 child: const Text(
                   'DELETE STORE',
                   style: TextStyle(
@@ -174,8 +198,9 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                 ),
               ),
               onPressed: () {
-                user.deleteStore(widget.store.id, false);
-                Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+                user.deleteStore(widget.store.id, false).then((_) =>
+                    Navigator.of(context)
+                        .pushReplacementNamed(TabsScreen.routeName));
               },
             ),
           ],
@@ -184,10 +209,10 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
     );
   }
 
-  Container _buildDivider() {
+  Container _buildDivider(Size deviceSize) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 8.0,
+      margin: EdgeInsets.symmetric(
+        horizontal: deviceSize.width * 0.03,
       ),
       width: double.infinity,
       height: 1.0,

@@ -570,7 +570,7 @@ class StoreStorageProxy {
   Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
     List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
-    if (products.isEmpty) {
+    if (productsModels.isEmpty) {
       FLog.error(text: "No products were found in store $storeID");
       return new Failure("No products were found in store $storeID", storeID);
     }
@@ -612,6 +612,7 @@ class StoreStorageProxy {
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     for (var prod in products) {
       await Amplify.DataStore.delete(prod);
+      await deletePicture(prod.id);
     }
   }
 
@@ -623,17 +624,12 @@ class StoreStorageProxy {
         FLog.error(text: "No such store $id");
         return new Failure("No such store", id);
       }
-      List<String> prodsID =
-          stores[0].storeProductModels == null ? [] : stores[0].storeProductModels!.map((e) => e.id).toList();
-      prodsID.forEach((element) {
-        deletePicture(element);
-      });
       await deleteOnlineStoreProducts(stores[0].id);
       await Amplify.DataStore.delete(stores[0]); //only 1 store per user
       deletePicture(id); // in s3 - for store picutre
       deletePicture("$id-qrcode"); //in s3
       deleteFileLocally(stores[0].qrCode);
-      var res = await deleteStoreOwnerStateIfNeeded(true);
+      var res = await deleteStoreOwnerStateIfNeeded();
       if (!res.getTag()) return res;
       FLog.info(text: "Deleted online store succssefully");
       return new Ok("Deleted online store succssefully", id);
@@ -655,7 +651,7 @@ class StoreStorageProxy {
       deletePicture(id); // in s3 - for store picutre
       deletePicture("$id-qrcode"); //in s3
       deleteFileLocally(stores[0].qrCode);
-      var res = await deleteStoreOwnerStateIfNeeded(false);
+      var res = await deleteStoreOwnerStateIfNeeded();
       if (!res.getTag()) return res;
       FLog.info(text: "Deleted physical store succssefully");
       return new Ok("Deleted physical store succssefully", id);
@@ -665,7 +661,7 @@ class StoreStorageProxy {
     }
   }
 
-  Future<ResultInterface> deleteStoreOwnerStateIfNeeded(bool deletedOnlineStore) async {
+  Future<ResultInterface> deleteStoreOwnerStateIfNeeded() async {
     String? storeOwnerID = await UsersStorageProxy().getStoreOwnerStateId();
     if (storeOwnerID == null) {
       FLog.error(text: "No store owner to delete");
@@ -674,15 +670,6 @@ class StoreStorageProxy {
     List<StoreOwnerModel> storeOwners =
         await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
     StoreOwnerModel storeOwnerModel = storeOwners.first;
-    if (deletedOnlineStore) {
-      await Amplify.DataStore.delete(storeOwnerModel); //no store left
-      UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
-      if (currUser == null) return Failure("No such user", null);
-      UserModel userWithoutStoreOwnerState = currUser.copyWith(userModelStoreOwnerModelId: null, storeOwnerModel: null);
-      await Amplify.DataStore.save(userWithoutStoreOwnerState);
-      FLog.info(text: "Deleted completly Store Owner State");
-      return new Ok("Deleted completly Store Owner State", userWithoutStoreOwnerState);
-    }
 
     await Amplify.DataStore.delete(storeOwnerModel); //no store left
     UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());

@@ -29,9 +29,12 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
       builder: (context, constraints) => Scaffold(
         appBar: AppBar(
           toolbarHeight: constraints.maxHeight * 0.1,
-          title: Text(
-            'Payment',
-            style: const TextStyle(fontSize: 22),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Online Payment',
+              style: const TextStyle(fontSize: 22),
+            ),
           ),
         ),
         body: SingleChildScrollView(
@@ -42,10 +45,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Flexible(
-                  flex: constraints.maxWidth > 600 ? 2 : 1,
-                  child: PaymentCard(widget.storeID),
-                ),
+                PaymentCard(widget.storeID),
               ],
             ),
           ),
@@ -217,7 +217,7 @@ class _PaymentCardState extends State<PaymentCard>
                           duration: Duration(milliseconds: 300),
                           curve: Curves.easeIn,
                           width: constraints.maxWidth * 0.8,
-                          padding: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.all(constraints.maxWidth * 0.05),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             gradient: LinearGradient(
@@ -254,13 +254,15 @@ class _PaymentCardState extends State<PaymentCard>
                               ),
                               Divider(),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10.0, bottom: 10.0),
+                                padding: EdgeInsets.only(
+                                    top: constraints.maxWidth * 0.025,
+                                    bottom: constraints.maxWidth * 0.025),
                                 child: cashbackSelection,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10.0, bottom: 10.0),
+                                padding: EdgeInsets.only(
+                                    top: constraints.maxWidth * 0.025,
+                                    bottom: constraints.maxWidth * 0.025),
                                 child: AnimatedContainer(
                                   duration: Duration(milliseconds: 300),
                                   curve: Curves.easeIn,
@@ -304,7 +306,8 @@ class _PaymentCardState extends State<PaymentCard>
                       ),
                       Container(
                         width: constraints.maxWidth * 0.75,
-                        padding: const EdgeInsets.only(top: 10.0),
+                        padding:
+                            EdgeInsets.only(top: constraints.maxWidth * 0.025),
                         child: ElevatedButton(
                           child: Text(
                             'Pay',

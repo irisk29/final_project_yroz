@@ -8,6 +8,8 @@ import 'open_online_store_screen.dart';
 import 'open_physical_store_screen.dart';
 
 class AccountScreen extends StatefulWidget {
+  const AccountScreen();
+
   @override
   _AccountScreenState createState() => _AccountScreenState();
 }
@@ -45,6 +47,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context, listen: false);
+    final deviceSize = MediaQuery.of(context).size;
 
     return FutureBuilder(
       future: user.getEWalletBalance(),
@@ -53,71 +56,79 @@ class _AccountScreenState extends State<AccountScreen> {
               ConnectionState.done
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.only(
+                  top: deviceSize.height * 0.02,
+                  left: deviceSize.width * 0.03,
+                  right: deviceSize.width * 0.03),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.12,
+                    height: deviceSize.height * 0.125,
                     child: Card(
                       elevation: 8.0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0)),
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ListTile(
-                          onTap: null,
-                          title: Text(
-                            user.name!,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
+                        padding: EdgeInsets.only(
+                            top: deviceSize.height * 0.015,
+                            bottom: deviceSize.height * 0.015,
+                            left: deviceSize.width * 0.02,
+                            right: deviceSize.width * 0.02),
+                        child: Center(
+                          child: ListTile(
+                            onTap: null,
+                            title: Text(
+                              user.name!,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                          leading: CircleAvatar(
-                            radius: 30.0,
-                            backgroundImage:
-                                Image.network(user.imageUrl!).image,
-                          ),
-                          trailing: !_physicalStoreOwner && !_onlineStoreOwner
-                              ? Column(
-                                  children: [
-                                    Consumer<User>(
-                                      builder: (context, user, child) =>
-                                          Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.3,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.055,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 15),
-                                          child: SwitchListTile(
-                                              activeColor: Colors.purple,
-                                              value: user.hideStoreOwnerOptions,
-                                              controlAffinity:
-                                                  ListTileControlAffinity
-                                                      .trailing,
-                                              onChanged: (_) => user
-                                                  .toggleStoreOwnerViewOption()),
+                            leading: CircleAvatar(
+                              radius: deviceSize.width * 0.075,
+                              backgroundImage:
+                                  Image.network(user.imageUrl!).image,
+                            ),
+                            trailing: !_physicalStoreOwner && !_onlineStoreOwner
+                                ? Column(
+                                    children: [
+                                      Consumer<User>(
+                                        builder: (context, user, child) =>
+                                            Container(
+                                          width: deviceSize.width * 0.3,
+                                          height: deviceSize.height * 0.055,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right:
+                                                    deviceSize.width * 0.035),
+                                            child: SwitchListTile(
+                                                activeColor: Colors.purple,
+                                                value:
+                                                    user.hideStoreOwnerOptions,
+                                                controlAffinity:
+                                                    ListTileControlAffinity
+                                                        .trailing,
+                                                onChanged: (_) => user
+                                                    .toggleStoreOwnerViewOption()),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      "Consumer View",
-                                      style: TextStyle(fontSize: 10),
-                                    ),
-                                  ],
-                                )
-                              : null,
+                                      Text(
+                                        "Consumer View",
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ],
+                                  )
+                                : null,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(deviceSize.width * 0.03),
                     child: Card(
                       elevation: 4.0,
                       shape: RoundedRectangleBorder(
@@ -130,24 +141,18 @@ class _AccountScreenState extends State<AccountScreen> {
                                 Icons.account_balance_wallet_outlined,
                                 color: Colors.purple,
                               ),
-                              title: Padding(
-                                padding: const EdgeInsets.only(bottom: 5),
-                                child: Text(
-                                  "Total Wallet Balance",
-                                  style: TextStyle(fontSize: 17),
-                                ),
+                              title: Text(
+                                "Total Wallet Balance",
+                                style: TextStyle(fontSize: 17),
                               ),
-                              trailing: Padding(
-                                padding: const EdgeInsets.only(bottom: 5),
-                                child: Text(
-                                  "€" + snap.data,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                  ),
+                              trailing: Text(
+                                "€" + snap.data,
+                                style: TextStyle(
+                                  fontSize: 17,
                                 ),
                               ),
                             ),
-                            _buildDivider(),
+                            _buildDivider(deviceSize),
                             ListTile(
                               leading: Icon(
                                 Icons.credit_card,
@@ -161,7 +166,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                 //open change language
                               },
                             ),
-                            _buildDivider(),
+                            _buildDivider(deviceSize),
                             ListTile(
                               leading: Icon(
                                 Icons.history,
@@ -183,7 +188,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             user.hideStoreOwnerOptions
                         ? Container()
                         : Padding(
-                            padding: const EdgeInsets.all(10.0),
+                            padding: EdgeInsets.all(deviceSize.width * 0.03),
                             child: Card(
                               elevation: 4.0,
                               shape: RoundedRectangleBorder(
@@ -202,7 +207,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                       OpenPhysicalStorePipeline.routeName,
                                     ),
                                   ),
-                                  _buildDivider(),
+                                  _buildDivider(deviceSize),
                                   ListTile(
                                     leading: Icon(
                                       Icons.store_outlined,
@@ -221,7 +226,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(deviceSize.width * 0.03),
                     child: Card(
                       elevation: 4.0,
                       shape: RoundedRectangleBorder(
@@ -240,7 +245,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(deviceSize.width * 0.03),
                     child: Card(
                       elevation: 4.0,
                       shape: RoundedRectangleBorder(
@@ -261,10 +266,10 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Container _buildDivider() {
+  Container _buildDivider(Size deviceSize) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 8.0,
+      margin: EdgeInsets.symmetric(
+        horizontal: deviceSize.width * 0.03,
       ),
       width: double.infinity,
       height: 1.0,

@@ -53,15 +53,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
   XFile? _pickedImage = null;
 
   ProductDTO? _editedProduct = ProductDTO(
-    id: '',
-    name: '',
-    price: 0,
-    description: '',
-    imageUrl: '',
-    category: '',
-    storeID: '',
-    imageFromPhone: null
-  );
+      id: '',
+      name: '',
+      price: 0,
+      description: '',
+      imageUrl: '',
+      category: '',
+      storeID: '',
+      imageFromPhone: null);
 
   var _isInit = true;
   var _isLoading = false;
@@ -88,18 +87,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Future<void> _saveForm() async {
-    final isValid = _form.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
-    _form.currentState!.save();
     setState(() {
       _isLoading = true;
     });
+
+    final isValid = _form.currentState!.validate();
+    if (isValid) {
+      _form.currentState!.save();
+      Navigator.of(context).pop(Tuple2<ProductDTO?, OnlineStoreDTO?>(
+          _editedProduct, widget._editedStore));
+    }
+
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop(Tuple2<ProductDTO?, OnlineStoreDTO?>(_editedProduct, widget._editedStore));
   }
 
   void _selectImage(XFile pickedImage) {
@@ -116,8 +117,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Add Product',
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Add Product',
+          ),
         ),
         actions: <Widget>[
           IconButton(
@@ -129,8 +133,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
       ),
       body: _isLoading
           ? Center(
-        child: CircularProgressIndicator(),
-      )
+              child: CircularProgressIndicator(),
+            )
           : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

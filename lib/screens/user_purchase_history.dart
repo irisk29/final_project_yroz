@@ -40,10 +40,13 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: deviceSize.height * 0.1,
-        title: Text(
-          "Latest Purchases",
-          style: const TextStyle(
-            fontSize: 22,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "Latest Purchases",
+            style: const TextStyle(
+              fontSize: 22,
+            ),
           ),
         ),
       ),
@@ -59,22 +62,22 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
                       itemBuilder: (context, index) =>
                           HistoryPurchaseItem(snap.data[index]))
                   : Container(
-                      width: MediaQuery.of(context).size.width,
+                      width: deviceSize.width,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            radius: 45.0,
+                            radius: deviceSize.width * 0.11,
                             backgroundColor: Theme.of(context).primaryColor,
                             child: CircleAvatar(
                               backgroundColor: Colors.white,
                               child: Icon(Icons.history, size: 40),
-                              radius: 40.0,
+                              radius: deviceSize.width * 0.1,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(deviceSize.height * 0.01),
                             child: Text("Latest Purchases",
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),

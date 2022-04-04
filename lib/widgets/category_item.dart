@@ -25,15 +25,14 @@ class CategoryItem extends StatelessWidget {
         child: Container(
             child: Stack(children: <Widget>[
           Positioned(
-              child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black,
-              image: DecorationImage(
-                  image: this.image,
-                  fit: BoxFit.cover),
-              borderRadius: BorderRadius.circular(15),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                image: DecorationImage(image: this.image, fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(15),
+              ),
             ),
-          )),
+          ),
           Positioned(
               top: constraints.maxHeight * 0.75,
               child: Container(

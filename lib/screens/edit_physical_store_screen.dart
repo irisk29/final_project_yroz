@@ -219,7 +219,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     }
   }
 
-  Widget? currentStepWidget() {
+  Widget? currentStepWidget(Size deviceSize) {
     switch (_currentStep) {
       case 0:
         return Column(
@@ -230,7 +230,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Form(
                 key: _detailsform,
                 child: Column(
@@ -324,7 +324,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             ),
             Divider(height: 0),
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: deviceSize.height * 0.5,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
@@ -364,7 +364,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Column(
                 children: [
                   Row(
@@ -578,6 +578,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
           title: Text(
             'Edit Store',
           ),
@@ -612,13 +613,14 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         });
                       },
                     ),
-                    currentStepWidget()!,
+                    currentStepWidget(deviceSize)!,
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
+                      child: Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: Padding(
+                          padding: EdgeInsets.all(deviceSize.height * 0.025),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _currentStep > 0

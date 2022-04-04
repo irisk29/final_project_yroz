@@ -85,34 +85,13 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       address: "",
       categories: [],
       operationHours: {
-        'sunday': [
-          OpenOnlineStorePipeline._sunday_open,
-          OpenOnlineStorePipeline._sunday_close
-        ],
-        'monday': [
-          OpenOnlineStorePipeline._monday_open,
-          OpenOnlineStorePipeline._monday_close
-        ],
-        'tuesday': [
-          OpenOnlineStorePipeline._tuesday_open,
-          OpenOnlineStorePipeline._tuesday_close
-        ],
-        'wednesday': [
-          OpenOnlineStorePipeline._wednesday_open,
-          OpenOnlineStorePipeline._wednesday_close
-        ],
-        'thursday': [
-          OpenOnlineStorePipeline._thursday_open,
-          OpenOnlineStorePipeline._thursday_close
-        ],
-        'friday': [
-          OpenOnlineStorePipeline._friday_open,
-          OpenOnlineStorePipeline._friday_close
-        ],
-        'saturday': [
-          OpenOnlineStorePipeline._saturday_open,
-          OpenOnlineStorePipeline._saturday_close
-        ]
+        'sunday': [OpenOnlineStorePipeline._sunday_open, OpenOnlineStorePipeline._sunday_close],
+        'monday': [OpenOnlineStorePipeline._monday_open, OpenOnlineStorePipeline._monday_close],
+        'tuesday': [OpenOnlineStorePipeline._tuesday_open, OpenOnlineStorePipeline._tuesday_close],
+        'wednesday': [OpenOnlineStorePipeline._wednesday_open, OpenOnlineStorePipeline._wednesday_close],
+        'thursday': [OpenOnlineStorePipeline._thursday_open, OpenOnlineStorePipeline._thursday_close],
+        'friday': [OpenOnlineStorePipeline._friday_open, OpenOnlineStorePipeline._friday_close],
+        'saturday': [OpenOnlineStorePipeline._saturday_open, OpenOnlineStorePipeline._saturday_close]
       },
       image: null,
       products: [],
@@ -142,8 +121,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           controller: OpenOnlineStorePipeline._controller,
           builder: AddressDialogBuilder(),
           onDone: (Address address) => address);
-      // final user = ModalRoute.of(context)!.settings.arguments as User?;
-      // widget.user = user;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -166,8 +143,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     _editedStore!.categories = _selectedItems;
     _editedStore!.products = _products;
     try {
-      await Provider.of<User>(context, listen: false).openOnlineStore(
-          _editedStore!, bankAccountForm.buildBankAccountDTO()!);
+      await Provider.of<User>(context, listen: false)
+          .openOnlineStore(_editedStore!, bankAccountForm.buildBankAccountDTO()!);
     } catch (error) {
       await showDialog(
         context: context,
@@ -205,39 +182,54 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   void _selectTime(String time) async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
-      initialTime: _editedStore!
-              .operationHours[time.substring(0, time.indexOf('['))]![
+      initialTime: _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
           int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
       initialEntryMode: TimePickerEntryMode.input,
     );
     if (newTime != null) {
       setState(() {
         _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
-                int.parse(
-                    time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
-            newTime;
+            int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))] = newTime;
       });
     }
   }
 
+  static const productsLimitation = 10;
   void _showAddProduct() async {
-    if (_products.length <= 10) {
-      final Tuple2<ProductDTO?, OnlineStoreDTO?> result = await Navigator.push(
+    if (_products.length < productsLimitation) {
+      final Tuple2<ProductDTO?, OnlineStoreDTO?>? result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
-
-      // Update UI
-      if (result.item1 != null) {
+      if (result != null && result.item1 != null) {
         setState(() {
           _editedStore = result.item2;
           _products.add(result.item1!);
         });
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            "Store's Products Limitation",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          content: Text("We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Ok"),
+            ),
+          ],
+        ),
+      );
     }
   }
 
-  Widget? currentStepWidget() {
+  Widget? currentStepWidget(Size deviceSize) {
     switch (_currentStep) {
       case 0:
         return Column(
@@ -248,13 +240,12 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Form(
                 key: _detailsform,
                 child: Column(
                   children: <Widget>[
-                    ImageInput(
-                        _selectImage, _unselectImage, _pickedImage, true),
+                    ImageInput(_selectImage, _unselectImage, _pickedImage, true),
                     TextFormField(
                       key: const Key('storeName'),
                       controller: _nameController,
@@ -279,9 +270,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             image: _editedStore!.image,
                             id: '',
                             products: _editedStore!.products,
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
@@ -293,9 +282,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             image: _editedStore!.image,
                             id: '',
                             products: _editedStore!.products,
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -323,9 +310,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             image: _editedStore!.image,
                             id: '',
                             products: _editedStore!.products,
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
@@ -337,18 +322,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             image: _editedStore!.image,
                             id: '',
                             products: _editedStore!.products,
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
                       key: const Key('storeAddress'),
                       decoration: InputDecoration(labelText: 'Address'),
                       controller: OpenOnlineStorePipeline._controller,
-                      onTap: () => showDialog(
-                          context: context,
-                          builder: (context) => destinationBuilder),
+                      onTap: () => showDialog(context: context, builder: (context) => destinationBuilder),
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
@@ -359,9 +340,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             image: _editedStore!.image,
                             id: '',
                             products: _editedStore!.products,
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                   ],
@@ -379,7 +358,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: deviceSize.height * 0.5,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
@@ -388,8 +367,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isChecked) =>
-                      _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
+                  onChanged: (isChecked) => _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
                 ),
               ),
             ),
@@ -419,7 +397,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Divider(height: 0),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(deviceSize.width * 0.03),
               child: Column(
                 children: [
                   Row(
@@ -432,18 +410,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             onPressed: () {
                               _selectTime('sunday[0]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['sunday']![0]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['sunday']![0].format(context)),
                           ),
                           Text('-'),
                           ElevatedButton(
                             onPressed: () {
                               _selectTime('sunday[1]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['sunday']![1]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['sunday']![1].format(context)),
                           ),
                         ],
                       ),
@@ -457,16 +431,12 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                         children: [
                           ElevatedButton(
                             onPressed: () => _selectTime('monday[0]'),
-                            child: Text(_editedStore!
-                                .operationHours['monday']![0]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['monday']![0].format(context)),
                           ),
                           Text('-'),
                           ElevatedButton(
                             onPressed: () => _selectTime('monday[1]'),
-                            child: Text(_editedStore!
-                                .operationHours['monday']![1]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['monday']![1].format(context)),
                           ),
                         ],
                       ),
@@ -482,18 +452,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             onPressed: () {
                               _selectTime('tuesday[0]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['tuesday']![0]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['tuesday']![0].format(context)),
                           ),
                           Text('-'),
                           ElevatedButton(
                             onPressed: () {
                               _selectTime('tuesday[1]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['tuesday']![1]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['tuesday']![1].format(context)),
                           ),
                         ],
                       ),
@@ -509,18 +475,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             onPressed: () {
                               _selectTime('wednesday[0]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['wednesday']![0]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['wednesday']![0].format(context)),
                           ),
                           Text('-'),
                           ElevatedButton(
                             onPressed: () {
                               _selectTime('wednesday[1]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['wednesday']![1]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['wednesday']![1].format(context)),
                           ),
                         ],
                       ),
@@ -536,18 +498,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             onPressed: () {
                               _selectTime('thursday[1]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['thursday']![0]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['thursday']![0].format(context)),
                           ),
                           Text('-'),
                           ElevatedButton(
                             onPressed: () {
                               _selectTime('thursday[1]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['thursday']![1]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['thursday']![1].format(context)),
                           ),
                         ],
                       ),
@@ -563,18 +521,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             onPressed: () {
                               _selectTime('friday[0]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['friday']![0]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['friday']![0].format(context)),
                           ),
                           Text('-'),
                           ElevatedButton(
                             onPressed: () {
                               _selectTime('friday[1]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['friday']![1]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['friday']![1].format(context)),
                           ),
                         ],
                       ),
@@ -590,18 +544,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             onPressed: () {
                               _selectTime('saturday[0]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['saturday']![0]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['saturday']![0].format(context)),
                           ),
                           Text('-'),
                           ElevatedButton(
                             onPressed: () {
                               _selectTime('saturday[1]');
                             },
-                            child: Text(_editedStore!
-                                .operationHours['saturday']![1]
-                                .format(context)),
+                            child: Text(_editedStore!.operationHours['saturday']![1].format(context)),
                           ),
                         ],
                       ),
@@ -640,12 +590,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       case 4:
         return bankAccountForm;
       case 5:
-        return StorePreview(
-            true,
-            _editedStore!.name,
-            _editedStore!.address,
-            _pickedImage,
-            _editedStore!.phoneNumber,
+        return StorePreview(true, _editedStore!.name, _editedStore!.address, _pickedImage, _editedStore!.phoneNumber,
             _editedStore!.operationHours);
       default:
         return null;
@@ -669,9 +614,12 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
-          title: Text(
-            'Open Online Store',
-            style: const TextStyle(fontSize: 22),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Open Online Store',
+              style: const TextStyle(fontSize: 22),
+            ),
           ),
         ),
         body: _isLoading

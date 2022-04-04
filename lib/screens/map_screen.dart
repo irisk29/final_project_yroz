@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:final_project_yroz/LogicModels/place.dart';
-import 'package:final_project_yroz/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../blocs/application_bloc.dart';
@@ -13,11 +12,11 @@ class MapScreen extends StatefulWidget {
   final PlaceLocation initialLocation;
   final bool isSelecting;
 
-  MapScreen({
+  const MapScreen({
     this.initialLocation =
         const PlaceLocation(latitude: 31.262218, longitude: 34.801461),
     this.isSelecting = false,
-  }) {}
+  });
 
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -62,17 +61,19 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     final applicationBloc = Provider.of<ApplicationBloc>(context);
+
     return Scaffold(
         body: applicationBloc.currentLocation == null
-            ? CircularProgressIndicator()
+            ? Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
                 child: Column(
                   children: [
                     Stack(
                       children: [
                         Container(
-                          height: MediaQuery.of(context).size.height - 160,
+                          height: deviceSize.height * 0.78,
                           child: GoogleMap(
                             mapType: MapType.normal,
                             myLocationEnabled: true,
@@ -89,9 +90,12 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.only(
+                              top: deviceSize.height * 0.01,
+                              left: deviceSize.width * 0.02,
+                              right: deviceSize.width * 0.1),
                           child: Wrap(
-                            spacing: 8.0,
+                            spacing: deviceSize.width * 0.015,
                             children: [
                               ...DUMMY_CATEGORIES.map(
                                 (e) => FilterChip(

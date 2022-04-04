@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../DTOs/StoreDTO.dart';
 import '../models/UserModel.dart';
+import '../LogicLayer/User.dart';
 import 'favorite_screen.dart';
 import 'map_screen.dart';
 
@@ -19,22 +20,22 @@ class TabsScreen extends StatefulWidget {
   @override
   _TabsScreenState createState() => _TabsScreenState();
 
-   //for test purposes
+  //for test purposes
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User("test@gmail.com", "test name"),
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User("test@gmail.com", "test name"),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-    // This mocked observer will now receive all navigation events
-    // that happen in our app.
-    navigatorObservers: nav,
-  );
+        // This mocked observer will now receive all navigation events
+        // that happen in our app.
+        navigatorObservers: nav,
+      );
 
   Widget wrapWithMaterial2(List<NavigatorObserver> nav, UserModel user) => MaterialApp(
     routes: {
@@ -66,13 +67,21 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  late List<Widget> _pages;
-  int _selectedPageIndex = 0;
+  late int _selectedPageIndex;
+  var _init = false;
 
   @override
-  void initState() {
-    super.initState();
-    //_pages = [CategoriesScreen(), MapScreen(), FavoriteScreen(), AccountScreen()];
+  void didChangeDependencies() {
+    if (!_init) {
+      final routeArgs = ModalRoute.of(context)!.settings.arguments;
+      _selectedPageIndex = routeArgs != null &&
+              routeArgs is Map<String, Object> &&
+              routeArgs.containsKey("index")
+          ? routeArgs['index'] as int
+          : 0;
+      _init = true;
+      super.didChangeDependencies();
+    }
   }
 
   void _selectPage(int index) {
@@ -83,12 +92,6 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _pages = [
-      CategoriesScreen(),
-      MapScreen(),
-      FavoriteScreen(),
-      AccountScreen()
-    ];
     final homeAppBar = HomeAppBar().build(context, () => setState(() {}));
     final favoritesAppBar = TabsAppBar("Favorites").build(context);
     final nearbyAppBar = TabsAppBar("Nearby").build(context);
@@ -99,40 +102,48 @@ class _TabsScreenState extends State<TabsScreen> {
       favoritesAppBar,
       accountAppBar
     ];
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: appBars[_selectedPageIndex],
-      body: _pages[_selectedPageIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        onTap: _selectPage,
-        backgroundColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Theme.of(context).primaryColor,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        currentIndex: _selectedPageIndex,
-        items: [
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.location_on_outlined),
-            label: 'Nearby',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.favorite_border),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).primaryColor,
-            icon: Icon(Icons.account_circle),
-            label: 'Account',
-          ),
-        ],
+
+    return LayoutBuilder(
+      builder: (context, constraints) => Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: appBars[_selectedPageIndex],
+        body: const [
+          CategoriesScreen(),
+          MapScreen(),
+          FavoriteScreen(),
+          AccountScreen()
+        ][_selectedPageIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          onTap: _selectPage,
+          backgroundColor: Colors.white,
+          unselectedItemColor: Colors.grey,
+          selectedItemColor: Theme.of(context).primaryColor,
+          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+          currentIndex: _selectedPageIndex,
+          items: [
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.location_on_outlined),
+              label: 'Nearby',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.favorite_border),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.account_circle),
+              label: 'Account',
+            ),
+          ],
+        ),
       ),
     );
   }

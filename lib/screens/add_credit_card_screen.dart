@@ -117,9 +117,12 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
-          title: Text(
-            "New Credit Card",
-            style: const TextStyle(fontSize: 22),
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "New Credit Card",
+              style: const TextStyle(fontSize: 22),
+            ),
           ),
         ),
         body: _isLoading
@@ -140,9 +143,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                         obscureCardNumber: true,
                         obscureCardCvv: true,
                         isHolderNameVisible: true,
-                        cardBgColor: Colors.indigo,
-                        backgroundImage:
-                            useBackgroundImage ? 'assets/card_bg.png' : null,
+                        cardBgColor: Colors.blue,
                         isSwipeGestureEnabled: true,
                         onCreditCardWidgetChange:
                             (CreditCardBrand creditCardBrand) {},
