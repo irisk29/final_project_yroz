@@ -14,25 +14,30 @@ class ManageOnlineStoreScreen extends StatefulWidget {
   late OnlineStoreDTO store;
 
   @override
-  _ManageOnlineStoreScreenState createState() =>
-      _ManageOnlineStoreScreenState();
+  _ManageOnlineStoreScreenState createState() => _ManageOnlineStoreScreenState();
 }
 
 class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
+  bool isLoading = false;
+
   @override
   void didChangeDependencies() {
-    widget.store =
-        Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
-    super.didChangeDependencies();
+    if (!isLoading) {
+      widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
+      super.didChangeDependencies();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context, listen: true);
-    final notificationCount = user.storeOwnerState!.newPurchasesNoViewed;
+    var notificationCount = 0;
+    if (user.storeOwnerState != null) {
+      notificationCount = user.storeOwnerState!.newPurchasesNoViewed;
+    }
     var deviceSize = MediaQuery.of(context).size;
 
-    return Scaffold(
+    return isLoading ? Scaffold(body: Center(child: CircularProgressIndicator())) : Scaffold(
       appBar: AppBar(
         toolbarHeight: deviceSize.height * 0.1,
         centerTitle: true,
@@ -63,20 +68,15 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                 height: deviceSize.height * 0.3,
                 decoration: BoxDecoration(
                   image: widget.store.image != null
-                      ? DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(widget.store.image!))
-                      : DecorationImage(
-                          image: AssetImage('assets/images/default-store.png'),
-                          fit: BoxFit.cover),
+                      ? DecorationImage(fit: BoxFit.cover, image: NetworkImage(widget.store.image!))
+                      : DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                 ),
               ),
             ),
             Card(
               elevation: 4.0,
               margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
               child: Column(
                 children: <Widget>[
                   ListTile(
@@ -86,8 +86,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     title: Text("Edit Store Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(EditOnlineStorePipeline.routeName),
+                    onTap: () => Navigator.of(context).pushNamed(EditOnlineStorePipeline.routeName),
                   ),
                   _buildDivider(deviceSize),
                   ListTile(
@@ -97,8 +96,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     title: Text("Edit Bank Account Details"),
                     trailing: Icon(Icons.keyboard_arrow_right),
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(EditBankAccountScreen.routeName),
+                    onTap: () => Navigator.of(context).pushNamed(EditBankAccountScreen.routeName),
                   ),
                   _buildDivider(deviceSize),
                   ListTile(
@@ -136,8 +134,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                     ),
                     trailing: Icon(Icons.keyboard_arrow_right),
                     title: Text("View Store Purchases"),
-                    onTap: () => Navigator.of(context)
-                        .pushNamed(StorePurchasesScreen.routeName),
+                    onTap: () => Navigator.of(context).pushNamed(StorePurchasesScreen.routeName),
                   ),
                   _buildDivider(deviceSize),
                   ListTile(
@@ -174,9 +171,12 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                       title: Text("Downgrade to Physical Store"),
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
-                        user.convertOnlineStoreToPhysical(widget.store).then(
-                            (_) => Navigator.of(context)
-                                .pushReplacementNamed(TabsScreen.routeName));
+                        setState(() {
+                          isLoading = true;
+                        });
+                        user
+                            .convertOnlineStoreToPhysical(widget.store)
+                            .then((_) => Navigator.of(context).pushReplacementNamed(TabsScreen.routeName));
                       }),
                 ],
               ),
@@ -198,9 +198,12 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                 ),
               ),
               onPressed: () {
-                user.deleteStore(widget.store.id, true).then((_) =>
-                    Navigator.of(context)
-                        .pushReplacementNamed(TabsScreen.routeName));
+                setState(() {
+                  isLoading = true;
+                });
+                user
+                    .deleteStore(widget.store.id, true)
+                    .then((_) => Navigator.of(context).pushReplacementNamed(TabsScreen.routeName));
               },
             ),
           ],

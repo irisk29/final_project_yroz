@@ -623,11 +623,13 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ),
         ),
         body: _isLoading
-            ? ListView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: [Center(
+            ? Align(
+              alignment: Alignment.center,
+              child: ListView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                children: [Center(
                   child: SizedBox(
-                    height: deviceSize.height * 0.3,
+                    height: deviceSize.height * 0.8,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -642,7 +644,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                     ),
                   ),
                 ),
-              ]
+                ]
+              ),
             )
             : ListView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -660,6 +663,18 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             Icon(Icons.account_balance),
                             Icon(Icons.storefront),
                           ],
+                          // activeStep property set to activeStep variable defined above.
+                            activeStep: _currentStep,
+                            steppingEnabled: false,
+                            enableStepTapping: false,
+                            enableNextPreviousButtons: false,
+                            activeStepColor: Theme.of(context).primaryColor,
+                            // This ensures step-tapping updates the activeStep.
+                            onStepReached: (index) {
+                              setState(() {
+                                _currentStep = index;
+                              });
+                            },
                         ),
                         currentStepWidget(deviceSize)!,
                         Expanded(

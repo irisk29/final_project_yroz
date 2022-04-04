@@ -35,6 +35,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
           actions: [
             ArrowElement(
               id: 'action',
+              targetAnchor: Alignment.centerLeft,
               child: IconButton(
                 icon: Icon(Icons.storefront),
                 onPressed: () {},
