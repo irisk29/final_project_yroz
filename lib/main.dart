@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
@@ -57,12 +59,17 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
       await refreshLocalData();
-      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
+      StreamSubscription h = Amplify.Hub.listen([HubChannel.DataStore], (modelSyncedEvent) {
+        if (modelSyncedEvent.eventName == 'modelSynced') {
+          
+        }
+      });
+      /*var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
         if (msg.eventName == 'ready') {
           FLog.info(text: "AWS Amplify is ready");
           FlutterNativeSplash.remove();
         }
-      });
+      });*/
     });
   }
 
