@@ -39,32 +39,32 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
     }
     var deviceSize = MediaQuery.of(context).size;
 
-    return isLoading
-        ? Scaffold(body: Center(child: CircularProgressIndicator()))
-        : Scaffold(
-            appBar: AppBar(
-              toolbarHeight: deviceSize.height * 0.1,
-              centerTitle: true,
-              title: Column(
-                children: [
-                  Text(
-                    widget.store.name,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    widget.store.categories.join(", "),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: deviceSize.height * 0.1,
+        centerTitle: true,
+        title: Column(
+          children: [
+            Text(
+              widget.store.name,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            body: SingleChildScrollView(
+            Text(
+              widget.store.categories.join(", "),
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               child: Column(
                 children: [
                   Center(
@@ -185,12 +185,37 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                             title: Text("Downgrade to Physical Store"),
                             trailing: Icon(Icons.keyboard_arrow_right),
                             onTap: () {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              user
-                                  .convertOnlineStoreToPhysical(widget.store)
-                                  .then((_) => Navigator.of(context).pop());
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: Text('Are you sure?'),
+                                  content: Text(
+                                    'Downgrading your store to physical store means that your online shop and all your products will be deleted.',
+                                  ),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text('No'),
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text('Yes'),
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop();
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        user
+                                            .convertOnlineStoreToPhysical(
+                                                widget.store)
+                                            .then((_) => Navigator.of(context)
+                                                .pop(false));
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
                             }),
                       ],
                     ),
@@ -212,18 +237,40 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                       ),
                     ),
                     onPressed: () {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      user
-                          .deleteStore(widget.store.id, true)
-                          .then((_) => Navigator.of(context).pop());
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text('Are you sure?'),
+                          content: Text(
+                            'Deleting your store means that all information on it will be deleted, you will not be able to restored this action.',
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('No'),
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                              },
+                            ),
+                            FlatButton(
+                              child: Text('Yes'),
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                user.deleteStore(widget.store.id, true).then(
+                                    (_) => Navigator.of(context).pop(false));
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 ],
               ),
             ),
-          );
+    );
   }
 
   Container _buildDivider(Size deviceSize) {
