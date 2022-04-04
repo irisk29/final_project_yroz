@@ -33,6 +33,7 @@ class StoreItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) => GestureDetector(
+        key: Key(this.store.id),
         child: Container(
             child: Stack(children: <Widget>[
           Positioned(

@@ -1,12 +1,15 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/account_screen.dart';
 import 'package:final_project_yroz/screens/categories_screen.dart';
+import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/widgets/tabs_app_bar.dart';
 import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
+import '../DTOs/StoreDTO.dart';
+import '../models/UserModel.dart';
 import 'favorite_screen.dart';
 import 'map_screen.dart';
 
@@ -31,6 +34,34 @@ class TabsScreen extends StatefulWidget {
     // This mocked observer will now receive all navigation events
     // that happen in our app.
     navigatorObservers: nav,
+  );
+
+  Widget wrapWithMaterial2(List<NavigatorObserver> nav, UserModel user) => MaterialApp(
+    routes: {
+      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      FavoriteScreen.routeName: (ctx) => FavoriteScreen(),
+    },
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User.fromModel(user),
+        ),
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
+    onGenerateRoute: (settings) {
+      return MaterialPageRoute(
+        settings: RouteSettings(arguments: settings.arguments! as Map<String, Object>),
+        builder: (context) {
+          return PhysicalStoreScreen().wrapWithMaterial(nav, user, ModalRoute.of(context)!.settings.arguments as Map<String, Object>);
+        },
+      );
+    },
   );
 }
 

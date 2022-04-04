@@ -1,12 +1,17 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_brand.dart';
-import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:final_project_yroz/widgets/credit_card_form.dart' as form;
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter_credit_card/credit_card_model.dart';
+import 'package:flutter_credit_card/credit_card_widget.dart';
+import 'package:flutter_credit_card/glassmorphism_config.dart';
 import 'package:provider/provider.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
+import '../models/UserModel.dart';
 
 class AddCreditCardScreen extends StatefulWidget {
   static const routeName = '/add-credit-card';
@@ -14,6 +19,25 @@ class AddCreditCardScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return AddCreditCardScreenState();
+  }
+
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) {
+    return MaterialApp(
+      routes: {
+        TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      },
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: User.fromModel(user),
+          ),
+        ],
+        child: this,
+      ),
+      // This mocked observer will now receive all navigation events
+      // that happen in our app.
+      //navigatorObservers: nav,
+    );
   }
 }
 
@@ -127,7 +151,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                         child: SingleChildScrollView(
                           child: Column(
                             children: <Widget>[
-                              CreditCardForm(
+                              form.CreditCardForm(
                                 formKey: formKey,
                                 obscureCvv: true,
                                 obscureNumber: true,
@@ -180,12 +204,13 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                   labelText: 'Card Holder',
                                 ),
                                 onCreditCardModelChange:
-                                    onCreditCardModelChange,
+                                  onCreditCardModelChange,
                               ),
                               const SizedBox(
                                 height: 20,
                               ),
                               ElevatedButton(
+                                key: const Key("save"),
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
