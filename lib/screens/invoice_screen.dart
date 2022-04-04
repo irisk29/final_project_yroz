@@ -335,7 +335,7 @@ class InvoiceScreen extends StatelessWidget {
                         Navigator.of(context).popUntil((route) => false);
                         Navigator.of(context).pushNamed(
                           TabsScreen.routeName,
-                          arguments: {'index': 3},
+                          arguments: {'index': 4},
                         );
                       },
                       child: Icon(Icons.close, color: Colors.white, size: 20),

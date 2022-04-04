@@ -1,5 +1,6 @@
 import 'package:final_project_yroz/screens/account_screen.dart';
 import 'package:final_project_yroz/screens/categories_screen.dart';
+import 'package:final_project_yroz/screens/search_screen.dart';
 import 'package:final_project_yroz/widgets/tabs_app_bar.dart';
 import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -60,11 +61,13 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     final homeAppBar = HomeAppBar().build(context, () => setState(() {}));
+    final searchAppBar = TabsAppBar("Search").build(context);
     final favoritesAppBar = TabsAppBar("Favorites").build(context);
     final nearbyAppBar = TabsAppBar("Nearby").build(context);
     final accountAppBar = TabsAppBar("My Account").build(context);
     List<AppBar> appBars = [
       homeAppBar,
+      searchAppBar,
       nearbyAppBar,
       favoritesAppBar,
       accountAppBar
@@ -74,11 +77,12 @@ class _TabsScreenState extends State<TabsScreen> {
       builder: (context, constraints) => Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: appBars[_selectedPageIndex],
-        body: const [
+        body: [
           CategoriesScreen(),
+          SearchScreen(),
           MapScreen(),
           FavoriteScreen(),
-          AccountScreen()
+          const AccountScreen()
         ][_selectedPageIndex],
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -93,6 +97,11 @@ class _TabsScreenState extends State<TabsScreen> {
               backgroundColor: Theme.of(context).primaryColor,
               icon: Icon(Icons.home_outlined),
               label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.search),
+              label: 'Search',
             ),
             BottomNavigationBarItem(
               backgroundColor: Theme.of(context).primaryColor,

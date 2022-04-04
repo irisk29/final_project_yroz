@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
@@ -25,6 +28,7 @@ import 'LogicLayer/User.dart';
 import 'amplifyconfiguration.dart';
 import 'blocs/application_bloc.dart';
 import 'models/ModelProvider.dart';
+import 'package:flutter/services.dart';
 
 import 'screens/landing_screen.dart';
 import 'screens/manage_online_store_screen.dart';
@@ -55,10 +59,18 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
-      await Future.delayed(Duration(milliseconds: 1000));
       await refreshLocalData();
-      await Future.delayed(Duration(milliseconds: 1000));
-      FlutterNativeSplash.remove();
+      /*StreamSubscription h = Amplify.Hub.listen([HubChannel.DataStore], (modelSyncedEvent) {
+        if (modelSyncedEvent.eventName == 'modelSynced') {
+          
+        }
+      });*/
+      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
+        if (msg.eventName == 'ready') {
+          FLog.info(text: "AWS Amplify is ready");
+          FlutterNativeSplash.remove();
+        }
+      });
     });
   }
 
@@ -89,7 +101,7 @@ class _MyAppState extends State<MyApp> {
     try {
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
-      print("Amplify was already configured. Was the app restarted?");
+      FLog.error(text: "Amplify was already configured. Was the app restarted?");
     }
     try {
       setState(() {
@@ -116,6 +128,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+    ]);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -139,24 +155,20 @@ class _MyAppState extends State<MyApp> {
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) =>
-              OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) =>
-              OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
           LandingScreen.routeName: (ctx) => LandingScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) =>
-              EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
           EditBankAccountScreen.routeName: (ctx) => EditBankAccountScreen(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) =>
-              ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),

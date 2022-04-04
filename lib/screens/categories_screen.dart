@@ -1,7 +1,6 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
-import 'package:final_project_yroz/widgets/search_bar.dart';
 import 'package:flutter/material.dart';
 import '../widgets/default_store_item.dart';
 
@@ -35,42 +34,77 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             return snap.connectionState != ConnectionState.done
                 ? Center(child: CircularProgressIndicator())
                 : SingleChildScrollView(
-                    child: Container(
-                      height: height * 0.95,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Column(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.04,
+                                top: constraints.maxHeight * 0.03),
+                            child: Text(
+                              "Categories",
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: height * 0.22,
+                          child: GridView(
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.all(height * 0.025),
                             children: [
-                              Container(
-                                height: height * 0.1,
-                              ),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: constraints.maxWidth * 0.04),
+                              DUMMY_CATEGORIES
+                                  .map(
+                                    (catData) => CategoryItem(
+                                        catData.id,
+                                        catData.title,
+                                        catData.color,
+                                        catData.image),
+                                  )
+                                  .toList(),
+                            ].expand((i) => i).toList(),
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: constraints.maxHeight,
+                              childAspectRatio: 1,
+                              mainAxisSpacing: constraints.maxWidth * 0.035,
+                            ),
+                          ),
+                        ),
+                        Divider(),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.04),
+                            child: Text(
+                              "Physical Stores",
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        physicalStores.isEmpty
+                            ? SizedBox(
+                                height: height * 0.22,
+                                child: Center(
                                   child: Text(
-                                    "Categories",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                      "Currently there are no physical stores to display"),
                                 ),
-                              ),
-                              SizedBox(
+                              )
+                            : SizedBox(
                                 height: height * 0.22,
                                 child: GridView(
                                   scrollDirection: Axis.horizontal,
                                   padding: EdgeInsets.all(height * 0.025),
                                   children: [
-                                    DUMMY_CATEGORIES
+                                    physicalStores
                                         .map(
-                                          (catData) => CategoryItem(
-                                              catData.id,
-                                              catData.title,
-                                              catData.color,
-                                              catData.image),
+                                          (storeData) => StoreItem(
+                                              storeData //, widget.user!
+                                              ),
                                         )
                                         .toList(),
                                   ].expand((i) => i).toList(),
@@ -83,102 +117,49 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   ),
                                 ),
                               ),
-                              Divider(),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: constraints.maxWidth * 0.04),
-                                  child: Text(
-                                    "Physical Stores",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                              physicalStores.isEmpty
-                                  ? SizedBox(
-                                      height: height * 0.22,
-                                      child: Center(
-                                        child: Text(
-                                            "Currently there are no physical stores to display"),
-                                      ),
-                                    )
-                                  : SizedBox(
-                                      height: height * 0.22,
-                                      child: GridView(
-                                        scrollDirection: Axis.horizontal,
-                                        padding: EdgeInsets.all(height * 0.025),
-                                        children: [
-                                          physicalStores
-                                              .map(
-                                                (storeData) => StoreItem(
-                                                    storeData //, widget.user!
-                                                    ),
-                                              )
-                                              .toList(),
-                                        ].expand((i) => i).toList(),
-                                        gridDelegate:
-                                            SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent:
-                                              constraints.maxHeight,
-                                          childAspectRatio: 1,
-                                          mainAxisSpacing:
-                                              constraints.maxWidth * 0.035,
-                                        ),
-                                      ),
-                                    ),
-                              Divider(),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: constraints.maxWidth * 0.04),
-                                  child: Text(
-                                    "Online Stores",
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ),
-                              onlineStores.isEmpty
-                                  ? SizedBox(
-                                      height: height * 0.22,
-                                      child: Center(
-                                        child: Text(
-                                            "Currently there are no online stores to display"),
-                                      ),
-                                    )
-                                  : SizedBox(
-                                      height: height * 0.22,
-                                      child: GridView(
-                                        scrollDirection: Axis.horizontal,
-                                        padding: EdgeInsets.all(height * 0.025),
-                                        children: [
-                                          onlineStores
-                                              .map(
-                                                (storeData) =>
-                                                    StoreItem(storeData),
-                                              )
-                                              .toList(),
-                                        ].expand((i) => i).toList(),
-                                        gridDelegate:
-                                            SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent:
-                                              constraints.maxHeight,
-                                          childAspectRatio: 1,
-                                          mainAxisSpacing:
-                                              constraints.maxWidth * 0.035,
-                                        ),
-                                      ),
-                                    ),
-                            ],
+                        Divider(),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                left: constraints.maxWidth * 0.04),
+                            child: Text(
+                              "Online Stores",
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
                           ),
-                          SearchBar(),
-                        ],
-                      ),
+                        ),
+                        onlineStores.isEmpty
+                            ? SizedBox(
+                                height: height * 0.22,
+                                child: Center(
+                                  child: Text(
+                                      "Currently there are no online stores to display"),
+                                ),
+                              )
+                            : SizedBox(
+                                height: height * 0.22,
+                                child: GridView(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.all(height * 0.025),
+                                  children: [
+                                    onlineStores
+                                        .map(
+                                          (storeData) => StoreItem(storeData),
+                                        )
+                                        .toList(),
+                                  ].expand((i) => i).toList(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: constraints.maxHeight,
+                                    childAspectRatio: 1,
+                                    mainAxisSpacing:
+                                        constraints.maxWidth * 0.035,
+                                  ),
+                                ),
+                              ),
+                      ],
                     ),
                   );
           },

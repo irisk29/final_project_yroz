@@ -19,10 +19,14 @@ class HomeAppBar {
         onPressed: () => user.storeOwnerState!.physicalStore != null
             ? Navigator.of(context)
                 .pushNamed(ManagePhysicalStoreScreen.routeName)
-                .then((value) => callback())
+                .then((value) {
+                if (value != null) callback();
+              })
             : Navigator.of(context)
                 .pushNamed(ManageOnlineStoreScreen.routeName)
-                .then((value) => callback()),
+                .then((value) {
+                if (value != null) callback();
+              }),
       );
       return notificationValue == 0
           ? icon

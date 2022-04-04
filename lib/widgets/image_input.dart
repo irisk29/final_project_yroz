@@ -64,9 +64,10 @@ class _ImageInputState extends State<ImageInput> {
     final deviceSize = MediaQuery.of(context).size;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          width: deviceSize.width * 0.35,
+          width: deviceSize.width * 0.4,
           height: deviceSize.height * 0.175,
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
