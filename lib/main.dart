@@ -28,6 +28,7 @@ import 'LogicLayer/User.dart';
 import 'amplifyconfiguration.dart';
 import 'blocs/application_bloc.dart';
 import 'models/ModelProvider.dart';
+import 'package:flutter/services.dart';
 
 import 'screens/landing_screen.dart';
 import 'screens/manage_online_store_screen.dart';
@@ -100,7 +101,7 @@ class _MyAppState extends State<MyApp> {
     try {
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
-      print("Amplify was already configured. Was the app restarted?");
+      FLog.error(text: "Amplify was already configured. Was the app restarted?");
     }
     try {
       setState(() {
@@ -127,6 +128,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+    ]);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -150,24 +155,20 @@ class _MyAppState extends State<MyApp> {
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) =>
-              OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) =>
-              OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
           LandingScreen.routeName: (ctx) => LandingScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) =>
-              EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
           EditBankAccountScreen.routeName: (ctx) => EditBankAccountScreen(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) =>
-              ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
