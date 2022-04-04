@@ -674,7 +674,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           });
                         },
                       ),
-                      currentStepWidget()!,
+                      currentStepWidget(deviceSize)!,
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(20),
