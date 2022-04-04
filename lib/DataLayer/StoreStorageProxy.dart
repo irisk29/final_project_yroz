@@ -338,17 +338,18 @@ class StoreStorageProxy {
 
   List<ProductDTO> convertProductsModelToDTO(List<StoreProductModel> products) {
     List<ProductDTO> productsDTO = [];
-    products.forEach((e) async {
+    for(var p in products)
+    {
       productsDTO.add(new ProductDTO(
-          id: e.id,
-          name: e.name,
-          price: e.price,
-          category: e.categories.isEmpty ? "" : jsonDecode(e.categories).cast<String>(),
-          imageUrl: e.imageUrl == null ? "" : e.imageUrl!,
-          description: e.description!,
-          storeID: e.onlinestoremodelID,
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          category: p.categories.isEmpty ? "" : jsonDecode(p.categories).cast<String>(),
+          imageUrl: p.imageUrl == null ? "" : p.imageUrl!,
+          description: p.description!,
+          storeID: p.onlinestoremodelID,
           imageFromPhone: null));
-    });
+    }
     return productsDTO;
   }
 
@@ -579,14 +580,15 @@ class StoreStorageProxy {
     }
   
     List<StoreProductModel> updatedProd = [];
-    products.forEach((element) async {
-      var res = await createProductForOnlineStore(element, storeID);
+    for(var p in products)
+    {
+       var res = await createProductForOnlineStore(p, storeID);
       if (res.getTag()) {
         updatedProd.add(res.getValue());
       } else {
         FLog.error(text: res.getMessage());
       }
-    });
+    }
 
     for (StoreProductModel p in updatedProd) {
       await Amplify.DataStore.save(p);
