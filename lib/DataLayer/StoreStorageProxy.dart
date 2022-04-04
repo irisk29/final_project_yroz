@@ -570,15 +570,14 @@ class StoreStorageProxy {
   Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
     List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
-    if (productsModels.isEmpty) {
-      FLog.error(text: "No products were found in store $storeID");
-      return new Failure("No products were found in store $storeID", storeID);
+    //can be empty when upgrading from physical to online
+    if (productsModels.isNotEmpty) {
+      for (StoreProductModel prod in productsModels) {
+        deletePicture(prod.id);
+        await Amplify.DataStore.delete(prod);
+      }
     }
-    for (StoreProductModel prod in productsModels) {
-      deletePicture(prod.id);
-      await Amplify.DataStore.delete(prod);
-    }
-
+  
     List<StoreProductModel> updatedProd = [];
     products.forEach((element) async {
       var res = await createProductForOnlineStore(element, storeID);
