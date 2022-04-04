@@ -59,17 +59,17 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
       await refreshLocalData();
-      StreamSubscription h = Amplify.Hub.listen([HubChannel.DataStore], (modelSyncedEvent) {
+      /*StreamSubscription h = Amplify.Hub.listen([HubChannel.DataStore], (modelSyncedEvent) {
         if (modelSyncedEvent.eventName == 'modelSynced') {
           
         }
-      });
-      /*var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
+      });*/
+      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
         if (msg.eventName == 'ready') {
           FLog.info(text: "AWS Amplify is ready");
           FlutterNativeSplash.remove();
         }
-      });*/
+      });
     });
   }
 
@@ -150,20 +150,24 @@ class _MyAppState extends State<MyApp> {
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) =>
+              OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) =>
+              OnlineStoreProductsScreen(),
           LandingScreen.routeName: (ctx) => LandingScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) =>
+              EditPhysicalStorePipeline(),
           EditBankAccountScreen.routeName: (ctx) => EditBankAccountScreen(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) =>
+              ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),

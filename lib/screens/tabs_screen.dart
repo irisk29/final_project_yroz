@@ -74,7 +74,7 @@ class _TabsScreenState extends State<TabsScreen> {
       builder: (context, constraints) => Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: appBars[_selectedPageIndex],
-        body: const [
+        body: [
           CategoriesScreen(),
           MapScreen(),
           FavoriteScreen(),

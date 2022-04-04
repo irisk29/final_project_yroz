@@ -603,8 +603,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         resizeToAvoidBottomInset: false,
         body: _isLoading
             ? Align(
-              alignment: Alignment.center,
-              child: ListView(
+                alignment: Alignment.center,
+                child: ListView(
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   children: [
@@ -628,14 +628,14 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                     )
                   ],
                 ),
-            )
+              )
             : ListView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 children: [
                   Container(
                     child: SizedBox(
-                      height: deviceSize.height * 0.8,
+                      height: deviceSize.height * 0.85,
                       child: Column(
                         children: [
                           IconStepper(
