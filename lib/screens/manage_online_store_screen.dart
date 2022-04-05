@@ -176,47 +176,6 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                                     ),
                                   )),
                         ),
-                        _buildDivider(deviceSize),
-                        ListTile(
-                            leading: Icon(
-                              Icons.arrow_circle_down,
-                              color: Colors.purple,
-                            ),
-                            title: Text("Downgrade to Physical Store"),
-                            trailing: Icon(Icons.keyboard_arrow_right),
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                  title: Text('Are you sure?'),
-                                  content: Text(
-                                    'Downgrading your store to physical store means that your online shop and all your products will be deleted.',
-                                  ),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      child: Text('No'),
-                                      onPressed: () {
-                                        Navigator.of(ctx).pop();
-                                      },
-                                    ),
-                                    FlatButton(
-                                      child: Text('Yes'),
-                                      onPressed: () {
-                                        Navigator.of(ctx).pop();
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        user
-                                            .convertOnlineStoreToPhysical(
-                                                widget.store)
-                                            .then((_) => Navigator.of(context)
-                                                .pop(false));
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
                       ],
                     ),
                   ),
