@@ -7,9 +7,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:f_logs/model/flog/flog.dart';
 import 'package:final_project_yroz/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../amplifyconfiguration.dart';
 import '../models/ModelProvider.dart';
@@ -31,11 +29,11 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen>
 
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 60),
+      duration: const Duration(seconds: 45),
     )..addListener(() {
         setState(() {});
       });
-    controller.forward();
+    TickerFuture ticker = controller.forward();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
@@ -44,24 +42,25 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen>
       var currentModelIndex = 0;
       var timers = [];
       Stopwatch stopwatch = new Stopwatch()..start();
-      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
+      Amplify.Hub.listen([HubChannel.DataStore], (msg) {
         if (msg.eventName == 'modelSynced') {
           currentModelIndex++;
           timers.add(stopwatch.elapsed);
           var avgTime = timers.reduce((value, element) => value + element) ~/
               timers.length;
-          print(avgTime);
-
-          controller.duration = avgTime * (MODEL_COUNT - currentModelIndex);
-          controller.forward(from: controller.value);
+          var duration = MODEL_COUNT - currentModelIndex > 0
+              ? avgTime * (MODEL_COUNT - currentModelIndex)
+              : avgTime;
+          duration = 1 - controller.value > 0
+              ? duration * (1 / (1 - controller.value))
+              : duration;
+          controller.duration = duration;
+          if (controller.isAnimating) ticker = controller.forward();
           stopwatch = new Stopwatch()..start();
         } else if (msg.eventName == 'ready') {
           FLog.info(text: "AWS Amplify is ready");
-          Navigator.pushReplacement(
-              context,
-              PageTransition(
-                  type: PageTransitionType.bottomToTop,
-                  child: LandingScreen()));
+          ticker.then((value) =>
+              Navigator.pushReplacementNamed(context, LandingScreen.routeName));
         }
       });
     });
@@ -125,10 +124,13 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen>
                   left: constraints.maxWidth * 0.075,
                   right: constraints.maxWidth * 0.075,
                 ),
-                child: LinearProgressIndicator(
-                  backgroundColor: Colors.white70,
-                  value: controller.value,
-                  minHeight: constraints.maxHeight * 0.05,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: LinearProgressIndicator(
+                    backgroundColor: Colors.white70,
+                    value: controller.value,
+                    minHeight: constraints.maxHeight * 0.05,
+                  ),
                 ),
               ),
             ),

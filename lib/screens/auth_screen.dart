@@ -90,7 +90,6 @@ class _AuthCardState extends State<AuthCard>
     setState(() => _isLoading = true);
     await Provider.of<User>(context, listen: false)
         .signIn(authProvider, context);
-    //TODO: ADD CALL TO ERROR DIALOG IF FAILS
     setState(() => _isLoading = false);
   }
 
