@@ -94,7 +94,6 @@ class _MyAppState extends State<MyApp> {
           TabsScreen.routeName: (ctx) => TabsScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
-          PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
           OpenPhysicalStorePipeline.routeName: (ctx) =>
               OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
@@ -114,7 +113,6 @@ class _MyAppState extends State<MyApp> {
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
           ManagePhysicalStoreScreen.routeName: (ctx) =>
               ManagePhysicalStoreScreen(),
-          OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
           TutorialScreen.routeName: (ctx) => TutorialScreen(),

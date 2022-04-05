@@ -27,6 +27,7 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) => Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           toolbarHeight: constraints.maxHeight * 0.1,
           title: Align(
@@ -37,17 +38,15 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            height: constraints.maxHeight / 1.3,
-            width: constraints.maxWidth,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                PaymentCard(widget.storeID),
-              ],
-            ),
+        body: Container(
+          height: constraints.maxHeight * 0.85,
+          width: constraints.maxWidth,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              PaymentCard(widget.storeID),
+            ],
           ),
         ),
       ),

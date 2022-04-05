@@ -51,23 +51,28 @@ class User extends ChangeNotifier {
         bagInStores = <ShoppingBagDTO>[],
         hideStoreOwnerOptions = true {}
 
-  User.fromModel(UserModel model): favoriteStores = <Tuple2<String, bool>>[],
+  User.fromModel(UserModel model)
+      : favoriteStores = <Tuple2<String, bool>>[],
         creditCards = <String>[],
         bagInStores = <ShoppingBagDTO>[],
         hideStoreOwnerOptions = false {
     try {
-      this.creditCards = model.creditCards == null ? [] : jsonDecode(model.creditCards!).cast<String>();
+      this.creditCards = model.creditCards == null
+          ? []
+          : jsonDecode(model.creditCards!).cast<String>();
       this.id = model.id;
       this.email = model.email;
       this.name = model.name;
       this.imageUrl = model.imageUrl;
       this.eWallet = model.eWallet;
       this.hideStoreOwnerOptions = model.hideStoreOwnerOptions;
-      this.favoriteStores =
-      model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
+      this.favoriteStores = model.favoriteStores == null
+          ? []
+          : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
       this.storeOwnerState = model.storeOwnerModel == null
           ? null
-          : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!, () => notifyListeners());
+          : StoreOwnerState.storeOwnerStateFromModel(
+              model.storeOwnerModel!, () => notifyListeners());
       this.bagInStores = [];
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
@@ -286,8 +291,8 @@ class User extends ChangeNotifier {
   Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
     try {
       String? bankToken = this.storeOwnerState!.storeBankAccountToken;
-      var res =
-          await StoreStorageProxy().convertPhysicalStoreToOnline(physicalStore, this.storeOwnerState!.lastTimeViewedPurchases);
+      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(
+          physicalStore, this.storeOwnerState!.lastTimeViewedPurchases);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
@@ -309,8 +314,8 @@ class User extends ChangeNotifier {
   Future<void> convertOnlineStoreToPhysical(OnlineStoreDTO onlineStore) async {
     try {
       String? bankToken = this.storeOwnerState!.storeBankAccountToken;
-      var res =
-          await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore, this.storeOwnerState!.lastTimeViewedPurchases);
+      var res = await StoreStorageProxy().convertOnlineStoreToPhysical(
+          onlineStore, this.storeOwnerState!.lastTimeViewedPurchases);
       if (!res.getTag()) {
         print(res.getMessage());
         return;

@@ -48,24 +48,24 @@ class OpenOnlineStorePipeline extends StatefulWidget {
 
   //for test purposes
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
-    routes: {
-      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-      TutorialScreen.routeName: (ctx) => TutorialScreen(),
-    },
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User("test@gmail.com", "test name"),
+        routes: {
+          TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+          TutorialScreen.routeName: (ctx) => TutorialScreen(),
+        },
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User("test@gmail.com", "test name"),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-    // This mocked observer will now receive all navigation events
-    // that happen in our app.
-    navigatorObservers: nav,
-  );
+        // This mocked observer will now receive all navigation events
+        // that happen in our app.
+        navigatorObservers: nav,
+      );
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -86,13 +86,34 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       address: "",
       categories: [],
       operationHours: {
-        'sunday': [OpenOnlineStorePipeline._sunday_open, OpenOnlineStorePipeline._sunday_close],
-        'monday': [OpenOnlineStorePipeline._monday_open, OpenOnlineStorePipeline._monday_close],
-        'tuesday': [OpenOnlineStorePipeline._tuesday_open, OpenOnlineStorePipeline._tuesday_close],
-        'wednesday': [OpenOnlineStorePipeline._wednesday_open, OpenOnlineStorePipeline._wednesday_close],
-        'thursday': [OpenOnlineStorePipeline._thursday_open, OpenOnlineStorePipeline._thursday_close],
-        'friday': [OpenOnlineStorePipeline._friday_open, OpenOnlineStorePipeline._friday_close],
-        'saturday': [OpenOnlineStorePipeline._saturday_open, OpenOnlineStorePipeline._saturday_close]
+        'sunday': [
+          OpenOnlineStorePipeline._sunday_open,
+          OpenOnlineStorePipeline._sunday_close
+        ],
+        'monday': [
+          OpenOnlineStorePipeline._monday_open,
+          OpenOnlineStorePipeline._monday_close
+        ],
+        'tuesday': [
+          OpenOnlineStorePipeline._tuesday_open,
+          OpenOnlineStorePipeline._tuesday_close
+        ],
+        'wednesday': [
+          OpenOnlineStorePipeline._wednesday_open,
+          OpenOnlineStorePipeline._wednesday_close
+        ],
+        'thursday': [
+          OpenOnlineStorePipeline._thursday_open,
+          OpenOnlineStorePipeline._thursday_close
+        ],
+        'friday': [
+          OpenOnlineStorePipeline._friday_open,
+          OpenOnlineStorePipeline._friday_close
+        ],
+        'saturday': [
+          OpenOnlineStorePipeline._saturday_open,
+          OpenOnlineStorePipeline._saturday_close
+        ]
       },
       image: null,
       products: [],
@@ -619,29 +640,63 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Wrap(
               children: _products
-                  .map((e) => Chip(
-                        deleteIcon: Icon(
-                          Icons.edit,
+                  .map((e) => Padding(
+                        padding: EdgeInsets.only(
+                            right: deviceSize.width * 0.01,
+                            left: deviceSize.width * 0.01),
+                        child: Chip(
+                          deleteIcon: Icon(
+                            Icons.edit,
+                          ),
+                          onDeleted: () async {
+                            final ProductDTO? result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditProductScreen(e)),
+                            );
+                            if (result != null) {
+                              setState(() {
+                                _products.removeWhere((element) =>
+                                    element.name == e.name &&
+                                    element.price == e.price &&
+                                    element.description == e.description);
+                                _products.add(result);
+                              });
+                            } else {
+                              setState(() {
+                                _products.removeWhere((element) =>
+                                    element.name == e.name &&
+                                    element.price == e.price &&
+                                    element.description == e.description);
+                              });
+                            }
+                          },
+                          label: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: deviceSize.height * 0.1,
+                              maxWidth: deviceSize.width * 0.3,
+                              minHeight: deviceSize.height * 0.025,
+                              minWidth: deviceSize.width * 0.15,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(e.name),
+                                Text(
+                                  e.description!,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 3,
+                                  softWrap: true,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        onDeleted: () async {
-                          final ProductDTO? result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditProductScreen(e)),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
-                              _products.add(result);
-                            });
-                          }
-                          else{
-                            setState(() {
-                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
-                            });
-                          }
-                        },
-                        label: Text(e.name+", ${e.description}"),
                       ))
                   .toList(),
             ),

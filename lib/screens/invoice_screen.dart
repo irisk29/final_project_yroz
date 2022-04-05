@@ -173,7 +173,17 @@ class InvoiceScreen extends StatelessWidget {
                                             },
                                           ),
                                         )
-                                      : Container(),
+                                      : ConstrainedBox(
+                                          constraints: new BoxConstraints(
+                                            minHeight:
+                                                constraints.maxHeight * 0.3,
+                                            maxHeight:
+                                                constraints.maxHeight * 0.3,
+                                          ),
+                                          child: Center(
+                                            child: Text("No Products Details"),
+                                          ),
+                                        ),
                                   Container(
                                     width: constraints.maxWidth * 0.5,
                                     child: Column(
