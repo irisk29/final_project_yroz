@@ -12,6 +12,7 @@ import 'package:final_project_yroz/screens/edit_bank_account.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/invoice_screen.dart';
+import 'package:final_project_yroz/screens/loading_splash_screen.dart';
 import 'package:final_project_yroz/screens/online_payment_screen.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
@@ -60,17 +61,7 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
       await refreshLocalData();
-      /*StreamSubscription h = Amplify.Hub.listen([HubChannel.DataStore], (modelSyncedEvent) {
-        if (modelSyncedEvent.eventName == 'modelSynced') {
-          
-        }
-      });*/
-      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) {
-        if (msg.eventName == 'ready') {
-          FLog.info(text: "AWS Amplify is ready");
-          FlutterNativeSplash.remove();
-        }
-      });
+      FlutterNativeSplash.remove();
     });
   }
 
@@ -101,7 +92,8 @@ class _MyAppState extends State<MyApp> {
     try {
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
-      FLog.error(text: "Amplify was already configured. Was the app restarted?");
+      FLog.error(
+          text: "Amplify was already configured. Was the app restarted?");
     }
     try {
       setState(() {
@@ -129,8 +121,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
     ]);
     return MultiProvider(
       providers: [
@@ -148,27 +140,32 @@ class _MyAppState extends State<MyApp> {
           accentColor: Colors.purple,
           fontFamily: 'Montserrat',
         ),
-        home: LandingScreen(),
+        home: LoadingSplashScreen(),
         routes: {
           CartScreen.routeName: (ctx) => CartScreen(),
           TabsScreen.routeName: (ctx) => TabsScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
           PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) =>
+              OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) =>
+              OnlineStoreProductsScreen(),
           LandingScreen.routeName: (ctx) => LandingScreen(),
+          LoadingSplashScreen.routeName: (ctx) => LoadingSplashScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) =>
+              EditPhysicalStorePipeline(),
           EditBankAccountScreen.routeName: (ctx) => EditBankAccountScreen(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) =>
+              ManagePhysicalStoreScreen(),
           OnlinePaymentScreen.routeName: (ctx) => OnlinePaymentScreen(null),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
