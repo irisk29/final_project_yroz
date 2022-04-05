@@ -106,7 +106,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                             child: SwitchListTile(
                                                 activeColor: Colors.purple,
                                                 value:
-                                                    user.hideStoreOwnerOptions,
+                                                    !user.hideStoreOwnerOptions,
                                                 controlAffinity:
                                                     ListTileControlAffinity
                                                         .trailing,
@@ -116,7 +116,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                         ),
                                       ),
                                       Text(
-                                        "Consumer View",
+                                        "Advanced Options",
                                         style: TextStyle(fontSize: 10),
                                       ),
                                     ],

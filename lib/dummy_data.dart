@@ -63,4 +63,10 @@ const DUMMY_CATEGORIES = const [
     color: Color.fromARGB(255, 255, 16, 215),
     image: AssetImage("assets/images/sweets.jpeg")
   ),
+  Category(
+      id: 'c11',
+      title: 'Other',
+      color: Color.fromARGB(255, 150, 80, 30),
+      image: AssetImage("assets/images/sweets.jpeg")
+  ),
 ];

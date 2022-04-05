@@ -113,10 +113,39 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {});
   }
 
+  void _exitWithoutSavingDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Are your sure?'),
+        content: Text("You are about to exit without saving your changes."),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Yes'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(ctx).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('No'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => _exitWithoutSavingDialog(),
+        ),
         title: Align(
           alignment: Alignment.centerLeft,
           child: Text(

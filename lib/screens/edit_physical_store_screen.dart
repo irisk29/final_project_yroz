@@ -575,10 +575,39 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
 
+    void _exitWithoutSavingDialog() {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Are your sure?'),
+          content: Text("You are about to exit without saving your changes."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            )
+          ],
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => _exitWithoutSavingDialog(),
+          ),
           toolbarHeight: deviceSize.height * 0.1,
           title: Text(
             'Edit Store',

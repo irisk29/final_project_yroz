@@ -631,17 +631,17 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           );
                           if (result != null) {
                             setState(() {
-                              _products.remove(e);
+                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
                               _products.add(result);
                             });
                           }
                           else{
                             setState(() {
-                              _products.remove(e);
+                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
                             });
                           }
                         },
-                        label: Text(e.name+"with price ${e.price.toStringAsFixed(2)}"),
+                        label: Text(e.name+", ${e.description}"),
                       ))
                   .toList(),
             ),
@@ -673,11 +673,40 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       }
     });
 
+    void _exitWithoutSavingDialog() {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Are your sure?'),
+          content: Text("You are about to exit without saving your changes."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            )
+          ],
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => _exitWithoutSavingDialog(),
+          ),
           toolbarHeight: deviceSize.height * 0.1,
           title: Align(
             alignment: Alignment.centerLeft,
