@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:final_project_yroz/screens/add_credit_card_screen.dart' as app;
+import 'package:final_project_yroz/screens/credit_cards_screen.dart' as app;
 import 'package:intl/intl.dart';
 import 'package:mockito/mockito.dart';
 
@@ -60,39 +60,24 @@ void main() {
       return Future(() => print("starting test.."));
     });
 
-    testWidgets('add credit card - positive scenario', (WidgetTester tester) async {
-      await tester.pumpWidget(app.AddCreditCardScreen().wrapWithMaterial([mockObserver], user));
+    testWidgets('remove credit card - positive scenario', (WidgetTester tester) async {
+      await tester.pumpWidget(app.CreditCardsScreen().wrapWithMaterial([mockObserver], user));
       await tester.pumpAndSettle();
 
       //start to fill the form
-      Finder fab = find.byKey(Key('card_number'));
-      await tester.enterText(fab, "1234123412341234");
+      Finder fab = find.byKey(Key('1234'));
+      await tester.longPress(fab);
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key('exp_date'));
-      await tester.enterText(fab, "1225");
+      await Future.delayed(Duration(seconds: 1));
+
+      fab = find.byKey(Key('yes'));
+      await tester.tap(fab,);
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key('cvv'));
-      await tester.enterText(fab, "123");
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key('holder'));
-      await tester.enterText(fab, "itay");
-      await tester.pumpAndSettle();
-
-      FocusManager.instance.primaryFocus?.unfocus();
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("save")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      await Future.delayed(Duration(seconds: 10));
-
-      // Verify the credit card was added
+      // Verify the credit card was removed
       UserModel? userModel = await UsersStorageProxy().getUser("test@gmail.com");
-      assert(userModel!.creditCards!.isNotEmpty);
+      assert(userModel!.creditCards!.isEmpty);
     });
   });
 }

@@ -1,6 +1,7 @@
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/credit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,9 +10,29 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
+import '../models/UserModel.dart';
 
 class CreditCardsScreen extends StatefulWidget {
   static const routeName = '/credit-cards';
+
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) {
+    return MaterialApp(
+      routes: {
+        TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      },
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: User.fromModel(user),
+          ),
+        ],
+        child: this,
+      ),
+      // This mocked observer will now receive all navigation events
+      // that happen in our app.
+      //navigatorObservers: nav,
+    );
+  }
 
   @override
   State<CreditCardsScreen> createState() => _CreditCardsScreenScreenState();
