@@ -181,8 +181,6 @@ class _PaymentCardState extends State<PaymentCard>
           ),
         );
       }
-
-      setState(() => _isLoading = false);
     }
   }
 

@@ -10,7 +10,6 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
-import 'credit_cards_screen.dart';
 
 class PhysicalPaymentScreen extends StatefulWidget {
   static const routeName = '/physical-payment';
@@ -205,8 +204,6 @@ class _PaymentCardState extends State<PaymentCard>
           ),
         );
       }
-
-      setState(() => _isLoading = false);
     }
   }
 
