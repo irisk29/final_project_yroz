@@ -19,6 +19,7 @@ import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
+import 'edit_product_screen.dart';
 import 'tabs_screen.dart';
 
 class OpenOnlineStorePipeline extends StatefulWidget {
@@ -574,14 +575,27 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               children: _products
                   .map((e) => Chip(
                         deleteIcon: Icon(
-                          Icons.close,
+                          Icons.edit,
                         ),
-                        onDeleted: () {
-                          setState(() {
-                            _products.remove(e);
-                          });
+                        onDeleted: () async {
+                          final ProductDTO? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditProductScreen(e)),
+                          );
+                          if (result != null) {
+                            setState(() {
+                              _products.remove(e);
+                              _products.add(result);
+                            });
+                          }
+                          else{
+                            setState(() {
+                              _products.remove(e);
+                            });
+                          }
                         },
-                        label: Text(e.name),
+                        label: Text(e.name+"with price ${e.price.toStringAsFixed(2)}"),
                       ))
                   .toList(),
             ),
