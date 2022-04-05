@@ -43,24 +43,25 @@ class EditOnlineStorePipeline extends StatefulWidget {
     return _EditOnlineStorePipelineState();
   }
 
-  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) => MaterialApp(
-    routes: {
-      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-    },
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User.fromModel(user),
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) =>
+      MaterialApp(
+        routes: {
+          TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+        },
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User.fromModel(user),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-    // This mocked observer will now receive all navigation events
-    // that happen in our app.
-    navigatorObservers: nav,
-  );
+        // This mocked observer will now receive all navigation events
+        // that happen in our app.
+        navigatorObservers: nav,
+      );
 }
 
 class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
@@ -120,9 +121,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   @override
   void initState() {
     // TODO: implement initState
-    _editedStore = Provider.of<User>(context, listen: false)
-        .storeOwnerState!
-        .onlineStore;
+    _editedStore =
+        Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
   }
 
   @override
@@ -666,78 +666,83 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
         body: _isLoading
             ? Center(child: CircularProgressIndicator())
             : ListView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                children: [Center(
-                  child: SizedBox(
-                  height: deviceSize.height * 0.8,
-                    child: Column(
-                    children: [
-                    IconStepper(
-                      icons: [
-                        Icon(Icons.info),
-                        Icon(Icons.tag),
-                        Icon(Icons.access_time),
-                        Icon(Icons.add_shopping_cart_rounded),
-                        Icon(Icons.storefront),
-                      ],
-                      // activeStep property set to activeStep variable defined above.
-                      activeStep: _currentStep,
-                      steppingEnabled: false,
-                      enableStepTapping: false,
-                      enableNextPreviousButtons: false,
-                      activeStepColor: Theme.of(context).primaryColor,
-                      // This ensures step-tapping updates the activeStep.
-                      onStepReached: (index) {
-                        setState(() {
-                          _currentStep = index;
-                        });
-                      },
-                    ),
-                    currentStepWidget(deviceSize)!,
-                    Expanded(
-                      child: Align(
-                        alignment: FractionalOffset.bottomCenter,
-                        child: Padding(
-                          padding: EdgeInsets.all(deviceSize.height * 0.025),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _currentStep > 0
-                                  ? CircleAvatar(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      height: deviceSize.height * 0.85,
+                      child: Column(
+                        children: [
+                          IconStepper(
+                            icons: [
+                              Icon(Icons.info),
+                              Icon(Icons.tag),
+                              Icon(Icons.access_time),
+                              Icon(Icons.add_shopping_cart_rounded),
+                              Icon(Icons.storefront),
+                            ],
+                            // activeStep property set to activeStep variable defined above.
+                            activeStep: _currentStep,
+                            steppingEnabled: false,
+                            enableStepTapping: false,
+                            enableNextPreviousButtons: false,
+                            activeStepColor: Theme.of(context).primaryColor,
+                            // This ensures step-tapping updates the activeStep.
+                            onStepReached: (index) {
+                              setState(() {
+                                _currentStep = index;
+                              });
+                            },
+                          ),
+                          currentStepWidget(deviceSize)!,
+                          Expanded(
+                            child: Align(
+                              alignment: FractionalOffset.bottomCenter,
+                              child: Padding(
+                                padding:
+                                    EdgeInsets.all(deviceSize.height * 0.025),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    _currentStep > 0
+                                        ? CircleAvatar(
+                                            radius: 25,
+                                            backgroundColor:
+                                                Theme.of(context).primaryColor,
+                                            child: IconButton(
+                                              color: Colors.black54,
+                                              onPressed: cancel,
+                                              icon: Icon(Icons.arrow_back),
+                                            ),
+                                          )
+                                        : Container(),
+                                    CircleAvatar(
                                       radius: 25,
                                       backgroundColor:
                                           Theme.of(context).primaryColor,
                                       child: IconButton(
+                                        key: const Key("continue_button"),
                                         color: Colors.black54,
-                                        onPressed: cancel,
-                                        icon: Icon(Icons.arrow_back),
+                                        onPressed: continued,
+                                        icon: Icon(_currentStep < 4
+                                            ? Icons.arrow_forward
+                                            : Icons.done),
                                       ),
                                     )
-                                  : Container(),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: IconButton(
-                                  key: const Key("continue_button"),
-                                  color: Colors.black54,
-                                  onPressed: continued,
-                                  icon: Icon(_currentStep < 4
-                                      ? Icons.arrow_forward
-                                      : Icons.done),
+                                  ],
                                 ),
-                              )
-                            ],
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

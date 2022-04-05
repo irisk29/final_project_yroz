@@ -602,29 +602,32 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         ),
         resizeToAvoidBottomInset: false,
         body: _isLoading
-            ? ListView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                children: [
-                  Center(
-                    child: SizedBox(
-                      height: deviceSize.height * 0.3,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          Container(
-                            width: deviceSize.width * 0.6,
-                            child: Text(
-                                "We are opening your store, it might take a few seconds...",
-                                textAlign: TextAlign.center),
-                          )
-                        ],
+            ? Align(
+                alignment: Alignment.center,
+                child: ListView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        height: deviceSize.height * 0.8,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            Container(
+                              width: deviceSize.width * 0.6,
+                              child: Text(
+                                  "We are opening your store, it might take a few seconds...",
+                                  textAlign: TextAlign.center),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               )
             : ListView(
                 keyboardDismissBehavior:
@@ -632,7 +635,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                 children: [
                   Container(
                     child: SizedBox(
-                      height: deviceSize.height * 0.8,
+                      height: deviceSize.height * 0.85,
                       child: Column(
                         children: [
                           IconStepper(

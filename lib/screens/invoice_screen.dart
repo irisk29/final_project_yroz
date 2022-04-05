@@ -100,7 +100,7 @@ class InvoiceScreen extends StatelessWidget {
                                   Row(
                                     children: [
                                       Container(
-                                        width: constraints.maxWidth * 0.35,
+                                        width: constraints.maxWidth * 0.3,
                                         child: Text("Product"),
                                       ),
                                       Container(
@@ -143,7 +143,7 @@ class InvoiceScreen extends StatelessWidget {
                                                     Container(
                                                         width: constraints
                                                                 .maxWidth *
-                                                            0.35,
+                                                            0.3,
                                                         child:
                                                             Text(product.name)),
                                                     Container(
@@ -335,7 +335,7 @@ class InvoiceScreen extends StatelessWidget {
                         Navigator.of(context).popUntil((route) => false);
                         Navigator.of(context).pushNamed(
                           TabsScreen.routeName,
-                          arguments: {'index': 3},
+                          arguments: {'index': 4},
                         );
                       },
                       child: Icon(Icons.close, color: Colors.white, size: 20),

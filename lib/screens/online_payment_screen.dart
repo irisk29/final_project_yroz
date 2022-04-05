@@ -68,7 +68,6 @@ class PaymentCard extends StatefulWidget {
 
 class _PaymentCardState extends State<PaymentCard>
     with SingleTickerProviderStateMixin {
-  AnimationController? _controller;
   var _cashback;
   String dropdownvalue = '';
   List<Tuple2<String, String>> items = [];
@@ -77,9 +76,6 @@ class _PaymentCardState extends State<PaymentCard>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-
     final user = Provider.of<User>(context, listen: false);
     widget.userName = user.name!;
     widget.bag = user.getShoppingBag(widget.storeID!);
@@ -185,8 +181,6 @@ class _PaymentCardState extends State<PaymentCard>
           ),
         );
       }
-
-      setState(() => _isLoading = false);
     }
   }
 
@@ -240,14 +234,14 @@ class _PaymentCardState extends State<PaymentCard>
                                     "AMOUNT TO PAY",
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 22.0,
+                                        fontSize: 20.0,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    "\€${totalPrice.toString()}",
+                                    "\€${totalPrice.toStringAsFixed(2)}",
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 22.0,
+                                        fontSize: 20.0,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ],
