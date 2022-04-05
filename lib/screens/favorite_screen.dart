@@ -11,6 +11,8 @@ import 'package:tuple/tuple.dart';
 import '../widgets/secondary_store_item.dart';
 
 class FavoriteScreen extends StatefulWidget {
+  static const routeName = '/favorite';
+
   const FavoriteScreen();
 
   @override

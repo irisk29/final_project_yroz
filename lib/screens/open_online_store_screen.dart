@@ -19,6 +19,7 @@ import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
 import '../dummy_data.dart';
 import 'add_product_screen.dart';
+import 'edit_product_screen.dart';
 import 'tabs_screen.dart';
 
 class OpenOnlineStorePipeline extends StatefulWidget {
@@ -47,24 +48,24 @@ class OpenOnlineStorePipeline extends StatefulWidget {
 
   //for test purposes
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
-        routes: {
-          TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-          TutorialScreen.routeName: (ctx) => TutorialScreen(),
-        },
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(
-              value: User("test@gmail.com", "test name"),
-            ),
-          ],
-          child: Scaffold(
-            body: this,
-          ),
+    routes: {
+      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      TutorialScreen.routeName: (ctx) => TutorialScreen(),
+    },
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: User("test@gmail.com", "test name"),
         ),
-        // This mocked observer will now receive all navigation events
-        // that happen in our app.
-        navigatorObservers: nav,
-      );
+      ],
+      child: Scaffold(
+        body: this,
+      ),
+    ),
+    // This mocked observer will now receive all navigation events
+    // that happen in our app.
+    navigatorObservers: nav,
+  );
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -85,34 +86,13 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       address: "",
       categories: [],
       operationHours: {
-        'sunday': [
-          OpenOnlineStorePipeline._sunday_open,
-          OpenOnlineStorePipeline._sunday_close
-        ],
-        'monday': [
-          OpenOnlineStorePipeline._monday_open,
-          OpenOnlineStorePipeline._monday_close
-        ],
-        'tuesday': [
-          OpenOnlineStorePipeline._tuesday_open,
-          OpenOnlineStorePipeline._tuesday_close
-        ],
-        'wednesday': [
-          OpenOnlineStorePipeline._wednesday_open,
-          OpenOnlineStorePipeline._wednesday_close
-        ],
-        'thursday': [
-          OpenOnlineStorePipeline._thursday_open,
-          OpenOnlineStorePipeline._thursday_close
-        ],
-        'friday': [
-          OpenOnlineStorePipeline._friday_open,
-          OpenOnlineStorePipeline._friday_close
-        ],
-        'saturday': [
-          OpenOnlineStorePipeline._saturday_open,
-          OpenOnlineStorePipeline._saturday_close
-        ]
+        'sunday': [OpenOnlineStorePipeline._sunday_open, OpenOnlineStorePipeline._sunday_close],
+        'monday': [OpenOnlineStorePipeline._monday_open, OpenOnlineStorePipeline._monday_close],
+        'tuesday': [OpenOnlineStorePipeline._tuesday_open, OpenOnlineStorePipeline._tuesday_close],
+        'wednesday': [OpenOnlineStorePipeline._wednesday_open, OpenOnlineStorePipeline._wednesday_close],
+        'thursday': [OpenOnlineStorePipeline._thursday_open, OpenOnlineStorePipeline._thursday_close],
+        'friday': [OpenOnlineStorePipeline._friday_open, OpenOnlineStorePipeline._friday_close],
+        'saturday': [OpenOnlineStorePipeline._saturday_open, OpenOnlineStorePipeline._saturday_close]
       },
       image: null,
       products: [],
@@ -641,14 +621,27 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               children: _products
                   .map((e) => Chip(
                         deleteIcon: Icon(
-                          Icons.close,
+                          Icons.edit,
                         ),
-                        onDeleted: () {
-                          setState(() {
-                            _products.remove(e);
-                          });
+                        onDeleted: () async {
+                          final ProductDTO? result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditProductScreen(e)),
+                          );
+                          if (result != null) {
+                            setState(() {
+                              _products.remove(e);
+                              _products.add(result);
+                            });
+                          }
+                          else{
+                            setState(() {
+                              _products.remove(e);
+                            });
+                          }
                         },
-                        label: Text(e.name),
+                        label: Text(e.name+"with price ${e.price.toStringAsFixed(2)}"),
                       ))
                   .toList(),
             ),

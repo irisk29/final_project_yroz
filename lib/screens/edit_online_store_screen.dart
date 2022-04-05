@@ -621,6 +621,11 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                               _editedStore!.addProduct(result);
                             });
                           }
+                          else{
+                            setState(() {
+                              _editedStore!.removeProduct(e);
+                            });
+                          }
                         },
                         label: Text(e.name),
                       ))

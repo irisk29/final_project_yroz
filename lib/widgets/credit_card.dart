@@ -17,6 +17,7 @@ class CreditCardWidget extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) => Center(
         child: GestureDetector(
+          key: Key(fourDigits),
           onLongPress: () async {
             return showDialog(
               context: context,
@@ -33,6 +34,7 @@ class CreditCardWidget extends StatelessWidget {
                     },
                   ),
                   FlatButton(
+                    key: const Key("yes"),
                     child: Text('Yes'),
                     onPressed: () async {
                       await Provider.of<User>(context, listen: false)

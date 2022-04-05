@@ -2,9 +2,13 @@ import 'package:collection/src/iterable_extensions.dart';
 
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/favorite_screen.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../models/UserModel.dart';
 
 class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
@@ -13,6 +17,28 @@ class PhysicalStoreScreen extends StatefulWidget {
 
   @override
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
+
+  //for test purposes
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user, Map<String, Object> args) {
+    args.toString();
+    return MaterialApp(
+      routes: {
+        TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+        FavoriteScreen.routeName: (ctx) => FavoriteScreen()
+      },
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: User.fromModel(user),
+          ),
+        ],
+        child: this,
+      ),
+      // This mocked observer will now receive all navigation events
+      // that happen in our app.
+      //navigatorObservers: nav,
+    );
+  }
 }
 
 class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
@@ -122,6 +148,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               ),
             ),
             ListTile(
+              key: const Key("favorite"),
               title: Text(
                 "About the store",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),

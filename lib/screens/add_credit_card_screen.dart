@@ -1,12 +1,17 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_brand.dart';
-import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:final_project_yroz/widgets/credit_card_form.dart' as form;
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter_credit_card/credit_card_model.dart';
+import 'package:flutter_credit_card/credit_card_widget.dart';
+import 'package:flutter_credit_card/glassmorphism_config.dart';
 import 'package:provider/provider.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
+import '../models/UserModel.dart';
 
 class AddCreditCardScreen extends StatefulWidget {
   static const routeName = '/add-credit-card';
@@ -14,6 +19,25 @@ class AddCreditCardScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return AddCreditCardScreenState();
+  }
+
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) {
+    return MaterialApp(
+      routes: {
+        TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+      },
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: User.fromModel(user),
+          ),
+        ],
+        child: this,
+      ),
+      // This mocked observer will now receive all navigation events
+      // that happen in our app.
+      //navigatorObservers: nav,
+    );
   }
 }
 
@@ -24,6 +48,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
   String cvvCode = '';
   bool isCvvFocused = false;
   bool useGlassMorphism = false;
+  bool useBackgroundImage = false;
   OutlineInputBorder? border;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late Secret secret;
@@ -127,7 +152,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                         child: SingleChildScrollView(
                           child: Column(
                             children: <Widget>[
-                              CreditCardForm(
+                              form.CreditCardForm(
                                 formKey: formKey,
                                 obscureCvv: true,
                                 obscureNumber: true,
@@ -180,41 +205,38 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                   labelText: 'Card Holder',
                                 ),
                                 onCreditCardModelChange:
-                                    onCreditCardModelChange,
+                                  onCreditCardModelChange,
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.all(deviceSize.height * 0.01),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      primary: Colors.blue),
-                                  child: Container(
-                                    width: deviceSize.width * 0.3,
-                                    margin: EdgeInsets.all(
-                                        deviceSize.width * 0.025),
-                                    child: const Text(
-                                      'SAVE',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        package: 'flutter_credit_card',
-                                        color: Colors.white,
-                                      ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ElevatedButton(
+                                key: const Key("save"),
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    primary: Theme.of(context).primaryColor),
+                                child: Container(
+                                  width: deviceSize.width * 0.3,
+                                  margin: const EdgeInsets.all(12),
+                                  child: const Text(
+                                    'Save',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      package: 'flutter_credit_card',
                                     ),
                                   ),
-                                  onPressed: () {
-                                    if (formKey.currentState!.validate()) {
-                                      print('valid!');
-                                      saveCreditCard();
-                                    } else {
-                                      print('invalid!');
-                                    }
-                                  },
                                 ),
+                                onPressed: () {
+                                  if (formKey.currentState!.validate()) {
+                                    print('valid!');
+                                    saveCreditCard();
+                                  } else {
+                                    print('invalid!');
+                                  }
+                                },
                               ),
                             ],
                           ),

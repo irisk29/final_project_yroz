@@ -62,7 +62,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
       storeID: '',
       imageFromPhone: null);
 
+  var _isInit = true;
   var _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      // final productId = ModalRoute.of(context)!.settings.arguments as String?;
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
 
   @override
   void dispose() {
@@ -121,106 +136,100 @@ class _AddProductScreenState extends State<AddProductScreen> {
               child: CircularProgressIndicator(),
             )
           : Padding(
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
-              child: Form(
-                key: _form,
-                child: ListView(
-                  children: <Widget>[
-                    ImageInput(
-                        _selectImage, _unselectImage, _pickedImage, false),
-                    TextFormField(
-                      key: const Key('title'),
-                      decoration: InputDecoration(labelText: 'Title'),
-                      textInputAction: TextInputAction.next,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_priceFocusNode);
-                      },
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please provide a value.';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _editedProduct = ProductDTO(
-                            name: value!,
-                            price: _editedProduct!.price,
-                            description: _editedProduct!.description,
-                            imageUrl: _editedProduct!.imageUrl,
-                            id: _editedProduct!.id,
-                            category: '',
-                            storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
-                      },
-                    ),
-                    TextFormField(
-                      key: const Key('price'),
-                      decoration: InputDecoration(labelText: 'Price'),
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.number,
-                      focusNode: _priceFocusNode,
-                      onFieldSubmitted: (_) {
-                        FocusScope.of(context)
-                            .requestFocus(_descriptionFocusNode);
-                      },
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a price.';
-                        }
-                        if (double.tryParse(value) == null) {
-                          return 'Please enter a valid number.';
-                        }
-                        if (double.parse(value) <= 0) {
-                          return 'Please enter a number greater than zero.';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _editedProduct = ProductDTO(
-                            name: _editedProduct!.name,
-                            price: double.parse(value!),
-                            description: _editedProduct!.description,
-                            imageUrl: _editedProduct!.imageUrl,
-                            id: _editedProduct!.id,
-                            category: '',
-                            storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
-                      },
-                    ),
-                    TextFormField(
-                      key: const Key('description'),
-                      decoration: InputDecoration(labelText: 'Description'),
-                      maxLines: 3,
-                      textInputAction: TextInputAction.done,
-                      focusNode: _descriptionFocusNode,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a description.';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _editedProduct = ProductDTO(
-                            name: _editedProduct!.name,
-                            price: _editedProduct!.price,
-                            description: value!,
-                            imageUrl: _editedProduct!.imageUrl,
-                            id: _editedProduct!.id,
-                            category: '',
-                            storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
-                      },
-                    ),
-                  ],
-                ),
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _form,
+          child: ListView(
+            children: <Widget>[
+              ImageInput(_selectImage, _unselectImage, _pickedImage, false),
+              TextFormField(
+                key: const Key('title'),
+                decoration: InputDecoration(labelText: 'Title'),
+                textInputAction: TextInputAction.next,
+                onFieldSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please provide a value.';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _editedProduct = ProductDTO(
+                      name: value!,
+                      price: _editedProduct!.price,
+                      description: _editedProduct!.description,
+                      imageUrl: _editedProduct!.imageUrl,
+                      id: _editedProduct!.id,
+                      category: '',
+                      storeID: '',
+                      imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
+                },
               ),
-            ),
+              TextFormField(
+                key: const Key('price'),
+                decoration: InputDecoration(labelText: 'Price'),
+                textInputAction: TextInputAction.next,
+                keyboardType: TextInputType.number,
+                focusNode: _priceFocusNode,
+                onFieldSubmitted: (_) {
+                  FocusScope.of(context)
+                      .requestFocus(_descriptionFocusNode);
+                },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a price.';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid number.';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'Please enter a number greater than zero.';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _editedProduct = ProductDTO(
+                      name: _editedProduct!.name,
+                      price: double.parse(value!),
+                      description: _editedProduct!.description,
+                      imageUrl: _editedProduct!.imageUrl,
+                      id: _editedProduct!.id,
+                      category: '',
+                      storeID: '',
+                      imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
+                },
+              ),
+              TextFormField(
+                key: const Key('description'),
+                decoration: InputDecoration(labelText: 'Description'),
+                maxLines: 3,
+                textInputAction: TextInputAction.done,
+                focusNode: _descriptionFocusNode,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter a description.';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _editedProduct = ProductDTO(
+                    name: _editedProduct!.name,
+                    price: _editedProduct!.price,
+                    description: value!,
+                    imageUrl: _editedProduct!.imageUrl,
+                    id: _editedProduct!.id,
+                    category: '',
+                    storeID: '',
+                    imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path)
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
