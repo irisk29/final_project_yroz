@@ -37,13 +37,11 @@ class StoreStorageProxy {
 
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store,
       [String? storeID, DateTime? lastViewPurchase]) async {
-    String? qrCode = store.qrCode;
     OnlineStoreModel onlineStoreModel = OnlineStoreModel(
         id: storeID,
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
-        qrCode: qrCode,
         categories: JsonEncoder.withIndent('  ').convert(store.categories),
         operationHours: JsonEncoder.withIndent('  ', (value) {
           if (value is TimeOfDay) {
@@ -57,10 +55,8 @@ class StoreStorageProxy {
           }
         }).convert(store.operationHours));
 
-    if (store.qrCode == null || store.qrCode!.isEmpty) {
-      qrCode = await generateUniqueQRCode(onlineStoreModel.id);
-      onlineStoreModel = onlineStoreModel.copyWith(qrCode: qrCode);
-    }
+    String qrCode = await generateUniqueQRCode(onlineStoreModel.id);
+
     String? imageUrl = null;
     if (store.imageFromPhone != null) {
       await uploadPicture(onlineStoreModel.id,
@@ -83,7 +79,8 @@ class StoreStorageProxy {
         operationHours: onlineStoreModel.operationHours,
         categories: onlineStoreModel.categories,
         imageUrl: imageUrl,
-        storeProductModels: productsModel);
+        storeProductModels: productsModel,
+        qrCode: qrCode);
     await Amplify.DataStore.save(onlineWithProducts);
 
     ResultInterface storeOwnerRes = await UsersStorageProxy()
@@ -108,7 +105,7 @@ class StoreStorageProxy {
       UserModel newUserModel = oldUserModel.copyWith(
           storeOwnerModel: storeOwner,
           userModelStoreOwnerModelId: storeOwner.id);
-      await Amplify.DataStore.save(onlineWithProducts);
+
       await Amplify.DataStore.save(storeOwner);
       await Amplify.DataStore.save(newUserModel);
     } else if (!storeOwnerRes
@@ -167,14 +164,11 @@ class StoreStorageProxy {
   }
 
   Future<ResultInterface> openPhysicalStore(StoreDTO store,
-      [String? storeID, DateTime? lastViewPurchase]) async {
-    String? qrCode = store.qrCode;
+      [DateTime? lastViewPurchase]) async {
     PhysicalStoreModel physicalModelNotComplete = PhysicalStoreModel(
-        id: storeID,
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
-        qrCode: qrCode,
         categories: JsonEncoder.withIndent('  ').convert(store.categories),
         operationHours: JsonEncoder.withIndent('  ', (value) {
           if (value is TimeOfDay) {
@@ -187,11 +181,9 @@ class StoreStorageProxy {
             return value.toJson();
           }
         }).convert(store.operationHours));
-    if (store.qrCode == null || store.qrCode!.isEmpty) {
-      qrCode = await generateUniqueQRCode(physicalModelNotComplete.id);
-      physicalModelNotComplete =
-          physicalModelNotComplete.copyWith(qrCode: qrCode);
-    }
+
+    String qrCode = await generateUniqueQRCode(physicalModelNotComplete.id);
+      
     String? imageUrl = null;
     if (store.imageFromPhone != null) {
       await uploadPicture(physicalModelNotComplete.id,
@@ -199,7 +191,7 @@ class StoreStorageProxy {
       imageUrl = await getDownloadUrl(physicalModelNotComplete.id);
     }
 
-    var physicalModel = physicalModelNotComplete.copyWith(imageUrl: imageUrl);
+    var physicalModel = physicalModelNotComplete.copyWith(imageUrl: imageUrl, qrCode: qrCode);
 
     ResultInterface storeOwnerRes = await UsersStorageProxy()
         .getStoreOwnerState(UserAuthenticator().getCurrentUserId());
@@ -778,24 +770,6 @@ class StoreStorageProxy {
     ResultInterface openOnlineStoreRes =
         await openOnlineStore(onlineStoreDTO, physicalStore.id, lastViewPurchase);
     return openOnlineStoreRes;
-  }
-
-  Future<ResultInterface> convertOnlineStoreToPhysical(OnlineStoreDTO onlineStore, DateTime lastViewPurchase) async {
-    ResultInterface deleteOnlineRes = await deleteOnlineStore(onlineStore.id);
-    if (!deleteOnlineRes.getTag()) return deleteOnlineRes;
-    StoreDTO physicalStoreDTO = StoreDTO(
-        id: onlineStore.id,
-        name: onlineStore.name,
-        address: onlineStore.address,
-        phoneNumber: onlineStore.phoneNumber,
-        categories: onlineStore.categories,
-        operationHours: onlineStore.operationHours,
-        qrCode: onlineStore.qrCode,
-        image: onlineStore.image,
-        imageFromPhone: onlineStore.imageFromPhone);
-    ResultInterface openPhysicalStoreRes =
-        await openPhysicalStore(physicalStoreDTO, onlineStore.id, lastViewPurchase);
-    return openPhysicalStoreRes;
   }
 
   Future<ResultInterface> getPhysicalStore(String storeID) async {

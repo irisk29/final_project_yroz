@@ -113,6 +113,7 @@ flutter:
      - assets/images/cleaning.jpeg
      - assets/images/sweets.jpeg
      - assets/images/clothes.png
+     - assets/images/other.png
      - assets/images/art.png
      - assets/images/shop1.png
      - assets/images/shop2.png
