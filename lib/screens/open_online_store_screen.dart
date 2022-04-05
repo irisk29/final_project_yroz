@@ -631,17 +631,17 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           );
                           if (result != null) {
                             setState(() {
-                              _products.remove(e);
+                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
                               _products.add(result);
                             });
                           }
                           else{
                             setState(() {
-                              _products.remove(e);
+                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
                             });
                           }
                         },
-                        label: Text(e.name+"with price ${e.price.toStringAsFixed(2)}"),
+                        label: Text(e.name+", ${e.description}"),
                       ))
                   .toList(),
             ),

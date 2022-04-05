@@ -627,7 +627,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                             });
                           }
                         },
-                        label: Text(e.name),
+                        label: Text(e.name+", ${e.description}"),
                       ))
                   .toList(),
             ),
