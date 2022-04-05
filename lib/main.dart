@@ -1,10 +1,5 @@
 import 'dart:async';
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:amplify_api/amplify_api.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
@@ -24,11 +19,8 @@ import 'package:final_project_yroz/screens/user_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'LogicLayer/User.dart';
-import 'amplifyconfiguration.dart';
 import 'blocs/application_bloc.dart';
-import 'models/ModelProvider.dart';
 import 'package:flutter/services.dart';
 
 import 'screens/landing_screen.dart';
@@ -53,56 +45,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _amplifyConfigured = false;
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      await _configureAmplify();
-      await refreshLocalData();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       FlutterNativeSplash.remove();
     });
-  }
-
-  Future<void> refreshLocalData() async {
-    //get fresh information from cloud everytime the app starts
-    try {
-      await Amplify.DataStore.clear();
-    } catch (error) {
-      print('Error stopping DataStore: $error');
-    }
-
-    try {
-      await Amplify.DataStore.start();
-    } catch (error) {
-      print('Error starting DataStore: $error');
-    }
-  }
-
-  Future<void> _configureAmplify() async {
-    if (!mounted) return;
-
-    Amplify.addPlugin(AmplifyAuthCognito());
-    Amplify.addPlugin(AmplifyStorageS3());
-    Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
-    Amplify.addPlugin(AmplifyAPI());
-
-    // Amplify can only be configured once.
-    try {
-      await Amplify.configure(amplifyconfig);
-    } on AmplifyAlreadyConfiguredException {
-      FLog.error(
-          text: "Amplify was already configured. Was the app restarted?");
-    }
-    try {
-      setState(() {
-        _amplifyConfigured = true;
-      });
-      //await deleteLocalDataStore();
-    } catch (e) {
-      print(e);
-    }
   }
 
   Map<int, Color> color = {
