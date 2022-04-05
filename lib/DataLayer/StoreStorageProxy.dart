@@ -780,8 +780,7 @@ class StoreStorageProxy {
     return openOnlineStoreRes;
   }
 
-  Future<ResultInterface> convertOnlineStoreToPhysical(
-      OnlineStoreDTO onlineStore, DateTime lastViewPurchase) async {
+  Future<ResultInterface> convertOnlineStoreToPhysical(OnlineStoreDTO onlineStore, DateTime lastViewPurchase) async {
     ResultInterface deleteOnlineRes = await deleteOnlineStore(onlineStore.id);
     if (!deleteOnlineRes.getTag()) return deleteOnlineRes;
     StoreDTO physicalStoreDTO = StoreDTO(
