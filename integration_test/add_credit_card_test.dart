@@ -6,16 +6,14 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
-import 'package:final_project_yroz/Result/ResultInterface.dart';
+import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
-import 'package:final_project_yroz/widgets/default_store_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart' as app;
-import 'package:intl/intl.dart';
 import 'package:mockito/mockito.dart';
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
@@ -43,25 +41,33 @@ void main() {
     }
   }
 
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
+  IntegrationTestWidgetsFlutterBinding
+      .ensureInitialized(); // to make the tests work
 
   group('end-to-end test', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late NavigatorObserver mockObserver;
     late UserModel user;
 
     setUp(() async {
       await _configureAmplify();
       UserAuthenticator().setCurrentUserId("test@gmail.com");
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+      UserModel currUser = new UserModel(
+          email: "test@gmail.com",
+          name: "test name",
+          hideStoreOwnerOptions: false);
       await Amplify.DataStore.save(currUser);
+      await InternalPaymentGateway().createUserAccount(currUser.id);
       mockObserver = MockNavigatorObserver();
       user = currUser;
       return Future(() => print("starting test.."));
     });
 
-    testWidgets('add credit card - positive scenario', (WidgetTester tester) async {
-      await tester.pumpWidget(app.AddCreditCardScreen().wrapWithMaterial([mockObserver], user));
+    testWidgets('add credit card - positive scenario',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+          app.AddCreditCardScreen().wrapWithMaterial([mockObserver], user));
       await tester.pumpAndSettle();
 
       //start to fill the form
@@ -91,7 +97,8 @@ void main() {
       await Future.delayed(Duration(seconds: 10));
 
       // Verify the credit card was added
-      UserModel? userModel = await UsersStorageProxy().getUser("test@gmail.com");
+      UserModel? userModel =
+          await UsersStorageProxy().getUser("test@gmail.com");
       assert(userModel!.creditCards!.isNotEmpty);
     });
   });
