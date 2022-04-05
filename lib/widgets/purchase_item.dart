@@ -44,7 +44,7 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
           children: [
             ListTile(
               title: Text(
-                  '\€${widget.purchase.cashBackAmount + widget.purchase.creditAmount}'),
+                  '\€${(widget.purchase.cashBackAmount + widget.purchase.creditAmount).toStringAsFixed(2)}'),
               subtitle: Text(DateFormat('dd/MM/yyyy HH:mm')
                   .format(widget.purchase.purchaseDate)),
               trailing: IconButton(
@@ -72,7 +72,7 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text(product.name),
-                              Text('${product.amount} X \€${product.price}'),
+                              Text('${product.amount} X \€${product.price.toStringAsFixed(2)}'),
                             ],
                           ),
                         );

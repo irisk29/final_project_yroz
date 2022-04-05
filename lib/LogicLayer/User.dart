@@ -287,7 +287,7 @@ class User extends ChangeNotifier {
     try {
       String? bankToken = this.storeOwnerState!.storeBankAccountToken;
       var res =
-          await StoreStorageProxy().convertPhysicalStoreToOnline(physicalStore);
+          await StoreStorageProxy().convertPhysicalStoreToOnline(physicalStore, this.storeOwnerState!.lastTimeViewedPurchases);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
@@ -310,7 +310,7 @@ class User extends ChangeNotifier {
     try {
       String? bankToken = this.storeOwnerState!.storeBankAccountToken;
       var res =
-          await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore);
+          await StoreStorageProxy().convertOnlineStoreToPhysical(onlineStore, this.storeOwnerState!.lastTimeViewedPurchases);
       if (!res.getTag()) {
         print(res.getMessage());
         return;

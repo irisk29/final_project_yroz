@@ -36,7 +36,7 @@ class StoreStorageProxy {
   StoreStorageProxy._internal();
 
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store,
-      [String? storeID]) async {
+      [String? storeID, DateTime? lastViewPurchase]) async {
     String? qrCode = store.qrCode;
     OnlineStoreModel onlineStoreModel = OnlineStoreModel(
         id: storeID,
@@ -94,10 +94,10 @@ class StoreStorageProxy {
       storeOwner = StoreOwnerModel(
           onlineStoreModel: onlineWithProducts,
           storeOwnerModelOnlineStoreModelId: onlineWithProducts.id,
-          lastPurchasesView: TemporalDateTime.fromString(
+          lastPurchasesView: lastViewPurchase == null ? TemporalDateTime.fromString(
               DateFormat('dd/MM/yyyy, hh:mm:ss a')
                   .parse('1/1/2022, 10:00:00 AM')
-                  .toDateTimeIso8601String()));
+                  .toDateTimeIso8601String()) : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
       UserModel? oldUserModel = await UsersStorageProxy()
           .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
@@ -167,7 +167,7 @@ class StoreStorageProxy {
   }
 
   Future<ResultInterface> openPhysicalStore(StoreDTO store,
-      [String? storeID]) async {
+      [String? storeID, DateTime? lastViewPurchase]) async {
     String? qrCode = store.qrCode;
     PhysicalStoreModel physicalModelNotComplete = PhysicalStoreModel(
         id: storeID,
@@ -208,7 +208,11 @@ class StoreStorageProxy {
       //the user will now have a store owner state
       storeOwner = StoreOwnerModel(
           physicalStoreModel: physicalModel,
-          storeOwnerModelPhysicalStoreModelId: physicalModel.id);
+          storeOwnerModelPhysicalStoreModelId: physicalModel.id,
+          lastPurchasesView: lastViewPurchase == null ? TemporalDateTime.fromString(
+              DateFormat('dd/MM/yyyy, hh:mm:ss a')
+                  .parse('1/1/2022, 10:00:00 AM')
+                  .toDateTimeIso8601String()) : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
       UserModel? oldUserModel = await UsersStorageProxy()
           .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
@@ -756,7 +760,7 @@ class StoreStorageProxy {
   }
 
   Future<ResultInterface> convertPhysicalStoreToOnline(
-      StoreDTO physicalStore) async {
+      StoreDTO physicalStore, DateTime lastViewPurchase) async {
     ResultInterface deletePhysicalRes =
         await deletePhysicalStore(physicalStore.id);
     if (!deletePhysicalRes.getTag()) return deletePhysicalRes;
@@ -772,12 +776,12 @@ class StoreStorageProxy {
         image: physicalStore.image,
         imageFromPhone: physicalStore.imageFromPhone);
     ResultInterface openOnlineStoreRes =
-        await openOnlineStore(onlineStoreDTO, physicalStore.id);
+        await openOnlineStore(onlineStoreDTO, physicalStore.id, lastViewPurchase);
     return openOnlineStoreRes;
   }
 
   Future<ResultInterface> convertOnlineStoreToPhysical(
-      OnlineStoreDTO onlineStore) async {
+      OnlineStoreDTO onlineStore, DateTime lastViewPurchase) async {
     ResultInterface deleteOnlineRes = await deleteOnlineStore(onlineStore.id);
     if (!deleteOnlineRes.getTag()) return deleteOnlineRes;
     StoreDTO physicalStoreDTO = StoreDTO(
@@ -791,7 +795,7 @@ class StoreStorageProxy {
         image: onlineStore.image,
         imageFromPhone: onlineStore.imageFromPhone);
     ResultInterface openPhysicalStoreRes =
-        await openPhysicalStore(physicalStoreDTO, onlineStore.id);
+        await openPhysicalStore(physicalStoreDTO, onlineStore.id, lastViewPurchase);
     return openPhysicalStoreRes;
   }
 
