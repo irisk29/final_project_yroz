@@ -675,7 +675,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             constraints: BoxConstraints(
                               maxHeight: deviceSize.height * 0.1,
                               maxWidth: deviceSize.width * 0.3,
-                              minHeight: deviceSize.height * 0.025,
+                              minHeight: deviceSize.height * 0.05,
                               minWidth: deviceSize.width * 0.15,
                             ),
                             child: Column(
@@ -689,7 +689,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                     color: Colors.black54,
                                   ),
                                   textAlign: TextAlign.center,
-                                  maxLines: 3,
+                                  maxLines: 2,
                                   softWrap: true,
                                   overflow: TextOverflow.fade,
                                 ),

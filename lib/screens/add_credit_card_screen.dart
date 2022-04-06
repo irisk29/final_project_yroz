@@ -74,7 +74,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
 
     final key = encrypt.Key.fromUtf8(secret.KEY);
     final iv = encrypt.IV.fromUtf8(secret.IV);
-    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
 
     final encrypted = encrypter.encrypt(cardNumber, iv: iv);
     print(encrypted.base16);
@@ -234,7 +234,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                   labelText: 'Card Holder',
                                 ),
                                 onCreditCardModelChange:
-                                  onCreditCardModelChange,
+                                    onCreditCardModelChange,
                               ),
                               const SizedBox(
                                 height: 20,
