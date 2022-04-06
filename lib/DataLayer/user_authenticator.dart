@@ -17,10 +17,10 @@ class UserAuthenticator {
 
   Future<Tuple2<UserModel?, bool>> signIn(AuthProvider authProvider) async {
     try {
-      var isAlreadySignedIn = await Amplify.Auth.fetchAuthSession();
+      /*var isAlreadySignedIn = await Amplify.Auth.fetchAuthSession();
       if (isAlreadySignedIn.isSignedIn) {
         return new Tuple2(null, false);
-      }
+      }*/
       await Amplify.Auth.signInWithWebUI(provider: authProvider);
       var res = await Amplify.Auth.fetchUserAttributes();
       var email, name, picture;
