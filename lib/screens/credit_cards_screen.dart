@@ -54,7 +54,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
     creditCards.forEach((token, creditCard) {
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
       encrypt.Encrypted enc =
           encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
       String number = encrypter.decrypt(enc, iv: iv);

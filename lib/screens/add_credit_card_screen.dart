@@ -74,7 +74,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
 
     final key = encrypt.Key.fromUtf8(secret.KEY);
     final iv = encrypt.IV.fromUtf8(secret.IV);
-    final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
 
     final encrypted = encrypter.encrypt(cardNumber, iv: iv);
     print(encrypted.base16);
@@ -92,14 +92,13 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('An Error Occurred!'),
+          title: Text('Credit Card Error'),
           content: Text(res.getMessage()),
           actions: <Widget>[
             FlatButton(
               child: Text('Ok'),
               onPressed: () {
                 Navigator.of(ctx).pop();
-                Navigator.of(ctx).pop(false);
               },
             ),
           ],
@@ -120,18 +119,18 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
           content: Text("You are about to exit without saving your changes."),
           actions: <Widget>[
             FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
               child: Text('Yes'),
               onPressed: () {
                 Navigator.of(ctx).pop();
                 Navigator.of(ctx).pop();
               },
             ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
           ],
         ),
       );
@@ -234,7 +233,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                   labelText: 'Card Holder',
                                 ),
                                 onCreditCardModelChange:
-                                  onCreditCardModelChange,
+                                    onCreditCardModelChange,
                               ),
                               const SizedBox(
                                 height: 20,
@@ -245,7 +244,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                    primary: Theme.of(context).primaryColor),
+                                    primary: Colors.blue),
                                 child: Container(
                                   width: deviceSize.width * 0.3,
                                   margin: const EdgeInsets.all(12),
@@ -259,11 +258,9 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                   ),
                                 ),
                                 onPressed: () {
+                                  formKey.currentState!.save();
                                   if (formKey.currentState!.validate()) {
-                                    print('valid!');
                                     saveCreditCard();
-                                  } else {
-                                    print('invalid!');
                                   }
                                 },
                               ),

@@ -29,17 +29,20 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
         : null;
   }
 
-  Future<void> _saveForm(BankAccountForm bankAccountForm) async {
+  Future<void> _saveForm(
+      BankAccountForm bankAccountForm, BuildContext context) async {
     setState(() {
       _isLoading = true;
     });
     try {
-      if (bankAccountForm.saveForm()) {
+      final res = await bankAccountForm.saveForm(context);
+      if (res) {
         await Provider.of<User>(context, listen: false)
             .editStoreBankAccount(bankAccountForm.buildBankAccountDTO()!);
         Navigator.of(context).pop();
       }
     } catch (error) {
+      print(error);
       await showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -85,7 +88,7 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
             ? Center(child: CircularProgressIndicator())
             : FutureBuilder(
                 future: bankAccountFuture,
-                builder: (BuildContext context, AsyncSnapshot snap) {
+                builder: (BuildContext ctx, AsyncSnapshot snap) {
                   return snap.connectionState != ConnectionState.done
                       ? Center(child: CircularProgressIndicator())
                       : snap.data == null
@@ -112,7 +115,8 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
                                                     color: Colors.red))),
                                       ),
                                       onPressed: () => _saveForm(
-                                          snap.data as BankAccountForm),
+                                          snap.data as BankAccountForm,
+                                          context),
                                       child: Text('Submit'),
                                     ),
                                   ),
