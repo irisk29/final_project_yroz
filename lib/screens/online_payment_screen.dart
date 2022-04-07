@@ -167,7 +167,7 @@ class _PaymentCardState extends State<PaymentCard>
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text("An error occured!"),
+            title: Text("Payment Error"),
             content: Text(res.getMessage().toString()),
             actions: <Widget>[
               FlatButton(

@@ -34,9 +34,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _formChanged;
 
   @override
   void initState() {
+    _formChanged = false;
     super.initState();
   }
 
@@ -45,7 +47,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_isInit) {
       _editedProduct = widget.product;
     }
-
     _isInit = false;
     super.didChangeDependencies();
   }
@@ -59,11 +60,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
+    _formChanged = true;
     setState(() {});
   }
 
@@ -83,11 +86,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var deviceSize = MediaQuery.of(context).size;
-
-    void _exitWithoutSavingDialog() {
+  void _exitWithoutSavingDialog() {
+    if (_formChanged) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -95,22 +95,29 @@ class _EditProductScreenState extends State<EditProductScreen> {
           content: Text("You are about to exit without saving your changes."),
           actions: <Widget>[
             FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
               child: Text('Yes'),
               onPressed: () {
                 Navigator.of(ctx).pop();
                 Navigator.of(ctx).pop();
               },
             ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
           ],
         ),
       );
+    } else {
+      Navigator.of(context).pop();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var deviceSize = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
@@ -165,6 +172,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedProduct = ProductDTO(
                             name: value!,
@@ -201,6 +209,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedProduct = ProductDTO(
                             name: _editedProduct!.name,
@@ -227,6 +236,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedProduct = ProductDTO(
                             name: _editedProduct!.name,

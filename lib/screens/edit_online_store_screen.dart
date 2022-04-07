@@ -117,12 +117,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _formChanged;
 
   @override
   void initState() {
-    // TODO: implement initState
+    _formChanged = false;
     _editedStore =
         Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
+    super.initState();
   }
 
   @override
@@ -149,11 +151,13 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
+    _formChanged = true;
     setState(() {});
   }
 
@@ -161,18 +165,21 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     setState(() {
       _isLoading = true;
     });
+
     if (_editedStore!.id.isNotEmpty) {
       _editedStore!.categories = _selectedItems;
-      try {
-        await Provider.of<User>(context, listen: false).updateOnlineStore(
-          _editedStore!,
-        );
-      } catch (error) {
+      final res =
+          await Provider.of<User>(context, listen: false).updateOnlineStore(
+        _editedStore!,
+      );
+      if (res.getTag())
+        Navigator.of(context).pop();
+      else {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text(error.toString()),
+            title: Text('Edit Store Error'),
+            content: Text(res.getMessage()),
             actions: <Widget>[
               FlatButton(
                 child: Text('Okay'),
@@ -184,10 +191,10 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           ),
         );
       }
+
       setState(() {
         _isLoading = false;
       });
-      Navigator.of(context).pop();
     }
   }
 
@@ -199,6 +206,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       } else {
         _selectedItems.remove(itemValue);
       }
+      _formChanged = true;
     });
   }
 
@@ -216,6 +224,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                 int.parse(
                     time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
+        _formChanged = true;
       });
     }
   }
@@ -228,11 +237,11 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
 
-      // Update UI
       if (result != null && result.item1 != null) {
         setState(() {
           _editedStore = result.item2;
           _editedStore!.addProduct(result.item1!);
+          _formChanged = true;
         });
       }
     } else {
@@ -290,6 +299,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
                             name: value!,
@@ -317,6 +327,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
@@ -336,6 +347,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) => destinationBuilder),
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
@@ -386,6 +398,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         onDeleted: () {
                           setState(() {
                             _selectedItems.remove(e);
+                            _formChanged = true;
                           });
                         },
                         label: Text(e),
@@ -621,13 +634,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                               _editedStore!.addProduct(result);
                             });
                           }
-                          else{
-                            setState(() {
-                              _editedStore!.removeProduct(e);
-                            });
-                          }
+                          _formChanged = true;
                         },
-                        label: Text(e.name+", ${e.description}"),
+                        label: Text(e.name + ", ${e.description}"),
                       ))
                   .toList(),
             ),
@@ -646,11 +655,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-
-    void _exitWithoutSavingDialog() {
+  void _exitWithoutSavingDialog() {
+    if (_formChanged) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -658,22 +664,29 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           content: Text("You are about to exit without saving your changes."),
           actions: <Widget>[
             FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
               child: Text('Yes'),
               onPressed: () {
                 Navigator.of(ctx).pop();
                 Navigator.of(ctx).pop();
               },
             ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
           ],
         ),
       );
+    } else {
+      Navigator.of(context).pop();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -688,6 +701,9 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             alignment: Alignment.centerLeft,
             child: Text(
               'Edit Store',
+              style: const TextStyle(
+                fontSize: 22,
+              ),
             ),
           ),
         ),

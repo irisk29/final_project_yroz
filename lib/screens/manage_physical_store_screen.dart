@@ -187,7 +187,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                               showDialog(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
-                                  title: Text('Are you sure?'),
+                                  title: Text('Upgrade to Online Store'),
                                   content: Text(
                                     'Upgrading your store to online store means that you can upload and sell your products within the app.',
                                   ),

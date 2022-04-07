@@ -117,13 +117,15 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _formChanged;
 
   @override
   void initState() {
-    // TODO: implement initState
+    _formChanged = false;
     _editedStore = Provider.of<User>(context, listen: false)
         .storeOwnerState!
         .physicalStore;
+    super.initState();
   }
 
   @override
@@ -150,11 +152,13 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
+    _formChanged = true;
     setState(() {});
   }
 
@@ -162,17 +166,19 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     setState(() {
       _isLoading = true;
     });
+
     if (_editedStore!.id.isNotEmpty) {
       _editedStore!.categories = _selectedItems;
-      try {
-        await Provider.of<User>(context, listen: false)
-            .updatePhysicalStore(_editedStore!);
-      } catch (error) {
+      final res = await Provider.of<User>(context, listen: false)
+          .updatePhysicalStore(_editedStore!);
+      if (res.getTag())
+        Navigator.of(context).pop();
+      else {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('An error occurred!'),
-            content: Text(error.toString()),
+            title: Text('Edit Store Error'),
+            content: Text(res.getMessage()),
             actions: <Widget>[
               FlatButton(
                 child: Text('Okay'),
@@ -185,10 +191,10 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         );
       }
     }
+
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pop();
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -199,6 +205,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       } else {
         _selectedItems.remove(itemValue);
       }
+      _formChanged = true;
     });
   }
 
@@ -216,6 +223,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                 int.parse(
                     time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
+        _formChanged = true;
       });
     }
   }
@@ -252,6 +260,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = StoreDTO(
                             name: value!,
@@ -279,6 +288,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = StoreDTO(
                             name: _editedStore!.name,
@@ -298,6 +308,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) => destinationBuilder),
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = StoreDTO(
                             name: _editedStore!.name,
@@ -348,6 +359,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         onDeleted: () {
                           setState(() {
                             _selectedItems.remove(e);
+                            _formChanged = true;
                           });
                         },
                         label: Text(e),
@@ -571,11 +583,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-
-    void _exitWithoutSavingDialog() {
+  void _exitWithoutSavingDialog() {
+    if (_formChanged) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -583,22 +592,29 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           content: Text("You are about to exit without saving your changes."),
           actions: <Widget>[
             FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
               child: Text('Yes'),
               onPressed: () {
                 Navigator.of(ctx).pop();
                 Navigator.of(ctx).pop();
               },
             ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
           ],
         ),
       );
+    } else {
+      Navigator.of(context).pop();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -611,6 +627,9 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           toolbarHeight: deviceSize.height * 0.1,
           title: Text(
             'Edit Store',
+            style: const TextStyle(
+              fontSize: 22,
+            ),
           ),
         ),
         resizeToAvoidBottomInset: false,
