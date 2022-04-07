@@ -91,10 +91,12 @@ class StoreStorageProxy {
       storeOwner = StoreOwnerModel(
           onlineStoreModel: onlineWithProducts,
           storeOwnerModelOnlineStoreModelId: onlineWithProducts.id,
-          lastPurchasesView: lastViewPurchase == null ? TemporalDateTime.fromString(
-              DateFormat('dd/MM/yyyy, hh:mm:ss a')
+          lastPurchasesView: lastViewPurchase == null
+              ? TemporalDateTime.fromString(DateFormat('dd/MM/yyyy, hh:mm:ss a')
                   .parse('1/1/2022, 10:00:00 AM')
-                  .toDateTimeIso8601String()) : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
+                  .toDateTimeIso8601String())
+              : TemporalDateTime.fromString(
+                  lastViewPurchase.toDateTimeIso8601String()));
       UserModel? oldUserModel = await UsersStorageProxy()
           .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
@@ -183,7 +185,7 @@ class StoreStorageProxy {
         }).convert(store.operationHours));
 
     String qrCode = await generateUniqueQRCode(physicalModelNotComplete.id);
-      
+
     String? imageUrl = null;
     if (store.imageFromPhone != null) {
       await uploadPicture(physicalModelNotComplete.id,
@@ -191,7 +193,8 @@ class StoreStorageProxy {
       imageUrl = await getDownloadUrl(physicalModelNotComplete.id);
     }
 
-    var physicalModel = physicalModelNotComplete.copyWith(imageUrl: imageUrl, qrCode: qrCode);
+    var physicalModel =
+        physicalModelNotComplete.copyWith(imageUrl: imageUrl, qrCode: qrCode);
 
     ResultInterface storeOwnerRes = await UsersStorageProxy()
         .getStoreOwnerState(UserAuthenticator().getCurrentUserId());
@@ -201,10 +204,12 @@ class StoreStorageProxy {
       storeOwner = StoreOwnerModel(
           physicalStoreModel: physicalModel,
           storeOwnerModelPhysicalStoreModelId: physicalModel.id,
-          lastPurchasesView: lastViewPurchase == null ? TemporalDateTime.fromString(
-              DateFormat('dd/MM/yyyy, hh:mm:ss a')
+          lastPurchasesView: lastViewPurchase == null
+              ? TemporalDateTime.fromString(DateFormat('dd/MM/yyyy, hh:mm:ss a')
                   .parse('1/1/2022, 10:00:00 AM')
-                  .toDateTimeIso8601String()) : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
+                  .toDateTimeIso8601String())
+              : TemporalDateTime.fromString(
+                  lastViewPurchase.toDateTimeIso8601String()));
       UserModel? oldUserModel = await UsersStorageProxy()
           .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
@@ -767,8 +772,8 @@ class StoreStorageProxy {
         qrCode: physicalStore.qrCode,
         image: physicalStore.image,
         imageFromPhone: physicalStore.imageFromPhone);
-    ResultInterface openOnlineStoreRes =
-        await openOnlineStore(onlineStoreDTO, physicalStore.id, lastViewPurchase);
+    ResultInterface openOnlineStoreRes = await openOnlineStore(
+        onlineStoreDTO, physicalStore.id, lastViewPurchase);
     return openOnlineStoreRes;
   }
 
@@ -845,5 +850,18 @@ class StoreStorageProxy {
             description: prod.description!,
             storeID: prod.onlinestoremodelID,
             imageFromPhone: file));
+  }
+
+  Future<ResultInterface> getStoreNameByID(String storeID) async {
+    var phy = await fetchPhysicalStore(storeID);
+    if (phy == null) {
+      var online = await fetchOnlineStore(storeID);
+      if (online == null) {
+        FLog.error(text: "No such store $storeID");
+        return new Failure("The store $storeID does not exist");
+      }
+      return new Ok("Found store $storeID name", online.name);
+    }
+    return new Ok("Found store $storeID name", phy.name);
   }
 }
