@@ -1,20 +1,14 @@
 import 'dart:io';
 
-import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:final_project_yroz/DTOs/StoreDTO.dart';
-import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
-import 'package:final_project_yroz/screens/manage_online_store_screen.dart';
-import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
-import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/default_store_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,11 +31,10 @@ void main() {
   }
 
   Future<void> _configureAmplify() async {
-    if (!configured) {
-      Amplify.addPlugin(AmplifyAuthCognito());
-      Amplify.addPlugin(AmplifyStorageS3());
-      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
-      Amplify.addPlugin(AmplifyAPI());
+    Amplify.addPlugin(AmplifyAuthCognito());
+    Amplify.addPlugin(AmplifyStorageS3());
+    Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
+    //Amplify.addPlugin(AmplifyAPI());
 
       // Amplify can only be configured once.
       try {
@@ -67,33 +60,19 @@ void main() {
           name: "physical store test",
           phoneNumber: "+972123456789",
           address: "Ashdod, Israel",
-          operationHours:
-              "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+          operationHours: "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
           categories: "[\"Food\"]",
           qrCode: "");
       TemporalDateTime time = TemporalDateTime.fromString(
           DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String());
-      StoreOwnerModel storeOwnerModel = StoreOwnerModel(
-          storeOwnerModelPhysicalStoreModelId: physicalStoreModel.id,
-          physicalStoreModel: physicalStoreModel,
-          lastPurchasesView: time);
-      UserModel currUser = new UserModel(
-          email: "test@gmail.com",
-          name: "test name",
-          hideStoreOwnerOptions: false,
-          userModelStoreOwnerModelId: storeOwnerModel.id,
-          storeOwnerModel: storeOwnerModel);
+      StoreOwnerModel storeOwnerModel = StoreOwnerModel(storeOwnerModelPhysicalStoreModelId: physicalStoreModel.id, physicalStoreModel: physicalStoreModel, lastPurchasesView: time);
+      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, userModelStoreOwnerModelId: storeOwnerModel.id, storeOwnerModel: storeOwnerModel);
       await Amplify.DataStore.save(physicalStoreModel);
       await Amplify.DataStore.save(storeOwnerModel);
       await Amplify.DataStore.save(currUser);
       mockObserver = MockNavigatorObserver();
       user = currUser;
       return Future(() => print("starting test.."));
-    });
-
-    tearDown(() async {
-      var res = await UsersStorageProxy().deleteUser("test@gmail.com");
-      print("in tear down: ${res.getMessage()}");
     });
 
     testWidgets('edit physical store - positive scenario', (WidgetTester tester) async {
@@ -129,71 +108,13 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(Duration(seconds: 10));
 
       // Verify the store was created
       ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
       assert(storeOwnerRes.getTag() == true);
       StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
       assert(storeOwnerModel.physicalStoreModel!.name == "physical store check");
-      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null);
-      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!.isNotEmpty);
-    });
-
-    testWidgets('edit physical store - sad scenario', (WidgetTester tester) async {
-      await tester.pumpWidget(app.EditPhysicalStorePipeline().wrapWithMaterial([mockObserver], user));
-      await tester.pumpAndSettle();
-
-      //start to fill the form
-      Finder fab = find.byKey(Key('phoneNumber'));
-      await tester.enterText(fab, "");
-      await tester.enterText(fab, "+1234567"); //wrong phone format
-      await tester.pumpAndSettle();
-
-      FocusManager.instance.primaryFocus?.unfocus();
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-      await Future.delayed(Duration(seconds: 5));
-
-      /*await Amplify.DataStore.clear();
-      await Amplify.DataStore.start();
-      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
-        if (msg.eventName == 'ready') {
-          print("ready to check");
-          // Verify the phone number did not change
-          ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
-          assert(storeOwnerRes.getTag() == true);
-          StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
-          PhysicalStoreModel? store = await StoreStorageProxy().fetchPhysicalStore(storeOwnerModel.storeOwnerModelPhysicalStoreModelId);
-          assert(store != null);
-          assert(store!.phoneNumber == "+972123456789");
-          print("finished check");
-        } else {
-          print("Not ready yet");
-        }
-      });
-      await Future.delayed(Duration(seconds: 10));*/
-
-      // Verify the store was created
-      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
-      assert(storeOwnerRes.getTag() == true);
-      StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
-      assert(storeOwnerModel.physicalStoreModel!.phoneNumber == "+972123456789");
       assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null);
       assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!.isNotEmpty);
     });
