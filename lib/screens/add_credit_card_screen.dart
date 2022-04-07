@@ -96,6 +96,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
           content: Text(res.getMessage()),
           actions: <Widget>[
             FlatButton(
+              key: const Key("ok_error"),
               child: Text('Ok'),
               onPressed: () {
                 Navigator.of(ctx).pop();
