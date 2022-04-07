@@ -320,17 +320,13 @@ class User extends ChangeNotifier {
 
   Future<void> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
     try {
-      String? bankToken = this.storeOwnerState!.storeBankAccountToken;
       var res = await StoreStorageProxy().convertPhysicalStoreToOnline(
           physicalStore, this.storeOwnerState!.lastTimeViewedPurchases);
       if (!res.getTag()) {
         print(res.getMessage());
         return;
       }
-      await UsersStorageProxy().saveStoreBankAccount(bankToken!);
       Tuple2<OnlineStoreModel, String> retVal = res.getValue();
-      this.storeOwnerState =
-          new StoreOwnerState(retVal.item2, () => notifyListeners(), bankToken);
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
       this.storeOwnerState!.physicalStore = null;
       this.storeOwnerState!.createPurchasesSubscription();
