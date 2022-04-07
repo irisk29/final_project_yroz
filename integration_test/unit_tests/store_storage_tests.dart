@@ -860,7 +860,8 @@ void main() {
           phoneNumber: "+972123456789",
           categories: ["Food"],
           operationHours: op);
-      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(storeDTO);
+      DateTime lastViewed = DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
+      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(storeDTO, lastViewed);
       expect(res.getTag(), true);
       var phyStore = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(phyStore == null, true);
@@ -888,143 +889,14 @@ void main() {
           phoneNumber: "+972123456789",
           categories: ["Food"],
           operationHours: op);
-      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(storeDTO);
+      DateTime lastViewed = DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
+      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(storeDTO, lastViewed);
       expect(res.getTag(), false);
       var phyStore = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(phyStore != null, true);
       expect(phyStore!.name, "physical store");
       //cleanup
       await Amplify.DataStore.delete(physicalModel);
-    });
-  });
-
-  group('convert online store to physical store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
-    late OnlineStoreModel onlineModel;
-    late StoreProductModel productModel;
-
-    setUp(() {
-      return Future(() async {
-        await _configureAmplify();
-        UserAuthenticator().setCurrentUserId("unittest@gmail.com");
-        onlineModel = OnlineStoreModel(
-            name: "online test",
-            phoneNumber: "+972123456789",
-            address: "Ashdod, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
-            categories: "[\"Food\"]",
-            qrCode: "");
-        productModel = StoreProductModel(
-          name: "product test",
-          categories: "",
-          price: 1.23,
-          onlinestoremodelID: onlineModel.id,
-          description: "wow",
-        );
-        StoreOwnerModel storeOwnerModel = StoreOwnerModel(
-            onlineStoreModel: onlineModel,
-            storeOwnerModelOnlineStoreModelId: onlineModel.id,
-            lastPurchasesView: TemporalDateTime.fromString(
-                DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String()));
-        UserModel currUser = new UserModel(
-            email: "unittest@gmail.com",
-            name: "test name",
-            hideStoreOwnerOptions: false,
-            storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id);
-        await Amplify.DataStore.save(productModel);
-        await Amplify.DataStore.save(onlineModel);
-        await Amplify.DataStore.save(storeOwnerModel);
-        await Amplify.DataStore.save(currUser);
-      });
-    });
-
-    tearDown(() {
-      return Future(() async {
-        var res = await UsersStorageProxy().deleteUser("unittest@gmail.com");
-        print("in tear down: ${res.getMessage()}");
-      });
-    });
-
-    test('good scenario', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
-      ProductDTO productDTO = ProductDTO(
-          id: "",
-          name: "product test",
-          price: 1.23,
-          category: "",
-          imageUrl: null,
-          description: "wow",
-          storeID: onlineModel.id,
-          imageFromPhone: null);
-      OnlineStoreDTO storeDTO = OnlineStoreDTO(
-          id: onlineModel.id,
-          name: "online test",
-          address: "Ashdod, Israel",
-          phoneNumber: "+972123456789",
-          categories: ["Food"],
-          operationHours: op,
-          products: [productDTO]);
-      var res = await StoreStorageProxy().convertOnlineStoreToPhysical(storeDTO);
-      expect(res.getTag(), true);
-      var onlineStore = await StoreStorageProxy().fetchOnlineStore(onlineModel.id);
-      expect(onlineStore == null, true);
-      var phyStore = await StoreStorageProxy().fetchPhysicalStore(onlineModel.id);
-      expect(phyStore != null, true);
-      expect(phyStore!.name, "online test");
-      var prod = await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
-      expect(prod.length, 0);
-      //cleanup
-      await Amplify.DataStore.delete(phyStore);
-    });
-
-    test('bad scenario - no such store', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
-      ProductDTO productDTO = ProductDTO(
-          id: "",
-          name: "product test",
-          price: 1.23,
-          category: "",
-          imageUrl: null,
-          description: "wow",
-          storeID: onlineModel.id,
-          imageFromPhone: null);
-      OnlineStoreDTO storeDTO = OnlineStoreDTO(
-          id: "aa",
-          name: "online test",
-          address: "Ashdod, Israel",
-          phoneNumber: "+972123456789",
-          categories: ["Food"],
-          operationHours: op,
-          products: [productDTO]);
-      var res = await StoreStorageProxy().convertOnlineStoreToPhysical(storeDTO);
-      expect(res.getTag(), false);
-      var onlineStore = await StoreStorageProxy().fetchOnlineStore(onlineModel.id);
-      expect(onlineStore != null, true);
-      expect(onlineStore!.name, "online test");
-      var prod = await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
-      expect(prod.length, 1);
-      expect(prod.firstWhere((element) => element.name == "product test", orElse: null) != null, true);
-      //cleanup
-      await Amplify.DataStore.delete(onlineStore);
-      await Amplify.DataStore.delete(productModel);
     });
   });
 }

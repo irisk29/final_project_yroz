@@ -17,6 +17,10 @@ class UserAuthenticator {
 
   Future<Tuple2<UserModel?, bool>> signIn(AuthProvider authProvider) async {
     try {
+      /*var isAlreadySignedIn = await Amplify.Auth.fetchAuthSession();
+      if (isAlreadySignedIn.isSignedIn) {
+        return new Tuple2(null, false);
+      }*/
       await Amplify.Auth.signInWithWebUI(provider: authProvider);
       var res = await Amplify.Auth.fetchUserAttributes();
       var email, name, picture;
@@ -26,7 +30,9 @@ class UserAuthenticator {
         if (element.userAttributeKey.key == "picture") picture = element.value;
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
-      Tuple2<UserModel?, bool> currUser = await UsersStorageProxy().createUser(email, name, picture);
+
+      Tuple2<UserModel?, bool> currUser =
+          await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
       return currUser;
     } catch (e) {
