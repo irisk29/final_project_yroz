@@ -92,14 +92,13 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('An Error Occurred!'),
+          title: Text('Credit Card Error'),
           content: Text(res.getMessage()),
           actions: <Widget>[
             FlatButton(
               child: Text('Ok'),
               onPressed: () {
                 Navigator.of(ctx).pop();
-                Navigator.of(ctx).pop(false);
               },
             ),
           ],
@@ -120,18 +119,18 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
           content: Text("You are about to exit without saving your changes."),
           actions: <Widget>[
             FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
               child: Text('Yes'),
               onPressed: () {
                 Navigator.of(ctx).pop();
                 Navigator.of(ctx).pop();
               },
             ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
           ],
         ),
       );
@@ -245,7 +244,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                    primary: Theme.of(context).primaryColor),
+                                    primary: Colors.blue),
                                 child: Container(
                                   width: deviceSize.width * 0.3,
                                   margin: const EdgeInsets.all(12),
@@ -259,11 +258,9 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
                                   ),
                                 ),
                                 onPressed: () {
+                                  formKey.currentState!.save();
                                   if (formKey.currentState!.validate()) {
-                                    print('valid!');
                                     saveCreditCard();
-                                  } else {
-                                    print('invalid!');
                                   }
                                 },
                               ),

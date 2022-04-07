@@ -1,4 +1,5 @@
 import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
+import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
 import 'package:flutter/material.dart';
 
 class BankAccountForm extends StatelessWidget {
@@ -22,10 +23,27 @@ class BankAccountForm extends StatelessWidget {
     return null;
   }
 
-  bool saveForm() {
+  Future<bool> saveForm(BuildContext context) async {
     if (_bankAccountForm.currentState!.validate()) {
       _bankAccountForm.currentState!.save();
-      return true;
+      final res = await InternalPaymentGateway()
+          .validateBankAccount(bankName!, branchNumber!, accountNumber!);
+      if (res.getTag()) return true;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("Invalid Bank Account"),
+          content: Text(res.getMessage()),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Okay'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
     }
     return false;
   }

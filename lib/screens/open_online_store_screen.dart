@@ -128,6 +128,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _bankLoading = false;
   var _acceptTerms = false;
 
   @override
@@ -703,7 +704,11 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ],
         );
       case 4:
-        return bankAccountForm;
+        return _bankLoading
+            ? SizedBox(
+                height: deviceSize.height * 0.6,
+                child: Center(child: CircularProgressIndicator()))
+            : bankAccountForm;
       case 5:
         return StorePreview(
             true,
@@ -830,47 +835,54 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               },
                             ),
                             currentStepWidget(deviceSize)!,
-                            Expanded(
-                              child: Align(
-                                alignment: FractionalOffset.bottomCenter,
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.all(deviceSize.height * 0.025),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _currentStep > 0
-                                          ? CircleAvatar(
+                            !_bankLoading
+                                ? Expanded(
+                                    child: Align(
+                                      alignment: FractionalOffset.bottomCenter,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(
+                                            deviceSize.height * 0.025),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            _currentStep > 0
+                                                ? CircleAvatar(
+                                                    radius: 25,
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                    child: IconButton(
+                                                      color: Colors.black54,
+                                                      onPressed: cancel,
+                                                      icon: Icon(
+                                                          Icons.arrow_back),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            CircleAvatar(
                                               radius: 25,
                                               backgroundColor: Theme.of(context)
                                                   .primaryColor,
                                               child: IconButton(
+                                                key: const Key(
+                                                    "continue_button"),
                                                 color: Colors.black54,
-                                                onPressed: cancel,
-                                                icon: Icon(Icons.arrow_back),
+                                                onPressed: () async =>
+                                                    await continued(context),
+                                                icon: Icon(_currentStep < 5
+                                                    ? Icons.arrow_forward
+                                                    : Icons.done),
                                               ),
-                                            )
-                                          : Container(),
-                                      CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor:
-                                            Theme.of(context).primaryColor,
-                                        child: IconButton(
-                                          key: const Key("continue_button"),
-                                          color: Colors.black54,
-                                          onPressed: continued,
-                                          icon: Icon(_currentStep < 5
-                                              ? Icons.arrow_forward
-                                              : Icons.done),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                                    ),
+                                  )
+                                : Container(),
                           ],
                         ),
                       ),
@@ -880,7 +892,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     );
   }
 
-  continued() {
+  continued(BuildContext context) async {
     switch (_currentStep) {
       case 0:
         if (_detailsform.currentState!.validate()) {
@@ -900,7 +912,10 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         setState(() => _currentStep += 1);
         break;
       case 4:
-        if (bankAccountForm.saveForm()) setState(() => _currentStep += 1);
+        setState(() => _bankLoading = true);
+        final res = await bankAccountForm.saveForm(context);
+        setState(() => _bankLoading = false);
+        if (res) setState(() => _currentStep += 1);
         break;
       case 5:
         _saveForm();

@@ -114,6 +114,21 @@ class InternalPaymentGateway {
     return await _deleteRequest(url, body);
   }
 
+  // params: cardNumber - 16 string length, expiryDate - m/y, cvv - 3 string length, cardHolder
+  // returns: Result
+  Future<ResultInterface> validateCreditCard(String cardNumber,
+      String expiryDate, String cvv, String cardHolder) async {
+    var body = {
+      "cardNumber": cardNumber,
+      "expiryDate": expiryDate,
+      "cvv": cvv,
+      "cardHolder": cardHolder,
+    };
+    var result = await _getRequest(
+        externalPaymentUrl, '/dev/creditCardValidation', body);
+    return result;
+  }
+
   // params: userId - email, cardNumber - 16 string length, expiryDate - m/y, cvv - 3 string length, cardHolder
   // returns: Result with credit crad token
   Future<ResultInterface<String>> addUserCreditCard(
@@ -170,6 +185,20 @@ class InternalPaymentGateway {
       return new Ok(result.getMessage(), convertedCardsDetails);
     }
     return new Failure(result.getMessage());
+  }
+
+  // params: bankName, branchNumber, bankAccount - 9 string length
+  // returns: Result
+  Future<ResultInterface> validateBankAccount(
+      String bankName, String branchNumber, String bankAccount) async {
+    var body = {
+      "bankName": bankName,
+      "branchNumber": branchNumber,
+      "bankAccount": bankAccount,
+    };
+    var result = await _getRequest(
+        externalPaymentUrl, '/dev/bankAccountValidation', body);
+    return result;
   }
 
   // params: userId - email, bankName, branchNumber, bankAccount - 9 string length
