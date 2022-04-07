@@ -281,6 +281,26 @@ class InternalPaymentGateway {
     return await _deleteRequest(url, body);
   }
 
+  // params: storeId, bankName, branchNumber, bankAccount - 9 string length
+  // returns: Result with bank account token
+  Future<ResultInterface<String>> editStoreBankAccount(String storeId,
+      String bankName, String branchNumber, String bankAccount) async {
+    var url =
+        Uri.parse('https://' + externalPaymentUrl + '/dev/storeBankAccount');
+    var body = {
+      "storeId": storeId,
+      "bankName": bankName,
+      "branchNumber": branchNumber,
+      "bankAccount": bankAccount,
+    };
+    var result = await _patchRequest(url, body);
+    if (result.getTag()) {
+      String token = result.getValue()["token"];
+      return new Ok(result.getMessage(), token);
+    }
+    return new Failure(result.getMessage());
+  }
+
   // params: storeId, bankAccountToken - saved bank account token that recived from addUserBankAccount
   // returns: bank account details that was asked
   Future<ResultInterface<Map<String, Map<String, String>>>>

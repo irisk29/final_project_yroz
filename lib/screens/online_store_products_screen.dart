@@ -10,7 +10,6 @@ class OnlineStoreProductsScreen extends StatefulWidget {
   static const routeName = '/online-store-products';
 
   late OnlineStoreDTO store;
-  //late User user;
 
   @override
   _OnlineStoreProductsScreenState createState() =>

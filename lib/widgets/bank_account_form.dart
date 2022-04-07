@@ -6,6 +6,7 @@ class BankAccountForm extends StatelessWidget {
   String? accountNumber;
   String? bankName;
   String? branchNumber;
+  VoidCallback? callback;
   OutlineInputBorder? border = OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.grey.withOpacity(0.7),
@@ -14,7 +15,11 @@ class BankAccountForm extends StatelessWidget {
   );
   final _bankAccountForm = GlobalKey<FormState>();
 
-  BankAccountForm([this.accountNumber, this.bankName, this.branchNumber]);
+  BankAccountForm(
+      [this.accountNumber,
+      this.bankName,
+      this.branchNumber,
+      this.callback = null]);
 
   BankAccountDTO? buildBankAccountDTO() {
     if (accountNumber != null && bankName != null && branchNumber != null) {
@@ -77,6 +82,9 @@ class BankAccountForm extends StatelessWidget {
                         focusedBorder: border,
                         enabledBorder: border,
                       ),
+                      onChanged: (_) {
+                        if (this.callback != null) callback!();
+                      },
                       onSaved: (value) {
                         bankName = value;
                       }),
@@ -101,6 +109,9 @@ class BankAccountForm extends StatelessWidget {
                       }
                       return null;
                     },
+                    onChanged: (_) {
+                      if (this.callback != null) callback!();
+                    },
                     onSaved: (value) => branchNumber = value,
                   ),
                   SizedBox(
@@ -124,6 +135,9 @@ class BankAccountForm extends StatelessWidget {
                         return "Invalid Branch Number";
                       }
                       return null;
+                    },
+                    onChanged: (_) {
+                      if (this.callback != null) callback!();
                     },
                     onSaved: (value) => accountNumber = value,
                   ),
