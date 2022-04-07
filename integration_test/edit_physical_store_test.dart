@@ -31,10 +31,11 @@ void main() {
   }
 
   Future<void> _configureAmplify() async {
-    Amplify.addPlugin(AmplifyAuthCognito());
-    Amplify.addPlugin(AmplifyStorageS3());
-    Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
-    //Amplify.addPlugin(AmplifyAPI());
+    if (!configured) {
+      Amplify.addPlugin(AmplifyAuthCognito());
+      Amplify.addPlugin(AmplifyStorageS3());
+      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
+      //Amplify.addPlugin(AmplifyAPI());
 
       // Amplify can only be configured once.
       try {
