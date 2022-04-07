@@ -130,6 +130,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   var _isLoading = false;
   var _bankLoading = false;
   var _acceptTerms = false;
+  var _validBankAccount = false;
   var _formChanged;
 
   @override
@@ -929,9 +930,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         break;
       case 4:
         setState(() => _bankLoading = true);
-        final res = await bankAccountForm.saveForm(context);
+        final res =
+            _validBankAccount || await bankAccountForm.saveForm(context);
         setState(() => _bankLoading = false);
-        if (res) setState(() => _currentStep += 1);
+        if (res)
+          setState(() {
+            _validBankAccount = true;
+            _currentStep += 1;
+          });
         break;
       case 5:
         _saveForm();

@@ -166,13 +166,27 @@ class User extends ChangeNotifier {
       }
       this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
       String storeID = tuple.item1.id;
-      await _createStoreAccount(storeID);
+      var accountRes = await _createStoreAccount(storeID);
+      if (!accountRes.getTag()) {
+        FLog.error(text: accountRes.getMessage());
+        await StoreStorageProxy()
+            .deleteStore(storeID, true); //revert open action
+        this.storeOwnerState = null;
+        return accountRes;
+      }
       res = await this.storeOwnerState!.addStoreBankAccount(
           storeID,
           bankAccountDTO.bankName,
           bankAccountDTO.branchNumber,
           bankAccountDTO.bankAccount);
-      if (!res.getTag()) return res;
+      if (!res.getTag()) {
+        FLog.error(text: res.getMessage());
+        await InternalPaymentGateway().deleteStoreAccount(storeID);
+        await StoreStorageProxy()
+            .deleteStore(storeID, true); //revert open action
+        this.storeOwnerState = null;
+        return res;
+      }
       this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return new Ok("opened online store", tuple.item1.id);
@@ -196,13 +210,26 @@ class User extends ChangeNotifier {
       }
       this.storeOwnerState!.setPhysicalStore(tuple.item1);
       String storeID = tuple.item1.id;
-      await _createStoreAccount(storeID);
+      var accountRes = await _createStoreAccount(storeID);
+      if (!accountRes.getTag()) {
+        FLog.error(text: accountRes.getMessage());
+        await StoreStorageProxy()
+            .deleteStore(storeID, true); //revert open action
+        this.storeOwnerState = null;
+        return accountRes;
+      }
       res = await this.storeOwnerState!.addStoreBankAccount(
           storeID,
           bankAccountDTO.bankName,
           bankAccountDTO.branchNumber,
           bankAccountDTO.bankAccount);
-      if (!res.getTag()) return res;
+      if (!res.getTag()) {
+        FLog.error(text: res.getMessage());
+        await StoreStorageProxy()
+            .deleteStore(storeID, true); //revert open action
+        this.storeOwnerState = null;
+        return res;
+      }
       this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
       return res;
@@ -549,15 +576,17 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<void> _createStoreAccount(String storeID) async {
+  Future<ResultInterface> _createStoreAccount(String storeID) async {
     //after the user creates a store, we only create an account for it
     var storeAccountRes =
         await InternalPaymentGateway().createStoreAccount(storeID);
     if (!storeAccountRes.getTag()) {
       print(storeAccountRes.getMessage());
-      return;
+      return storeAccountRes;
     }
     notifyListeners();
+    return new Ok(
+        "Created store account succssefully", storeAccountRes.getValue());
   }
 
   Future<void> _deleteStoreAccount(String storeID) async {
