@@ -48,24 +48,24 @@ class OpenOnlineStorePipeline extends StatefulWidget {
 
   //for test purposes
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
-    routes: {
-      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-      TutorialScreen.routeName: (ctx) => TutorialScreen(),
-    },
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User("test@gmail.com", "test name"),
+        routes: {
+          TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+          TutorialScreen.routeName: (ctx) => TutorialScreen(),
+        },
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User("test@gmail.com", "test name"),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-    // This mocked observer will now receive all navigation events
-    // that happen in our app.
-    navigatorObservers: nav,
-  );
+        // This mocked observer will now receive all navigation events
+        // that happen in our app.
+        navigatorObservers: nav,
+      );
 }
 
 class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
@@ -86,13 +86,34 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       address: "",
       categories: [],
       operationHours: {
-        'sunday': [OpenOnlineStorePipeline._sunday_open, OpenOnlineStorePipeline._sunday_close],
-        'monday': [OpenOnlineStorePipeline._monday_open, OpenOnlineStorePipeline._monday_close],
-        'tuesday': [OpenOnlineStorePipeline._tuesday_open, OpenOnlineStorePipeline._tuesday_close],
-        'wednesday': [OpenOnlineStorePipeline._wednesday_open, OpenOnlineStorePipeline._wednesday_close],
-        'thursday': [OpenOnlineStorePipeline._thursday_open, OpenOnlineStorePipeline._thursday_close],
-        'friday': [OpenOnlineStorePipeline._friday_open, OpenOnlineStorePipeline._friday_close],
-        'saturday': [OpenOnlineStorePipeline._saturday_open, OpenOnlineStorePipeline._saturday_close]
+        'sunday': [
+          OpenOnlineStorePipeline._sunday_open,
+          OpenOnlineStorePipeline._sunday_close
+        ],
+        'monday': [
+          OpenOnlineStorePipeline._monday_open,
+          OpenOnlineStorePipeline._monday_close
+        ],
+        'tuesday': [
+          OpenOnlineStorePipeline._tuesday_open,
+          OpenOnlineStorePipeline._tuesday_close
+        ],
+        'wednesday': [
+          OpenOnlineStorePipeline._wednesday_open,
+          OpenOnlineStorePipeline._wednesday_close
+        ],
+        'thursday': [
+          OpenOnlineStorePipeline._thursday_open,
+          OpenOnlineStorePipeline._thursday_close
+        ],
+        'friday': [
+          OpenOnlineStorePipeline._friday_open,
+          OpenOnlineStorePipeline._friday_close
+        ],
+        'saturday': [
+          OpenOnlineStorePipeline._saturday_open,
+          OpenOnlineStorePipeline._saturday_close
+        ]
       },
       image: null,
       products: [],
@@ -107,6 +128,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _bankLoading = false;
   var _acceptTerms = false;
 
   @override
@@ -619,36 +641,74 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             ),
             Wrap(
               children: _products
-                  .map((e) => Chip(
-                        deleteIcon: Icon(
-                          Icons.edit,
+                  .map((e) => Padding(
+                        padding: EdgeInsets.only(
+                            right: deviceSize.width * 0.01,
+                            left: deviceSize.width * 0.01),
+                        child: Chip(
+                          deleteIcon: Icon(
+                            Icons.edit,
+                          ),
+                          onDeleted: () async {
+                            final ProductDTO? result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditProductScreen(e)),
+                            );
+                            if (result != null) {
+                              setState(() {
+                                _products.removeWhere((element) =>
+                                    element.name == e.name &&
+                                    element.price == e.price &&
+                                    element.description == e.description);
+                                _products.add(result);
+                              });
+                            } else {
+                              setState(() {
+                                _products.removeWhere((element) =>
+                                    element.name == e.name &&
+                                    element.price == e.price &&
+                                    element.description == e.description);
+                              });
+                            }
+                          },
+                          label: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: deviceSize.height * 0.1,
+                              maxWidth: deviceSize.width * 0.3,
+                              minHeight: deviceSize.height * 0.05,
+                              minWidth: deviceSize.width * 0.15,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(e.name),
+                                Text(
+                                  e.description!,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        onDeleted: () async {
-                          final ProductDTO? result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditProductScreen(e)),
-                          );
-                          if (result != null) {
-                            setState(() {
-                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
-                              _products.add(result);
-                            });
-                          }
-                          else{
-                            setState(() {
-                              _products.removeWhere((element) => element.name==e.name && element.price==e.price && element.description==e.description);
-                            });
-                          }
-                        },
-                        label: Text(e.name+", ${e.description}"),
                       ))
                   .toList(),
             ),
           ],
         );
       case 4:
-        return bankAccountForm;
+        return _bankLoading
+            ? SizedBox(
+                height: deviceSize.height * 0.6,
+                child: Center(child: CircularProgressIndicator()))
+            : bankAccountForm;
       case 5:
         return StorePreview(
             true,
@@ -775,47 +835,54 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               },
                             ),
                             currentStepWidget(deviceSize)!,
-                            Expanded(
-                              child: Align(
-                                alignment: FractionalOffset.bottomCenter,
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.all(deviceSize.height * 0.025),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      _currentStep > 0
-                                          ? CircleAvatar(
+                            !_bankLoading
+                                ? Expanded(
+                                    child: Align(
+                                      alignment: FractionalOffset.bottomCenter,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(
+                                            deviceSize.height * 0.025),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            _currentStep > 0
+                                                ? CircleAvatar(
+                                                    radius: 25,
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .primaryColor,
+                                                    child: IconButton(
+                                                      color: Colors.black54,
+                                                      onPressed: cancel,
+                                                      icon: Icon(
+                                                          Icons.arrow_back),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            CircleAvatar(
                                               radius: 25,
                                               backgroundColor: Theme.of(context)
                                                   .primaryColor,
                                               child: IconButton(
+                                                key: const Key(
+                                                    "continue_button"),
                                                 color: Colors.black54,
-                                                onPressed: cancel,
-                                                icon: Icon(Icons.arrow_back),
+                                                onPressed: () async =>
+                                                    await continued(context),
+                                                icon: Icon(_currentStep < 5
+                                                    ? Icons.arrow_forward
+                                                    : Icons.done),
                                               ),
-                                            )
-                                          : Container(),
-                                      CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor:
-                                            Theme.of(context).primaryColor,
-                                        child: IconButton(
-                                          key: const Key("continue_button"),
-                                          color: Colors.black54,
-                                          onPressed: continued,
-                                          icon: Icon(_currentStep < 5
-                                              ? Icons.arrow_forward
-                                              : Icons.done),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                                    ),
+                                  )
+                                : Container(),
                           ],
                         ),
                       ),
@@ -825,7 +892,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     );
   }
 
-  continued() {
+  continued(BuildContext context) async {
     switch (_currentStep) {
       case 0:
         if (_detailsform.currentState!.validate()) {
@@ -845,7 +912,10 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         setState(() => _currentStep += 1);
         break;
       case 4:
-        if (bankAccountForm.saveForm()) setState(() => _currentStep += 1);
+        setState(() => _bankLoading = true);
+        final res = await bankAccountForm.saveForm(context);
+        setState(() => _bankLoading = false);
+        if (res) setState(() => _currentStep += 1);
         break;
       case 5:
         _saveForm();

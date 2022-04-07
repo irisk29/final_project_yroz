@@ -35,7 +35,8 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeIn,
       height: _expanded
-          ? (purchaseProducts.length * 30) + deviceSize.height * 0.14
+          ? (purchaseProducts.length > 0 ? purchaseProducts.length * 30 : 30) +
+              deviceSize.height * 0.14
           : deviceSize.height * 0.14,
       child: Card(
         margin: EdgeInsets.all(deviceSize.width * 0.025),
@@ -62,23 +63,33 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
                 ? AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
                     curve: Curves.easeIn,
-                    height: purchaseProducts.length * 30,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        var product = purchaseProducts[index];
-                        return Padding(
-                          padding: EdgeInsets.all(deviceSize.width * 0.01),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(product.name),
-                              Text('${product.amount} X \€${product.price.toStringAsFixed(2)}'),
-                            ],
+                    height: purchaseProducts.length > 0
+                        ? purchaseProducts.length * 30
+                        : 30,
+                    child: purchaseProducts.length > 0
+                        ? ListView.builder(
+                            itemBuilder: (context, index) {
+                              var product = purchaseProducts[index];
+                              return Padding(
+                                padding:
+                                    EdgeInsets.all(deviceSize.width * 0.01),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(product.name),
+                                    Text(
+                                        '${product.amount} X \€${product.price.toStringAsFixed(2)}'),
+                                  ],
+                                ),
+                              );
+                            },
+                            itemCount: purchaseProducts.length,
+                          )
+                        : Padding(
+                            padding: EdgeInsets.all(deviceSize.width * 0.01),
+                            child: Center(child: Text("No Products Details")),
                           ),
-                        );
-                      },
-                      itemCount: purchaseProducts.length,
-                    ),
                   )
                 : Container(),
           ],

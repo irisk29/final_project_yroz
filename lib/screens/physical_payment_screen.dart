@@ -14,7 +14,9 @@ import '../LogicLayer/SecretLoader.dart';
 class PhysicalPaymentScreen extends StatefulWidget {
   static const routeName = '/physical-payment';
 
-  late String storeID;
+  late String? storeID;
+
+  PhysicalPaymentScreen(this.storeID);
 
   @override
   State<PhysicalPaymentScreen> createState() => _PhysicalPaymentScreenState();
@@ -22,52 +24,28 @@ class PhysicalPaymentScreen extends StatefulWidget {
 
 class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
   @override
-  void didChangeDependencies() {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
-    widget.storeID = routeArgs['store'] as String;
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Align(
-          alignment: Alignment.centerLeft,
-          child: Text("Physical Payment"),
+    return LayoutBuilder(
+      builder: (context, constraints) => Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          toolbarHeight: constraints.maxHeight * 0.1,
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Physical Payment"),
+          ),
         ),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.5),
-                  Color.fromRGBO(243, 90, 106, 1.0).withOpacity(0.9),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0, 1],
-              ),
-            ),
+        body: Container(
+          height: constraints.maxHeight * 0.85,
+          width: constraints.maxWidth,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              PaymentCard(widget.storeID),
+            ],
           ),
-          SingleChildScrollView(
-            child: Container(
-              height: deviceSize.height / 1.3,
-              width: deviceSize.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  PaymentCard(widget.storeID),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -119,7 +97,7 @@ class _PaymentCardState extends State<PaymentCard>
     creditCards.forEach((token, creditCard) {
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key));
+      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
       encrypt.Encrypted enc =
           encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
       String number = encrypter.decrypt(enc, iv: iv);
@@ -250,6 +228,13 @@ class _PaymentCardState extends State<PaymentCard>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
+                              Text(
+                                "AMOUNT TO PAY",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
                               TextFormField(
                                 decoration: InputDecoration(
                                     labelText: 'Purchase amount'),

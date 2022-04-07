@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:address_search_field/address_search_field.dart';
-import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
@@ -124,6 +123,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _bankLoading = false;
   var _acceptTerms = false;
 
   @override
@@ -562,7 +562,11 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           ],
         );
       case 3:
-        return bankAccountForm;
+        return _bankLoading
+            ? SizedBox(
+                height: deviceSize.height * 0.6,
+                child: Center(child: CircularProgressIndicator()))
+            : bankAccountForm;
       case 4:
         return StorePreview(
             false,
@@ -689,47 +693,53 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                             },
                           ),
                           currentStepWidget(deviceSize)!,
-                          Expanded(
-                            child: Align(
-                              alignment: FractionalOffset.bottomCenter,
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.all(deviceSize.height * 0.025),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    _currentStep > 0
-                                        ? CircleAvatar(
+                          !_bankLoading
+                              ? Expanded(
+                                  child: Align(
+                                    alignment: FractionalOffset.bottomCenter,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(
+                                          deviceSize.height * 0.025),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _currentStep > 0
+                                              ? CircleAvatar(
+                                                  radius: 25,
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .primaryColor,
+                                                  child: IconButton(
+                                                    color: Colors.black54,
+                                                    onPressed: cancel,
+                                                    icon:
+                                                        Icon(Icons.arrow_back),
+                                                  ),
+                                                )
+                                              : Container(),
+                                          CircleAvatar(
                                             radius: 25,
                                             backgroundColor:
                                                 Theme.of(context).primaryColor,
                                             child: IconButton(
+                                              key: const Key("continue_button"),
                                               color: Colors.black54,
-                                              onPressed: cancel,
-                                              icon: Icon(Icons.arrow_back),
+                                              onPressed: () async =>
+                                                  await continued(context),
+                                              icon: Icon(_currentStep < 4
+                                                  ? Icons.arrow_forward
+                                                  : Icons.done),
                                             ),
                                           )
-                                        : Container(),
-                                    CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      child: IconButton(
-                                        key: const Key("continue_button"),
-                                        color: Colors.black54,
-                                        onPressed: continued,
-                                        icon: Icon(_currentStep < 4
-                                            ? Icons.arrow_forward
-                                            : Icons.done),
+                                        ],
                                       ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
                     ),
@@ -740,7 +750,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     );
   }
 
-  continued() {
+  continued(BuildContext context) async {
     switch (_currentStep) {
       case 0:
         if (_detailsform.currentState!.validate()) {
@@ -757,7 +767,10 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         setState(() => _currentStep += 1);
         break;
       case 3:
-        if (bankAccountForm.saveForm()) setState(() => _currentStep += 1);
+        setState(() => _bankLoading = true);
+        final res = await bankAccountForm.saveForm(context);
+        setState(() => _bankLoading = false);
+        if (res) setState(() => _currentStep += 1);
         break;
       case 4:
         _saveForm();

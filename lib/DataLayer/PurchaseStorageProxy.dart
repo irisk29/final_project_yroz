@@ -46,7 +46,7 @@ class PurchaseStorageProxy {
           text: "No Purchases were found for transaction $transactionID");
     }
     PurchaseHistoryModel purchase = purchases.first; //transaction ID is unique
-    if (purchase.products == null)
+    if (purchase.products == null || purchase.products!.isEmpty)
       return new Ok("No products for purchase", []);
     var purchaseProducts = jsonDecode(purchase.products!) as List<dynamic>;
     var convertedPurchaseProducts = purchaseProducts

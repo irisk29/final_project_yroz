@@ -58,7 +58,9 @@ class User extends ChangeNotifier {
         bagInStores = <ShoppingBagDTO>[],
         hideStoreOwnerOptions = false {
     try {
-      this.creditCards = model.creditCards == null ? [] : jsonDecode(model.creditCards!).cast<String>();
+      this.creditCards = model.creditCards == null
+          ? []
+          : jsonDecode(model.creditCards!).cast<String>();
       this.id = model.id;
       this.email = model.email;
       this.name = model.name;
@@ -69,7 +71,8 @@ class User extends ChangeNotifier {
           model.favoriteStores == null ? [] : UsersStorageProxy.fromJsonToTupleList(model.favoriteStores!);
       this.storeOwnerState = model.storeOwnerModel == null
           ? null
-          : StoreOwnerState.storeOwnerStateFromModel(model.storeOwnerModel!, () => notifyListeners());
+          : StoreOwnerState.storeOwnerStateFromModel(
+              model.storeOwnerModel!, () => notifyListeners());
       this.bagInStores = [];
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
