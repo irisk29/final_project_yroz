@@ -68,24 +68,6 @@ class _AuthCardState extends State<AuthCard>
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('An Error Occurred!'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Okay'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
-  }
-
   Future<void> _authenticate(AuthProvider authProvider) async {
     setState(() => _isLoading = true);
     await Provider.of<User>(context, listen: false)

@@ -1,6 +1,8 @@
+import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import '../DTOs/PurchaseHistoryDTO.dart';
 import '../LogicLayer/User.dart';
@@ -14,23 +16,27 @@ class UserPurchasesScreen extends StatefulWidget {
 }
 
 class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
-  late Future<List<PurchaseHistoryDTO>> _purchasesFuture;
+  late Future<List<Tuple2<String, PurchaseHistoryDTO>>> _purchasesFuture;
 
   @override
   void initState() {
-    super.initState();
     _purchasesFuture = _initPurchases();
+    super.initState();
   }
 
-  Future<List<PurchaseHistoryDTO>> _initPurchases() async {
+  Future<List<Tuple2<String, PurchaseHistoryDTO>>> _initPurchases() async {
     User user = Provider.of<User>(context, listen: false);
     final start =
         DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
     final end = DateTime.now();
     final purchases =
         await user.getSuccssefulPurchaseHistoryForUserInRange(start, end);
-    print(purchases.length);
-    return purchases;
+    List<Tuple2<String, PurchaseHistoryDTO>> purchaseTuples = [];
+    for (var purchase in purchases) {
+      var res = await StoreStorageProxy().getStoreNameByID(purchase.storeID);
+      purchaseTuples.add(Tuple2(res.getValue(), purchase));
+    }
+    return purchaseTuples;
   }
 
   @override
@@ -56,11 +62,14 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
           return snap.connectionState != ConnectionState.done
               ? Center(child: CircularProgressIndicator())
               : snap.data.length > 0
-                  ? ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: snap.data.length,
-                      itemBuilder: (context, index) =>
-                          HistoryPurchaseItem(snap.data[index]))
+                  ? Padding(
+                      padding: EdgeInsets.only(top: deviceSize.height * 0.01),
+                      child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: snap.data.length,
+                          itemBuilder: (context, index) => HistoryPurchaseItem(
+                              snap.data[index].item2, snap.data[index].item1)),
+                    )
                   : Container(
                       width: deviceSize.width,
                       child: Column(

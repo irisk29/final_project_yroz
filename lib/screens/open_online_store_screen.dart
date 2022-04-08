@@ -130,6 +130,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   var _isLoading = false;
   var _bankLoading = false;
   var _acceptTerms = false;
+  var _validBankAccount = false;
+  var _formChanged;
+
+  @override
+  void initState() {
+    _formChanged = false;
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() async {
@@ -151,11 +159,13 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
+    _formChanged = true;
     setState(() {});
   }
 
@@ -165,15 +175,17 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     });
     _editedStore!.categories = _selectedItems;
     _editedStore!.products = _products;
-    try {
-      await Provider.of<User>(context, listen: false).openOnlineStore(
-          _editedStore!, bankAccountForm.buildBankAccountDTO()!);
-    } catch (error) {
+
+    final res = await Provider.of<User>(context, listen: false)
+        .openOnlineStore(_editedStore!, bankAccountForm.buildBankAccountDTO()!);
+    if (res.getTag())
+      Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
+    else {
       await showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('An error occurred!'),
-          content: Text(error.toString()),
+          title: Text('Store Opening Error'),
+          content: Text(res.getMessage()),
           actions: <Widget>[
             FlatButton(
               child: Text('Okay'),
@@ -185,10 +197,10 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         ),
       );
     }
+
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -199,6 +211,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       } else {
         _selectedItems.remove(itemValue);
       }
+      _formChanged = true;
     });
   }
 
@@ -216,6 +229,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                 int.parse(
                     time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
+        _formChanged = true;
       });
     }
   }
@@ -231,6 +245,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         setState(() {
           _editedStore = result.item2;
           _products.add(result.item1!);
+          _formChanged = true;
         });
       }
     } else {
@@ -301,6 +316,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             imageFromPhone: _pickedImage == null
                                 ? null
                                 : File(_pickedImage!.path));
+                        _formChanged = true;
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
@@ -345,6 +361,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             imageFromPhone: _pickedImage == null
                                 ? null
                                 : File(_pickedImage!.path));
+                        _formChanged = true;
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
@@ -368,6 +385,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) => destinationBuilder),
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
@@ -421,6 +439,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                         onDeleted: () {
                           setState(() {
                             _selectedItems.remove(e);
+                            _formChanged = true;
                           });
                         },
                         label: Text(e),
@@ -662,13 +681,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                     element.price == e.price &&
                                     element.description == e.description);
                                 _products.add(result);
-                              });
-                            } else {
-                              setState(() {
-                                _products.removeWhere((element) =>
-                                    element.name == e.name &&
-                                    element.price == e.price &&
-                                    element.description == e.description);
+                                _formChanged = true;
                               });
                             }
                           },
@@ -722,6 +735,35 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     }
   }
 
+  void _exitWithoutSavingDialog() {
+    if (_formChanged) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Are your sure?'),
+          content: Text("You are about to exit without saving your changes."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
@@ -732,31 +774,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         _acceptTerms = true;
       }
     });
-
-    void _exitWithoutSavingDialog() {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('Are your sure?'),
-          content: Text("You are about to exit without saving your changes."),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Yes'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(ctx).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
-          ],
-        ),
-      );
-    }
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -913,9 +930,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         break;
       case 4:
         setState(() => _bankLoading = true);
-        final res = await bankAccountForm.saveForm(context);
+        final res =
+            _validBankAccount || await bankAccountForm.saveForm(context);
         setState(() => _bankLoading = false);
-        if (res) setState(() => _currentStep += 1);
+        if (res)
+          setState(() {
+            _validBankAccount = true;
+            _currentStep += 1;
+          });
         break;
       case 5:
         _saveForm();

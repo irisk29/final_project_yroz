@@ -125,6 +125,13 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   var _isLoading = false;
   var _bankLoading = false;
   var _acceptTerms = false;
+  var _formChanged;
+
+  @override
+  void initState() {
+    _formChanged = false;
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() async {
@@ -146,11 +153,13 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
+    _formChanged = true;
     setState(() {});
   }
 
@@ -159,15 +168,18 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       _isLoading = true;
     });
     _editedStore!.categories = _selectedItems;
-    try {
-      await Provider.of<User>(context, listen: false).openPhysicalStore(
-          _editedStore!, bankAccountForm.buildBankAccountDTO()!);
-    } catch (error) {
+
+    final res = await Provider.of<User>(context, listen: false)
+        .openPhysicalStore(
+            _editedStore!, bankAccountForm.buildBankAccountDTO()!);
+    if (res.getTag())
+      Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
+    else {
       await showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('An error occurred!'),
-          content: Text(error.toString()),
+          title: Text('Store Opening Error'),
+          content: Text(res.getMessage()),
           actions: <Widget>[
             FlatButton(
               child: Text('Okay'),
@@ -179,10 +191,10 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         ),
       );
     }
+
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -193,6 +205,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       } else {
         _selectedItems.remove(itemValue);
       }
+      _formChanged = true;
     });
   }
 
@@ -210,6 +223,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                 int.parse(
                     time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
             newTime;
+        _formChanged = true;
       });
     }
   }
@@ -246,6 +260,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         }
                         return null;
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = StoreDTO(
                             name: value!,
@@ -275,6 +290,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                           return 'invalid phone number.';
                         }
                       },
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = StoreDTO(
                             name: _editedStore!.name,
@@ -297,6 +313,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) => destinationBuilder),
+                      onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
                         _editedStore = StoreDTO(
                             name: _editedStore!.name,
@@ -350,6 +367,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         onDeleted: () {
                           setState(() {
                             _selectedItems.remove(e);
+                            _formChanged = true;
                           });
                         },
                         label: Text(e),
@@ -579,6 +597,35 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     }
   }
 
+  void _exitWithoutSavingDialog() {
+    if (_formChanged) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Are your sure?'),
+          content: Text("You are about to exit without saving your changes."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
@@ -589,31 +636,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         _acceptTerms = true;
       }
     });
-
-    void _exitWithoutSavingDialog() {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('Are your sure?'),
-          content: Text("You are about to exit without saving your changes."),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Yes'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(ctx).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
-          ],
-        ),
-      );
-    }
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

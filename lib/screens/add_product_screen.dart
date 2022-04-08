@@ -26,24 +26,25 @@ class AddProductScreen extends StatefulWidget {
 
   //for test purposes
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
-    routes: {
-      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-      OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline().wrapWithMaterial(nav),
-    },
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User("test@gmail.com", "test name"),
+        routes: {
+          TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+          OpenOnlineStorePipeline.routeName: (ctx) =>
+              OpenOnlineStorePipeline().wrapWithMaterial(nav),
+        },
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User("test@gmail.com", "test name"),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-    // This mocked observer will now receive all navigation events
-    // that happen in our app.
-    navigatorObservers: nav,
-  );
+        // This mocked observer will now receive all navigation events
+        // that happen in our app.
+        navigatorObservers: nav,
+      );
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
@@ -62,21 +63,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
       storeID: '',
       imageFromPhone: null);
 
-  var _isInit = true;
   var _isLoading = false;
+  var _formChanged;
 
   @override
   void initState() {
+    _formChanged = false;
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      // final productId = ModalRoute.of(context)!.settings.arguments as String?;
-    }
-    _isInit = false;
-    super.didChangeDependencies();
   }
 
   @override
@@ -114,28 +107,32 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   void _exitWithoutSavingDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Are your sure?'),
-        content: Text("You are about to exit without saving your changes."),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Yes'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(ctx).pop();
-            },
-          ),
-          FlatButton(
-            child: Text('No'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
+    if (_formChanged) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Are your sure?'),
+          content: Text("You are about to exit without saving your changes."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -165,100 +162,109 @@ class _AddProductScreenState extends State<AddProductScreen> {
               child: CircularProgressIndicator(),
             )
           : Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _form,
-          child: ListView(
-            children: <Widget>[
-              ImageInput(_selectImage, _unselectImage, _pickedImage, false),
-              TextFormField(
-                key: const Key('title'),
-                decoration: InputDecoration(labelText: 'Title'),
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_priceFocusNode);
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please provide a value.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _editedProduct = ProductDTO(
-                      name: value!,
-                      price: _editedProduct!.price,
-                      description: _editedProduct!.description,
-                      imageUrl: _editedProduct!.imageUrl,
-                      id: _editedProduct!.id,
-                      category: '',
-                      storeID: '',
-                      imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
-                },
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _form,
+                child: ListView(
+                  children: <Widget>[
+                    ImageInput(
+                        _selectImage, _unselectImage, _pickedImage, false),
+                    TextFormField(
+                      key: const Key('title'),
+                      decoration: InputDecoration(labelText: 'Title'),
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_priceFocusNode);
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide a value.';
+                        }
+                        return null;
+                      },
+                      onChanged: (_) => _formChanged = true,
+                      onSaved: (value) {
+                        _editedProduct = ProductDTO(
+                            name: value!,
+                            price: _editedProduct!.price,
+                            description: _editedProduct!.description,
+                            imageUrl: _editedProduct!.imageUrl,
+                            id: _editedProduct!.id,
+                            category: '',
+                            storeID: '',
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
+                      },
+                    ),
+                    TextFormField(
+                      key: const Key('price'),
+                      decoration: InputDecoration(labelText: 'Price'),
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      focusNode: _priceFocusNode,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(_descriptionFocusNode);
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a price.';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Please enter a valid number.';
+                        }
+                        if (double.parse(value) <= 0) {
+                          return 'Please enter a number greater than zero.';
+                        }
+                        return null;
+                      },
+                      onChanged: (_) => _formChanged = true,
+                      onSaved: (value) {
+                        _editedProduct = ProductDTO(
+                            name: _editedProduct!.name,
+                            price: double.parse(value!),
+                            description: _editedProduct!.description,
+                            imageUrl: _editedProduct!.imageUrl,
+                            id: _editedProduct!.id,
+                            category: '',
+                            storeID: '',
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
+                      },
+                    ),
+                    TextFormField(
+                      key: const Key('description'),
+                      decoration: InputDecoration(labelText: 'Description'),
+                      maxLines: 3,
+                      textInputAction: TextInputAction.done,
+                      focusNode: _descriptionFocusNode,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a description.';
+                        }
+                        return null;
+                      },
+                      onChanged: (_) => _formChanged = true,
+                      onSaved: (value) {
+                        _editedProduct = ProductDTO(
+                            name: _editedProduct!.name,
+                            price: _editedProduct!.price,
+                            description: value!,
+                            imageUrl: _editedProduct!.imageUrl,
+                            id: _editedProduct!.id,
+                            category: '',
+                            storeID: '',
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
+                      },
+                    ),
+                  ],
+                ),
               ),
-              TextFormField(
-                key: const Key('price'),
-                decoration: InputDecoration(labelText: 'Price'),
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                focusNode: _priceFocusNode,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context)
-                      .requestFocus(_descriptionFocusNode);
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a price.';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number.';
-                  }
-                  if (double.parse(value) <= 0) {
-                    return 'Please enter a number greater than zero.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _editedProduct = ProductDTO(
-                      name: _editedProduct!.name,
-                      price: double.parse(value!),
-                      description: _editedProduct!.description,
-                      imageUrl: _editedProduct!.imageUrl,
-                      id: _editedProduct!.id,
-                      category: '',
-                      storeID: '',
-                      imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
-                },
-              ),
-              TextFormField(
-                key: const Key('description'),
-                decoration: InputDecoration(labelText: 'Description'),
-                maxLines: 3,
-                textInputAction: TextInputAction.done,
-                focusNode: _descriptionFocusNode,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a description.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _editedProduct = ProductDTO(
-                    name: _editedProduct!.name,
-                    price: _editedProduct!.price,
-                    description: value!,
-                    imageUrl: _editedProduct!.imageUrl,
-                    id: _editedProduct!.id,
-                    category: '',
-                    storeID: '',
-                    imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path)
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

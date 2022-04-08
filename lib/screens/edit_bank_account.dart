@@ -13,11 +13,13 @@ class EditBankAccountScreen extends StatefulWidget {
 class _EditBankAccountState extends State<EditBankAccountScreen> {
   late Future<void> bankAccountFuture;
   var _isLoading = false;
+  var _formChanged;
 
   @override
   void initState() {
-    super.initState();
     bankAccountFuture = _fetchBankAccountDetails();
+    _formChanged = false;
+    super.initState();
   }
 
   Future<BankAccountForm?> _fetchBankAccountDetails() async {
@@ -25,7 +27,7 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
     final bankAccount = await user.getStoreBankAccountDetails();
     return bankAccount != null
         ? BankAccountForm(bankAccount.bankAccount, bankAccount.bankName,
-            bankAccount.branchNumber)
+            bankAccount.branchNumber, () => _formChanged = true)
         : null;
   }
 
@@ -34,34 +36,64 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
     setState(() {
       _isLoading = true;
     });
-    try {
-      final res = await bankAccountForm.saveForm(context);
-      if (res) {
-        await Provider.of<User>(context, listen: false)
-            .editStoreBankAccount(bankAccountForm.buildBankAccountDTO()!);
+
+    final saveFormRes = await bankAccountForm.saveForm(context);
+    if (saveFormRes) {
+      final editRes = await Provider.of<User>(context, listen: false)
+          .editStoreBankAccount(bankAccountForm.buildBankAccountDTO()!);
+      if (editRes.getTag())
         Navigator.of(context).pop();
+      else {
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Edit Bank Acoount Error'),
+            content: Text(editRes.getMessage()),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              )
+            ],
+          ),
+        );
       }
-    } catch (error) {
-      print(error);
-      await showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('An error occurred!'),
-          content: Text(error.toString()),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Okay'),
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-            )
-          ],
-        ),
-      );
     }
+
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _exitWithoutSavingDialog() {
+    if (_formChanged) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Are your sure?'),
+          content: Text("You are about to exit without saving your changes."),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -73,6 +105,10 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => _exitWithoutSavingDialog(),
+          ),
           title: Align(
             alignment: Alignment.centerLeft,
             child: Text(
