@@ -21,6 +21,7 @@ import 'package:mockito/mockito.dart';
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
 void main() {
+  bool configured = false;
   takeScreenshot(tester, binding) async {
     if (Platform.isAndroid) {
       await binding.convertFlutterSurfaceToImage();
@@ -30,16 +31,19 @@ void main() {
   }
 
   Future<void> _configureAmplify() async {
-    Amplify.addPlugin(AmplifyAuthCognito());
-    Amplify.addPlugin(AmplifyStorageS3());
-    Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
-    //Amplify.addPlugin(AmplifyAPI());
+    if (!configured) {
+      Amplify.addPlugin(AmplifyAuthCognito());
+      Amplify.addPlugin(AmplifyStorageS3());
+      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
+      //Amplify.addPlugin(AmplifyAPI());
 
-    // Amplify can only be configured once.
-    try {
-      await Amplify.configure(amplifyconfig);
-    } on AmplifyAlreadyConfiguredException {
-      print("Amplify was already configured. Was the app restarted?");
+      // Amplify can only be configured once.
+      try {
+        await Amplify.configure(amplifyconfig);
+        configured = true;
+      } on AmplifyAlreadyConfiguredException {
+        print("Amplify was already configured. Was the app restarted?");
+      }
     }
   }
 

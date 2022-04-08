@@ -22,6 +22,7 @@ import 'package:mockito/mockito.dart';
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
 void main() {
+  bool configured = false;
   takeScreenshot(tester, binding) async {
     if (Platform.isAndroid) {
       await binding.convertFlutterSurfaceToImage();
@@ -31,16 +32,20 @@ void main() {
   }
 
   Future<void> _configureAmplify() async {
-    Amplify.addPlugin(AmplifyAuthCognito());
-    Amplify.addPlugin(AmplifyStorageS3());
-    Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
-    //Amplify.addPlugin(AmplifyAPI());
+    if (!configured) {
+      Amplify.addPlugin(AmplifyAuthCognito());
+      Amplify.addPlugin(AmplifyStorageS3());
+      Amplify.addPlugin(
+          AmplifyDataStore(modelProvider: ModelProvider.instance));
+      //Amplify.addPlugin(AmplifyAPI());
 
-    // Amplify can only be configured once.
-    try {
-      await Amplify.configure(amplifyconfig);
-    } on AmplifyAlreadyConfiguredException {
-      print("Amplify was already configured. Was the app restarted?");
+      // Amplify can only be configured once.
+      try {
+        await Amplify.configure(amplifyconfig);
+        configured = true;
+      } on AmplifyAlreadyConfiguredException {
+        print("Amplify was already configured. Was the app restarted?");
+      }
     }
   }
 
@@ -73,7 +78,7 @@ void main() {
       return Future(() => print("starting test.."));
     });
 
-    testWidgets('open online store - positive scenario', (WidgetTester tester) async {
+    testWidgets('edit online store - positive scenario', (WidgetTester tester) async {
       await tester.pumpWidget(app.EditOnlineStorePipeline().wrapWithMaterial([mockObserver], user));
       await tester.pumpAndSettle();
 
@@ -118,6 +123,55 @@ void main() {
       assert(storeOwnerRes.getTag() == true);
       StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
       assert(storeOwnerModel.onlineStoreModel!.name == "online store check");
+      assert(storeOwnerModel.storeOwnerModelOnlineStoreModelId != null);
+      assert(storeOwnerModel.storeOwnerModelOnlineStoreModelId!.isNotEmpty);
+    });
+
+    testWidgets('edit online store - sad scenario', (WidgetTester tester) async {
+      await tester.pumpWidget(app.EditOnlineStorePipeline().wrapWithMaterial([mockObserver], user));
+      await tester.pumpAndSettle();
+
+      Finder fab = find.byKey(Key('phoneNumber'));
+      await tester.enterText(fab, "");
+      await tester.enterText(fab, "+9722222");
+      await tester.pumpAndSettle();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key('store_category_2'));
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      //operations hours
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //when pressing this button it creates the store
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      await Future.delayed(Duration(seconds: 10));
+
+      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
+      assert(storeOwnerRes.getTag() == true);
+      StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
+      assert(storeOwnerModel.onlineStoreModel!.phoneNumber != "+9722222");
       assert(storeOwnerModel.storeOwnerModelOnlineStoreModelId != null);
       assert(storeOwnerModel.storeOwnerModelOnlineStoreModelId!.isNotEmpty);
     });

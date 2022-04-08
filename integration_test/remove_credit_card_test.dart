@@ -6,6 +6,9 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
+import 'package:final_project_yroz/LogicLayer/Secret.dart';
+import 'package:final_project_yroz/LogicLayer/SecretLoader.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
@@ -14,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:final_project_yroz/screens/credit_cards_screen.dart' as app;
 import 'package:intl/intl.dart';
 import 'package:mockito/mockito.dart';
@@ -53,8 +57,16 @@ void main() {
     setUp(() async {
       await _configureAmplify();
       UserAuthenticator().setCurrentUserId("test@gmail.com");
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, creditCards: "[\"024314cf-d119-5246-b9fb-697bf0a22f0e\"]");
       await Amplify.DataStore.save(currUser);
+      await InternalPaymentGateway().createUserAccount(currUser.id);
+      Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      final key = encrypt.Key.fromUtf8(secret.KEY);
+      final iv = encrypt.IV.fromUtf8(secret.IV);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
+      final encrypted = encrypter.encrypt("6886 1232 1189 6261", iv: iv);
+      String num = encrypted.base16.toString();
+      await InternalPaymentGateway().addUserCreditCard(currUser.id, num, "10/22", "987", "yroz");
       mockObserver = MockNavigatorObserver();
       user = currUser;
       return Future(() => print("starting test.."));
@@ -65,7 +77,7 @@ void main() {
       await tester.pumpAndSettle();
 
       //start to fill the form
-      Finder fab = find.byKey(Key('1234'));
+      Finder fab = find.byKey(Key('6261'));
       await tester.longPress(fab);
       await tester.pumpAndSettle();
 
@@ -75,9 +87,11 @@ void main() {
       await tester.tap(fab,);
       await tester.pumpAndSettle();
 
+      await Future.delayed(Duration(seconds: 10));
+
       // Verify the credit card was removed
       UserModel? userModel = await UsersStorageProxy().getUser("test@gmail.com");
-      assert(userModel!.creditCards!.isEmpty);
+      assert(userModel!.creditCards=="[]");
     });
   });
 }

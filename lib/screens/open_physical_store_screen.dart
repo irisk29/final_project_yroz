@@ -289,7 +289,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         if (!value.startsWith('+') || value.length < 6) {
                           return 'invalid phone number.';
                         }
-                        return null;
                       },
                       onChanged: (_) => _formChanged = true,
                       onSaved: (value) {
