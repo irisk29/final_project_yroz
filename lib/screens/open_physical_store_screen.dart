@@ -274,7 +274,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         if (!value.startsWith('+') || value.length < 6) {
                           return 'invalid phone number.';
                         }
-                        return null;
                       },
                       onSaved: (value) {
                         _editedStore = StoreDTO(
