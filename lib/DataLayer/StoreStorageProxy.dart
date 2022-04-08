@@ -106,8 +106,9 @@ class StoreStorageProxy {
       FLog.info(text: "open online store ${onlineWithProducts.id} for store owner ${storeOwner.id}");
       return new Ok("open online store succeeded", Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner.id));
     } else if ((storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId == null &&
-        storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId == null) ||
-        (storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId!.isEmpty && storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId!.isEmpty)) {
+            storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId == null) ||
+        (storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId!.isEmpty &&
+            storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId!.isEmpty)) {
       StoreOwnerModel emptyOwner = storeOwnerRes.getValue();
       storeOwner = emptyOwner.copyWith(
           onlineStoreModel: onlineWithProducts, storeOwnerModelOnlineStoreModelId: onlineWithProducts.id);
@@ -191,21 +192,23 @@ class StoreStorageProxy {
       imageUrl = await getDownloadUrl(physicalModelNotComplete.id);
     }
 
-    var physicalModel =
-        physicalModelNotComplete.copyWith(imageUrl: imageUrl, qrCode: qrCode);
+    var physicalModel = physicalModelNotComplete.copyWith(imageUrl: imageUrl, qrCode: qrCode);
+    await Amplify.DataStore.save(physicalModel);
 
     ResultInterface storeOwnerRes =
         await UsersStorageProxy().getStoreOwnerState(UserAuthenticator().getCurrentUserId());
-    StoreOwnerModel? storeOwner = null;
+
     if (!storeOwnerRes.getTag()) {
       //the user will now have a store owner state
-      storeOwner = StoreOwnerModel(
+      StoreOwnerModel storeOwner = StoreOwnerModel(
           physicalStoreModel: physicalModel,
           storeOwnerModelPhysicalStoreModelId: physicalModel.id,
           lastPurchasesView: lastViewPurchase == null
               ? TemporalDateTime.fromString(
                   DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String())
               : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
+      await Amplify.DataStore.save(storeOwner);
+
       UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
         FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
@@ -214,15 +217,14 @@ class StoreStorageProxy {
 
       UserModel newUserModel =
           oldUserModel.copyWith(storeOwnerModel: storeOwner, userModelStoreOwnerModelId: storeOwner.id);
-      await Amplify.DataStore.save(physicalModel);
-      await Amplify.DataStore.save(storeOwner);
+      FLog.info(text: "saving user model: $newUserModel");
       await Amplify.DataStore.save(newUserModel);
       FLog.info(text: "open physical store ${physicalModel.id} for store owner ${storeOwner.id}");
       return new Ok("open physical store succsseded", Tuple2<PhysicalStoreModel, String>(physicalModel, storeOwner.id));
-    } 
+    }
     // already have an physical store
     FLog.error(text: "User already has physical store - only one is allowed!");
-    return new Failure("User already has physical store - only one is allowed!", "");    
+    return new Failure("User already has physical store - only one is allowed!", "");
   }
 
   Future<File> createFileFromImageUrl(String url) async {
