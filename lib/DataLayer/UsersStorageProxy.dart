@@ -28,7 +28,7 @@ class UsersStorageProxy {
 
     if (users.isEmpty) //no such user in the DB
     {
-      UserModel userModel = UserModel(email: email, name: name, imageUrl: imageUrl, hideStoreOwnerOptions: true);
+      UserModel userModel = UserModel(email: email, name: name, imageUrl: imageUrl, hideStoreOwnerOptions: true, isLoggedIn: true);
       await Amplify.DataStore.save(userModel);
       print("Created user and saved to DB");
       FLog.info(text: "Created user with id ${userModel.id}");
@@ -53,7 +53,8 @@ class UsersStorageProxy {
         eWallet: user.eWallet,
         shoppingBagModels: shoppingBags,
         storeOwnerModel: storeOwner,
-        userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id);
+        userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id,
+        isLoggedIn: user.isLoggedIn);
     FLog.info(text: "Fetched existing user");
     return fullUser;
   }
@@ -62,6 +63,18 @@ class UsersStorageProxy {
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
 
     return users.isEmpty ? null : users.first;
+  }
+
+  Future<void> logoutUser() async {
+    String emailCurrUser = UserAuthenticator().getCurrentUserId();
+    var user = await getUser(emailCurrUser);
+    if (user == null) {
+      print("current user model is null, user's email: " + emailCurrUser);
+      FLog.error(text: "No such user - $emailCurrUser");
+      return null;
+    }
+    user = user.copyWith(isLoggedIn: false);
+    await Amplify.DataStore.save(user);
   }
 
   Future<void> saveStoreOwnerViewOption(bool hide) async {

@@ -17,10 +17,6 @@ class UserAuthenticator {
 
   Future<Tuple2<UserModel?, bool>> signIn(AuthProvider authProvider) async {
     try {
-      /*var isAlreadySignedIn = await Amplify.Auth.fetchAuthSession();
-      if (isAlreadySignedIn.isSignedIn) {
-        return new Tuple2(null, false);
-      }*/
       await Amplify.Auth.signInWithWebUI(provider: authProvider);
       var res = await Amplify.Auth.fetchUserAttributes();
       var email, name, picture;
@@ -36,8 +32,6 @@ class UserAuthenticator {
       _currentUserId = email;
       return currUser;
     } catch (e) {
-      var res = await signOut();
-      print("user signed out $res");
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
     }
@@ -45,7 +39,8 @@ class UserAuthenticator {
 
   Future<bool> signOut() async {
     try {
-      await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));
+      await UsersStorageProxy().logoutUser();
+      await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));  
     } on AuthException catch (e) {
       print(e.message);
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);

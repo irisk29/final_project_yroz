@@ -105,23 +105,27 @@ class User extends ChangeNotifier {
     }
   }
 
-  Future<void> signIn(AuthProvider authProvider, BuildContext context) async {
+  Future<ResultInterface> signIn(AuthProvider authProvider, BuildContext context) async {
     try {
       Tuple2<UserModel?, bool> currUser = await UserAuthenticator().signIn(authProvider);
       isSignedIn = currUser.item1 != null;
       if (isSignedIn) {
+        if (!currUser.item2 && currUser.item1!.isLoggedIn) {
+          isSignedIn = false;
+          return new Failure("You are already logged-in in another device, please sign out.");
+        }
         userFromModel(currUser.item1!);
         if (currUser.item2) //this is a new user - first time signed in
         {
           await createEWallet();
         }
       }
-      //TODO: If isSignedIn == false that means that the user is already logged in -> should shouw alert about it
       notifyListeners();
       Navigator.of(context).pushNamed(LandingScreen.routeName, arguments: this);
     } catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
     }
+    return new Ok("User logged in");
   }
 
   void signOut(BuildContext context) async {

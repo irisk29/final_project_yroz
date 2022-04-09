@@ -39,6 +39,7 @@ class UserModel extends Model {
   final List<ShoppingBagModel>? _shoppingBagModels;
   final String? _favoriteStores;
   final bool? _hideStoreOwnerOptions;
+  final bool? _isLoggedIn;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _userModelStoreOwnerModelId;
@@ -114,6 +115,19 @@ class UserModel extends Model {
     }
   }
   
+  bool get isLoggedIn {
+    try {
+      return _isLoggedIn!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -126,9 +140,9 @@ class UserModel extends Model {
     return _userModelStoreOwnerModelId;
   }
   
-  const UserModel._internal({required this.id, required email, required name, imageUrl, creditCards, eWallet, storeOwnerModel, shoppingBagModels, favoriteStores, required hideStoreOwnerOptions, createdAt, updatedAt, userModelStoreOwnerModelId}): _email = email, _name = name, _imageUrl = imageUrl, _creditCards = creditCards, _eWallet = eWallet, _storeOwnerModel = storeOwnerModel, _shoppingBagModels = shoppingBagModels, _favoriteStores = favoriteStores, _hideStoreOwnerOptions = hideStoreOwnerOptions, _createdAt = createdAt, _updatedAt = updatedAt, _userModelStoreOwnerModelId = userModelStoreOwnerModelId;
+  const UserModel._internal({required this.id, required email, required name, imageUrl, creditCards, eWallet, storeOwnerModel, shoppingBagModels, favoriteStores, required hideStoreOwnerOptions, required isLoggedIn, createdAt, updatedAt, userModelStoreOwnerModelId}): _email = email, _name = name, _imageUrl = imageUrl, _creditCards = creditCards, _eWallet = eWallet, _storeOwnerModel = storeOwnerModel, _shoppingBagModels = shoppingBagModels, _favoriteStores = favoriteStores, _hideStoreOwnerOptions = hideStoreOwnerOptions, _isLoggedIn = isLoggedIn, _createdAt = createdAt, _updatedAt = updatedAt, _userModelStoreOwnerModelId = userModelStoreOwnerModelId;
   
-  factory UserModel({String? id, required String email, required String name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, required bool hideStoreOwnerOptions, String? userModelStoreOwnerModelId}) {
+  factory UserModel({String? id, required String email, required String name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, required bool hideStoreOwnerOptions, required bool isLoggedIn, String? userModelStoreOwnerModelId}) {
     return UserModel._internal(
       id: id == null ? UUID.getUUID() : id,
       email: email,
@@ -140,6 +154,7 @@ class UserModel extends Model {
       shoppingBagModels: shoppingBagModels != null ? List<ShoppingBagModel>.unmodifiable(shoppingBagModels) : shoppingBagModels,
       favoriteStores: favoriteStores,
       hideStoreOwnerOptions: hideStoreOwnerOptions,
+      isLoggedIn: isLoggedIn,
       userModelStoreOwnerModelId: userModelStoreOwnerModelId);
   }
   
@@ -161,6 +176,7 @@ class UserModel extends Model {
       DeepCollectionEquality().equals(_shoppingBagModels, other._shoppingBagModels) &&
       _favoriteStores == other._favoriteStores &&
       _hideStoreOwnerOptions == other._hideStoreOwnerOptions &&
+      _isLoggedIn == other._isLoggedIn &&
       _userModelStoreOwnerModelId == other._userModelStoreOwnerModelId;
   }
   
@@ -180,6 +196,7 @@ class UserModel extends Model {
     buffer.write("eWallet=" + "$_eWallet" + ", ");
     buffer.write("favoriteStores=" + "$_favoriteStores" + ", ");
     buffer.write("hideStoreOwnerOptions=" + (_hideStoreOwnerOptions != null ? _hideStoreOwnerOptions!.toString() : "null") + ", ");
+    buffer.write("isLoggedIn=" + (_isLoggedIn != null ? _isLoggedIn!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("userModelStoreOwnerModelId=" + "$_userModelStoreOwnerModelId");
@@ -188,7 +205,7 @@ class UserModel extends Model {
     return buffer.toString();
   }
   
-  UserModel copyWith({String? id, String? email, String? name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, bool? hideStoreOwnerOptions, String? userModelStoreOwnerModelId}) {
+  UserModel copyWith({String? id, String? email, String? name, String? imageUrl, String? creditCards, String? eWallet, StoreOwnerModel? storeOwnerModel, List<ShoppingBagModel>? shoppingBagModels, String? favoriteStores, bool? hideStoreOwnerOptions, bool? isLoggedIn, String? userModelStoreOwnerModelId}) {
     return UserModel._internal(
       id: id ?? this.id,
       email: email ?? this.email,
@@ -200,6 +217,7 @@ class UserModel extends Model {
       shoppingBagModels: shoppingBagModels ?? this.shoppingBagModels,
       favoriteStores: favoriteStores ?? this.favoriteStores,
       hideStoreOwnerOptions: hideStoreOwnerOptions ?? this.hideStoreOwnerOptions,
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
       userModelStoreOwnerModelId: userModelStoreOwnerModelId ?? this.userModelStoreOwnerModelId);
   }
   
@@ -221,12 +239,13 @@ class UserModel extends Model {
         : null,
       _favoriteStores = json['favoriteStores'],
       _hideStoreOwnerOptions = json['hideStoreOwnerOptions'],
+      _isLoggedIn = json['isLoggedIn'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
       _userModelStoreOwnerModelId = json['userModelStoreOwnerModelId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'email': _email, 'name': _name, 'imageUrl': _imageUrl, 'creditCards': _creditCards, 'eWallet': _eWallet, 'storeOwnerModel': _storeOwnerModel?.toJson(), 'shoppingBagModels': _shoppingBagModels?.map((ShoppingBagModel? e) => e?.toJson()).toList(), 'favoriteStores': _favoriteStores, 'hideStoreOwnerOptions': _hideStoreOwnerOptions, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userModelStoreOwnerModelId': _userModelStoreOwnerModelId
+    'id': id, 'email': _email, 'name': _name, 'imageUrl': _imageUrl, 'creditCards': _creditCards, 'eWallet': _eWallet, 'storeOwnerModel': _storeOwnerModel?.toJson(), 'shoppingBagModels': _shoppingBagModels?.map((ShoppingBagModel? e) => e?.toJson()).toList(), 'favoriteStores': _favoriteStores, 'hideStoreOwnerOptions': _hideStoreOwnerOptions, 'isLoggedIn': _isLoggedIn, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userModelStoreOwnerModelId': _userModelStoreOwnerModelId
   };
 
   static final QueryField ID = QueryField(fieldName: "userModel.id");
@@ -243,6 +262,7 @@ class UserModel extends Model {
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (ShoppingBagModel).toString()));
   static final QueryField FAVORITESTORES = QueryField(fieldName: "favoriteStores");
   static final QueryField HIDESTOREOWNEROPTIONS = QueryField(fieldName: "hideStoreOwnerOptions");
+  static final QueryField ISLOGGEDIN = QueryField(fieldName: "isLoggedIn");
   static final QueryField USERMODELSTOREOWNERMODELID = QueryField(fieldName: "userModelStoreOwnerModelId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "UserModel";
@@ -313,6 +333,12 @@ class UserModel extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: UserModel.HIDESTOREOWNEROPTIONS,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: UserModel.ISLOGGEDIN,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.bool)
     ));

@@ -69,7 +69,7 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false);
+            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -145,7 +145,8 @@ void main() {
             name: "test name",
             imageUrl: "https://pic.png",
             hideStoreOwnerOptions: false,
-            favoriteStores: favStores);
+            favoriteStores: favStores, 
+            isLoggedIn: true);
         await Amplify.DataStore.save(onlineModel);
         await Amplify.DataStore.save(physicalModel);
         await Amplify.DataStore.save(currUser);
@@ -227,7 +228,7 @@ void main() {
         storeProductModel2 = StoreProductModel(
             name: "product2", categories: "", price: 7.89, onlinestoremodelID: onlineModel.id, description: "cheap");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false);
+            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
         userID = currUser.id;
         await Amplify.DataStore.save(onlineModel);
         await Amplify.DataStore.save(storeProductModel1);
@@ -394,7 +395,7 @@ void main() {
         storeProductModel2 = StoreProductModel(
             name: "product2", categories: "", price: 7.89, onlinestoremodelID: onlineModel.id, description: "cheap");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false);
+            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
         userID = currUser.id;
         shoppingBagModel = ShoppingBagModel(usermodelID: userID, onlineStoreID: onlineModel.id);
         cartProductModel = CartProductModel(
@@ -586,7 +587,7 @@ void main() {
         storeProductModel2 = StoreProductModel(
             name: "product2", categories: "", price: 7.89, onlinestoremodelID: onlineModel.id, description: "cheap");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false);
+            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
         userID = currUser.id;
         shoppingBagModel = ShoppingBagModel(usermodelID: userID, onlineStoreID: onlineModel.id);
         cartProductModel = CartProductModel(
@@ -740,7 +741,8 @@ void main() {
             name: "test name",
             imageUrl: "https://pic.png",
             hideStoreOwnerOptions: false,
-            creditCards: "[\"creditToken\"]");
+            creditCards: "[\"creditToken\"]",
+            isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -801,7 +803,8 @@ void main() {
             imageUrl: "https://pic.png",
             hideStoreOwnerOptions: false,
             storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id);
+            userModelStoreOwnerModelId: storeOwnerModel.id, 
+            isLoggedIn: true);
         await Amplify.DataStore.save(storeOwnerModel);
         await Amplify.DataStore.save(currUser);
       });

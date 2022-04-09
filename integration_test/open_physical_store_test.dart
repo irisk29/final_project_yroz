@@ -59,7 +59,7 @@ void main() {
     setUp(() async {
       await _configureAmplify();
       UserAuthenticator().setCurrentUserId("test@gmail.com");
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
       await Amplify.DataStore.save(currUser);
       mockObserver = MockNavigatorObserver();
       return Future(() => print("starting test.."));
