@@ -115,7 +115,7 @@ class StoreStorageProxy {
       UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
         FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
-        return new Failure("no such user exists in the system!", null);
+        return new Failure("no such user exists in the system!", onlineWithProducts);
       }
       UserModel newUserModel =
           oldUserModel.copyWith(storeOwnerModel: storeOwner, userModelStoreOwnerModelId: storeOwner.id);
@@ -127,7 +127,7 @@ class StoreStorageProxy {
     }
     // already have an online store
     FLog.error(text: "User already has online store - only one is allowed!");
-    return new Failure("User already has online store - only one is allowed!", "");
+    return new Failure("User already has online store - only one is allowed!", onlineWithProducts);
   }
 
   Future<String> generateUniqueQRCode(String storeID) async {
@@ -212,7 +212,7 @@ class StoreStorageProxy {
       UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
         FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
-        return new Failure("no such user exists in the system!", null);
+        return new Failure("no such user exists in the system!", physicalModel);
       }
 
       UserModel newUserModel =
@@ -224,7 +224,7 @@ class StoreStorageProxy {
     }
     // already have an physical store
     FLog.error(text: "User already has physical store - only one is allowed!");
-    return new Failure("User already has physical store - only one is allowed!", "");
+    return new Failure("User already has physical store - only one is allowed!", physicalModel);
   }
 
   Future<File> createFileFromImageUrl(String url) async {

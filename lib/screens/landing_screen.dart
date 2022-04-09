@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/splash_screen.dart';
@@ -21,9 +22,8 @@ class LandingScreen extends StatelessWidget {
       res = await Amplify.Auth.getCurrentUser();
       var res2 = await Amplify.Auth.fetchUserAttributes();
       email = res2.firstWhere((element) => element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) == 0);
-      print(res);
     } catch (e) {
-      print(e);
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return false;
     }
     UserModel? model = await UsersStorageProxy().getUser(email.value);

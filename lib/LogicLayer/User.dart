@@ -149,12 +149,14 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openOnlineStore(OnlineStoreDTO store, BankAccountDTO bankAccountDTO) async {
     try {
       var res = await StoreStorageProxy().openOnlineStore(store);
-      if (!res.getTag()) return res; //failure
-      var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
-      if (storeOwnerState == null) {
-        //we might already have a store, hence it won't be null
-        this.storeOwnerState = new StoreOwnerState(tuple.item2, () => notifyListeners());
+      if (!res.getTag()) {
+        OnlineStoreModel online = res.getValue();
+        await StoreStorageProxy().deleteOnlineStore(online.id);
+        return res; //failure
       }
+      var tuple = (res.getValue() as Tuple2); //<online store model, store owner id>
+      this.storeOwnerState = new StoreOwnerState(tuple.item2, () => notifyListeners());
+
       this.storeOwnerState!.setOnlineStoreFromModel(tuple.item1);
       String storeID = tuple.item1.id;
       var accountRes = await _createStoreAccount(storeID);
@@ -164,14 +166,14 @@ class User extends ChangeNotifier {
         this.storeOwnerState = null;
         return accountRes;
       }
-      res = await this.storeOwnerState!.addStoreBankAccount(
+      var bankAccountRes = await this.storeOwnerState!.addStoreBankAccount(
           storeID, bankAccountDTO.bankName, bankAccountDTO.branchNumber, bankAccountDTO.bankAccount);
-      if (!res.getTag()) {
-        FLog.error(text: res.getMessage());
+      if (!bankAccountRes.getTag()) {
+        FLog.error(text: bankAccountRes.getMessage());
         await InternalPaymentGateway().deleteStoreAccount(storeID);
         await StoreStorageProxy().deleteStore(storeID, true); //revert open action
         this.storeOwnerState = null;
-        return res;
+        return bankAccountRes;
       }
       this.storeOwnerState!.createPurchasesSubscription();
       notifyListeners();
@@ -185,12 +187,14 @@ class User extends ChangeNotifier {
   Future<ResultInterface> openPhysicalStore(StoreDTO store, BankAccountDTO bankAccountDTO) async {
     try {
       var res = await StoreStorageProxy().openPhysicalStore(store);
-      if (!res.getTag()) return res; //failure
-      var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
-      if (storeOwnerState == null) {
-        //we might already have a store, hence it won't be null
-        this.storeOwnerState = new StoreOwnerState(tuple.item2, () => notifyListeners());
+      if (!res.getTag()) {
+        PhysicalStoreModel physical = res.getValue();
+        await StoreStorageProxy().deletePhysicalStore(physical.id);
+        return res; //failure
       }
+      var tuple = (res.getValue() as Tuple2); //<physical store model, store owner id>
+      this.storeOwnerState = new StoreOwnerState(tuple.item2, () => notifyListeners());
+      
       this.storeOwnerState!.setPhysicalStore(tuple.item1);
       String storeID = tuple.item1.id;
       var accountRes = await _createStoreAccount(storeID);
