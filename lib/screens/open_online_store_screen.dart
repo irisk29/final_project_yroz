@@ -338,9 +338,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                       key: const Key('phoneNumber'),
                       decoration: InputDecoration(
                         labelText: 'Phone Number',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(),
-                        ),
                       ),
                       controller: _phoneNumberController,
                       initialCountryCode: 'IL',

@@ -281,9 +281,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                       key: const Key('phoneNumber'),
                       decoration: InputDecoration(
                         labelText: 'Phone Number',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(),
-                        ),
                       ),
                       controller: _phoneNumberController,
                       initialCountryCode: 'IL',
