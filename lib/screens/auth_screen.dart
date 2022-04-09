@@ -74,7 +74,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text('Login Error'),
-          content: Text("HEERE::: The user is already logged in, please logout from the other device."),
+          content: Text("The user is already logged in, please logout from the other device."),
           actions: <Widget>[
             FlatButton(
               key: const Key("ok_error"),

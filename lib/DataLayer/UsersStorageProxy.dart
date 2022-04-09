@@ -54,7 +54,7 @@ class UsersStorageProxy {
         shoppingBagModels: shoppingBags,
         storeOwnerModel: storeOwner,
         userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id,
-        isLoggedIn: user.isLoggedIn);
+        isLoggedIn: !user.isLoggedIn);
     FLog.info(text: "Fetched existing user");
     return fullUser;
   }
