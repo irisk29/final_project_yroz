@@ -20,35 +20,32 @@ class LandingScreen extends StatelessWidget {
     try {
       res = await Amplify.Auth.getCurrentUser();
       var res2 = await Amplify.Auth.fetchUserAttributes();
-      email = res2.firstWhere((element) => element.userAttributeKey.compareTo(CognitoUserAttributeKey.email)==0);
+      email = res2.firstWhere((element) => element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) == 0);
       print(res);
     } catch (e) {
       print(e);
       return false;
     }
     UserModel? model = await UsersStorageProxy().getUser(email.value);
-    if(model!=null)
-      Provider.of<User>(context, listen: false).userFromModel(model);
+    if (model != null) Provider.of<User>(context, listen: false).userFromModel(model);
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: isSignedIn(context),
-      builder: (ctx, AsyncSnapshot<bool> snapshot) {
-        final appUser = context.watch<User>().isSignedIn;
-        if(snapshot.hasData && snapshot.data != null) {
-          if (snapshot.data!)
-            return TabsScreen();
-          else if (appUser)
-            return TabsScreen();
-          else
-            return AuthScreen();
-        }
-        else
-          return SplashScreen(AuthScreen());
-      }
-    );
+        future: isSignedIn(context),
+        builder: (ctx, AsyncSnapshot<bool> snapshot) {
+          final appUser = context.watch<User>().isSignedIn;
+          if (snapshot.hasData && snapshot.data != null) {
+            if (snapshot.data!)
+              return TabsScreen();
+            else if (appUser)
+              return TabsScreen();
+            else
+              return AuthScreen();
+          } else
+            return SplashScreen(AuthScreen());
+        });
   }
 }

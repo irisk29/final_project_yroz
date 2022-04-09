@@ -53,8 +53,7 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard>
-    with SingleTickerProviderStateMixin {
+class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   GlobalKey stickyKey = GlobalKey();
   late AnimationController _controller;
@@ -64,14 +63,30 @@ class _AuthCardState extends State<AuthCard>
   void initState() {
     super.initState();
 
-    _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
   }
 
   Future<void> _authenticate(AuthProvider authProvider) async {
     setState(() => _isLoading = true);
-    await Provider.of<User>(context, listen: false)
-        .signIn(authProvider, context);
+    var res = await Provider.of<User>(context, listen: false).signIn(authProvider, context);
+    if (!res.getTag()) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Login Error'),
+          content: Text("The user is already logged in, please logout from the other device."),
+          actions: <Widget>[
+            FlatButton(
+              key: const Key("ok_error"),
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    }
     setState(() => _isLoading = false);
   }
 
@@ -108,8 +123,7 @@ class _AuthCardState extends State<AuthCard>
                           ),
                           SignInButton(
                             Buttons.FacebookNew,
-                            onPressed: () =>
-                                _authenticate(AuthProvider.facebook),
+                            onPressed: () => _authenticate(AuthProvider.facebook),
                           ),
                         ],
                       ),
@@ -136,20 +150,14 @@ class _AuthCardState extends State<AuthCard>
                         width: deviceSize.width * 0.75,
                         padding: EdgeInsets.all(deviceSize.width * 0.05),
                         constraints: BoxConstraints(
-                            minHeight: (stickyKey.currentContext!
-                                    .findRenderObject() as RenderBox)
-                                .size
-                                .height),
+                            minHeight: (stickyKey.currentContext!.findRenderObject() as RenderBox).size.height),
                       ),
                     ),
                   ),
                   Container(
                     padding: EdgeInsets.all(deviceSize.width * 0.05),
                     constraints: BoxConstraints(
-                        minHeight: (stickyKey.currentContext!.findRenderObject()
-                                as RenderBox)
-                            .size
-                            .height),
+                        minHeight: (stickyKey.currentContext!.findRenderObject() as RenderBox).size.height),
                     child: Center(child: CircularProgressIndicator()),
                   ),
                 ],

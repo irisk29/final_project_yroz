@@ -11,6 +11,7 @@ import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:final_project_yroz/widgets/terms.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:tuple/tuple.dart';
@@ -333,43 +334,25 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                 : File(_pickedImage!.path));
                       },
                     ),
-                    TextFormField(
+                    IntlPhoneField(
                       key: const Key('phoneNumber'),
-                      decoration: InputDecoration(labelText: 'phoneNumber'),
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        labelText: 'Phone Number',
+                      ),
                       controller: _phoneNumberController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a phone Number.';
-                        }
-                        if (!value.startsWith('+') || value.length < 6) {
-                          return 'invalid phone number.';
-                        }
-                        return null;
-                      },
-                      onChanged: (value) {
-                        _editedStore = OnlineStoreDTO(
-                            name: _editedStore!.name,
-                            phoneNumber: value,
-                            address: _editedStore!.address,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            image: _editedStore!.image,
-                            id: '',
-                            products: _editedStore!.products,
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                      initialCountryCode: 'IL',
+                      onChanged: (phone) {
                         _formChanged = true;
+                        print(phone.completeNumber);
                       },
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
-                            phoneNumber: value!,
+                            phoneNumber: value!.completeNumber,
                             address: _editedStore!.address,
                             categories: _editedStore!.categories,
                             operationHours: _editedStore!.operationHours,
+                            qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
                             id: '',
                             products: _editedStore!.products,

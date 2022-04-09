@@ -14,7 +14,7 @@
         </intent>
     </queries>
    <application
-        android:label="project_demo"
+        android:label="yroz"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

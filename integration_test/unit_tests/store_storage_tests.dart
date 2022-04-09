@@ -49,7 +49,7 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -156,7 +156,7 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -242,7 +242,7 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         OnlineStoreModel onlineStoreModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
@@ -316,7 +316,7 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         OnlineStoreModel onlineStoreModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
@@ -385,7 +385,7 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         PhysicalStoreModel physicalStoreModel = PhysicalStoreModel(
             name: "physical store",
             phoneNumber: "+972123456789",
@@ -469,7 +469,7 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         onlineModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
@@ -684,7 +684,8 @@ void main() {
             name: "test name",
             hideStoreOwnerOptions: false,
             storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id);
+            userModelStoreOwnerModelId: storeOwnerModel.id, 
+            isLoggedIn: true);
         await Amplify.DataStore.save(physicalModel);
         await Amplify.DataStore.save(storeOwnerModel);
         await Amplify.DataStore.save(currUser);
@@ -758,7 +759,8 @@ void main() {
             name: "test name",
             hideStoreOwnerOptions: false,
             storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id);
+            userModelStoreOwnerModelId: storeOwnerModel.id, 
+            isLoggedIn: true);
         await Amplify.DataStore.save(productModel);
         await Amplify.DataStore.save(onlineModel);
         await Amplify.DataStore.save(storeOwnerModel);
@@ -829,7 +831,8 @@ void main() {
             name: "test name",
             hideStoreOwnerOptions: false,
             storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id);
+            userModelStoreOwnerModelId: storeOwnerModel.id,
+            isLoggedIn: true);
         await Amplify.DataStore.save(physicalModel);
         await Amplify.DataStore.save(storeOwnerModel);
         await Amplify.DataStore.save(currUser);
