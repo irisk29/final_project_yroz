@@ -51,12 +51,15 @@ class StoreOwnerState {
   String get getStoreOwnerID => _storeOwnerID;
   void setStoreOwnerID(id) => _storeOwnerID = id;
 
+  Openings decodeOpenings(String hours){
+    List<OpeningTimes> days = [];
+    return Openings(days: days);
+  }
+
   Future<void> setOnlineStoreFromModel(
       OnlineStoreModel onlineStoreModel) async {
     var categories = jsonDecode(onlineStoreModel.categories);
-    Map<String, dynamic> operationHours =
-        jsonDecode(onlineStoreModel.operationHours);
-    var op = parseOperationHours(operationHours);
+    Openings op = decodeOpenings(onlineStoreModel.operationHours);
     List<ProductDTO> products = [];
     if (onlineStoreModel.storeProductModels != null) {
       products = onlineStoreModel.storeProductModels!
@@ -82,9 +85,7 @@ class StoreOwnerState {
 
   Future<void> setPhysicalStore(PhysicalStoreModel physicalStoreModel) async {
     var categories = jsonDecode(physicalStoreModel.categories);
-    Map<String, dynamic> operationHours =
-        jsonDecode(physicalStoreModel.operationHours);
-    var op = parseOperationHours(operationHours);
+    Openings op = decodeOpenings(physicalStoreModel.operationHours);
     physicalStore = new StoreDTO(
         id: physicalStoreModel.id,
         name: physicalStoreModel.name,

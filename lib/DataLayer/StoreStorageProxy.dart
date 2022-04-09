@@ -43,16 +43,7 @@ class StoreStorageProxy {
         phoneNumber: store.phoneNumber,
         address: store.address,
         categories: JsonEncoder.withIndent('  ').convert(store.categories),
-        operationHours: JsonEncoder.withIndent('  ', (value) {
-          if (value is TimeOfDay) {
-            final now = new DateTime.now();
-            final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
-            final format = DateFormat.jm();
-            return format.format(dt);
-          } else {
-            return value.toJson();
-          }
-        }).convert(store.operationHours));
+        operationHours: openingsToJson(store.operationHours));
 
     String qrCode = await generateUniqueQRCode(onlineStoreModel.id);
 
@@ -167,22 +158,30 @@ class StoreStorageProxy {
     return file;
   }
 
+  String openingsToJson(Openings openings){
+    String json = "";
+    for(OpeningTimes t in openings.days){
+      json = json + t.day + ":";
+      if(t.closed)
+        json = json + "closed";
+      else{
+        final now = new DateTime.now();
+        final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
+        final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
+        final format = DateFormat.jm();
+        json = json + format.format(dt) + format.format(dt2);
+      }
+    }
+    return json;
+  }
+
   Future<ResultInterface> openPhysicalStore(StoreDTO store, [DateTime? lastViewPurchase]) async {
     PhysicalStoreModel physicalModelNotComplete = PhysicalStoreModel(
         name: store.name,
         phoneNumber: store.phoneNumber,
         address: store.address,
         categories: JsonEncoder.withIndent('  ').convert(store.categories),
-        operationHours: JsonEncoder.withIndent('  ', (value) {
-          if (value is TimeOfDay) {
-            final now = new DateTime.now();
-            final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
-            final format = DateFormat.jm();
-            return format.format(dt);
-          } else {
-            return value.toJson();
-          }
-        }).convert(store.operationHours));
+        operationHours: openingsToJson(store.operationHours));
 
     String qrCode = await generateUniqueQRCode(physicalModelNotComplete.id);
 
@@ -421,6 +420,11 @@ class StoreStorageProxy {
     }
   }
 
+  Openings decodeOpenings(String hours){
+    List<OpeningTimes> days = [];
+    return Openings(days: days);
+  }
+
   Future<List<StoreDTO>> convertPhysicalStoreModelToDTO(List<PhysicalStoreModel> physicalStores) async {
     List<StoreDTO> lst = [];
     for (PhysicalStoreModel model in physicalStores) {
@@ -430,7 +434,7 @@ class StoreStorageProxy {
           address: model.address,
           phoneNumber: model.phoneNumber,
           categories: jsonDecode(model.categories).cast<String>(),
-          operationHours: opHours(jsonDecode(model.operationHours)),
+          operationHours: decodeOpenings(model.operationHours),
           image: model.imageUrl,
           qrCode: model.qrCode!);
       lst.add(dto);
@@ -447,7 +451,7 @@ class StoreStorageProxy {
           address: model.address,
           phoneNumber: model.phoneNumber,
           categories: jsonDecode(model.categories).cast<String>(),
-          operationHours: opHours(jsonDecode(model.operationHours)),
+          operationHours: decodeOpenings(model.operationHours),
           image: model.imageUrl,
           products: await fetchStoreProducts(model.id),
           qrCode: model.qrCode);
@@ -516,16 +520,7 @@ class StoreStorageProxy {
           phoneNumber: newStore.phoneNumber,
           address: newStore.address,
           categories: JsonEncoder.withIndent('  ').convert(newStore.categories),
-          operationHours: JsonEncoder.withIndent('  ', (value) {
-            if (value is TimeOfDay) {
-              final now = new DateTime.now();
-              final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
-              final format = DateFormat.jm();
-              return format.format(dt);
-            } else {
-              return value.toJson();
-            }
-          }).convert(newStore.operationHours),
+          operationHours: openingsToJson(newStore.operationHours),
           qrCode: newStore.qrCode,
           imageUrl: imageUrl);
 
@@ -560,16 +555,7 @@ class StoreStorageProxy {
           phoneNumber: newStore.phoneNumber,
           address: newStore.address,
           categories: JsonEncoder.withIndent('  ').convert(newStore.categories),
-          operationHours: JsonEncoder.withIndent('  ', (value) {
-            if (value is TimeOfDay) {
-              final now = new DateTime.now();
-              final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
-              final format = DateFormat.jm();
-              return format.format(dt);
-            } else {
-              return value.toJson();
-            }
-          }).convert(newStore.operationHours),
+          operationHours: openingsToJson(newStore.operationHours),
           qrCode: newStore.qrCode,
           imageUrl: imageUrl);
 
@@ -754,7 +740,7 @@ class StoreStorageProxy {
             phoneNumber: store.phoneNumber,
             address: store.address,
             categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
-            operationHours: opHours(jsonDecode(store.operationHours)),
+            operationHours: decodeOpenings(store.operationHours),
             qrCode: store.qrCode,
             image: store.imageUrl));
   }
@@ -776,7 +762,7 @@ class StoreStorageProxy {
             phoneNumber: store.phoneNumber,
             address: store.address,
             categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
-            operationHours: opHours(jsonDecode(store.operationHours)),
+            operationHours: decodeOpenings(store.operationHours),
             products: products,
             qrCode: store.qrCode,
             image: store.imageUrl));

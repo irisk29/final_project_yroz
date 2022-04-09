@@ -362,7 +362,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
             _editedStore!.address,
             _pickedImage,
             _editedStore!.phoneNumber,
-            _editedStore!.operationHours);
+            openingHours.saveOpenHours());
       default:
         return null;
     }
