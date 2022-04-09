@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,7 +11,7 @@ class StoreDTO {
   String phoneNumber;
   String address;
   List<String> categories;
-  Map<String, List<TimeOfDay>> operationHours;
+  Openings operationHours;
   String? image; //url for the imageFromPhone in s3
   String? qrCode;
   File? imageFromPhone;

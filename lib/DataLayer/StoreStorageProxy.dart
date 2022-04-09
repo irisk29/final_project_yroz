@@ -6,6 +6,7 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
@@ -455,7 +456,7 @@ class StoreStorageProxy {
     return lst;
   }
 
-  Map<String, List<TimeOfDay>> opHours(Map<String, dynamic> oper) {
+  Openings opHours(Map<String, dynamic> oper) {
     Map<String, List<TimeOfDay>> map = {};
     for (MapEntry e in oper.entries) {
       List<TimeOfDay> l = [];
@@ -464,7 +465,7 @@ class StoreStorageProxy {
       }
       map.addEntries([MapEntry(e.key, l)]);
     }
-    return map;
+    return Openings(days: []);
   }
 
   Future<ResultInterface> createProductForOnlineStore(ProductDTO productDTO, String onlineStoreModelID) async {

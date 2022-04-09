@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../LogicModels/OpeningTimes.dart';
+
 class OnlineStoreScreen extends StatefulWidget {
   static const routeName = '/online-store';
 
@@ -22,20 +24,6 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
     super.didChangeDependencies();
-  }
-
-  String mapAsString() {
-    String map = "";
-    for (MapEntry<String, List<TimeOfDay>> e
-        in widget.store.operationHours.entries) {
-      map = map + e.key + ": ";
-      for (int i = 0; i < e.value.length; i++) {
-        map = map + e.value[i].format(context) + " ";
-        if (i == 0) map = map + "- ";
-      }
-      map = map + '\n';
-    }
-    return map;
   }
 
   bool lessthanfifteen(TimeOfDay a, TimeOfDay b) {
@@ -56,12 +44,14 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    for (MapEntry<String, List<TimeOfDay>> e
-        in widget.store.operationHours.entries) {
-      if (e.key == day) {
+    //String hour = DateFormat('Hm').format(DateTime.now());
+    for (OpeningTimes e in widget.store.operationHours.days) {
+      if (e.day == day) {
+        if(e.closed)
+          return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if (opBigger(time, e.value[0]) && opSmaller(time, e.value[1])) {
-          if (lessthanfifteen(e.value[1], time)) {
+        if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
+          if (lessthanfifteen(e.operationHours.item2, time)) {
             return 1;
           }
           return 0;
@@ -70,6 +60,20 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
       }
     }
     return 2;
+  }
+
+  String mapAsString() {
+    String map = "";
+    for (OpeningTimes e in widget.store.operationHours.days) {
+      map = map + e.day + ": ";
+      if(e.closed)
+        map = map + "closed";
+      else {
+        map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
+      }
+      map = map + '\n';
+    }
+    return map;
   }
 
   void routeToOnlineStoreProducts(BuildContext ctx) {

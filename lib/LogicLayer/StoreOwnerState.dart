@@ -10,6 +10,7 @@ import 'package:final_project_yroz/DTOs/PurchaseHistoryDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
+import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:final_project_yroz/Result/OK.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
@@ -95,7 +96,7 @@ class StoreOwnerState {
         qrCode: physicalStoreModel.qrCode!);
   }
 
-  Map<String, List<TimeOfDay>> parseOperationHours(
+  Openings parseOperationHours(
       Map<String, dynamic> operationHours) {
     Map<String, List<TimeOfDay>> opH = {};
     operationHours.forEach((key, value) {
@@ -106,7 +107,7 @@ class StoreOwnerState {
           .toList();
       opH[key] = lst;
     });
-    return opH;
+    return Openings(days: []);
   }
 
   Future<List<PurchaseHistoryDTO>>
