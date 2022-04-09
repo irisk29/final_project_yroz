@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:f_logs/f_logs.dart';
@@ -26,7 +28,10 @@ class UserAuthenticator {
         if (element.userAttributeKey.key == "picture") picture = element.value;
         print('key: ${element.userAttributeKey}; value: ${element.value}');
       }
-
+      if (authProvider == AuthProvider.facebook) {
+        var map = jsonDecode(picture);
+        picture = map["data"]["url"];
+      }
       Tuple2<UserModel?, bool> currUser =
           await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
