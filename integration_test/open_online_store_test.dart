@@ -137,15 +137,15 @@ void main() {
       await tester.pumpAndSettle();
 
       fab = find.byKey(Key('bank_name'));
-      await tester.enterText(fab, "leumi");
+      await tester.enterText(fab, "yroz");
       await tester.pump();
 
       fab = find.byKey(Key('branch_number'));
-      await tester.enterText(fab, "123");
+      await tester.enterText(fab, "987");
       await tester.pump();
 
       fab = find.byKey(Key('account_number'));
-      await tester.enterText(fab, "123456789");
+      await tester.enterText(fab, "211896261");
       await tester.pump();
 
       FocusManager.instance.primaryFocus?.unfocus();
