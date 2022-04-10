@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:f_logs/f_logs.dart';
@@ -28,9 +29,9 @@ class _LandingScreenState extends State<LandingScreen> {
     isSignedIn().then((data) {
       setState(() {
         isUserAlreadySignedIn = data;
-        if(isUserAlreadySignedIn != null && isUserAlreadySignedIn!)
-          Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
       });
+      if (isUserAlreadySignedIn != null && isUserAlreadySignedIn!)
+        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
     }).catchError((e) {
       Navigator.pop(context, "an error");
     });
@@ -48,15 +49,24 @@ class _LandingScreenState extends State<LandingScreen> {
       return false;
     }
     UserModel? model = await UsersStorageProxy().fetchFullUser(email.value);
+    print("isSignIn: ${model != null && model.isLoggedIn}");
+    if (model != null && model.isLoggedIn) return false;
     if (model != null) Provider.of<User>(context, listen: false).userFromModel(model);
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
+    //sleep(Duration(seconds: 2));
+    //print("after sleep");
     final appUser = context.watch<User>().isSignedIn;
     print(appUser);
-    return isUserAlreadySignedIn == null && !appUser ? CircularProgressIndicator() :
-    appUser ? TabsScreen() : AuthScreen();
+    return isUserAlreadySignedIn == null && !appUser
+        ? Center(child: CircularProgressIndicator())
+        : appUser
+            ? TabsScreen()
+            : isUserAlreadySignedIn != null && !isUserAlreadySignedIn!
+                ? AuthScreen()
+                : TabsScreen();
   }
 }

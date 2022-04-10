@@ -110,7 +110,7 @@ class User extends ChangeNotifier {
       Tuple2<UserModel?, bool> currUser = await UserAuthenticator().signIn(authProvider);
       isSignedIn = currUser.item1 != null;
       if (isSignedIn) {
-        if (!currUser.item2 && currUser.item1!.isLoggedIn) {
+        if (!currUser.item2 && !currUser.item1!.isLoggedIn) {
           isSignedIn = false;
           return new Failure("You are already logged-in in another device, please sign out.");
         }
