@@ -28,7 +28,8 @@ class UsersStorageProxy {
 
     if (users.isEmpty) //no such user in the DB
     {
-      UserModel userModel = UserModel(email: email, name: name, imageUrl: imageUrl, hideStoreOwnerOptions: true, isLoggedIn: true);
+      UserModel userModel =
+          UserModel(email: email, name: name, imageUrl: imageUrl, hideStoreOwnerOptions: true, isLoggedIn: true);
       await Amplify.DataStore.save(userModel);
       print("Created user and saved to DB");
       FLog.info(text: "Created user with id ${userModel.id}");
@@ -62,7 +63,34 @@ class UsersStorageProxy {
   Future<UserModel?> getUser(String email) async {
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
 
-    return users.isEmpty ? null : await createFullUser(users.first, users.first.name, users.first.imageUrl);
+    //return users.isEmpty ? null : await createFullUser(users.first, users.first.name, users.first.imageUrl);
+    return users.isEmpty ? null : users.first;
+  }
+
+  Future<UserModel?> fetchFullUser(String email) async {
+    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
+
+    if (users.isEmpty) return null;
+    UserModel user = users.first;
+
+    var resStoreOwner = await getStoreOwnerState(user.email);
+    StoreOwnerModel? storeOwner = resStoreOwner.getTag() ? resStoreOwner.getValue() : null;
+    List<ShoppingBagModel> shoppingBags =
+        await Amplify.DataStore.query(ShoppingBagModel.classType, where: ShoppingBagModel.USERMODELID.eq(user.id));
+
+    UserModel fullUser = user.copyWith(
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        imageUrl: user.imageUrl,
+        creditCards: user.creditCards,
+        eWallet: user.eWallet,
+        shoppingBagModels: shoppingBags,
+        storeOwnerModel: storeOwner,
+        userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id,
+        isLoggedIn: user.isLoggedIn);
+    FLog.info(text: "Fetched full user");
+    return fullUser;
   }
 
   Future<void> logoutUser() async {
