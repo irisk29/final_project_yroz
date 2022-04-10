@@ -35,7 +35,8 @@ class StoreStorageProxy {
 
   StoreStorageProxy._internal();
 
-  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store, [String? storeID, DateTime? lastViewPurchase]) async {
+  Future<ResultInterface> openOnlineStore(OnlineStoreDTO store,
+      [String? storeID, DateTime? lastViewPurchase]) async {
     OnlineStoreModel onlineStoreModel = OnlineStoreModel(
         id: storeID,
         name: store.name,
@@ -45,7 +46,8 @@ class StoreStorageProxy {
         operationHours: JsonEncoder.withIndent('  ', (value) {
           if (value is TimeOfDay) {
             final now = new DateTime.now();
-            final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
+            final dt = DateTime(
+                now.year, now.month, now.day, value.hour, value.minute);
             final format = DateFormat.jm();
             return format.format(dt);
           } else {
@@ -57,7 +59,8 @@ class StoreStorageProxy {
 
     String? imageUrl = null;
     if (store.imageFromPhone != null) {
-      await uploadPicture(onlineStoreModel.id, store.imageFromPhone); // uploading the picture to s3
+      await uploadPicture(onlineStoreModel.id,
+          store.imageFromPhone); // uploading the picture to s3
       imageUrl = await getDownloadUrl(onlineStoreModel.id);
     }
 
@@ -80,8 +83,8 @@ class StoreStorageProxy {
         qrCode: qrCode);
     await Amplify.DataStore.save(onlineWithProducts);
 
-    ResultInterface storeOwnerRes =
-        await UsersStorageProxy().getStoreOwnerState(UserAuthenticator().getCurrentUserId());
+    ResultInterface storeOwnerRes = await UsersStorageProxy()
+        .getStoreOwnerState(UserAuthenticator().getCurrentUserId());
     StoreOwnerModel? storeOwner = null;
     //second case it is empty store owner when upgrading from physical to online
     if (!storeOwnerRes.getTag()) {
@@ -90,44 +93,66 @@ class StoreStorageProxy {
           onlineStoreModel: onlineWithProducts,
           storeOwnerModelOnlineStoreModelId: onlineWithProducts.id,
           lastPurchasesView: lastViewPurchase == null
-              ? TemporalDateTime.fromString(
-                  DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String())
-              : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
-      UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+              ? TemporalDateTime.fromString(DateFormat('dd/MM/yyyy, hh:mm:ss a')
+                  .parse('1/1/2022, 10:00:00 AM')
+                  .toDateTimeIso8601String())
+              : TemporalDateTime.fromString(
+                  lastViewPurchase.toDateTimeIso8601String()));
+      UserModel? oldUserModel = await UsersStorageProxy()
+          .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
-        FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+        FLog.error(
+            text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
         return new Failure("no such user exists in the system!", null);
       }
-      UserModel newUserModel =
-          oldUserModel.copyWith(storeOwnerModel: storeOwner, userModelStoreOwnerModelId: storeOwner.id);
+      UserModel newUserModel = oldUserModel.copyWith(
+          storeOwnerModel: storeOwner,
+          userModelStoreOwnerModelId: storeOwner.id);
 
       await Amplify.DataStore.save(storeOwner);
       await Amplify.DataStore.save(newUserModel);
-      FLog.info(text: "open online store ${onlineWithProducts.id} for store owner ${storeOwner.id}");
-      return new Ok("open online store succeeded", Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner.id));
-    } else if ((storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId == null &&
-            storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId == null) ||
+      FLog.info(
+          text:
+              "open online store ${onlineWithProducts.id} for store owner ${storeOwner.id}");
+      return new Ok("open online store succeeded",
+          Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner.id));
+    } else if ((storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId ==
+                null &&
+            storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId ==
+                null) ||
         (storeOwnerRes.getValue().storeOwnerModelOnlineStoreModelId!.isEmpty &&
-            storeOwnerRes.getValue().storeOwnerModelPhysicalStoreModelId!.isEmpty)) {
+            storeOwnerRes
+                .getValue()
+                .storeOwnerModelPhysicalStoreModelId!
+                .isEmpty)) {
       StoreOwnerModel emptyOwner = storeOwnerRes.getValue();
       storeOwner = emptyOwner.copyWith(
-          onlineStoreModel: onlineWithProducts, storeOwnerModelOnlineStoreModelId: onlineWithProducts.id);
-      UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+          onlineStoreModel: onlineWithProducts,
+          storeOwnerModelOnlineStoreModelId: onlineWithProducts.id);
+      UserModel? oldUserModel = await UsersStorageProxy()
+          .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
-        FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
-        return new Failure("no such user exists in the system!", onlineWithProducts);
+        FLog.error(
+            text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+        return new Failure(
+            "no such user exists in the system!", onlineWithProducts);
       }
-      UserModel newUserModel =
-          oldUserModel.copyWith(storeOwnerModel: storeOwner, userModelStoreOwnerModelId: storeOwner.id);
+      UserModel newUserModel = oldUserModel.copyWith(
+          storeOwnerModel: storeOwner,
+          userModelStoreOwnerModelId: storeOwner.id);
 
       await Amplify.DataStore.save(storeOwner);
       await Amplify.DataStore.save(newUserModel);
-      FLog.debug(text: "Finished open online store in case of convert, store owner ID: ${storeOwner.id}");
-      return new Ok("open online store succeeded", Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner.id));
+      FLog.debug(
+          text:
+              "Finished open online store in case of convert, store owner ID: ${storeOwner.id}");
+      return new Ok("open online store succeeded",
+          Tuple2<OnlineStoreModel, String>(onlineWithProducts, storeOwner.id));
     }
     // already have an online store
     FLog.error(text: "User already has online store - only one is allowed!");
-    return new Failure("User already has online store - only one is allowed!", onlineWithProducts);
+    return new Failure("User already has online store - only one is allowed!",
+        onlineWithProducts);
   }
 
   Future<String> generateUniqueQRCode(String storeID) async {
@@ -149,7 +174,8 @@ class StoreStorageProxy {
     String tempPath = tempDir.path;
     final ts = DateTime.now().millisecondsSinceEpoch.toString();
     String path = '$tempPath/$ts.png';
-    final picData = await painter.toImageData(2048, format: ImageByteFormat.png);
+    final picData =
+        await painter.toImageData(2048, format: ImageByteFormat.png);
     File qrFile = await writeToFile(picData!, path);
     var res = await uploadPicture("$storeID-qrcode", qrFile);
     if (!res.getTag()) {
@@ -163,11 +189,13 @@ class StoreStorageProxy {
 
   Future<File> writeToFile(ByteData data, String path) async {
     final buffer = data.buffer;
-    File file = await File(path).writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+    File file = await File(path).writeAsBytes(
+        buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
     return file;
   }
 
-  Future<ResultInterface> openPhysicalStore(StoreDTO store, [DateTime? lastViewPurchase]) async {
+  Future<ResultInterface> openPhysicalStore(StoreDTO store,
+      [DateTime? lastViewPurchase]) async {
     PhysicalStoreModel physicalModelNotComplete = PhysicalStoreModel(
         name: store.name,
         phoneNumber: store.phoneNumber,
@@ -176,7 +204,8 @@ class StoreStorageProxy {
         operationHours: JsonEncoder.withIndent('  ', (value) {
           if (value is TimeOfDay) {
             final now = new DateTime.now();
-            final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
+            final dt = DateTime(
+                now.year, now.month, now.day, value.hour, value.minute);
             final format = DateFormat.jm();
             return format.format(dt);
           } else {
@@ -188,15 +217,17 @@ class StoreStorageProxy {
 
     String? imageUrl = null;
     if (store.imageFromPhone != null) {
-      await uploadPicture(physicalModelNotComplete.id, store.imageFromPhone); // uploading the picture to s3
+      await uploadPicture(physicalModelNotComplete.id,
+          store.imageFromPhone); // uploading the picture to s3
       imageUrl = await getDownloadUrl(physicalModelNotComplete.id);
     }
 
-    var physicalModel = physicalModelNotComplete.copyWith(imageUrl: imageUrl, qrCode: qrCode);
+    var physicalModel =
+        physicalModelNotComplete.copyWith(imageUrl: imageUrl, qrCode: qrCode);
     await Amplify.DataStore.save(physicalModel);
 
-    ResultInterface storeOwnerRes =
-        await UsersStorageProxy().getStoreOwnerState(UserAuthenticator().getCurrentUserId());
+    ResultInterface storeOwnerRes = await UsersStorageProxy()
+        .getStoreOwnerState(UserAuthenticator().getCurrentUserId());
 
     if (!storeOwnerRes.getTag()) {
       //the user will now have a store owner state
@@ -204,27 +235,36 @@ class StoreStorageProxy {
           physicalStoreModel: physicalModel,
           storeOwnerModelPhysicalStoreModelId: physicalModel.id,
           lastPurchasesView: lastViewPurchase == null
-              ? TemporalDateTime.fromString(
-                  DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String())
-              : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
+              ? TemporalDateTime.fromString(DateFormat('dd/MM/yyyy, hh:mm:ss a')
+                  .parse('1/1/2022, 10:00:00 AM')
+                  .toDateTimeIso8601String())
+              : TemporalDateTime.fromString(
+                  lastViewPurchase.toDateTimeIso8601String()));
       await Amplify.DataStore.save(storeOwner);
 
-      UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+      UserModel? oldUserModel = await UsersStorageProxy()
+          .getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
-        FLog.error(text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
+        FLog.error(
+            text: "No such user - ${UserAuthenticator().getCurrentUserId()}");
         return new Failure("no such user exists in the system!", physicalModel);
       }
 
-      UserModel newUserModel =
-          oldUserModel.copyWith(storeOwnerModel: storeOwner, userModelStoreOwnerModelId: storeOwner.id);
+      UserModel newUserModel = oldUserModel.copyWith(
+          storeOwnerModel: storeOwner,
+          userModelStoreOwnerModelId: storeOwner.id);
       FLog.info(text: "saving user model: $newUserModel");
       await Amplify.DataStore.save(newUserModel);
-      FLog.info(text: "open physical store ${physicalModel.id} for store owner ${storeOwner.id}");
-      return new Ok("open physical store succsseded", Tuple2<PhysicalStoreModel, String>(physicalModel, storeOwner.id));
+      FLog.info(
+          text:
+              "open physical store ${physicalModel.id} for store owner ${storeOwner.id}");
+      return new Ok("open physical store succsseded",
+          Tuple2<PhysicalStoreModel, String>(physicalModel, storeOwner.id));
     }
     // already have an physical store
     FLog.error(text: "User already has physical store - only one is allowed!");
-    return new Failure("User already has physical store - only one is allowed!", physicalModel);
+    return new Failure("User already has physical store - only one is allowed!",
+        physicalModel);
   }
 
   Future<File> createFileFromImageUrl(String url) async {
@@ -233,8 +273,8 @@ class StoreStorageProxy {
     var buffer = uint8list.buffer;
     ByteData byteData = ByteData.view(buffer);
     var tempDir = await getTemporaryDirectory();
-    File file = await File('${tempDir.path}/img')
-        .writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    File file = await File('${tempDir.path}/img').writeAsBytes(
+        buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
     return file;
   }
 
@@ -248,7 +288,8 @@ class StoreStorageProxy {
           local: file,
           key: storeId,
           onProgress: (progress) {
-            print("Fraction completed: " + progress.getFractionCompleted().toString());
+            print("Fraction completed: " +
+                progress.getFractionCompleted().toString());
           });
       FLog.info(text: "Successfully uploaded file: ${result.key}");
       return new Ok('Successfully uploaded file: ${result.key}', storeId);
@@ -284,22 +325,27 @@ class StoreStorageProxy {
     return res.getTag() ? await uploadPicture(storeId, file) : res;
   }
 
-  Future<OnlineStoreModel?> fetchOnlineStore(String? storeOwnerOnlineStoreId) async {
+  Future<OnlineStoreModel?> fetchOnlineStore(
+      String? storeOwnerOnlineStoreId) async {
     if (storeOwnerOnlineStoreId == null) return null;
-    List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(OnlineStoreModel.classType,
+    List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
         where: OnlineStoreModel.ID.eq(storeOwnerOnlineStoreId));
     if (onlineStores.isEmpty) return null;
     var onlinestore = onlineStores.first;
-    List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
+    List<StoreProductModel> products = await Amplify.DataStore.query(
+        StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(onlinestore.id));
 
     var fullStore = onlinestore.copyWith(storeProductModels: products);
     return fullStore; //only one online store per user
   }
 
-  Future<PhysicalStoreModel?> fetchPhysicalStore(String? storeOwnerPhysicalStoreId) async {
+  Future<PhysicalStoreModel?> fetchPhysicalStore(
+      String? storeOwnerPhysicalStoreId) async {
     if (storeOwnerPhysicalStoreId == null) return null;
-    List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(PhysicalStoreModel.classType,
+    List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
+        PhysicalStoreModel.classType,
         where: PhysicalStoreModel.ID.eq(storeOwnerPhysicalStoreId));
 
     if (physicalStores.isEmpty) return null;
@@ -307,12 +353,16 @@ class StoreStorageProxy {
   }
 
   Future<List<StoreDTO>> fetchCategoryStores(String category) async {
-    List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(PhysicalStoreModel.classType,
+    List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
+        PhysicalStoreModel.classType,
         where: PhysicalStoreModel.CATEGORIES.contains(category));
-    List<StoreDTO> convertedPhysicalStores = await convertPhysicalStoreModelToDTO(physicalStores);
-    List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(OnlineStoreModel.classType,
+    List<StoreDTO> convertedPhysicalStores =
+        await convertPhysicalStoreModelToDTO(physicalStores);
+    List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
         where: OnlineStoreModel.CATEGORIES.contains(category));
-    List<StoreDTO> convertedOnlineStores = await convertOnlineStoreModelToDTO(onlineStores);
+    List<StoreDTO> convertedOnlineStores =
+        await convertOnlineStoreModelToDTO(onlineStores);
 
     convertedPhysicalStores.addAll(convertedOnlineStores);
     return convertedPhysicalStores;
@@ -320,8 +370,10 @@ class StoreStorageProxy {
 
   Future<List<StoreDTO>> fetchAllPhysicalStores() async {
     try {
-      List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(PhysicalStoreModel.classType);
-      return convertPhysicalStoreModelToDTO(physicalStores); //only one physical store per user
+      List<PhysicalStoreModel> physicalStores =
+          await Amplify.DataStore.query(PhysicalStoreModel.classType);
+      return convertPhysicalStoreModelToDTO(
+          physicalStores); //only one physical store per user
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
@@ -330,8 +382,10 @@ class StoreStorageProxy {
 
   Future<List<OnlineStoreDTO>> fetchAllOnlineStores() async {
     try {
-      List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(OnlineStoreModel.classType);
-      return convertOnlineStoreModelToDTO(onlineStores); //only one online store per user
+      List<OnlineStoreModel> onlineStores =
+          await Amplify.DataStore.query(OnlineStoreModel.classType);
+      return convertOnlineStoreModelToDTO(
+          onlineStores); //only one online store per user
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       throw e;
@@ -363,7 +417,9 @@ class StoreStorageProxy {
           id: p.id,
           name: p.name,
           price: p.price,
-          category: p.categories.isEmpty ? "" : jsonDecode(p.categories).cast<String>(),
+          category: p.categories.isEmpty
+              ? ""
+              : jsonDecode(p.categories).cast<String>(),
           imageUrl: p.imageUrl == null ? "" : p.imageUrl!,
           description: p.description!,
           storeID: p.onlinestoremodelID,
@@ -373,31 +429,76 @@ class StoreStorageProxy {
   }
 
   Future<List<ProductDTO>> fetchStoreProducts(String storeId) async {
-    List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
+    List<StoreProductModel> products = await Amplify.DataStore.query(
+        StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeId));
     return convertProductsModelToDTO(products);
   }
 
   Future<List<StoreDTO>> fetchStoresByKeywords(String keywords) async {
     try {
-      List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
-        PhysicalStoreModel.classType,
-        where: PhysicalStoreModel.NAME
-            .contains(keywords)
-            .or(PhysicalStoreModel.ADDRESS.contains(keywords))
-            .or(PhysicalStoreModel.CATEGORIES.contains(keywords)),
-      );
-      List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
-        OnlineStoreModel.classType,
-        where: OnlineStoreModel.NAME
-            .contains(keywords)
-            .or(OnlineStoreModel.ADDRESS.contains(keywords))
-            .or(OnlineStoreModel.CATEGORIES.contains(keywords)),
-      );
-      List<StoreDTO> physicalDtos = await convertPhysicalStoreModelToDTO(physicalStores);
-      List<OnlineStoreDTO> onlineDtos = await convertOnlineStoreModelToDTO(onlineStores);
+      final splitedKeywords = keywords.split(' ');
+      List<PhysicalStoreModel> physicalStores = [];
+      List<OnlineStoreModel> onlineStores = [];
 
-      List<StoreDTO> allDtos = List.generate(onlineDtos.length, (index) => onlineDtos[index]);
+      for (var i = 0; i < splitedKeywords.length; i++) {
+        final lowerKeyword = splitedKeywords[i].toLowerCase();
+        final upperKeyword = splitedKeywords[i].toUpperCase();
+        final firstUpperKeyword = splitedKeywords[i].isNotEmpty
+            ? splitedKeywords[i][0].toUpperCase() +
+                splitedKeywords[i].substring(1)
+            : "";
+
+        physicalStores.addAll(
+          await Amplify.DataStore.query(PhysicalStoreModel.classType,
+              where: PhysicalStoreModel.NAME
+                  .contains(splitedKeywords[i])
+                  .or(PhysicalStoreModel.ADDRESS.contains(splitedKeywords[i]))
+                  .or(PhysicalStoreModel.CATEGORIES
+                      .contains(splitedKeywords[i]))
+                  .or(PhysicalStoreModel.NAME
+                      .contains(lowerKeyword)
+                      .or(PhysicalStoreModel.ADDRESS.contains(lowerKeyword))
+                      .or(PhysicalStoreModel.CATEGORIES.contains(lowerKeyword)))
+                  .or(PhysicalStoreModel.NAME
+                      .contains(upperKeyword)
+                      .or(PhysicalStoreModel.ADDRESS.contains(upperKeyword))
+                      .or(PhysicalStoreModel.CATEGORIES.contains(upperKeyword)))
+                  .or(PhysicalStoreModel.NAME
+                      .contains(firstUpperKeyword)
+                      .or(PhysicalStoreModel.ADDRESS
+                          .contains(firstUpperKeyword))
+                      .or(PhysicalStoreModel.CATEGORIES
+                          .contains(firstUpperKeyword)))),
+        );
+        onlineStores.addAll(await Amplify.DataStore.query(
+          OnlineStoreModel.classType,
+          where: OnlineStoreModel.NAME
+              .contains(splitedKeywords[i])
+              .or(OnlineStoreModel.ADDRESS.contains(splitedKeywords[i]))
+              .or(OnlineStoreModel.CATEGORIES.contains(splitedKeywords[i]))
+              .or(OnlineStoreModel.NAME
+                  .contains(lowerKeyword)
+                  .or(OnlineStoreModel.ADDRESS.contains(lowerKeyword))
+                  .or(OnlineStoreModel.CATEGORIES.contains(lowerKeyword)))
+              .or(OnlineStoreModel.NAME
+                  .contains(upperKeyword)
+                  .or(OnlineStoreModel.ADDRESS.contains(upperKeyword))
+                  .or(OnlineStoreModel.CATEGORIES.contains(upperKeyword)))
+              .or(OnlineStoreModel.NAME
+                  .contains(firstUpperKeyword)
+                  .or(OnlineStoreModel.ADDRESS.contains(firstUpperKeyword))
+                  .or(OnlineStoreModel.CATEGORIES.contains(firstUpperKeyword))),
+        ));
+      }
+
+      List<StoreDTO> physicalDtos =
+          await convertPhysicalStoreModelToDTO(physicalStores);
+      List<OnlineStoreDTO> onlineDtos =
+          await convertOnlineStoreModelToDTO(onlineStores);
+
+      List<StoreDTO> allDtos =
+          List.generate(onlineDtos.length, (index) => onlineDtos[index]);
       allDtos.addAll(physicalDtos);
       return allDtos;
     } on Exception catch (e) {
@@ -409,7 +510,8 @@ class StoreStorageProxy {
   Future<String?> getDownloadUrl(String keyName) async {
     try {
       final ListResult storageItems = await Amplify.Storage.list();
-      final item = storageItems.items.where((element) => element.key == keyName);
+      final item =
+          storageItems.items.where((element) => element.key == keyName);
       if (item.isEmpty) return null;
       final GetUrlResult result = await Amplify.Storage.getUrl(key: keyName);
       print('Got URL: ${result.url}');
@@ -422,7 +524,8 @@ class StoreStorageProxy {
     }
   }
 
-  Future<List<StoreDTO>> convertPhysicalStoreModelToDTO(List<PhysicalStoreModel> physicalStores) async {
+  Future<List<StoreDTO>> convertPhysicalStoreModelToDTO(
+      List<PhysicalStoreModel> physicalStores) async {
     List<StoreDTO> lst = [];
     for (PhysicalStoreModel model in physicalStores) {
       StoreDTO dto = StoreDTO(
@@ -439,7 +542,8 @@ class StoreStorageProxy {
     return lst;
   }
 
-  Future<List<OnlineStoreDTO>> convertOnlineStoreModelToDTO(List<OnlineStoreModel> onlineStores) async {
+  Future<List<OnlineStoreDTO>> convertOnlineStoreModelToDTO(
+      List<OnlineStoreModel> onlineStores) async {
     List<OnlineStoreDTO> lst = [];
     for (OnlineStoreModel model in onlineStores) {
       OnlineStoreDTO dto = OnlineStoreDTO(
@@ -469,7 +573,8 @@ class StoreStorageProxy {
     return map;
   }
 
-  Future<ResultInterface> createProductForOnlineStore(ProductDTO productDTO, String onlineStoreModelID) async {
+  Future<ResultInterface> createProductForOnlineStore(
+      ProductDTO productDTO, String onlineStoreModelID) async {
     try {
       StoreProductModel productModel = StoreProductModel(
           name: productDTO.name,
@@ -478,14 +583,17 @@ class StoreStorageProxy {
           description: productDTO.description,
           onlinestoremodelID: onlineStoreModelID);
       if (productDTO.imageFromPhone != null) {
-        var res = await uploadPicture(productModel.id, productDTO.imageFromPhone); // uploading the picture to s3
+        var res = await uploadPicture(productModel.id,
+            productDTO.imageFromPhone); // uploading the picture to s3
         if (!res.getTag()) return res;
-        productModel = productModel.copyWith(imageUrl: await getDownloadUrl(productModel.id));
+        productModel = productModel.copyWith(
+            imageUrl: await getDownloadUrl(productModel.id));
       }
 
       await Amplify.DataStore.save(productModel);
       FLog.info(
-          text: "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}");
+          text:
+              "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}");
       return new Ok(
           "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}",
           productModel);
@@ -497,8 +605,9 @@ class StoreStorageProxy {
 
   Future<ResultInterface> updatePhysicalStore(StoreDTO newStore) async {
     try {
-      List<PhysicalStoreModel> physicalStores =
-          await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(newStore.id));
+      List<PhysicalStoreModel> physicalStores = await Amplify.DataStore.query(
+          PhysicalStoreModel.classType,
+          where: PhysicalStoreModel.ID.eq(newStore.id));
       if (physicalStores.isEmpty) {
         FLog.error(text: "No physical store is found!");
         return new Failure("No physical store is found!", null);
@@ -520,7 +629,8 @@ class StoreStorageProxy {
           operationHours: JsonEncoder.withIndent('  ', (value) {
             if (value is TimeOfDay) {
               final now = new DateTime.now();
-              final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
+              final dt = DateTime(
+                  now.year, now.month, now.day, value.hour, value.minute);
               final format = DateFormat.jm();
               return format.format(dt);
             } else {
@@ -541,8 +651,9 @@ class StoreStorageProxy {
 
   Future<ResultInterface> updateOnlineStore(OnlineStoreDTO newStore) async {
     try {
-      List<OnlineStoreModel> onlineStores =
-          await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(newStore.id));
+      List<OnlineStoreModel> onlineStores = await Amplify.DataStore.query(
+          OnlineStoreModel.classType,
+          where: OnlineStoreModel.ID.eq(newStore.id));
       if (onlineStores.isEmpty) {
         FLog.error(text: "No online store is found!");
         return new Failure("No online store is found!", null);
@@ -564,7 +675,8 @@ class StoreStorageProxy {
           operationHours: JsonEncoder.withIndent('  ', (value) {
             if (value is TimeOfDay) {
               final now = new DateTime.now();
-              final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
+              final dt = DateTime(
+                  now.year, now.month, now.day, value.hour, value.minute);
               final format = DateFormat.jm();
               return format.format(dt);
             } else {
@@ -575,10 +687,12 @@ class StoreStorageProxy {
           imageUrl: imageUrl);
 
       await Amplify.DataStore.save(updatedStore);
-      ResultInterface prodRes = await updateOnlineStoreProducts(newStore.products, newStore.id);
+      ResultInterface prodRes =
+          await updateOnlineStoreProducts(newStore.products, newStore.id);
       if (!prodRes.getTag()) return prodRes;
       List<StoreProductModel> prods = prodRes.getValue();
-      OnlineStoreModel update = updatedStore.copyWith(storeProductModels: prods);
+      OnlineStoreModel update =
+          updatedStore.copyWith(storeProductModels: prods);
       FLog.info(text: "updated online store succssefully");
       return new Ok("updated online store succssefully", update);
     } on Exception catch (e) {
@@ -587,8 +701,10 @@ class StoreStorageProxy {
     }
   }
 
-  Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
-    List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
+  Future<ResultInterface> updateOnlineStoreProducts(
+      List<ProductDTO> products, String storeID) async {
+    List<StoreProductModel> productsModels = await Amplify.DataStore.query(
+        StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     //can be empty when upgrading from physical to online
     if (productsModels.isNotEmpty) {
@@ -617,7 +733,9 @@ class StoreStorageProxy {
 
   Future<ResultInterface> deleteStore(String id, bool isOnline) async {
     try {
-      var res = isOnline ? await deleteOnlineStore(id) : await deletePhysicalStore(id);
+      var res = isOnline
+          ? await deleteOnlineStore(id)
+          : await deletePhysicalStore(id);
       if (!res.getTag()) return res; //failure occured
       return new Ok(res.getMessage(), id);
     } on Exception catch (e) {
@@ -627,7 +745,8 @@ class StoreStorageProxy {
   }
 
   Future<void> deleteOnlineStoreProducts(String storeID) async {
-    List<StoreProductModel> products = await Amplify.DataStore.query(StoreProductModel.classType,
+    List<StoreProductModel> products = await Amplify.DataStore.query(
+        StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     for (var prod in products) {
       await Amplify.DataStore.delete(prod);
@@ -637,8 +756,9 @@ class StoreStorageProxy {
 
   Future<ResultInterface> deleteOnlineStore(String id) async {
     try {
-      List<OnlineStoreModel> stores =
-          await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(id));
+      List<OnlineStoreModel> stores = await Amplify.DataStore.query(
+          OnlineStoreModel.classType,
+          where: OnlineStoreModel.ID.eq(id));
       if (stores.isEmpty) {
         FLog.error(text: "No such store $id");
         return new Failure("No such store", id);
@@ -658,10 +778,12 @@ class StoreStorageProxy {
     }
   }
 
-  Future<ResultInterface> deletePhysicalStore(String id, [bool? updateStoreOwner]) async {
+  Future<ResultInterface> deletePhysicalStore(String id,
+      [bool? updateStoreOwner]) async {
     try {
-      List<PhysicalStoreModel> stores =
-          await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(id));
+      List<PhysicalStoreModel> stores = await Amplify.DataStore.query(
+          PhysicalStoreModel.classType,
+          where: PhysicalStoreModel.ID.eq(id));
       if (stores.isEmpty) {
         FLog.error(text: "No such store $id");
         return new Failure("No such store", id);
@@ -688,14 +810,17 @@ class StoreStorageProxy {
       FLog.error(text: "No store owner to delete");
       return new Failure("No store owner to delete", null);
     }
-    List<StoreOwnerModel> storeOwners =
-        await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
+    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
+        StoreOwnerModel.classType,
+        where: StoreOwnerModel.ID.eq(storeOwnerID));
     StoreOwnerModel storeOwnerModel = storeOwners.first;
 
     await Amplify.DataStore.delete(storeOwnerModel); //no store left
-    UserModel? currUser = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
+    UserModel? currUser = await UsersStorageProxy()
+        .getUser(UserAuthenticator().getCurrentUserId());
     if (currUser == null) return Failure("No such user", null);
-    currUser = currUser.copyWith(userModelStoreOwnerModelId: "", storeOwnerModel: null);
+    currUser = currUser.copyWith(
+        userModelStoreOwnerModelId: "", storeOwnerModel: null);
     await Amplify.DataStore.save(currUser);
     FLog.info(text: "Deleted completly Store Owner State");
     return new Ok("Deleted completly Store Owner State", currUser);
@@ -707,8 +832,9 @@ class StoreStorageProxy {
       FLog.error(text: "No store owner to delete");
       return new Failure("No store owner to delete", null);
     }
-    List<StoreOwnerModel> storeOwners =
-        await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
+    List<StoreOwnerModel> storeOwners = await Amplify.DataStore.query(
+        StoreOwnerModel.classType,
+        where: StoreOwnerModel.ID.eq(storeOwnerID));
     StoreOwnerModel storeOwnerModel = storeOwners.first;
     var empty = storeOwnerModel.copyWith(
         onlineStoreModel: null,
@@ -719,8 +845,10 @@ class StoreStorageProxy {
     return new Ok("Empty store owner ${empty.id}", storeOwnerID);
   }
 
-  Future<ResultInterface> convertPhysicalStoreToOnline(StoreDTO physicalStore, DateTime lastViewPurchase) async {
-    ResultInterface deletePhysicalRes = await deletePhysicalStore(physicalStore.id, true);
+  Future<ResultInterface> convertPhysicalStoreToOnline(
+      StoreDTO physicalStore, DateTime lastViewPurchase) async {
+    ResultInterface deletePhysicalRes =
+        await deletePhysicalStore(physicalStore.id, true);
     if (!deletePhysicalRes.getTag()) return deletePhysicalRes;
     ResultInterface emptyStoreOwnerRes = await emptyStoreOwner();
     if (!emptyStoreOwnerRes.getTag()) return emptyStoreOwnerRes;
@@ -735,13 +863,15 @@ class StoreStorageProxy {
         qrCode: physicalStore.qrCode,
         image: physicalStore.image,
         imageFromPhone: physicalStore.imageFromPhone);
-    ResultInterface openOnlineStoreRes = await openOnlineStore(onlineStoreDTO, physicalStore.id, lastViewPurchase);
+    ResultInterface openOnlineStoreRes = await openOnlineStore(
+        onlineStoreDTO, physicalStore.id, lastViewPurchase);
     return openOnlineStoreRes;
   }
 
   Future<ResultInterface> getPhysicalStore(String storeID) async {
-    List<PhysicalStoreModel> stores =
-        await Amplify.DataStore.query(PhysicalStoreModel.classType, where: PhysicalStoreModel.ID.eq(storeID));
+    List<PhysicalStoreModel> stores = await Amplify.DataStore.query(
+        PhysicalStoreModel.classType,
+        where: PhysicalStoreModel.ID.eq(storeID));
     if (stores.isEmpty) {
       FLog.error(text: "No such store $storeID exists");
       return new Failure("No such store $storeID exists", storeID);
@@ -754,15 +884,18 @@ class StoreStorageProxy {
             name: store.name,
             phoneNumber: store.phoneNumber,
             address: store.address,
-            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            categories: store.categories.isEmpty
+                ? ""
+                : jsonDecode(store.categories).cast<String>(),
             operationHours: opHours(jsonDecode(store.operationHours)),
             qrCode: store.qrCode,
             image: store.imageUrl));
   }
 
   Future<ResultInterface> getOnlineStore(String storeID) async {
-    List<OnlineStoreModel> stores =
-        await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(storeID));
+    List<OnlineStoreModel> stores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
+        where: OnlineStoreModel.ID.eq(storeID));
     if (stores.isEmpty) {
       FLog.error(text: "No such store $storeID exists");
       return new Failure("No such store $storeID exists", storeID);
@@ -776,7 +909,9 @@ class StoreStorageProxy {
             name: store.name,
             phoneNumber: store.phoneNumber,
             address: store.address,
-            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            categories: store.categories.isEmpty
+                ? ""
+                : jsonDecode(store.categories).cast<String>(),
             operationHours: opHours(jsonDecode(store.operationHours)),
             products: products,
             qrCode: store.qrCode,
@@ -784,14 +919,17 @@ class StoreStorageProxy {
   }
 
   Future<ResultInterface> getOnlineStoreProduct(String prodId) async {
-    List<StoreProductModel> prods =
-        await Amplify.DataStore.query(StoreProductModel.classType, where: StoreProductModel.ID.eq(prodId));
+    List<StoreProductModel> prods = await Amplify.DataStore.query(
+        StoreProductModel.classType,
+        where: StoreProductModel.ID.eq(prodId));
     if (prods.isEmpty) {
       FLog.error(text: "No such product $prodId exists");
       return new Failure("No such product $prodId exists", prodId);
     }
     var prod = prods.first;
-    File? file = prod.imageUrl != null ? await createFileFromImageUrl(prod.imageUrl!) : null;
+    File? file = prod.imageUrl != null
+        ? await createFileFromImageUrl(prod.imageUrl!)
+        : null;
     return new Ok(
         "Found product $prodId",
         ProductDTO(
