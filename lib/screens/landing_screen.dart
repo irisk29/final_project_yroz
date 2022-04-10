@@ -12,10 +12,31 @@ import '../screens/tabs_screen.dart';
 import '../screens/auth_screen.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 
-class LandingScreen extends StatelessWidget {
+class LandingScreen extends StatefulWidget {
   static const routeName = '/landing';
 
-  Future<bool> isSignedIn(BuildContext context) async {
+  @override
+  State<LandingScreen> createState() => _LandingScreenState();
+}
+
+class _LandingScreenState extends State<LandingScreen> {
+  late bool? isUserAlreadySignedIn = null;
+
+  @override
+  void initState() {
+    super.initState();
+    isSignedIn().then((data) {
+      setState(() {
+        isUserAlreadySignedIn = data;
+        if(isUserAlreadySignedIn != null && isUserAlreadySignedIn!)
+          Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+      });
+    }).catchError((e) {
+      Navigator.pop(context, "an error");
+    });
+  }
+
+  Future<bool> isSignedIn() async {
     AuthUser res;
     AuthUserAttribute email;
     try {
@@ -26,26 +47,16 @@ class LandingScreen extends StatelessWidget {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return false;
     }
-    UserModel? model = await UsersStorageProxy().getUser(email.value);
+    UserModel? model = await UsersStorageProxy().fetchFullUser(email.value);
     if (model != null) Provider.of<User>(context, listen: false).userFromModel(model);
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: isSignedIn(context),
-        builder: (ctx, AsyncSnapshot<bool> snapshot) {
-          final appUser = context.watch<User>().isSignedIn;
-          if (snapshot.hasData && snapshot.data != null) {
-            if (snapshot.data!)
-              return TabsScreen();
-            else if (appUser)
-              return TabsScreen();
-            else
-              return AuthScreen();
-          } else
-            return SplashScreen(AuthScreen());
-        });
+    final appUser = context.watch<User>().isSignedIn;
+    print(appUser);
+    return isUserAlreadySignedIn == null && !appUser ? CircularProgressIndicator() :
+    appUser ? TabsScreen() : AuthScreen();
   }
 }
