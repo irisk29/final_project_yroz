@@ -1,5 +1,4 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,31 +16,30 @@ class CreditCardWidget extends StatefulWidget {
   State<CreditCardWidget> createState() => _CreditCardWidgetState();
 }
 
-class _CreditCardWidgetState extends State<CreditCardWidget>
-    with SingleTickerProviderStateMixin {
-  static const _animDuration = 3;
-
-  late AnimationController _controller;
-  late Map<Type, GestureRecognizerFactory> _customGestures;
-  late Animation<double> _widthAnimation;
+class _CreditCardWidgetState extends State<CreditCardWidget> {
+  double? dx = null;
+  double? dy = null;
 
   @override
-  void initState() {
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: _animDuration),
-    );
-
-    _widthAnimation = Tween<double>(begin: 0.0, end: 200).animate(_controller);
-    _customGestures = Map<Type, GestureRecognizerFactory>();
-    _customGestures[LongPressGestureRecognizer] =
-        GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
-      () => LongPressGestureRecognizer(
-          duration: Duration(seconds: _animDuration), debugOwner: this),
-      (LongPressGestureRecognizer instance) {
-        instance
-          ..onLongPress = () {
-            showDialog(
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => Center(
+        child: GestureDetector(
+          key: Key(widget.fourDigits),
+          onTapDown: (details) {
+            setState(() {
+              dx = details.localPosition.dx;
+              dy = details.localPosition.dy;
+            });
+          },
+          onTapUp: (_) {
+            setState(() {
+              dx = null;
+              dy = null;
+            });
+          },
+          onLongPress: () async {
+            await showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
                 title: Text('Are you sure?'),
@@ -67,44 +65,20 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
                 ],
               ),
             );
-          }
-          ..onLongPressStart = (details) {
-            _controller.forward();
-          }
-          ..onLongPressMoveUpdate = (details) {}
-          ..onLongPressEnd = (details) {
-            _controller.reverse();
-          }
-          ..onLongPressUp = () {};
-      },
-    );
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) => Center(
-        child: RawGestureDetector(
-          gestures: _customGestures,
-          key: Key(widget.fourDigits),
+            setState(() {
+              dx = null;
+              dy = null;
+            });
+          },
           child: Stack(
             children: [
               Container(
-                width: constraints.maxWidth,
-                height: constraints.maxHeight * 0.75,
-                child: Card(
-                  color: widget.color,
-                  elevation: 3,
-                  child: Stack(
-                    children: <Widget>[
+                  width: constraints.maxWidth,
+                  height: constraints.maxHeight * 0.75,
+                  child: Card(
+                    color: widget.color,
+                    elevation: 3,
+                    child: Stack(children: <Widget>[
                       Positioned(
                           top: constraints.maxHeight * 0.225,
                           left: constraints.maxWidth * 0.075,
@@ -149,34 +123,23 @@ class _CreditCardWidgetState extends State<CreditCardWidget>
                           top: constraints.maxHeight * 0.425,
                           left: constraints.maxWidth * 0.65,
                           child: Image.asset("assets/images/visa1.png")),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.grey,
-                    style: BorderStyle.solid,
-                  ),
-                  color: Colors.white,
-                ),
-                width: 200,
-                height: 50,
-                child: AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: _widthAnimation.value,
-                        color: Colors.indigo,
+                    ]),
+                  )),
+              dx != null && dy != null
+                  ? Positioned(
+                      child: CircleAvatar(
+                        radius: constraints.maxWidth * 0.07,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child:
+                              Icon(Icons.delete, color: Colors.red, size: 20),
+                          radius: constraints.maxWidth * 0.06,
+                        ),
                       ),
-                    );
-                  },
-                ),
-              ),
+                      top: dy! + constraints.maxHeight * 0.01,
+                      left: dx! + constraints.maxWidth * 0.01)
+                  : SizedBox()
             ],
           ),
         ),

@@ -8,7 +8,7 @@ class HistoryPurchaseItem extends StatefulWidget {
   final PurchaseHistoryDTO purchase;
   final String storeName;
 
-  const HistoryPurchaseItem(this.purchase, [this.storeName = "My Store"]);
+  const HistoryPurchaseItem(this.purchase, this.storeName);
 
   @override
   _HistoryPurchaseItemState createState() => _HistoryPurchaseItemState();
@@ -30,9 +30,8 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
 
   @override
   Widget build(BuildContext context) {
-    final totalAmount =
-        (widget.purchase.cashBackAmount + widget.purchase.creditAmount)
-            .toStringAsFixed(2);
+    final creditAmount = widget.purchase.creditAmount.toStringAsFixed(2);
+    final cashBackAmount = widget.purchase.cashBackAmount.toStringAsFixed(2);
     final purchaseDate =
         DateFormat('dd/MM/yyyy HH:mm').format(widget.purchase.purchaseDate);
     final deviceSize = MediaQuery.of(context).size;
@@ -41,7 +40,7 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeIn,
       height: _expanded
-          ? (purchaseProducts.length > 0 ? purchaseProducts.length * 20 : 20) +
+          ? (purchaseProducts.length > 0 ? purchaseProducts.length * 50 : 50) +
               deviceSize.height * 0.175
           : deviceSize.height * 0.175,
       child: Card(
@@ -56,9 +55,10 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
             shrinkWrap: true,
             children: [
               ListTile(
-                title: Text(widget.storeName),
-                subtitle:
-                    Text("Total amount:  \€${totalAmount}\n ${purchaseDate}"),
+                title: Text(widget.storeName,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(
+                    "Credit amount:  \€${creditAmount}\nCash-back amount:  \€${cashBackAmount}\n${purchaseDate}"),
                 trailing: IconButton(
                   icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
                   onPressed: () async {
@@ -75,31 +75,40 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
                       duration: const Duration(milliseconds: 250),
                       curve: Curves.easeIn,
                       height: purchaseProducts.length > 0
-                          ? purchaseProducts.length * 20
-                          : 20,
+                          ? purchaseProducts.length * 50
+                          : 50,
                       child: purchaseProducts.length > 0
-                          ? ListView.builder(
-                              itemBuilder: (context, index) {
-                                var product = purchaseProducts[index];
-                                return Padding(
-                                  padding:
-                                      EdgeInsets.all(deviceSize.width * 0.01),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(product.name),
-                                      Text(
-                                          '${product.amount} X \€${product.price.toStringAsFixed(2)}'),
-                                    ],
-                                  ),
-                                );
-                              },
-                              itemCount: purchaseProducts.length,
+                          ? ListTile(
+                              title: Text(
+                                "Online Purchase",
+                                style: TextStyle(fontSize: 15),
+                                textAlign: TextAlign.center,
+                              ),
+                              subtitle: ListView.builder(
+                                itemBuilder: (context, index) {
+                                  var product = purchaseProducts[index];
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        top: deviceSize.height * 0.01,
+                                        bottom: deviceSize.height * 0.01),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(product.name),
+                                        Text(
+                                            '${product.amount.toInt()} X \€${product.price.toStringAsFixed(2)}'),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                itemCount: purchaseProducts.length,
+                              ),
                             )
-                          : Padding(
-                              padding: EdgeInsets.all(deviceSize.width * 0.01),
-                              child: Center(child: Text("No Products Details")),
+                          : ListTile(
+                              title: Center(child: Text("Physical Purchase")),
+                              subtitle:
+                                  Center(child: Text("No Products Details")),
                             ),
                     )
                   : Container(),
