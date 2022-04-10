@@ -35,7 +35,7 @@ class UsersStorageProxy {
       return Tuple2<UserModel, bool>(userModel, true);
     }
     var user = users.first;
-    return Tuple2<UserModel, bool>(await createFullUser(user, user.name, user.imageUrl), false);
+    return Tuple2<UserModel, bool>(await createFullUser(user, name, imageUrl), false);
   }
 
   Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
@@ -62,7 +62,7 @@ class UsersStorageProxy {
   Future<UserModel?> getUser(String email) async {
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType, where: UserModel.EMAIL.eq(email));
 
-    return users.isEmpty ? null : users.first;
+    return users.isEmpty ? null : await createFullUser(users.first, users.first.name, users.first.imageUrl);
   }
 
   Future<void> logoutUser() async {
