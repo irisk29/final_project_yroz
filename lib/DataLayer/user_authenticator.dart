@@ -32,20 +32,20 @@ class UserAuthenticator {
         var map = jsonDecode(picture);
         picture = map["data"]["url"];
       }
-      Tuple2<UserModel?, bool> currUser =
-          await UsersStorageProxy().createUser(email, name, picture);
+      Tuple2<UserModel?, bool> currUser = await UsersStorageProxy().createUser(email, name, picture);
       _currentUserId = email;
       return currUser;
     } catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      throw e;
+      return new Tuple2(null, false);
     }
   }
 
   Future<bool> signOut() async {
     try {
       await UsersStorageProxy().logoutUser();
-      await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));  
+      await Amplify.DataStore.clear();
+      await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));
     } on AuthException catch (e) {
       print(e.message);
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);

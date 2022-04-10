@@ -124,6 +124,8 @@ class User extends ChangeNotifier {
       Navigator.of(context).pushNamed(LandingScreen.routeName, arguments: this);
     } catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      //await Amplify.Auth.signOut();
+      return new Failure("Error");
     }
     return new Ok("User logged in");
   }
