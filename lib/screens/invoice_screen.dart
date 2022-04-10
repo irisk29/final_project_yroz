@@ -160,6 +160,7 @@ class InvoiceScreen extends StatelessWidget {
                                                           constraints.maxWidth *
                                                               0.18,
                                                       child: Text(product.amount
+                                                          .toInt()
                                                           .toString()),
                                                     ),
                                                     Text("\€" +

@@ -13,6 +13,7 @@ class StorePurchasesScreen extends StatefulWidget {
 }
 
 class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
+  late String storeName;
   late List<PurchaseHistoryDTO> newStorePurchases;
   late List<PurchaseHistoryDTO> earlierStorePurchases;
 
@@ -24,6 +25,14 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
   void initState() {
     super.initState();
     _purchasesFuture = _initPurchases();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    storeName = routeArgs['storeName'] as String;
+    super.didChangeDependencies();
   }
 
   Future<void> _initPurchases() async {
@@ -56,6 +65,15 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
     });
   }
 
+  double totalStoreEarning() {
+    final double newTotal = newStorePurchases.fold(
+        0, (sum, item) => sum + item.cashBackAmount + item.creditAmount);
+    final double earlierTotal = earlierStorePurchases.fold(
+        0, (sum, item) => sum + item.cashBackAmount + item.creditAmount);
+    final totalEarning = (newTotal + earlierTotal) * 0.9;
+    return totalEarning;
+  }
+
   @override
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
@@ -84,29 +102,80 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
                   child: newStorePurchases.length +
                               earlierStorePurchases.length >
                           0
-                      ? ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          itemCount: newStorePurchases.length +
-                              earlierStorePurchases.length,
-                          itemBuilder: (context, index) {
-                            if (index == 0 && newStorePurchases.length > 0) {
-                              return Column(children: [
-                                ListTile(title: Text("New")),
-                                HistoryPurchaseItem(newStorePurchases[index])
-                              ]);
-                            } else if (index == newStorePurchases.length) {
-                              return Column(children: [
-                                ListTile(title: Text("Earlier")),
-                                HistoryPurchaseItem(earlierStorePurchases[
-                                    index - newStorePurchases.length])
-                              ]);
-                            } else if (index < newStorePurchases.length) {
-                              return HistoryPurchaseItem(
-                                  newStorePurchases[index]);
-                            }
-                            return HistoryPurchaseItem(earlierStorePurchases[
-                                index - newStorePurchases.length]);
-                          },
+                      ? Column(
+                          children: [
+                            Container(
+                              height: deviceSize.height * 0.2,
+                              width: double.infinity,
+                              color: Colors.white,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        height: deviceSize.height * 0.075,
+                                        child:
+                                            Image.asset('assets/icon/icon.png'),
+                                      ),
+                                      Text(
+                                        "  \€" +
+                                            totalStoreEarning()
+                                                .toStringAsFixed(2),
+                                        style: TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    "Total Earnings",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Flexible(
+                              child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: newStorePurchases.length +
+                                    earlierStorePurchases.length,
+                                itemBuilder: (context, index) {
+                                  if (index == 0 &&
+                                      newStorePurchases.length > 0) {
+                                    return Column(children: [
+                                      ListTile(title: Text("New")),
+                                      HistoryPurchaseItem(
+                                          newStorePurchases[index], storeName)
+                                    ]);
+                                  } else if (index ==
+                                      newStorePurchases.length) {
+                                    return Column(children: [
+                                      ListTile(title: Text("Earlier")),
+                                      HistoryPurchaseItem(
+                                          earlierStorePurchases[
+                                              index - newStorePurchases.length],
+                                          storeName)
+                                    ]);
+                                  } else if (index < newStorePurchases.length) {
+                                    return HistoryPurchaseItem(
+                                        newStorePurchases[index], storeName);
+                                  }
+                                  return HistoryPurchaseItem(
+                                      earlierStorePurchases[
+                                          index - newStorePurchases.length],
+                                      storeName);
+                                },
+                              ),
+                            ),
+                          ],
                         )
                       : Container(
                           width: MediaQuery.of(context).size.width,

@@ -147,8 +147,9 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                           ),
                           trailing: Icon(Icons.keyboard_arrow_right),
                           title: Text("View Store Purchases"),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(StorePurchasesScreen.routeName),
+                          onTap: () => Navigator.of(context).pushNamed(
+                              StorePurchasesScreen.routeName,
+                              arguments: {"storeName": widget.store.name}),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
