@@ -40,10 +40,10 @@ class MarkerService {
         position:
             LatLng(place.geometry.location.lat, place.geometry.location.lng),
         onTap: () async {
-          String dest_lat = place.geometry.location.lat as String;
-          String dest_lng = place.geometry.location.lng as String;
-          String origin_lat = (await GeolocatorService().getCurrentLocation()).latitude as String;
-          String origin_lng = (await GeolocatorService().getCurrentLocation()).longitude as String;
+          String dest_lat = place.geometry.location.lat.toString();
+          String dest_lng = place.geometry.location.lng.toString();
+          String origin_lat = (await GeolocatorService().getCurrentLocation()).latitude.toString();
+          String origin_lng = (await GeolocatorService().getCurrentLocation()).longitude.toString();
           Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
           String googleUrl = 'https://maps.googleapis.com/maps/api/directions/json?origin=$origin_lat,$origin_lng&destination=$dest_lat,$dest_lng&key=${secret.API_KEY}';
           if (await canLaunch(googleUrl)) {
