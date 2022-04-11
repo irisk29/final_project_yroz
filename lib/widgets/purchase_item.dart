@@ -40,7 +40,10 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeIn,
       height: _expanded
-          ? (purchaseProducts.length > 0 ? purchaseProducts.length * 50 : 50) +
+          ? (purchaseProducts.length > 0
+                  ? deviceSize.height * 0.025 +
+                      purchaseProducts.length * deviceSize.height * 0.05
+                  : deviceSize.height * 0.05) +
               deviceSize.height * 0.175
           : deviceSize.height * 0.175,
       child: Card(
@@ -75,8 +78,9 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
                       duration: const Duration(milliseconds: 250),
                       curve: Curves.easeIn,
                       height: purchaseProducts.length > 0
-                          ? purchaseProducts.length * 50
-                          : 50,
+                          ? deviceSize.height * 0.025 +
+                              purchaseProducts.length * deviceSize.height * 0.05
+                          : deviceSize.height * 0.05,
                       child: purchaseProducts.length > 0
                           ? ListTile(
                               title: Text(
