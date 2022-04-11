@@ -130,7 +130,7 @@ class _CartItemState extends State<CartItem> {
                   ),
                 ],
               ),
-              trailing: Text('X ${widget.quantity.toInt()}'),
+              trailing: Text('X ${widget.quantity %1 == 0 ? widget.quantity.toInt() : widget.quantity.toStringAsFixed(2)}'),
               onLongPress: () async {
                 double quantity = 0;
                 await showDialog(

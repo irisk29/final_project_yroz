@@ -390,8 +390,7 @@ class User extends ChangeNotifier {
     return new Ok("Removed store $storeID to favorites", storeID);
   }
 
-  void addProductToShoppingBagLocally(
-      String storeID, CartProductDTO cartProductDTO) {
+  void addProductToShoppingBagLocally(String storeID, CartProductDTO cartProductDTO) {
     ShoppingBagDTO? shoppingBagDTO = getShoppingBag(storeID);
     if (shoppingBagDTO == null) {
       FLog.error(text: "No shopping bag was found");

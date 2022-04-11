@@ -174,6 +174,7 @@ class _PaymentCardState extends State<PaymentCard>
                 child: Text('Ok'),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
               )
             ],

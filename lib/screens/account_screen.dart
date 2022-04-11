@@ -90,7 +90,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               Consumer<User>(
                                 builder: (context, user, child) => Container(
                                   width: deviceSize.width * 0.3,
-                                  height: deviceSize.height * 0.05,
+                                  height: deviceSize.height * 0.04,
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         right: deviceSize.width * 0.035),

@@ -153,7 +153,7 @@ class InvoiceScreen extends StatelessWidget {
                                                       child: Text("\€" +
                                                           product.price
                                                               .toStringAsFixed(
-                                                                  1)),
+                                                                  2)),
                                                     ),
                                                     Container(
                                                       width:
@@ -167,7 +167,7 @@ class InvoiceScreen extends StatelessWidget {
                                                         (product.price *
                                                                 product.amount)
                                                             .toStringAsFixed(
-                                                                1)),
+                                                                2)),
                                                   ],
                                                 ),
                                               );

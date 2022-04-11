@@ -37,7 +37,7 @@ class ShoppingBagDTO {
     final index = products.indexWhere((element) => element.cartID == cartProductID);
     if (index >= 0) {
       final prevProduct = products[index];
-      if (prevProduct.amount - 1 == 0) {
+      if (prevProduct.amount - 1 <= 0) {
         removeProduct(cartProductID);
       } else {
         final updatedProduct = CartProductDTO(
