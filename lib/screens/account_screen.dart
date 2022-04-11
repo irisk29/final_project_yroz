@@ -58,7 +58,7 @@ class _AccountScreenState extends State<AccountScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            height: deviceSize.height * 0.125,
+            height: deviceSize.height * 0.15,
             child: Card(
               elevation: 8.0,
               shape: RoundedRectangleBorder(

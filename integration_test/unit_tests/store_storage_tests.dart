@@ -11,6 +11,7 @@ import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
@@ -62,15 +63,15 @@ void main() {
     });
 
     test('good scenario', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       List<ProductDTO> prods = [
         ProductDTO(
             id: "",
@@ -102,15 +103,15 @@ void main() {
     });
 
     test('sad scenario - wrong phone format', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       List<ProductDTO> prods = [
         ProductDTO(
             id: "",
@@ -169,15 +170,15 @@ void main() {
     });
 
     test('good scenario', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "",
           name: "physical test",
@@ -197,15 +198,15 @@ void main() {
     });
 
     test('sad scenario - wrong phone format', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "",
           name: "physical test",
@@ -409,15 +410,15 @@ void main() {
     });
 
     test('good scenario', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       StoreDTO storeDTO = StoreDTO(
           id: physicalModel.id,
           name: "new name", //changed name
@@ -434,15 +435,15 @@ void main() {
     });
 
     test('bad scenario - no such store', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "",
           name: "new name", //changed name
@@ -501,15 +502,15 @@ void main() {
     });
 
     test('good scenario - update online store info', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "product test",
@@ -536,15 +537,15 @@ void main() {
     });
 
     test('good scenario - update online store\'s product', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "product test",
@@ -605,15 +606,15 @@ void main() {
     });
 
     test('bad scenario - no such store', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "product test",
@@ -847,15 +848,15 @@ void main() {
     });
 
     test('good scenario', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       StoreDTO storeDTO = StoreDTO(
           id: physicalModel.id,
           name: "physical store",
@@ -876,15 +877,15 @@ void main() {
     });
 
     test('bad scenario - no such store', () async {
-      Map<String, List<TimeOfDay>> op = {
-        "sunday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "monday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "tuesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "wednesday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "thursday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "friday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-        "saturday": [TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59)],
-      };
+      Openings op = Openings(days: [
+        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "aa",
           name: "physical store",
