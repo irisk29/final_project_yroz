@@ -300,7 +300,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                             qrCode: _editedStore!.qrCode,
                             products: _editedStore!.products,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                     TextFormField(

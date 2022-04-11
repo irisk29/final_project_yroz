@@ -436,23 +436,23 @@ class StoreStorageProxy {
         int firstminute = 0;
         int secondhour = 0;
         int secondminute = 0;
-        String firsttime = line.substring(line.indexOf("-"),line.indexOf(","));
+        String firsttime = line.substring(line.indexOf("-")+1,line.indexOf(","));
         if(firsttime.contains("AM")){
           firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":")));
-          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":"),firsttime.indexOf(" ")));
+          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":")+1,firsttime.indexOf(" ")));
         }
         else{
           firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":"))) + 12;
-          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":"),firsttime.indexOf(" ")));
+          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":")+1,firsttime.indexOf(" ")));
         }
-        String secondtime = line.substring(line.indexOf(","));
-        if(firsttime.contains("AM")){
+        String secondtime = line.substring(line.indexOf(",")+1);
+        if(secondtime.contains("AM")){
           secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":")));
-          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":"),secondtime.indexOf(" ")));
+          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":")+1,secondtime.indexOf(" ")));
         }
         else{
           secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":"))) + 12;
-          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":"),secondtime.indexOf(" ")));
+          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":")+1,secondtime.indexOf(" ")));
         }
         days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: false, operationHours: Tuple2(TimeOfDay(hour: firsthour, minute: firstminute), TimeOfDay(hour: secondhour, minute: secondminute))));
       }

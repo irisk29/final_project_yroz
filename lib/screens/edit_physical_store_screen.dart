@@ -75,24 +75,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   late AddressSearchBuilder destinationBuilder;
   XFile? _pickedImage = null;
-  StoreDTO? _editedStore = StoreDTO(
-      id: "",
-      name: "",
-      phoneNumber: "",
-      address: "",
-      categories: [],
-      operationHours: Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]),
-      qrCode: "",
-      image: null,
-      imageFromPhone: null);
+  StoreDTO? _editedStore;
 
   final List<String> _selectedItems = [];
 
@@ -261,7 +244,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                             operationHours: _editedStore!.operationHours,
                             qrCode: _editedStore!.qrCode,
                             image: _editedStore!.image,
-                            id: '');
+                            id: _editedStore!.id);
                       },
                     ),
                     TextFormField(
