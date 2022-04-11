@@ -67,7 +67,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     for (OpeningTimes e in widget.store.operationHours.days) {
       map = map + e.day + ": ";
       if(e.closed)
-        map = map + "closed";
+        map = map + "Closed";
       else {
         map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
       }
