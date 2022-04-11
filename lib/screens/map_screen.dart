@@ -73,7 +73,7 @@ class _MapScreenState extends State<MapScreen> {
                     Stack(
                       children: [
                         Container(
-                          height: deviceSize.height * 0.78,
+                          height: deviceSize.height * 0.74,
                           child: GoogleMap(
                             mapType: MapType.normal,
                             myLocationEnabled: true,
