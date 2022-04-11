@@ -692,8 +692,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           setState(() {
             _categorySelected = false;
           });
-        }
-        else{
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
