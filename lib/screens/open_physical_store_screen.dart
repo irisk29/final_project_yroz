@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 import 'package:final_project_yroz/widgets/opening_hours.dart';
 import 'package:tuple/tuple.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';

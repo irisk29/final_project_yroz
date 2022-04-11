@@ -57,7 +57,7 @@ void main() {
     setUp(() async {
       await _configureAmplify();
       UserAuthenticator().setCurrentUserId("test@gmail.com");
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, creditCards: "[\"024314cf-d119-5246-b9fb-697bf0a22f0e\"]");
+      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, creditCards: "[\"024314cf-d119-5246-b9fb-697bf0a22f0e\"]", isLoggedIn: true);
       await Amplify.DataStore.save(currUser);
       await InternalPaymentGateway().createUserAccount(currUser.id);
       Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();

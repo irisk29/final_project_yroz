@@ -67,7 +67,7 @@ void main() {
       TemporalDateTime time = TemporalDateTime.fromString(
           DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String());
       StoreOwnerModel storeOwnerModel = StoreOwnerModel(storeOwnerModelPhysicalStoreModelId: physicalStoreModel.id, physicalStoreModel: physicalStoreModel, lastPurchasesView: time);
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, userModelStoreOwnerModelId: storeOwnerModel.id, storeOwnerModel: storeOwnerModel);
+      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, userModelStoreOwnerModelId: storeOwnerModel.id, storeOwnerModel: storeOwnerModel, isLoggedIn: true);
       await Amplify.DataStore.save(physicalStoreModel);
       await Amplify.DataStore.save(storeOwnerModel);
       await Amplify.DataStore.save(currUser);

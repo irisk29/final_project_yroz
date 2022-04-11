@@ -59,7 +59,7 @@ void main() {
     setUp(() async {
       await _configureAmplify();
       UserAuthenticator().setCurrentUserId("test@gmail.com");
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false);
+      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
       await Amplify.DataStore.save(currUser);
       mockObserver = MockNavigatorObserver();
       return Future(() => print("starting test.."));
@@ -85,7 +85,7 @@ void main() {
       await tester.pump();
 
       fab = find.byKey(Key('phoneNumber'));
-      await tester.enterText(fab, "+972123456789");
+      await tester.enterText(fab, "123456789");
       await tester.pump();
 
       fab = find.byKey(Key('storeAddress'));
@@ -113,15 +113,15 @@ void main() {
       await tester.pumpAndSettle();
 
       fab = find.byKey(Key('bank_name'));
-      await tester.enterText(fab, "leumi");
+      await tester.enterText(fab, "yroz");
       await tester.pump();
 
       fab = find.byKey(Key('branch_number'));
-      await tester.enterText(fab, "123");
+      await tester.enterText(fab, "987");
       await tester.pump();
 
       fab = find.byKey(Key('account_number'));
-      await tester.enterText(fab, "123456789");
+      await tester.enterText(fab, "211896261");
       await tester.pump();
 
       FocusManager.instance.primaryFocus?.unfocus();

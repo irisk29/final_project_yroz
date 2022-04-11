@@ -17,6 +17,7 @@ type UserModel @model @auth(rules: [{allow: public}]) {
   shoppingBagModels: [ShoppingBagModel] @hasMany(indexName: "byUserModel", fields: ["id"])
   favoriteStores: AWSJSON
   hideStoreOwnerOptions: Boolean!
+  isLoggedIn: Boolean!
 }
 
 type PurchaseHistoryModel @model @auth(rules: [{allow: public}]) {
