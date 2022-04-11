@@ -8,6 +8,10 @@ class OpeningHours extends StatefulWidget {
   @override
   State<OpeningHours> createState() => _OpeningHoursState();
 
+  Openings openings;
+
+  OpeningHours(this.openings);
+
   Openings saveOpenHours(){
     return Openings(days: _OpeningHoursState.days);
   }
@@ -28,16 +32,14 @@ class _OpeningHoursState extends State<OpeningHours> {
   late List<bool> showHours;
 
   _OpeningHoursState(){
-    days = [
-      new OpeningTimes(day: "Sunday", closed: false, operationHours: sunday_times),
-      new OpeningTimes(day: "Monday", closed: false, operationHours: monday_times),
-      new OpeningTimes(day: "Tuesday", closed: false, operationHours: tuesday_times),
-      new OpeningTimes(day: "Wednesday", closed: false, operationHours: wednesday_times),
-      new OpeningTimes(day: "Thursday", closed: false, operationHours: thursday_times),
-      new OpeningTimes(day: "Friday", closed: false, operationHours: friday_times),
-      new OpeningTimes(day: "Saturday", closed: false, operationHours: saturday_times),
-    ];
+
+  }
+
+  @override
+  void initState() {
+    days = widget.openings.days;
     showHours = days.map((user) => false).toList();
+    super.initState();
   }
 
   void showHour(int index) {

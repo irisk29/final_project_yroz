@@ -42,7 +42,7 @@ class _StorePreviewState extends State<StorePreview> {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
     //String hour = DateFormat('Hm').format(DateTime.now());
     for (OpeningTimes e in widget.operationHours.days) {
-      if (e.day == day) {
+      if (e.day.toLowerCase() == day) {
         if(e.closed)
           return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());

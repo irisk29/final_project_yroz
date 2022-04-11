@@ -106,6 +106,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     _formChanged = false;
     _editedStore =
         Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
+    openingHours = OpeningHours(_editedStore!.operationHours);
     super.initState();
   }
 
@@ -143,7 +144,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     setState(() {});
   }
 
-  OpeningHours openingHours = OpeningHours();
+  late OpeningHours openingHours;
 
   Future<void> _saveForm() async {
     setState(() {

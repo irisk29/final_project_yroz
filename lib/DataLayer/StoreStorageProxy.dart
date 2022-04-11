@@ -162,7 +162,7 @@ class StoreStorageProxy {
   String openingsToJson(Openings openings){
     String json = "";
     for(OpeningTimes t in openings.days){
-      json = json + t.day + ":";
+      json = json + t.day + "-";
       if(t.closed)
         json = json + "closed";
       else{
@@ -170,8 +170,9 @@ class StoreStorageProxy {
         final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
         final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
         final format = DateFormat.jm();
-        json = json + format.format(dt) + format.format(dt2);
+        json = json + format.format(dt) + "," + format.format(dt2);
       }
+      json = json + "\n";
     }
     return json;
   }
@@ -424,6 +425,38 @@ class StoreStorageProxy {
 
   Openings decodeOpenings(String hours){
     List<OpeningTimes> days = [];
+    LineSplitter ls = new LineSplitter();
+    List<String> lines = ls.convert(hours);
+    for(String line in lines){
+      if(line.contains("closed")){
+        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: true, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))));
+      }
+      else{
+        int firsthour = 0;
+        int firstminute = 0;
+        int secondhour = 0;
+        int secondminute = 0;
+        String firsttime = line.substring(line.indexOf("-"),line.indexOf(","));
+        if(firsttime.contains("AM")){
+          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":")));
+          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":"),firsttime.indexOf(" ")));
+        }
+        else{
+          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":"))) + 12;
+          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":"),firsttime.indexOf(" ")));
+        }
+        String secondtime = line.substring(line.indexOf(","));
+        if(firsttime.contains("AM")){
+          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":")));
+          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":"),secondtime.indexOf(" ")));
+        }
+        else{
+          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":"))) + 12;
+          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":"),secondtime.indexOf(" ")));
+        }
+        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: false, operationHours: Tuple2(TimeOfDay(hour: firsthour, minute: firstminute), TimeOfDay(hour: secondhour, minute: secondminute))));
+      }
+    }
     return Openings(days: days);
   }
 

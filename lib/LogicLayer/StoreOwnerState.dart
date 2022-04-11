@@ -16,8 +16,10 @@ import 'package:final_project_yroz/models/ModelProvider.dart';
 import 'package:final_project_yroz/Result/Failure.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
 
 import '../DTOs/BankAccountDTO.dart';
+import '../LogicModels/OpeningTimes.dart';
 
 class StoreOwnerState {
   String _storeOwnerID;
@@ -47,10 +49,46 @@ class StoreOwnerState {
   String get getStoreOwnerID => _storeOwnerID;
   void setStoreOwnerID(id) => _storeOwnerID = id;
 
+  Openings decodeOpenings(String hours){
+    List<OpeningTimes> days = [];
+    LineSplitter ls = new LineSplitter();
+    List<String> lines = ls.convert(hours);
+    for(String line in lines){
+      if(line.contains("closed")){
+        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: true, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))));
+      }
+      else{
+        int firsthour = 0;
+        int firstminute = 0;
+        int secondhour = 0;
+        int secondminute = 0;
+        String firsttime = line.substring(line.indexOf("-"),line.indexOf(","));
+        if(firsttime.contains("AM")){
+          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":")));
+          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":"),firsttime.indexOf(" ")));
+        }
+        else{
+          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":"))) + 12;
+          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":"),firsttime.indexOf(" ")));
+        }
+        String secondtime = line.substring(line.indexOf(","));
+        if(firsttime.contains("AM")){
+          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":")));
+          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":"),secondtime.indexOf(" ")));
+        }
+        else{
+          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":"))) + 12;
+          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":"),secondtime.indexOf(" ")));
+        }
+        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))));
+      }
+    }
+    return Openings(days: days);
+  }
+
   Future<void> setOnlineStoreFromModel(OnlineStoreModel onlineStoreModel) async {
     var categories = jsonDecode(onlineStoreModel.categories);
-    Map<String, dynamic> operationHours = jsonDecode(onlineStoreModel.operationHours);
-    var op = parseOperationHours(operationHours);
+    var op = decodeOpenings(onlineStoreModel.operationHours);
     List<ProductDTO> products = [];
     if (onlineStoreModel.storeProductModels != null) {
       products = onlineStoreModel.storeProductModels!
@@ -76,8 +114,7 @@ class StoreOwnerState {
 
   Future<void> setPhysicalStore(PhysicalStoreModel physicalStoreModel) async {
     var categories = jsonDecode(physicalStoreModel.categories);
-    Map<String, dynamic> operationHours = jsonDecode(physicalStoreModel.operationHours);
-    var op = parseOperationHours(operationHours);
+    var op = decodeOpenings(physicalStoreModel.operationHours);
     physicalStore = new StoreDTO(
         id: physicalStoreModel.id,
         name: physicalStoreModel.name,
