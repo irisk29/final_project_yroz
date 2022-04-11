@@ -580,8 +580,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           setState(() {
             _categorySelected = false;
           });
-        }
-        else{
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(

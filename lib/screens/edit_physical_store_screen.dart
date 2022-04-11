@@ -496,8 +496,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           setState(() {
             _categorySelected = false;
           });
-        }
-        else{
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(

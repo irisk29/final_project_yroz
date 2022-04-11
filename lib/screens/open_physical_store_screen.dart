@@ -570,8 +570,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
           setState(() {
             _categorySelected = false;
           });
-        }
-        else{
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
