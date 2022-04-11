@@ -61,13 +61,13 @@ class _ProductItemState extends State<ProductItem> {
                           : Container(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text('\€${widget.product.price}',
                               style: TextStyle(fontSize: 16)),
                           IconButton(
                             icon: Icon(Icons.add_shopping_cart),
-                            alignment: Alignment.topCenter,
+                            alignment: Alignment.center,
                             padding: EdgeInsets.all(0),
                             onPressed: () async {
                               double quantity = 0;

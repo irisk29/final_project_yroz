@@ -49,220 +49,206 @@ class _AccountScreenState extends State<AccountScreen> {
     final user = Provider.of<User>(context, listen: false);
     final deviceSize = MediaQuery.of(context).size;
 
-    return FutureBuilder(
-      future: user.getEWalletBalance(),
-      builder: (BuildContext context, AsyncSnapshot snap) => snap
-                  .connectionState !=
-              ConnectionState.done
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: EdgeInsets.only(
-                  top: deviceSize.height * 0.02,
-                  left: deviceSize.width * 0.03,
-                  right: deviceSize.width * 0.03),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    height: deviceSize.height * 0.125,
-                    child: Card(
-                      elevation: 8.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: deviceSize.height * 0.015,
-                            bottom: deviceSize.height * 0.015,
-                            left: deviceSize.width * 0.02,
-                            right: deviceSize.width * 0.02),
-                        child: Center(
-                          child: ListTile(
-                            onTap: null,
-                            title: Text(
-                              user.name!,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                              ),
-                            ),
-                            leading: CircleAvatar(
-                              radius: deviceSize.width * 0.075,
-                              backgroundImage:
-                                  Image.network(user.imageUrl!).image,
-                            ),
-                            trailing: !_physicalStoreOwner && !_onlineStoreOwner
-                                ? Column(
-                                    children: [
-                                      Consumer<User>(
-                                        builder: (context, user, child) =>
-                                            Container(
-                                          width: deviceSize.width * 0.3,
-                                          height: deviceSize.height * 0.05,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                right:
-                                                    deviceSize.width * 0.035),
-                                            child: SwitchListTile(
-                                                activeColor: Colors.purple,
-                                                value:
-                                                    !user.hideStoreOwnerOptions,
-                                                controlAffinity:
-                                                    ListTileControlAffinity
-                                                        .trailing,
-                                                onChanged: (_) => user
-                                                    .toggleStoreOwnerViewOption()),
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        "Advanced Options",
-                                        style: TextStyle(fontSize: 10),
-                                      ),
-                                    ],
-                                  )
-                                : null,
-                          ),
-                        ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(
+          top: deviceSize.height * 0.02,
+          left: deviceSize.width * 0.03,
+          right: deviceSize.width * 0.03),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: deviceSize.height * 0.125,
+            child: Card(
+              elevation: 8.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: deviceSize.height * 0.015,
+                    bottom: deviceSize.height * 0.015,
+                    left: deviceSize.width * 0.02,
+                    right: deviceSize.width * 0.02),
+                child: Center(
+                  child: ListTile(
+                    onTap: null,
+                    title: Text(
+                      user.name!,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(deviceSize.width * 0.03),
-                    child: Card(
-                      elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: Container(
-                        child: Column(
-                          children: <Widget>[
-                            ListTile(
-                              leading: Icon(
-                                Icons.account_balance_wallet_outlined,
-                                color: Colors.purple,
-                              ),
-                              title: Text(
-                                "Total Wallet Balance",
-                                style: TextStyle(fontSize: 17),
-                              ),
-                              trailing: Text(
-                                "€" + snap.data,
-                                style: TextStyle(
-                                  fontSize: 17,
+                    leading: CircleAvatar(
+                      radius: deviceSize.width * 0.075,
+                      backgroundImage: Image.network(user.imageUrl!).image,
+                    ),
+                    trailing: !_physicalStoreOwner && !_onlineStoreOwner
+                        ? Column(
+                            children: [
+                              Consumer<User>(
+                                builder: (context, user, child) => Container(
+                                  width: deviceSize.width * 0.3,
+                                  height: deviceSize.height * 0.05,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        right: deviceSize.width * 0.035),
+                                    child: SwitchListTile(
+                                        activeColor: Colors.purple,
+                                        value: !user.hideStoreOwnerOptions,
+                                        controlAffinity:
+                                            ListTileControlAffinity.trailing,
+                                        onChanged: (_) =>
+                                            user.toggleStoreOwnerViewOption()),
+                                  ),
                                 ),
                               ),
-                            ),
-                            _buildDivider(deviceSize),
-                            ListTile(
-                              leading: Icon(
-                                Icons.credit_card,
-                                color: Colors.purple,
+                              Text(
+                                "Advanced Options",
+                                style: TextStyle(fontSize: 10),
                               ),
-                              title: Text("My Credit Cards"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: () {
-                                Navigator.of(context)
-                                    .pushNamed(CreditCardsScreen.routeName);
-                                //open change language
-                              },
-                            ),
-                            _buildDivider(deviceSize),
-                            ListTile(
-                              leading: Icon(
-                                Icons.history,
-                                color: Colors.purple,
-                              ),
-                              title: Text("My Purchases"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: () => Navigator.of(context)
-                                  .pushNamed(UserPurchasesScreen.routeName),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                            ],
+                          )
+                        : null,
                   ),
-                  Consumer<User>(
-                    builder: (context, user, child) => _physicalStoreOwner ||
-                            _onlineStoreOwner ||
-                            user.hideStoreOwnerOptions
-                        ? Container()
-                        : Padding(
-                            padding: EdgeInsets.all(deviceSize.width * 0.03),
-                            child: Card(
-                              elevation: 4.0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: Column(
-                                children: <Widget>[
-                                  ListTile(
-                                    leading: Icon(
-                                      Icons.storefront,
-                                      color: Colors.purple,
-                                    ),
-                                    title: Text("Open Physical Store"),
-                                    trailing: Icon(Icons.keyboard_arrow_right),
-                                    onTap: () =>
-                                        Navigator.of(context).pushNamed(
-                                      OpenPhysicalStorePipeline.routeName,
-                                    ),
-                                  ),
-                                  _buildDivider(deviceSize),
-                                  ListTile(
-                                    leading: Icon(
-                                      Icons.store_outlined,
-                                      color: Colors.purple,
-                                    ),
-                                    title: Text("Open Online Store"),
-                                    trailing: Icon(Icons.keyboard_arrow_right),
-                                    onTap: () =>
-                                        Navigator.of(context).pushNamed(
-                                      OpenOnlineStorePipeline.routeName,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(deviceSize.width * 0.03),
-                    child: Card(
-                      elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.qr_code_scanner,
-                          color: Colors.purple,
-                        ),
-                        title: Text("Scan A Barcode"),
-                        trailing: Icon(Icons.keyboard_arrow_right),
-                        onTap: () {
-                          Navigator.pushNamed(context, QRViewExample.routeName);
-                        },
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(deviceSize.width * 0.03),
-                    child: Card(
-                      elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.exit_to_app,
-                          color: Colors.purple,
-                        ),
-                        title: Text("Logout"),
-                        onTap: () => context.read<User>().signOut(context),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(deviceSize.width * 0.03),
+            child: Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(
+                        Icons.account_balance_wallet_outlined,
+                        color: Colors.purple,
+                      ),
+                      title: Text(
+                        "Total Wallet Balance",
+                        style: TextStyle(fontSize: 17),
+                      ),
+                      trailing: Text(
+                        "€" + user.eWalletBalance,
+                        style: TextStyle(
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                    _buildDivider(deviceSize),
+                    ListTile(
+                      leading: Icon(
+                        Icons.credit_card,
+                        color: Colors.purple,
+                      ),
+                      title: Text("My Credit Cards"),
+                      trailing: Icon(Icons.keyboard_arrow_right),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(CreditCardsScreen.routeName);
+                        //open change language
+                      },
+                    ),
+                    _buildDivider(deviceSize),
+                    ListTile(
+                      leading: Icon(
+                        Icons.history,
+                        color: Colors.purple,
+                      ),
+                      title: Text("My Purchases"),
+                      trailing: Icon(Icons.keyboard_arrow_right),
+                      onTap: () => Navigator.of(context)
+                          .pushNamed(UserPurchasesScreen.routeName),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Consumer<User>(
+            builder: (context, user, child) => _physicalStoreOwner ||
+                    _onlineStoreOwner ||
+                    user.hideStoreOwnerOptions
+                ? Container()
+                : Padding(
+                    padding: EdgeInsets.all(deviceSize.width * 0.03),
+                    child: Card(
+                      elevation: 4.0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: Icon(
+                              Icons.storefront,
+                              color: Colors.purple,
+                            ),
+                            title: Text("Open Physical Store"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () => Navigator.of(context).pushNamed(
+                              OpenPhysicalStorePipeline.routeName,
+                            ),
+                          ),
+                          _buildDivider(deviceSize),
+                          ListTile(
+                            leading: Icon(
+                              Icons.store_outlined,
+                              color: Colors.purple,
+                            ),
+                            title: Text("Open Online Store"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () => Navigator.of(context).pushNamed(
+                              OpenOnlineStorePipeline.routeName,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(deviceSize.width * 0.03),
+            child: Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: ListTile(
+                leading: Icon(
+                  Icons.qr_code_scanner,
+                  color: Colors.purple,
+                ),
+                title: Text("Scan A Barcode"),
+                trailing: Icon(Icons.keyboard_arrow_right),
+                onTap: () {
+                  Navigator.pushNamed(context, QRViewExample.routeName);
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(deviceSize.width * 0.03),
+            child: Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: ListTile(
+                leading: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.purple,
+                ),
+                title: Text("Logout"),
+                onTap: () => context.read<User>().signOut(context),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

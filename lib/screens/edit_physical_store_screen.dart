@@ -83,6 +83,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   var _isInit = true;
   var _isLoading = false;
+  var _categorySelected = true;
   var _formChanged;
 
   @override
@@ -172,6 +173,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     setState(() {
       if (isSelected) {
         _selectedItems.add(itemValue);
+        _categorySelected = true;
       } else {
         _selectedItems.remove(itemValue);
       }
@@ -305,22 +307,27 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                 ),
               ),
             ),
-            Wrap(
-              children: _selectedItems
-                  .map((e) => Chip(
-                        deleteIcon: Icon(
-                          Icons.close,
-                        ),
-                        onDeleted: () {
-                          setState(() {
-                            _selectedItems.remove(e);
-                            _formChanged = true;
-                          });
-                        },
-                        label: Text(e),
-                      ))
-                  .toList(),
-            ),
+            _categorySelected
+                ? Wrap(
+                    children: _selectedItems
+                        .map((e) => Chip(
+                              deleteIcon: Icon(
+                                Icons.close,
+                              ),
+                              onDeleted: () {
+                                setState(() {
+                                  _selectedItems.remove(e);
+                                  _formChanged = true;
+                                });
+                              },
+                              label: Text(e),
+                            ))
+                        .toList(),
+                  )
+                : Text(
+                    "Please select at least one category",
+                    style: TextStyle(color: Theme.of(context).errorColor),
+                  ),
           ],
         );
       case 2:
@@ -481,7 +488,14 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         break;
       case 1:
         if (_selectedItems.isNotEmpty) {
-          setState(() => _currentStep += 1);
+          setState(() {
+            _categorySelected = true;
+            _currentStep += 1;
+          });
+        } else {
+          setState(() {
+            _categorySelected = false;
+          });
         }
         else{
           showDialog(
@@ -511,6 +525,11 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   }
 
   cancel() {
-    _currentStep > 0 ? setState(() => _currentStep -= 1) : null;
+    _currentStep > 0
+        ? setState(() {
+            _categorySelected = true;
+            _currentStep -= 1;
+          })
+        : null;
   }
 }
