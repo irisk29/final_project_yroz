@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
+import 'package:final_project_yroz/widgets/opening_hours.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +12,7 @@ class StorePreview extends StatefulWidget {
   final String address;
   final XFile? image;
   final String phoneNumber;
-  final Map<String, List<TimeOfDay>> operationHours;
+  final Openings operationHours;
 
   StorePreview(this.isOnlineStore, this.title, this.address, this.image,
       this.phoneNumber, this.operationHours);
@@ -39,11 +41,13 @@ class _StorePreviewState extends State<StorePreview> {
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
     //String hour = DateFormat('Hm').format(DateTime.now());
-    for (MapEntry<String, List<TimeOfDay>> e in widget.operationHours.entries) {
-      if (e.key == day) {
+    for (OpeningTimes e in widget.operationHours.days) {
+      if (e.day.toLowerCase() == day) {
+        if(e.closed)
+          return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if (opBigger(time, e.value[0]) && opSmaller(time, e.value[1])) {
-          if (lessthanfifteen(e.value[1], time)) {
+        if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
+          if (lessthanfifteen(e.operationHours.item2, time)) {
             return 1;
           }
           return 0;
@@ -56,11 +60,12 @@ class _StorePreviewState extends State<StorePreview> {
 
   String mapAsString() {
     String map = "";
-    for (MapEntry<String, List<TimeOfDay>> e in widget.operationHours.entries) {
-      map = map + e.key + ": ";
-      for (int i = 0; i < e.value.length; i++) {
-        map = map + e.value[i].format(context) + " ";
-        if (i == 0) map = map + "- ";
+    for (OpeningTimes e in widget.operationHours.days) {
+      map = map + e.day + ": ";
+      if(e.closed)
+        map = map + "closed";
+      else {
+        map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
       }
       map = map + '\n';
     }

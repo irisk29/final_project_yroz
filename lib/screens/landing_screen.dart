@@ -64,9 +64,9 @@ class _LandingScreenState extends State<LandingScreen> {
     return isUserAlreadySignedIn == null && !appUser
         ? Center(child: CircularProgressIndicator())
         : appUser
-            ? TabsScreen()
-            : isUserAlreadySignedIn != null && !isUserAlreadySignedIn!
-                ? AuthScreen()
-                : TabsScreen();
+        ? TabsScreen()
+        : isUserAlreadySignedIn != null && !isUserAlreadySignedIn!
+        ? AuthScreen()
+        : TabsScreen();
   }
 }

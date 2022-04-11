@@ -18,7 +18,9 @@ import 'package:tuple/tuple.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
+import '../LogicModels/OpeningTimes.dart';
 import '../dummy_data.dart';
+import '../widgets/opening_hours.dart';
 import 'add_product_screen.dart';
 import 'edit_product_screen.dart';
 import 'tabs_screen.dart';
@@ -41,6 +43,16 @@ class OpenOnlineStorePipeline extends StatefulWidget {
   static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 0);
   static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
+
+  static Openings openings = Openings(days: [
+    new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+  ]);
 
   @override
   _OpenOnlineStorePipelineState createState() {
@@ -86,36 +98,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       phoneNumber: "",
       address: "",
       categories: [],
-      operationHours: {
-        'sunday': [
-          OpenOnlineStorePipeline._sunday_open,
-          OpenOnlineStorePipeline._sunday_close
-        ],
-        'monday': [
-          OpenOnlineStorePipeline._monday_open,
-          OpenOnlineStorePipeline._monday_close
-        ],
-        'tuesday': [
-          OpenOnlineStorePipeline._tuesday_open,
-          OpenOnlineStorePipeline._tuesday_close
-        ],
-        'wednesday': [
-          OpenOnlineStorePipeline._wednesday_open,
-          OpenOnlineStorePipeline._wednesday_close
-        ],
-        'thursday': [
-          OpenOnlineStorePipeline._thursday_open,
-          OpenOnlineStorePipeline._thursday_close
-        ],
-        'friday': [
-          OpenOnlineStorePipeline._friday_open,
-          OpenOnlineStorePipeline._friday_close
-        ],
-        'saturday': [
-          OpenOnlineStorePipeline._saturday_open,
-          OpenOnlineStorePipeline._saturday_close
-        ]
-      },
+      operationHours: OpenOnlineStorePipeline.openings,
       image: null,
       products: [],
       imageFromPhone: null);
@@ -171,13 +154,15 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     setState(() {});
   }
 
+  OpeningHours openingHours = OpeningHours(OpenOnlineStorePipeline.openings);
+
   Future<void> _saveForm() async {
     setState(() {
       _isLoading = true;
     });
     _editedStore!.categories = _selectedItems;
     _editedStore!.products = _products;
-
+    _editedStore!.operationHours = openingHours.saveOpenHours();
     final res = await Provider.of<User>(context, listen: false)
         .openOnlineStore(_editedStore!, bankAccountForm.buildBankAccountDTO()!);
     if (res.getTag())
@@ -216,25 +201,6 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
       }
       _formChanged = true;
     });
-  }
-
-  void _selectTime(String time) async {
-    final TimeOfDay? newTime = await showTimePicker(
-      context: context,
-      initialTime: _editedStore!
-              .operationHours[time.substring(0, time.indexOf('['))]![
-          int.parse(time.substring(time.indexOf('[') + 1, time.indexOf(']')))],
-      initialEntryMode: TimePickerEntryMode.input,
-    );
-    if (newTime != null) {
-      setState(() {
-        _editedStore!.operationHours[time.substring(0, time.indexOf('['))]![
-                int.parse(
-                    time.substring(time.indexOf('[') + 1, time.indexOf(']')))] =
-            newTime;
-        _formChanged = true;
-      });
-    }
   }
 
   static const productsLimitation = 10;
@@ -371,6 +337,15 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           context: context,
                           builder: (context) => destinationBuilder),
                       onChanged: (_) => _formChanged = true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide a value.';
+                        }
+                        if (value.length < 2) {
+                          return 'Should be at least 2 characters long.';
+                        }
+                        return null;
+                      },
                       onSaved: (value) {
                         _editedStore = OnlineStoreDTO(
                             name: _editedStore!.name,
@@ -439,207 +414,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           ],
         );
       case 2:
-        return Column(
-          children: [
-            const Text(
-              'Select Store Opening Hours',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Divider(height: 0),
-            Padding(
-              padding: EdgeInsets.all(deviceSize.width * 0.03),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Sunday'),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('sunday[0]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['sunday']![0]
-                                .format(context)),
-                          ),
-                          Text('-'),
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('sunday[1]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['sunday']![1]
-                                .format(context)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Monday'),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () => _selectTime('monday[0]'),
-                            child: Text(_editedStore!
-                                .operationHours['monday']![0]
-                                .format(context)),
-                          ),
-                          Text('-'),
-                          ElevatedButton(
-                            onPressed: () => _selectTime('monday[1]'),
-                            child: Text(_editedStore!
-                                .operationHours['monday']![1]
-                                .format(context)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Tuesday'),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('tuesday[0]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['tuesday']![0]
-                                .format(context)),
-                          ),
-                          Text('-'),
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('tuesday[1]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['tuesday']![1]
-                                .format(context)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Wednesday'),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('wednesday[0]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['wednesday']![0]
-                                .format(context)),
-                          ),
-                          Text('-'),
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('wednesday[1]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['wednesday']![1]
-                                .format(context)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Thursday'),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('thursday[1]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['thursday']![0]
-                                .format(context)),
-                          ),
-                          Text('-'),
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('thursday[1]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['thursday']![1]
-                                .format(context)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Friday'),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('friday[0]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['friday']![0]
-                                .format(context)),
-                          ),
-                          Text('-'),
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('friday[1]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['friday']![1]
-                                .format(context)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Saturday'),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('saturday[0]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['saturday']![0]
-                                .format(context)),
-                          ),
-                          Text('-'),
-                          ElevatedButton(
-                            onPressed: () {
-                              _selectTime('saturday[1]');
-                            },
-                            child: Text(_editedStore!
-                                .operationHours['saturday']![1]
-                                .format(context)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
+        return openingHours;
       case 3:
         return Column(
           children: [
@@ -917,6 +692,23 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           setState(() {
             _categorySelected = false;
           });
+        }
+        else{
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text("Error"),
+              content: Text("Please choose a category.\nThere is an 'other' category if needed."),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
         }
         break;
       case 2:

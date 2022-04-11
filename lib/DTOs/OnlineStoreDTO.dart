@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
+import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:flutter/material.dart';
 
 import 'StoreDTO.dart';
@@ -14,7 +15,7 @@ class OnlineStoreDTO extends StoreDTO {
       required String address,
       required String phoneNumber,
       required List<String> categories,
-      required Map<String, List<TimeOfDay>> operationHours,
+      required Openings operationHours,
       String? image,
       required List<ProductDTO> products,
       String? qrCode,

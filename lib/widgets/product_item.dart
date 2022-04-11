@@ -90,9 +90,8 @@ class _ProductItemState extends State<ProductItem> {
                                             widget.product,
                                             widget.storeID,
                                             quantity);
-                                        Scaffold.of(context)
-                                            .hideCurrentSnackBar();
-                                        Scaffold.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                        ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               'Added item to cart!',
