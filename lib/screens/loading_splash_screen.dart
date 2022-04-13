@@ -33,9 +33,9 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
         setState(() {});
       });
     TickerFuture ticker = controller.forward();
-    ticker.timeout(Duration(seconds: 5), onTimeout: () {
+    ticker.timeout(Duration(seconds: 20), onTimeout: () {
       FLog.error(text: "Timeout occurd in ticker");
-      Navigator.pushReplacementNamed(context, LandingScreen.routeName);
+      Navigator.of(context).pushReplacementNamed(LandingScreen.routeName);
     });
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
@@ -81,6 +81,7 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
   Future<void> _configureAmplify() async {
     if (!mounted) return;
 
+    if (Amplify.isConfigured) return;
     Amplify.addPlugin(AmplifyAuthCognito());
     Amplify.addPlugin(AmplifyStorageS3());
     Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
