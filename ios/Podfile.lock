@@ -79,6 +79,8 @@ PODS:
   - AWSS3 (2.27.6):
     - AWSCore (= 2.27.6)
   - Flutter (1.0.0)
+  - flutter_mailer (0.0.1):
+    - Flutter
   - flutter_native_splash (0.0.1):
     - Flutter
   - FMDB (2.7.5):
@@ -132,6 +134,7 @@ DEPENDENCIES:
   - amplify_flutter (from `.symlinks/plugins/amplify_flutter/ios`)
   - amplify_storage_s3_ios (from `.symlinks/plugins/amplify_storage_s3_ios/ios`)
   - Flutter (from `Flutter`)
+  - flutter_mailer (from `.symlinks/plugins/flutter_mailer/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
@@ -183,6 +186,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/amplify_storage_s3_ios/ios"
   Flutter:
     :path: Flutter
+  flutter_mailer:
+    :path: ".symlinks/plugins/flutter_mailer/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   geolocator_apple:
@@ -227,6 +232,7 @@ SPEC CHECKSUMS:
   AWSPluginsCore: 2f150ba04e92117a8ea809eaf14fa5b9a2b02e09
   AWSS3: 2b8d31de4ae07b8dc00ab26e805f389b328b20a3
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_mailer: 2ef5a67087bc8c6c4cefd04a178bf1ae2c94cd83
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
