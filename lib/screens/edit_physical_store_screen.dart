@@ -308,7 +308,10 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               ),
             ),
             _categorySelected
-                ? Wrap(
+                ? SizedBox(
+                  height: deviceSize.height * 0.1,
+                  child: ListView(
+                  scrollDirection: Axis.horizontal,
                     children: _selectedItems
                         .map((e) => Chip(
                               deleteIcon: Icon(
@@ -323,7 +326,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                               label: Text(e),
                             ))
                         .toList(),
-                  )
+                  ),
+            )
                 : Text(
                     "Please select at least one category",
                     style: TextStyle(color: Theme.of(context).errorColor),

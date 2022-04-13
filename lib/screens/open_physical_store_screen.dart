@@ -335,7 +335,10 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               ),
             ),
             _categorySelected
-                ? Wrap(
+                ? SizedBox(
+                  height: deviceSize.height * 0.1,
+                  child: ListView(
+                  scrollDirection: Axis.horizontal,
                     children: _selectedItems
                         .map((e) => Chip(
                               deleteIcon: Icon(
@@ -350,7 +353,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                               label: Text(e),
                             ))
                         .toList(),
-                  )
+                  ),
+            )
                 : Text(
                     "Please select at least one category",
                     style: TextStyle(color: Theme.of(context).errorColor),

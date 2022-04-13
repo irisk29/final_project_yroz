@@ -416,22 +416,26 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               ),
             ),
             _categorySelected
-                ? Wrap(
-                    children: _selectedItems
-                        .map((e) => Chip(
-                              deleteIcon: Icon(
-                                Icons.close,
-                              ),
-                              onDeleted: () {
-                                setState(() {
-                                  _selectedItems.remove(e);
-                                  _formChanged = true;
-                                });
-                              },
-                              label: Text(e),
-                            ))
-                        .toList(),
-                  )
+                ? SizedBox(
+                  height: deviceSize.height * 0.1,
+                  child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: _selectedItems
+                          .map((e) => Chip(
+                                deleteIcon: Icon(
+                                  Icons.close,
+                                ),
+                                onDeleted: () {
+                                  setState(() {
+                                    _selectedItems.remove(e);
+                                    _formChanged = true;
+                                  });
+                                },
+                                label: Text(e),
+                              ))
+                          .toList(),
+                    ),
+                )
                 : Text(
                     "Please select at least one category",
                     style: TextStyle(color: Theme.of(context).errorColor),

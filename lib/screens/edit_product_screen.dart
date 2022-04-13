@@ -171,7 +171,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
-                        if(int.tryParse(value)!=null){
+                        if(double.tryParse(value)!=null){
                           return 'Product name can not be a number';
                         }
                         return null;

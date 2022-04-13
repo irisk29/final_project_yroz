@@ -87,6 +87,11 @@ class _CashbackSelectionState extends State<CashbackSelection> {
                                     widget.cashbackAvailable) {
                               return 'You do not have enough cashback';
                             }
+                            if(value != null &&
+                                value.isNotEmpty &&
+                                double.tryParse(value)==null){
+                              return 'Amount has be a number';
+                            }
                             return null;
                           },
                           onChanged: (value) {
