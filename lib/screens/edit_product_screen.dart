@@ -4,6 +4,7 @@ import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tuple/tuple.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -78,7 +79,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     final isValid = _form.currentState!.validate();
     if (isValid) {
       _form.currentState!.save();
-      Navigator.of(context).pop(_editedProduct);
+      Navigator.of(context).pop(Tuple2(_editedProduct,false));
     }
 
     setState(() {
@@ -138,7 +139,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               Icons.delete,
             ),
             onPressed: () {
-              Navigator.of(context).pop(null);
+              Navigator.of(context).pop(Tuple2(_editedProduct,false));
             },
           ),
           IconButton(

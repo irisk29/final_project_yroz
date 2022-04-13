@@ -434,20 +434,31 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             Icons.edit,
                           ),
                           onDeleted: () async {
-                            final ProductDTO? result = await Navigator.push(
+                            final Tuple2<ProductDTO, bool>? result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EditProductScreen(e)),
                             );
                             if (result != null) {
-                              setState(() {
-                                _products.removeWhere((element) =>
-                                    element.name == e.name &&
-                                    element.price == e.price &&
-                                    element.description == e.description);
-                                _products.add(result);
-                                _formChanged = true;
-                              });
+                              if(result.item2){
+                                setState(() {
+                                  _products.removeWhere((element) =>
+                                  element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
+                                  _formChanged = true;
+                                });
+                              }
+                              else {
+                                setState(() {
+                                  _products.removeWhere((element) =>
+                                  element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
+                                  _products.add(result.item1);
+                                  _formChanged = true;
+                                });
+                              }
                             }
                           },
                           label: ConstrainedBox(

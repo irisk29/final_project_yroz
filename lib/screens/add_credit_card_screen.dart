@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/credit_card_brand.dart';
 import 'package:final_project_yroz/widgets/credit_card_form.dart' as form;
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:flutter_credit_card/credit_card_model.dart';
+import 'package:final_project_yroz/widgets/credit_card_model.dart' as model;
 import 'package:flutter_credit_card/credit_card_widget.dart';
 import 'package:flutter_credit_card/glassmorphism_config.dart';
 import 'package:provider/provider.dart';
@@ -277,7 +277,7 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
     );
   }
 
-  void onCreditCardModelChange(CreditCardModel? creditCardModel) {
+  void onCreditCardModelChange(model.CreditCardModel? creditCardModel) {
     setState(() {
       cardNumber = creditCardModel!.cardNumber;
       expiryDate = creditCardModel.expiryDate;
