@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:f_logs/f_logs.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
-import 'package:final_project_yroz/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import '../models/UserModel.dart';
@@ -43,7 +41,9 @@ class _LandingScreenState extends State<LandingScreen> {
     try {
       res = await Amplify.Auth.getCurrentUser();
       var res2 = await Amplify.Auth.fetchUserAttributes();
-      email = res2.firstWhere((element) => element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) == 0);
+      email = res2.firstWhere((element) =>
+          element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) ==
+          0);
     } catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return false;
@@ -51,22 +51,20 @@ class _LandingScreenState extends State<LandingScreen> {
     UserModel? model = await UsersStorageProxy().fetchFullUser(email.value);
     print("isSignIn: ${model != null && model.isLoggedIn}");
     if (model != null && model.isLoggedIn) return false;
-    if (model != null) Provider.of<User>(context, listen: false).userFromModel(model);
+    if (model != null)
+      Provider.of<User>(context, listen: false).userFromModel(model);
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    //sleep(Duration(seconds: 2));
-    //print("after sleep");
     final appUser = context.watch<User>().isSignedIn;
-    print(appUser);
     return isUserAlreadySignedIn == null && !appUser
         ? Center(child: CircularProgressIndicator())
         : appUser
-        ? TabsScreen()
-        : isUserAlreadySignedIn != null && !isUserAlreadySignedIn!
-        ? AuthScreen()
-        : TabsScreen();
+            ? TabsScreen()
+            : isUserAlreadySignedIn != null && !isUserAlreadySignedIn!
+                ? AuthScreen()
+                : TabsScreen();
   }
 }

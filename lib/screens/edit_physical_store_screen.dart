@@ -172,7 +172,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   void _itemChange(String itemValue, bool isSelected) {
     setState(() {
       if (isSelected) {
-        _selectedItems.add(itemValue);
+        _selectedItems.insert(0, itemValue);
         _categorySelected = true;
       } else {
         _selectedItems.remove(itemValue);
@@ -191,94 +191,97 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Divider(height: 0),
-            Padding(
-              padding: EdgeInsets.all(deviceSize.width * 0.03),
-              child: Form(
-                key: _detailsform,
-                child: Column(
-                  children: <Widget>[
-                    ImageInput(
-                        _selectImage, _unselectImage, _pickedImage, true),
-                    TextFormField(
-                      key: const Key('storeName'),
-                      initialValue: _editedStore!.name,
-                      decoration: InputDecoration(labelText: 'Store Name'),
-                      textInputAction: TextInputAction.next,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please provide a value.';
-                        }
-                        if (value.length < 2) {
-                          return 'Should be at least 2 characters long.';
-                        }
-                        return null;
-                      },
-                      onChanged: (_) => _formChanged = true,
-                      onSaved: (value) {
-                        _editedStore = StoreDTO(
-                            name: value!,
-                            phoneNumber: _editedStore!.phoneNumber,
-                            address: _editedStore!.address,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            qrCode: _editedStore!.qrCode,
-                            image: _editedStore!.image,
-                            id: _editedStore!.id);
-                      },
-                    ),
-                    IntlPhoneField(
-                      key: const Key('phoneNumber'),
-                      decoration: InputDecoration(
-                        labelText: 'Phone Number',
+            Container(
+              height: deviceSize.height * 0.625,
+              child: Padding(
+                padding: EdgeInsets.all(deviceSize.width * 0.03),
+                child: Form(
+                  key: _detailsform,
+                  child: Column(
+                    children: <Widget>[
+                      ImageInput(
+                          _selectImage, _unselectImage, _pickedImage, true),
+                      TextFormField(
+                        key: const Key('storeName'),
+                        initialValue: _editedStore!.name,
+                        decoration: InputDecoration(labelText: 'Store Name'),
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide a value.';
+                          }
+                          if (value.length < 2) {
+                            return 'Should be at least 2 characters long.';
+                          }
+                          return null;
+                        },
+                        onChanged: (_) => _formChanged = true,
+                        onSaved: (value) {
+                          _editedStore = StoreDTO(
+                              name: value!,
+                              phoneNumber: _editedStore!.phoneNumber,
+                              address: _editedStore!.address,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              qrCode: _editedStore!.qrCode,
+                              image: _editedStore!.image,
+                              id: _editedStore!.id);
+                        },
                       ),
-                      initialValue: _editedStore!.phoneNumber.substring(4),
-                      initialCountryCode: 'IL',
-                      onChanged: (phone) {
-                        _formChanged = true;
-                        print(phone.completeNumber);
-                      },
-                      onSaved: (value) {
-                        _editedStore = StoreDTO(
-                            name: _editedStore!.name,
-                            phoneNumber: value!.completeNumber,
-                            address: _editedStore!.address,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            qrCode: _editedStore!.qrCode,
-                            image: _editedStore!.image,
-                            id: _editedStore!.id);
-                      },
-                    ),
-                    TextFormField(
-                      key: const Key('storeAddress'),
-                      initialValue: _editedStore!.address,
-                      decoration: InputDecoration(labelText: 'Address'),
-                      onTap: () => showDialog(
-                          context: context,
-                          builder: (context) => destinationBuilder),
-                      onChanged: (_) => _formChanged = true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please provide a value.';
-                        }
-                        if (value.length < 2) {
-                          return 'Should be at least 2 characters long.';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _editedStore = StoreDTO(
-                            name: _editedStore!.name,
-                            phoneNumber: _editedStore!.phoneNumber,
-                            address: value!,
-                            categories: _editedStore!.categories,
-                            operationHours: _editedStore!.operationHours,
-                            qrCode: _editedStore!.qrCode,
-                            image: _editedStore!.image,
-                            id: _editedStore!.id);
-                      },
-                    ),
-                  ],
+                      IntlPhoneField(
+                        key: const Key('phoneNumber'),
+                        decoration: InputDecoration(
+                          labelText: 'Phone Number',
+                        ),
+                        initialValue: _editedStore!.phoneNumber.substring(4),
+                        initialCountryCode: 'IL',
+                        onChanged: (phone) {
+                          _formChanged = true;
+                          print(phone.completeNumber);
+                        },
+                        onSaved: (value) {
+                          _editedStore = StoreDTO(
+                              name: _editedStore!.name,
+                              phoneNumber: value!.completeNumber,
+                              address: _editedStore!.address,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              qrCode: _editedStore!.qrCode,
+                              image: _editedStore!.image,
+                              id: _editedStore!.id);
+                        },
+                      ),
+                      TextFormField(
+                        key: const Key('storeAddress'),
+                        initialValue: _editedStore!.address,
+                        decoration: InputDecoration(labelText: 'Address'),
+                        onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => destinationBuilder),
+                        onChanged: (_) => _formChanged = true,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide a value.';
+                          }
+                          if (value.length < 2) {
+                            return 'Should be at least 2 characters long.';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _editedStore = StoreDTO(
+                              name: _editedStore!.name,
+                              phoneNumber: _editedStore!.phoneNumber,
+                              address: value!,
+                              categories: _editedStore!.categories,
+                              operationHours: _editedStore!.operationHours,
+                              qrCode: _editedStore!.qrCode,
+                              image: _editedStore!.image,
+                              id: _editedStore!.id);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -293,7 +296,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             ),
             Divider(height: 0),
             Container(
-              height: deviceSize.height * 0.5,
+              height: deviceSize.height * 0.55,
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: DUMMY_CATEGORIES.length,
@@ -309,25 +312,32 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             ),
             _categorySelected
                 ? SizedBox(
-                  height: deviceSize.height * 0.1,
-                  child: ListView(
-                  scrollDirection: Axis.horizontal,
-                    children: _selectedItems
-                        .map((e) => Chip(
-                              deleteIcon: Icon(
-                                Icons.close,
-                              ),
-                              onDeleted: () {
-                                setState(() {
-                                  _selectedItems.remove(e);
-                                  _formChanged = true;
-                                });
-                              },
-                              label: Text(e),
-                            ))
-                        .toList(),
-                  ),
-            )
+                    height: deviceSize.height * 0.075,
+                    child: Center(
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        children: _selectedItems
+                            .map((e) => Padding(
+                                padding: EdgeInsets.only(
+                                    right: deviceSize.width * 0.01,
+                                    left: deviceSize.width * 0.01),
+                                child: Chip(
+                                  deleteIcon: Icon(
+                                    Icons.close,
+                                  ),
+                                  onDeleted: () {
+                                    setState(() {
+                                      _selectedItems.remove(e);
+                                      _formChanged = true;
+                                    });
+                                  },
+                                  label: Text(e),
+                                )))
+                            .toList(),
+                      ),
+                    ),
+                  )
                 : Text(
                     "Please select at least one category",
                     style: TextStyle(color: Theme.of(context).errorColor),
@@ -398,52 +408,51 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             ),
           ),
         ),
-        resizeToAvoidBottomInset: false,
         body: _isLoading
             ? Center(child: CircularProgressIndicator())
-            : ListView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                children: [
-                  Center(
-                    child: SizedBox(
-                      height: deviceSize.height * 0.85,
-                      child: Column(
-                        children: [
-                          IconStepper(
-                            icons: [
-                              Icon(Icons.info),
-                              Icon(Icons.tag),
-                              Icon(Icons.access_time),
-                              Icon(Icons.storefront),
-                            ],
-                            // activeStep property set to activeStep variable defined above.
-                            activeStep: _currentStep,
-                            steppingEnabled: false,
-                            enableStepTapping: false,
-                            enableNextPreviousButtons: false,
-                            activeStepColor: Theme.of(context).primaryColor,
-                            // This ensures step-tapping updates the activeStep.
-                            onStepReached: (index) {
-                              setState(() {
-                                _currentStep = index;
-                              });
-                            },
-                          ),
-                          currentStepWidget(deviceSize)!,
-                          Expanded(
-                            child: Align(
-                              alignment: FractionalOffset.bottomCenter,
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.all(deviceSize.height * 0.025),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    _currentStep > 0
-                                        ? CircleAvatar(
+            : SingleChildScrollView(
+                child: Center(
+                  child: SizedBox(
+                    height: deviceSize.height * 0.85,
+                    child: Column(
+                      children: [
+                        IconStepper(
+                          icons: [
+                            Icon(Icons.info),
+                            Icon(Icons.tag),
+                            Icon(Icons.access_time),
+                            Icon(Icons.storefront),
+                          ],
+                          // activeStep property set to activeStep variable defined above.
+                          activeStep: _currentStep,
+                          steppingEnabled: false,
+                          enableStepTapping: false,
+                          enableNextPreviousButtons: false,
+                          activeStepColor: Theme.of(context).primaryColor,
+                          // This ensures step-tapping updates the activeStep.
+                          onStepReached: (index) {
+                            setState(() {
+                              _currentStep = index;
+                            });
+                          },
+                        ),
+                        currentStepWidget(deviceSize)!,
+                        Expanded(
+                          child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.all(deviceSize.height * 0.025),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _currentStep > 0
+                                      ? Padding(
+                                          padding: EdgeInsets.only(
+                                              left: deviceSize.width * 0.025),
+                                          child: CircleAvatar(
                                             radius: 25,
                                             backgroundColor:
                                                 Theme.of(context).primaryColor,
@@ -452,9 +461,13 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                                               onPressed: cancel,
                                               icon: Icon(Icons.arrow_back),
                                             ),
-                                          )
-                                        : Container(),
-                                    CircleAvatar(
+                                          ),
+                                        )
+                                      : Container(),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: deviceSize.width * 0.025),
+                                    child: CircleAvatar(
                                       radius: 25,
                                       backgroundColor:
                                           Theme.of(context).primaryColor,
@@ -466,17 +479,17 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                                             ? Icons.arrow_forward
                                             : Icons.done),
                                       ),
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
       ),
     );

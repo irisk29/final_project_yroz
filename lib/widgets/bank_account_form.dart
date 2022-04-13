@@ -82,6 +82,12 @@ class BankAccountForm extends StatelessWidget {
                         focusedBorder: border,
                         enabledBorder: border,
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please provide a value.';
+                        }
+                        return null;
+                      },
                       onChanged: (_) {
                         if (this.callback != null) callback!();
                       },
@@ -104,7 +110,10 @@ class BankAccountForm extends StatelessWidget {
                       hintText: 'XXX',
                     ),
                     validator: (value) {
-                      if (value == null || value.length != 3) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please provide a value.';
+                      }
+                      if (value.length != 3) {
                         return "Invalid Branch Number";
                       }
                       return null;
@@ -129,9 +138,10 @@ class BankAccountForm extends StatelessWidget {
                       labelText: 'ACCOUNT NUMBER',
                     ),
                     validator: (value) {
-                      if (value == null ||
-                          value.length < 9 ||
-                          value.length > 12) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please provide a value.';
+                      }
+                      if (value.length < 9 || value.length > 12) {
                         return "Invalid Branch Number";
                       }
                       return null;
