@@ -5,10 +5,14 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:f_logs/model/flog/flog.dart';
-import 'package:final_project_yroz/screens/landing_screen.dart';
+import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
+import 'package:final_project_yroz/screens/auth_screen.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:provider/provider.dart';
 
+import '../LogicLayer/User.dart';
 import '../amplifyconfiguration.dart';
 import '../models/ModelProvider.dart';
 
@@ -42,7 +46,7 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen>
       var currentModelIndex = 0;
       var timers = [];
       Stopwatch stopwatch = new Stopwatch()..start();
-      Amplify.Hub.listen([HubChannel.DataStore], (msg) {
+      Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
         if (msg.eventName == 'modelSynced') {
           currentModelIndex++;
           timers.add(stopwatch.elapsed);
@@ -59,8 +63,12 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen>
           stopwatch = new Stopwatch()..start();
         } else if (msg.eventName == 'ready') {
           FLog.info(text: "AWS Amplify is ready");
-          ticker.then((value) =>
-              Navigator.pushReplacementNamed(context, LandingScreen.routeName));
+          final isUserAlreadySignedIn = await isSignedIn();
+          ticker.whenCompleteOrCancel(() => Navigator.pushReplacementNamed(
+              context,
+              isUserAlreadySignedIn
+                  ? TabsScreen.routeName
+                  : AuthScreen.routeName));
         }
       });
     });
@@ -97,6 +105,26 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen>
       FLog.error(
           text: "Amplify was already configured. Was the app restarted?");
     }
+  }
+
+  Future<bool> isSignedIn() async {
+    AuthUserAttribute email;
+    try {
+      await Amplify.Auth.getCurrentUser();
+      var res2 = await Amplify.Auth.fetchUserAttributes();
+      email = res2.firstWhere((element) =>
+          element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) ==
+          0);
+    } catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return false;
+    }
+    UserModel? model = await UsersStorageProxy().fetchFullUser(email.value);
+    print("isLoggedIn: ${model != null && model.isLoggedIn}");
+    if (model != null)
+      Provider.of<User>(context, listen: false).userFromModel(model);
+    if (model != null && model.isLoggedIn) return true;
+    return false;
   }
 
   @override

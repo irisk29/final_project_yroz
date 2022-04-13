@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
+import 'package:final_project_yroz/screens/auth_screen.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
 import 'package:final_project_yroz/screens/edit_bank_account.dart';
@@ -22,7 +23,6 @@ import 'LogicLayer/User.dart';
 import 'blocs/application_bloc.dart';
 import 'package:flutter/services.dart';
 
-import 'screens/landing_screen.dart';
 import 'screens/manage_online_store_screen.dart';
 import 'screens/manage_physical_store_screen.dart';
 import 'screens/category_screen.dart';
@@ -89,6 +89,7 @@ class _MyAppState extends State<MyApp> {
         home: LoadingSplashScreen(),
         routes: {
           CartScreen.routeName: (ctx) => CartScreen(),
+          AuthScreen.routeName: (ctx) => AuthScreen(),
           TabsScreen.routeName: (ctx) => TabsScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
@@ -99,7 +100,6 @@ class _MyAppState extends State<MyApp> {
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
           OnlineStoreProductsScreen.routeName: (ctx) =>
               OnlineStoreProductsScreen(),
-          LandingScreen.routeName: (ctx) => LandingScreen(),
           LoadingSplashScreen.routeName: (ctx) => LoadingSplashScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
           EditPhysicalStorePipeline.routeName: (ctx) =>
