@@ -132,8 +132,7 @@ class _openUrl {
   _openUrl(this.result);
 
   void _launchPayment(context, url) async =>
-      Navigator.of(context).pushNamed(PhysicalPaymentScreen.routeName,
-          arguments: {'store': url.toString()});
+      PhysicalPaymentScreen(url.toString());
 
   @override
   Widget build(BuildContext context) {
