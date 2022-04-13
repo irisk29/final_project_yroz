@@ -180,6 +180,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
+                        if(double.tryParse(value)!=null){
+                          return 'Product name can not be a number';
+                        }
                         return null;
                       },
                       onChanged: (_) => _formChanged = true,

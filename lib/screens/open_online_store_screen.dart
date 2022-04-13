@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
@@ -239,11 +239,36 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
       if (result != null && result.item1 != null) {
-        setState(() {
-          _editedStore = result.item2;
-          _products.add(result.item1!);
-          _formChanged = true;
-        });
+        if(_products.firstWhereOrNull((element) => element.name==result.item1!.name &&
+                element.description==result.item1!.description &&
+                  result.item1!.price==element.price) != null){
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(
+                "Product Error",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              content: Text(
+                  "A Product with these characteristics already exists."),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Ok"),
+                ),
+              ],
+            ),
+          );
+        }
+        else {
+          setState(() {
+            _editedStore = result.item2;
+            _products.add(result.item1!);
+            _formChanged = true;
+          });
+        }
       }
     } else {
       showDialog(
@@ -419,22 +444,26 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
               ),
             ),
             _categorySelected
-                ? Wrap(
-                    children: _selectedItems
-                        .map((e) => Chip(
-                              deleteIcon: Icon(
-                                Icons.close,
-                              ),
-                              onDeleted: () {
-                                setState(() {
-                                  _selectedItems.remove(e);
-                                  _formChanged = true;
-                                });
-                              },
-                              label: Text(e),
-                            ))
-                        .toList(),
-                  )
+                ? SizedBox(
+                  height: deviceSize.height * 0.1,
+                  child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: _selectedItems
+                          .map((e) => Chip(
+                                deleteIcon: Icon(
+                                  Icons.close,
+                                ),
+                                onDeleted: () {
+                                  setState(() {
+                                    _selectedItems.remove(e);
+                                    _formChanged = true;
+                                  });
+                                },
+                                label: Text(e),
+                              ))
+                          .toList(),
+                    ),
+                )
                 : Text(
                     "Please select at least one category",
                     style: TextStyle(color: Theme.of(context).errorColor),
@@ -462,20 +491,31 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             Icons.edit,
                           ),
                           onDeleted: () async {
-                            final ProductDTO? result = await Navigator.push(
+                            final Tuple2<ProductDTO, bool>? result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => EditProductScreen(e)),
                             );
                             if (result != null) {
-                              setState(() {
-                                _products.removeWhere((element) =>
-                                    element.name == e.name &&
-                                    element.price == e.price &&
-                                    element.description == e.description);
-                                _products.add(result);
-                                _formChanged = true;
-                              });
+                              if(result.item2){
+                                setState(() {
+                                  _products.removeWhere((element) =>
+                                  element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
+                                  _formChanged = true;
+                                });
+                              }
+                              else {
+                                setState(() {
+                                  _products.removeWhere((element) =>
+                                  element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
+                                  _products.add(result.item1);
+                                  _formChanged = true;
+                                });
+                              }
                             }
                           },
                           label: ConstrainedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:final_project_yroz/widgets/credit_card_model.dart' as model;
+import 'package:flutter_credit_card/credit_card_widget.dart';
 
 class CreditCardForm extends StatefulWidget {
   const CreditCardForm({
@@ -46,7 +47,7 @@ class CreditCardForm extends StatefulWidget {
   final String cvvValidationMessage;
   final String dateValidationMessage;
   final String numberValidationMessage;
-  final void Function(CreditCardModel?) onCreditCardModelChange;
+  final void Function(model.CreditCardModel?) onCreditCardModelChange;
   final Color themeColor;
   final Color textColor;
   final Color? cursorColor;
@@ -74,8 +75,8 @@ class _CreditCardFormState extends State<CreditCardForm> {
   bool isCvvFocused = false;
   late Color themeColor;
 
-  late void Function(CreditCardModel?) onCreditCardModelChange;
-  late CreditCardModel creditCardModel;
+  late void Function(model.CreditCardModel?) onCreditCardModelChange;
+  late model.CreditCardModel creditCardModel;
 
   final MaskedTextController _cardNumberController =
   MaskedTextController(mask: '0000 0000 0000 0000');
@@ -101,7 +102,7 @@ class _CreditCardFormState extends State<CreditCardForm> {
     cardHolderName = widget.cardHolderName;
     cvvCode = widget.cvvCode;
 
-    creditCardModel = CreditCardModel(
+    creditCardModel = model.CreditCardModel(
         cardNumber, expiryDate, cardHolderName, cvvCode, isCvvFocused);
   }
 
@@ -150,9 +151,10 @@ class _CreditCardFormState extends State<CreditCardForm> {
 
   @override
   void dispose() {
-    cardHolderNode.dispose();
-    cvvFocusNode.dispose();
-    expiryDateNode.dispose();
+    // cardHolderNode.dispose();
+    // cvvFocusNode.dispose();
+    // expiryDateNode.dispose();
+    // creditCardModel.dispose();
     super.dispose();
   }
 

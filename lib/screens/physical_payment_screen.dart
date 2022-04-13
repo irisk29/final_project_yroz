@@ -242,7 +242,10 @@ class _PaymentCardState extends State<PaymentCard>
                                 controller: amountController,
                                 validator: (value) {
                                   if (value!.isEmpty) {
-                                    return 'Please enter a number.';
+                                    return 'Please enter a value.';
+                                  }
+                                  if(double.tryParse(value)==null){
+                                    return 'Amount has be a number';
                                   }
                                   return null;
                                 },
