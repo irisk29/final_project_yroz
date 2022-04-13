@@ -36,7 +36,8 @@ class UsersStorageProxy {
       return Tuple2<UserModel, bool>(userModel, true);
     }
     var user = users.first;
-    return Tuple2<UserModel, bool>(await createFullUser(user, name, imageUrl), false);
+    var fullUser = await createFullUser(user, name, imageUrl);
+    return Tuple2<UserModel, bool>(fullUser, false);
   }
 
   Future<UserModel> createFullUser(UserModel user, String name, String? imageUrl) async {
@@ -57,6 +58,8 @@ class UsersStorageProxy {
         userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id,
         isLoggedIn: !user.isLoggedIn);
     FLog.info(text: "Fetched existing user");
+    if(!user.isLoggedIn) //only save if the user wasn't logged in already
+      await Amplify.DataStore.save(fullUser);
     return fullUser;
   }
 
