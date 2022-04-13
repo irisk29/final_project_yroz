@@ -30,9 +30,8 @@ class _LandingScreenState extends State<LandingScreen> {
       setState(() {
         isUserAlreadySignedIn = data;
       });
-      if (isUserAlreadySignedIn != null && isUserAlreadySignedIn!)
-        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
     }).catchError((e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       Navigator.pop(context, "an error");
     });
   }
@@ -49,24 +48,19 @@ class _LandingScreenState extends State<LandingScreen> {
       return false;
     }
     UserModel? model = await UsersStorageProxy().fetchFullUser(email.value);
-    print("isSignIn: ${model != null && model.isLoggedIn}");
-    if (model != null && model.isLoggedIn) return false;
+    print("isLoggedIn: ${model != null && model.isLoggedIn}");
     if (model != null) Provider.of<User>(context, listen: false).userFromModel(model);
-    return true;
+    if (model != null && model.isLoggedIn) return true;
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    //sleep(Duration(seconds: 2));
-    //print("after sleep");
-    final appUser = context.watch<User>().isSignedIn;
-    print(appUser);
-    return isUserAlreadySignedIn == null && !appUser
+    print("is already: $isUserAlreadySignedIn");
+    return isUserAlreadySignedIn == null
         ? Center(child: CircularProgressIndicator())
-        : appUser
-        ? TabsScreen()
-        : isUserAlreadySignedIn != null && !isUserAlreadySignedIn!
-        ? AuthScreen()
-        : TabsScreen();
+            : !isUserAlreadySignedIn!
+                ? AuthScreen()
+                : TabsScreen();            
   }
 }
