@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
@@ -211,11 +211,36 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
       );
       if (result != null && result.item1 != null) {
-        setState(() {
-          _editedStore = result.item2;
-          _products.add(result.item1!);
-          _formChanged = true;
-        });
+        if(_products.firstWhereOrNull((element) => element.name==result.item1!.name &&
+                element.description==result.item1!.description &&
+                  result.item1!.price==element.price) != null){
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(
+                "Product Error",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              content: Text(
+                  "A Product with these characteristics already exists."),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Ok"),
+                ),
+              ],
+            ),
+          );
+        }
+        else {
+          setState(() {
+            _editedStore = result.item2;
+            _products.add(result.item1!);
+            _formChanged = true;
+          });
+        }
       }
     } else {
       showDialog(

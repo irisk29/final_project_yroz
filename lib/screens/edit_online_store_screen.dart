@@ -1,4 +1,5 @@
 import 'package:address_search_field/address_search_field.dart';
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -393,18 +394,26 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                           Icons.edit,
                         ),
                         onDeleted: () async {
-                          final ProductDTO? result = await Navigator.push(
+                          final Tuple2<ProductDTO, bool>? result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => EditProductScreen(e)),
                           );
                           if (result != null) {
-                            setState(() {
-                              _editedStore!.removeProduct(e);
-                              _editedStore!.addProduct(result);
-                            });
+                            if(result.item2){
+                              setState(() {
+                                _editedStore!.removeProduct(e);
+                                _formChanged = true;
+                              });
+                            }
+                            else {
+                              setState(() {
+                                _editedStore!.removeProduct(e);
+                                _editedStore!.addProduct(result.item1);
+                                _formChanged = true;
+                              });
+                            }
                           }
-                          _formChanged = true;
                         },
                         label: Text(e.name + ", ${e.description}"),
                       ))

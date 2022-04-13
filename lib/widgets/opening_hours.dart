@@ -67,7 +67,7 @@ class _OpeningHoursState extends State<OpeningHours> {
     final deviceSize = MediaQuery.of(context).size;
 
     return Container(
-      height: deviceSize.height * 0.65,
+      height: deviceSize.height * 0.6,
       child: ListView.builder(
             shrinkWrap: true,
             physics: AlwaysScrollableScrollPhysics(),
@@ -97,6 +97,7 @@ class _OpeningHoursState extends State<OpeningHours> {
                           !(days[index].closed) ?
                                Row(
                                   children: [
+                                    Container(width: MediaQuery.of(context).size.width*0.25,),
                                     ElevatedButton(
                                       onPressed: () {
                                         _selectTime(index,1);
@@ -104,7 +105,7 @@ class _OpeningHoursState extends State<OpeningHours> {
                                       child: Text(days[index].operationHours.item1
                                           .format(context)),
                                     ),
-                                    Text('-'),
+                                    Text(' - ', style: TextStyle(fontSize: 20)),
                                     ElevatedButton(
                                       onPressed: () {
                                         _selectTime(index,2);
@@ -114,15 +115,18 @@ class _OpeningHoursState extends State<OpeningHours> {
                                     ),
                                   ],
                       ) : Container(),
-                          CheckboxListTile(
-                            value: days[index].closed,
-                            title: Text("Closed"),
-                            controlAffinity: ListTileControlAffinity.leading,
-                            onChanged: (isChecked) {
-                              setState(() {
-                                days[index].closed = isChecked!;
-                              });
-                            },
+                          Padding(
+                            padding: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.25,),
+                            child: CheckboxListTile(
+                              value: days[index].closed,
+                              title: Text("Closed"),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              onChanged: (isChecked) {
+                                setState(() {
+                                  days[index].closed = isChecked!;
+                                });
+                              },
+                            ),
                           ),
                         ],
                       )
