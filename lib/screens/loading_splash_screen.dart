@@ -84,6 +84,7 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen>
   Future<void> _configureAmplify() async {
     if (!mounted) return;
 
+    if (Amplify.isConfigured) return;
     Amplify.addPlugin(AmplifyAuthCognito());
     Amplify.addPlugin(AmplifyStorageS3());
     Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
