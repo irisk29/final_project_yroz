@@ -51,13 +51,18 @@ class _OpeningHoursState extends State<OpeningHours> {
   void _selectTime(int index1, int item) async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
-      initialTime: item==1 ? days[index1].operationHours.item1 : days[index1].operationHours.item2,
+      initialTime: item == 1
+          ? days[index1].operationHours.item1
+          : days[index1].operationHours.item2,
       initialEntryMode: TimePickerEntryMode.input,
     );
     if (newTime != null) {
       setState(() {
-        item==1 ? days[index1].operationHours = Tuple2(newTime, days[index1].operationHours.item2)
-        : days[index1].operationHours = Tuple2(days[index1].operationHours.item1, newTime);
+        item == 1
+            ? days[index1].operationHours =
+                Tuple2(newTime, days[index1].operationHours.item2)
+            : days[index1].operationHours =
+                Tuple2(days[index1].operationHours.item1, newTime);
       });
     }
   }
