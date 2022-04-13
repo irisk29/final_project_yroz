@@ -82,13 +82,41 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       address: "",
       categories: [],
       operationHours: Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(
+            day: "Sunday",
+            closed: false,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(
+            day: "Monday",
+            closed: false,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(
+            day: "Tuesday",
+            closed: false,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(
+            day: "Wednesday",
+            closed: false,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(
+            day: "Thursday",
+            closed: false,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(
+            day: "Friday",
+            closed: false,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))),
+        new OpeningTimes(
+            day: "Saturday",
+            closed: false,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))),
       ]),
       image: null,
       products: []);
@@ -580,21 +608,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           setState(() {
             _categorySelected = false;
           });
-          showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text("Error"),
-              content: Text("Please choose a category.\nThere is an 'other' category if needed."),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Okay'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
         }
         break;
       case 2:

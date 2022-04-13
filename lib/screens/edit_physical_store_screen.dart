@@ -496,21 +496,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           setState(() {
             _categorySelected = false;
           });
-          showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text("Error"),
-              content: Text("Please choose a category.\nThere is an 'other' category if needed."),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Okay'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
         }
         break;
       case 2:
