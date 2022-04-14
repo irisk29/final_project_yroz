@@ -1,10 +1,7 @@
 import 'package:address_search_field/address_search_field.dart';
-import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
-import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
-import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:final_project_yroz/widgets/store_preview.dart';
@@ -13,31 +10,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
-import 'package:tuple/tuple.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
-import '../LogicModels/OpeningTimes.dart';
 import '../dummy_data.dart';
 import '../widgets/opening_hours.dart';
 
 class EditPhysicalStorePipeline extends StatefulWidget {
   static const routeName = '/edit-physical-store';
 
-  static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _monday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _tuesday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _tuesday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _wednesday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _wednesday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _thursday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _thursday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _friday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _friday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
   static TextEditingController _controller = TextEditingController();
 
   @override
@@ -74,7 +55,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   final _detailsform = GlobalKey<FormState>();
 
   late AddressSearchBuilder destinationBuilder;
-  XFile? _pickedImage = null;
+  XFile? _pickedImage;
   StoreDTO? _editedStore;
 
   final List<String> _selectedItems = [];
@@ -92,7 +73,10 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     _editedStore = Provider.of<User>(context, listen: false)
         .storeOwnerState!
         .physicalStore;
-    openingHours = OpeningHours(_editedStore!.operationHours);
+    openingHours = OpeningHours(
+        _editedStore!.operationHours.clone(), () => _formChanged = true);
+    _pickedImage =
+        _editedStore!.image != null ? XFile(_editedStore!.image!) : null;
     super.initState();
   }
 
@@ -137,24 +121,27 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       _isLoading = true;
     });
 
-    if (_editedStore!.id.isNotEmpty) {
+    if (_formChanged) {
       _editedStore!.categories = _selectedItems;
       _editedStore!.operationHours = openingHours.saveOpenHours();
+      _editedStore!.image = _pickedImage != null ? _pickedImage!.path : null;
       final res = await Provider.of<User>(context, listen: false)
           .updatePhysicalStore(_editedStore!);
-      if (res.getTag()){
+      if (res.getTag()) {
         SnackBar snackBar = SnackBar(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(20.0),
           ),
+          backgroundColor: Theme.of(context).primaryColor,
           behavior: SnackBarBehavior.floating,
-          content: const Text('Changed successfully!', textAlign: TextAlign.center),
-          width: MediaQuery.of(context).size.width * 0.5,
+          content: const Text('Saved Store Details Successfully!',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black87)),
+          width: MediaQuery.of(context).size.width * 0.75,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.of(context).pop();
-      }
-      else {
+      } else {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -171,10 +158,12 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           ),
         );
       }
+    } else {
+      Navigator.of(context).pop();
     }
 
     setState(() {
-      _isLoading = false;
+      _isLoading = true;
     });
   }
 
@@ -363,7 +352,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             _editedStore!.address,
             _pickedImage,
             _editedStore!.phoneNumber,
-            _editedStore!.operationHours);
+            openingHours.saveOpenHours());
       default:
         return null;
     }
@@ -450,49 +439,44 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         Expanded(
                           child: Align(
                             alignment: FractionalOffset.bottomCenter,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.all(deviceSize.height * 0.025),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _currentStep > 0
-                                      ? Padding(
-                                          padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.025),
-                                          child: CircleAvatar(
-                                            radius: 25,
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
-                                            child: IconButton(
-                                              color: Colors.black54,
-                                              onPressed: cancel,
-                                              icon: Icon(Icons.arrow_back),
-                                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _currentStep > 0
+                                    ? Padding(
+                                        padding: EdgeInsets.only(
+                                            left: deviceSize.width * 0.025),
+                                        child: CircleAvatar(
+                                          radius: 25,
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                          child: IconButton(
+                                            color: Colors.black54,
+                                            onPressed: cancel,
+                                            icon: Icon(Icons.arrow_back),
                                           ),
-                                        )
-                                      : Container(),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        right: deviceSize.width * 0.025),
-                                    child: CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      child: IconButton(
-                                        key: const Key("continue_button"),
-                                        color: Colors.black54,
-                                        onPressed: continued,
-                                        icon: Icon(_currentStep < 3
-                                            ? Icons.arrow_forward
-                                            : Icons.done),
-                                      ),
+                                        ),
+                                      )
+                                    : Container(),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: deviceSize.width * 0.025),
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    child: IconButton(
+                                      key: const Key("continue_button"),
+                                      color: Colors.black54,
+                                      onPressed: continued,
+                                      icon: Icon(_currentStep < 3
+                                          ? Icons.arrow_forward
+                                          : Icons.done),
                                     ),
-                                  )
-                                ],
-                              ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ),

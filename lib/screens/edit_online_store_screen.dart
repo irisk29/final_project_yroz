@@ -16,7 +16,6 @@ import 'package:tuple/tuple.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
-import '../LogicModels/OpeningTimes.dart';
 import '../dummy_data.dart';
 import '../models/UserModel.dart';
 import '../widgets/opening_hours.dart';
@@ -24,21 +23,6 @@ import 'add_product_screen.dart';
 
 class EditOnlineStorePipeline extends StatefulWidget {
   static const routeName = '/edit-online-store';
-
-  static TimeOfDay _sunday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _sunday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _monday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _monday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _tuesday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _tuesday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _wednesday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _wednesday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _thursday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _thursday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _friday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _friday_close = TimeOfDay(hour: 23, minute: 59);
-  static TimeOfDay _saturday_open = TimeOfDay(hour: 7, minute: 0);
-  static TimeOfDay _saturday_close = TimeOfDay(hour: 23, minute: 59);
 
   static TextEditingController _controller = TextEditingController();
 
@@ -75,53 +59,10 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   final _detailsform = GlobalKey<FormState>();
 
   late AddressSearchBuilder destinationBuilder;
-  XFile? _pickedImage = null;
-  OnlineStoreDTO? _editedStore = OnlineStoreDTO(
-      id: "",
-      name: "",
-      phoneNumber: "",
-      address: "",
-      categories: [],
-      operationHours: Openings(days: [
-        new OpeningTimes(
-            day: "Sunday",
-            closed: false,
-            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
-                TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(
-            day: "Monday",
-            closed: false,
-            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
-                TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(
-            day: "Tuesday",
-            closed: false,
-            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
-                TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(
-            day: "Wednesday",
-            closed: false,
-            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
-                TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(
-            day: "Thursday",
-            closed: false,
-            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
-                TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(
-            day: "Friday",
-            closed: false,
-            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
-                TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(
-            day: "Saturday",
-            closed: false,
-            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
-                TimeOfDay(hour: 23, minute: 59))),
-      ]),
-      image: null,
-      products: []);
+  XFile? _pickedImage;
+  OnlineStoreDTO? _editedStore;
 
+  final List<ProductDTO> _products = [];
   final List<String> _selectedItems = [];
 
   late Secret secret;
@@ -136,7 +77,10 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     _formChanged = false;
     _editedStore =
         Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
-    openingHours = OpeningHours(_editedStore!.operationHours);
+    openingHours = OpeningHours(
+        _editedStore!.operationHours.clone(), () => _formChanged = true);
+    _pickedImage =
+        _editedStore!.image != null ? XFile(_editedStore!.image!) : null;
     super.initState();
   }
 
@@ -157,6 +101,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           .storeOwnerState!
           .onlineStore;
       _selectedItems.addAll(_editedStore!.categories);
+      _products.addAll(_editedStore!.products);
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -181,9 +126,11 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _isLoading = true;
     });
 
-    if (_editedStore!.id.isNotEmpty) {
+    if (_formChanged) {
       _editedStore!.categories = _selectedItems;
+      _editedStore!.products = _products;
       _editedStore!.operationHours = openingHours.saveOpenHours();
+      _editedStore!.image = _pickedImage != null ? _pickedImage!.path : null;
       final res =
           await Provider.of<User>(context, listen: false).updateOnlineStore(
         _editedStore!,
@@ -191,16 +138,18 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       if (res.getTag()) {
         SnackBar snackBar = SnackBar(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(20.0),
           ),
+          backgroundColor: Theme.of(context).primaryColor,
           behavior: SnackBarBehavior.floating,
-          content: const Text('Changed successfully!', textAlign: TextAlign.center),
-          width: MediaQuery.of(context).size.width * 0.5,
+          content: const Text('Saved Store Details Successfully!',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black87)),
+          width: MediaQuery.of(context).size.width * 0.75,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.of(context).pop();
-      }
-      else {
+      } else {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -217,11 +166,13 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           ),
         );
       }
-
-      setState(() {
-        _isLoading = false;
-      });
+    } else {
+      Navigator.of(context).pop();
     }
+
+    setState(() {
+      _isLoading = true;
+    });
   }
 
   // This function is triggered when a checkbox is checked or unchecked
@@ -239,18 +190,39 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   static const productsLimitation = 10;
   void _showAddProduct() async {
-    if (_editedStore!.products.length < productsLimitation) {
-      final Tuple2<ProductDTO?, OnlineStoreDTO?>? result = await Navigator.push(
+    if (_products.length < productsLimitation) {
+      final ProductDTO? result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
+        MaterialPageRoute(builder: (context) => AddProductScreen()),
       );
-
-      if (result != null && result.item1 != null) {
-        setState(() {
-          _editedStore = result.item2;
-          _editedStore!.addProduct(result.item1!);
-          _formChanged = true;
-        });
+      if (result != null) {
+        if (_products.firstWhereOrNull((element) =>
+                element.name == result.name &&
+                element.description == result.description &&
+                result.price == element.price) !=
+            null) {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text("Add Product Error"),
+              content: Text(
+                  "A product with these characteristics already exists. Please use the description field to distinguish between the two products."),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        } else {
+          setState(() {
+            _products.add(result);
+            _formChanged = true;
+          });
+        }
       }
     } else {
       showDialog(
@@ -440,34 +412,69 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
               onPressed: _showAddProduct,
             ),
             Wrap(
-              children: _editedStore!.products
-                  .map((e) => Chip(
-                        deleteIcon: Icon(
-                          Icons.edit,
-                        ),
-                        onDeleted: () async {
-                          final Tuple2<ProductDTO, bool>? result =
-                              await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditProductScreen(e)),
-                          );
-                          if (result != null) {
-                            if (result.item2) {
-                              setState(() {
-                                _editedStore!.removeProduct(e);
-                                _formChanged = true;
-                              });
-                            } else {
-                              setState(() {
-                                _editedStore!.removeProduct(e);
-                                _editedStore!.addProduct(result.item1);
-                                _formChanged = true;
-                              });
+              children: _products
+                  .map((e) => Padding(
+                        padding: EdgeInsets.only(
+                            right: deviceSize.width * 0.01,
+                            left: deviceSize.width * 0.01),
+                        child: Chip(
+                          deleteIcon: Icon(
+                            Icons.edit,
+                          ),
+                          onDeleted: () async {
+                            final Tuple2<ProductDTO?, bool>? result =
+                                await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditProductScreen(e)),
+                            );
+                            if (result != null) {
+                              if (result.item2) {
+                                setState(() {
+                                  _products.removeWhere((element) =>
+                                      element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
+                                  _formChanged = true;
+                                });
+                              } else {
+                                setState(() {
+                                  _products.removeWhere((element) =>
+                                      element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
+                                  _products.add(result.item1!);
+                                  _formChanged = true;
+                                });
+                              }
                             }
-                          }
-                        },
-                        label: Text(e.name + ", ${e.description}"),
+                          },
+                          label: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: deviceSize.height * 0.1,
+                              maxWidth: deviceSize.width * 0.3,
+                              minHeight: deviceSize.height * 0.05,
+                              minWidth: deviceSize.width * 0.15,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(e.name),
+                                Text(
+                                  e.description!,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ))
                   .toList(),
             ),
@@ -480,7 +487,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             _editedStore!.address,
             _pickedImage,
             _editedStore!.phoneNumber,
-            _editedStore!.operationHours);
+            openingHours.saveOpenHours());
       default:
         return null;
     }
@@ -571,49 +578,44 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         Expanded(
                           child: Align(
                             alignment: FractionalOffset.bottomCenter,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.all(deviceSize.height * 0.025),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _currentStep > 0
-                                      ? Padding(
-                                          padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.025),
-                                          child: CircleAvatar(
-                                            radius: 25,
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
-                                            child: IconButton(
-                                              color: Colors.black54,
-                                              onPressed: cancel,
-                                              icon: Icon(Icons.arrow_back),
-                                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _currentStep > 0
+                                    ? Padding(
+                                        padding: EdgeInsets.only(
+                                            left: deviceSize.width * 0.025),
+                                        child: CircleAvatar(
+                                          radius: 25,
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                          child: IconButton(
+                                            color: Colors.black54,
+                                            onPressed: cancel,
+                                            icon: Icon(Icons.arrow_back),
                                           ),
-                                        )
-                                      : Container(),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        right: deviceSize.width * 0.025),
-                                    child: CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      child: IconButton(
-                                        key: const Key("continue_button"),
-                                        color: Colors.black54,
-                                        onPressed: continued,
-                                        icon: Icon(_currentStep < 4
-                                            ? Icons.arrow_forward
-                                            : Icons.done),
-                                      ),
+                                        ),
+                                      )
+                                    : Container(),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: deviceSize.width * 0.025),
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    child: IconButton(
+                                      key: const Key("continue_button"),
+                                      color: Colors.black54,
+                                      onPressed: continued,
+                                      icon: Icon(_currentStep < 4
+                                          ? Icons.arrow_forward
+                                          : Icons.done),
                                     ),
-                                  )
-                                ],
-                              ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ),

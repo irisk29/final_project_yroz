@@ -139,11 +139,14 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   var _bankLoading = false;
   var _acceptTerms = false;
   var _categorySelected = true;
+  var _validBankAccount = false;
   var _formChanged;
 
   @override
   void initState() {
     _formChanged = false;
+    openingHours = OpeningHours(
+        OpenPhysicalStorePipeline.openings.clone(), () => _formChanged = true);
     super.initState();
   }
 
@@ -177,7 +180,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     setState(() {});
   }
 
-  OpeningHours openingHours = OpeningHours(OpenPhysicalStorePipeline.openings);
+  late OpeningHours openingHours;
 
   Future<void> _saveForm() async {
     setState(() {
@@ -616,9 +619,14 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         break;
       case 3:
         setState(() => _bankLoading = true);
-        final res = await bankAccountForm.saveForm(context);
+        final res =
+            _validBankAccount || await bankAccountForm.saveForm(context);
         setState(() => _bankLoading = false);
-        if (res) setState(() => _currentStep += 1);
+        if (res)
+          setState(() {
+            _validBankAccount = true;
+            _currentStep += 1;
+          });
         break;
       case 4:
         _saveForm();
