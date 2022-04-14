@@ -740,6 +740,37 @@ void main() {
     });
   });
 
+  group('get wallet balance', () {
+    final userId = "unittest";
+    String? walletToken;
+
+    setUpAll(() {
+      return Future(() async {
+        final result = await internalPaymentGateway.createUserAccount(userId);
+        walletToken = result.getValue()!;
+      });
+    });
+
+    tearDownAll(() {
+      return Future(() async {
+        await internalPaymentGateway.deleteUserAccount(userId);
+        walletToken = null;
+      });
+    });
+
+    test('good scenario', () async {
+      final result =
+          await internalPaymentGateway.eWalletBalance(userId, walletToken!);
+      expect(result.getTag(), true);
+      expect(double.parse(result.getValue()!), 0.0);
+    });
+
+    test('sad scenario - wring wallet token', () async {
+      final result = await internalPaymentGateway.eWalletBalance(userId, "");
+      expect(result.getTag(), false);
+    });
+  });
+
   group('payment', () {
     final userId = "unittest-user";
     final storeId = "unittest-store";
@@ -872,6 +903,83 @@ void main() {
 
       await removeBankAccount();
       await removeCreditCard();
+    });
+  });
+
+  group('purchase history', () {
+    final userId = "unittest-user" + DateTime.now().toString();
+    final storeId = "unittest-store" + DateTime.now().toString();
+    String? bankToken, creditToken, walletToken, paymentToken;
+
+    setUpAll(() {
+      return Future(() async {
+        var result = await internalPaymentGateway.createUserAccount(userId);
+        walletToken = result.getValue();
+        await internalPaymentGateway.createStoreAccount(storeId);
+
+        String bankAccount = "207884701";
+        String branchNumber = "987";
+        String bankName = "Yroz";
+        result = await internalPaymentGateway.addStoreBankAccount(
+            storeId, bankName, branchNumber, bankAccount);
+        bankToken = result.getValue()!;
+
+        String cardNumber = "6886 1232 0788 4701";
+        String expiryDate = "10/22";
+        String cvv = "987";
+        String cardHolder = "Yroz";
+        Secret secret =
+            await SecretLoader(secretPath: "assets/secrets.json").load();
+        final key = encrypt.Key.fromUtf8(secret.KEY);
+        final iv = encrypt.IV.fromUtf8(secret.IV);
+        final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
+        final encrypted = encrypter.encrypt(cardNumber, iv: iv);
+        String encryptedCardNumber = encrypted.base16.toString();
+        result = await internalPaymentGateway.addUserCreditCard(
+            userId, encryptedCardNumber, expiryDate, cvv, cardHolder);
+        creditToken = result.getValue()!;
+
+        final cashbackAmount = "0";
+        final creditAmount = "10";
+        result = await internalPaymentGateway.makePayment(userId, storeId,
+            walletToken!, creditToken!, cashbackAmount, creditAmount);
+        paymentToken = result.getValue()!;
+      });
+    });
+
+    tearDownAll(() {
+      return Future(() async {
+        await internalPaymentGateway.removeStoreBankAccount(
+            storeId, bankToken!);
+        bankToken = null;
+
+        await internalPaymentGateway.removeUserCreditCard(userId, creditToken!);
+        creditToken = null;
+
+        await internalPaymentGateway.deleteUserAccount(userId);
+        await internalPaymentGateway.deleteStoreAccount(storeId);
+      });
+    });
+
+    test('good scenario', () async {
+      DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
+      DateTime now = DateTime.now();
+      final result = await internalPaymentGateway.getPurchaseHistory(
+          yesterday, now,
+          userId: userId, storeId: storeId, succeeded: true);
+      expect(result.getTag(), true);
+      expect(result.getValue()!.length, 1);
+      expect(result.getValue()!.first["purchaseToken"], paymentToken);
+    });
+
+    test('sad scenario - no such purchase history', () async {
+      DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
+      DateTime now = DateTime.now();
+      final result = await internalPaymentGateway.getPurchaseHistory(
+          yesterday, now,
+          userId: userId, storeId: storeId, succeeded: false);
+      expect(result.getTag(), true);
+      expect(result.getValue()!.isEmpty, true);
     });
   });
 }
