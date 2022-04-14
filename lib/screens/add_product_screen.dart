@@ -15,12 +15,6 @@ import 'open_online_store_screen.dart';
 class AddProductScreen extends StatefulWidget {
   static const routeName = '/add-product';
 
-  OnlineStoreDTO? _editedStore;
-
-  AddProductScreen(OnlineStoreDTO? editedStore) {
-    this._editedStore = editedStore;
-  }
-
   @override
   _AddProductScreenState createState() => _AddProductScreenState();
 
@@ -87,8 +81,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final isValid = _form.currentState!.validate();
     if (isValid) {
       _form.currentState!.save();
-      Navigator.of(context).pop(Tuple2<ProductDTO?, OnlineStoreDTO?>(
-          _editedProduct, widget._editedStore));
+      Navigator.of(context).pop(_editedProduct);
     }
 
     setState(() {
@@ -180,7 +173,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
-                        if(double.tryParse(value)!=null){
+                        if (double.tryParse(value) != null) {
                           return 'Product name can not be a number';
                         }
                         return null;

@@ -1,5 +1,3 @@
-import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
-import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:tuple/tuple.dart';
@@ -9,8 +7,9 @@ class OpeningHours extends StatefulWidget {
   State<OpeningHours> createState() => _OpeningHoursState();
 
   Openings openings;
+  VoidCallback callback;
 
-  OpeningHours(this.openings);
+  OpeningHours(this.openings, this.callback);
 
   Openings saveOpenHours() {
     return Openings(days: _OpeningHoursState.days);
@@ -67,6 +66,7 @@ class _OpeningHoursState extends State<OpeningHours> {
                 Tuple2(newTime, days[index1].operationHours.item2)
             : days[index1].operationHours =
                 Tuple2(days[index1].operationHours.item1, newTime);
+        widget.callback();
       });
     }
   }
@@ -143,6 +143,7 @@ class _OpeningHoursState extends State<OpeningHours> {
                             onChanged: (isChecked) {
                               setState(() {
                                 days[index].closed = isChecked!;
+                                widget.callback();
                               });
                             },
                           ),

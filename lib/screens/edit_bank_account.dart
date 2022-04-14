@@ -33,58 +33,54 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
         : null;
   }
 
-  Future<void> _saveForm(BankAccountForm bankAccountForm, BuildContext context) async {
+  Future<void> _saveForm(
+      BankAccountForm bankAccountForm, BuildContext context) async {
     setState(() {
       _isLoading = true;
     });
 
-    final saveFormRes = await bankAccountForm.saveForm(context);
-    if (saveFormRes) {
-      final editRes = await Provider.of<User>(context, listen: false)
-          .editStoreBankAccount(bankAccountForm.buildBankAccountDTO()!);
-      if (editRes.getTag()) {
-        setState(() {
-          _isLoading = false;
-        });
-        SnackBar snackBar = SnackBar(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          behavior: SnackBarBehavior.floating,
-          content: const Text('Changed successfully!', textAlign: TextAlign.center),
-          width: MediaQuery.of(context).size.width * 0.5,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        // await showDialog(
-        //     context: context,
-        //     builder: (ctx) {
-        //       Future.delayed(Duration(seconds: 2), () {
-        //         Navigator.of(context).pop(true);
-        //       });
-        //       return AlertDialog(
-        //         title: new Text("Changed successfully!"),
-        //       );
-        //     }
-        // );
-        Navigator.of(context).pop();
+    if (_formChanged) {
+      final saveFormRes = await bankAccountForm.saveForm(context);
+      if (saveFormRes) {
+        final editRes = await Provider.of<User>(context, listen: false)
+            .editStoreBankAccount(bankAccountForm.buildBankAccountDTO()!);
+        if (editRes.getTag()) {
+          setState(() {
+            _isLoading = false;
+          });
+          SnackBar snackBar = SnackBar(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            behavior: SnackBarBehavior.floating,
+            content: const Text('Saved Bank Account Successfully!',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black87)),
+            width: MediaQuery.of(context).size.width * 0.75,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.of(context).pop();
+        } else {
+          await showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text('Edit Bank Acoount Error'),
+              content: Text(editRes.getMessage()),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                  },
+                )
+              ],
+            ),
+          );
+        }
       }
-      else {
-        await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('Edit Bank Acoount Error'),
-            content: Text(editRes.getMessage()),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Okay'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              )
-            ],
-          ),
-        );
-      }
+    } else {
+      Navigator.of(context).pop();
     }
 
     setState(() {

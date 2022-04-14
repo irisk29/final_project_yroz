@@ -3,11 +3,11 @@ import 'package:final_project_yroz/screens/account_screen.dart';
 import 'package:final_project_yroz/screens/categories_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/search_screen.dart';
+import 'package:final_project_yroz/widgets/account_app_bar.dart';
 import 'package:final_project_yroz/widgets/tabs_app_bar.dart';
 import 'package:final_project_yroz/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 
 import '../DTOs/StoreDTO.dart';
 import '../models/UserModel.dart';
@@ -38,33 +38,39 @@ class TabsScreen extends StatefulWidget {
         navigatorObservers: nav,
       );
 
-  Widget wrapWithMaterial2(List<NavigatorObserver> nav, UserModel user) => MaterialApp(
-    routes: {
-      TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-      FavoriteScreen.routeName: (ctx) => FavoriteScreen(),
-    },
-    home: MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: User.fromModel(user),
+  Widget wrapWithMaterial2(List<NavigatorObserver> nav, UserModel user) =>
+      MaterialApp(
+        routes: {
+          TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
+          FavoriteScreen.routeName: (ctx) => FavoriteScreen(),
+        },
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: User.fromModel(user),
+            ),
+          ],
+          child: Scaffold(
+            body: this,
+          ),
         ),
-      ],
-      child: Scaffold(
-        body: this,
-      ),
-    ),
-    // This mocked observer will now receive all navigation events
-    // that happen in our app.
-    navigatorObservers: nav,
-    onGenerateRoute: (settings) {
-      return MaterialPageRoute(
-        settings: RouteSettings(arguments: settings.arguments! as Map<String, Object>),
-        builder: (context) {
-          return PhysicalStoreScreen().wrapWithMaterial(nav, user, ModalRoute.of(context)!.settings.arguments as Map<String, Object>);
+        // This mocked observer will now receive all navigation events
+        // that happen in our app.
+        navigatorObservers: nav,
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+            settings: RouteSettings(
+                arguments: settings.arguments! as Map<String, Object>),
+            builder: (context) {
+              return PhysicalStoreScreen().wrapWithMaterial(
+                  nav,
+                  user,
+                  ModalRoute.of(context)!.settings.arguments
+                      as Map<String, Object>);
+            },
+          );
         },
       );
-    },
-  );
 }
 
 class _TabsScreenState extends State<TabsScreen> {
@@ -97,7 +103,7 @@ class _TabsScreenState extends State<TabsScreen> {
     final searchAppBar = TabsAppBar("Search").build(context);
     final favoritesAppBar = TabsAppBar("Favorites").build(context);
     final nearbyAppBar = TabsAppBar("Nearby").build(context);
-    final accountAppBar = TabsAppBar("My Account").build(context);
+    final accountAppBar = AccountAppBar().build(context);
     List<AppBar> appBars = [
       homeAppBar,
       searchAppBar,

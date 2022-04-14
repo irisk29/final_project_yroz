@@ -79,7 +79,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     final isValid = _form.currentState!.validate();
     if (isValid) {
       _form.currentState!.save();
-      Navigator.of(context).pop(Tuple2(_editedProduct,false));
+      Navigator.of(context).pop(Tuple2(_editedProduct, false));
     }
 
     setState(() {
@@ -139,7 +139,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               Icons.delete,
             ),
             onPressed: () {
-              Navigator.of(context).pop(Tuple2(_editedProduct,false));
+              Navigator.of(context).pop(Tuple2(_editedProduct, true));
             },
           ),
           IconButton(
@@ -171,7 +171,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         if (value!.isEmpty) {
                           return 'Please provide a value.';
                         }
-                        if(double.tryParse(value)!=null){
+                        if (double.tryParse(value) != null) {
                           return 'Product name can not be a number';
                         }
                         return null;

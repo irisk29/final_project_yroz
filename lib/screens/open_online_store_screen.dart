@@ -149,6 +149,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   @override
   void initState() {
     _formChanged = false;
+    openingHours = OpeningHours(
+        OpenOnlineStorePipeline.openings.clone(), () => _formChanged = true);
     super.initState();
   }
 
@@ -182,7 +184,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     setState(() {});
   }
 
-  OpeningHours openingHours = OpeningHours(OpenOnlineStorePipeline.openings);
+  late OpeningHours openingHours;
 
   Future<void> _saveForm() async {
     setState(() {
@@ -234,39 +236,35 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   static const productsLimitation = 10;
   void _showAddProduct() async {
     if (_products.length < productsLimitation) {
-      final Tuple2<ProductDTO?, OnlineStoreDTO?>? result = await Navigator.push(
+      final ProductDTO? result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddProductScreen(_editedStore)),
+        MaterialPageRoute(builder: (context) => AddProductScreen()),
       );
-      if (result != null && result.item1 != null) {
+      if (result != null) {
         if (_products.firstWhereOrNull((element) =>
-                element.name == result.item1!.name &&
-                element.description == result.item1!.description &&
-                result.item1!.price == element.price) !=
+                element.name == result.name &&
+                element.description == result.description &&
+                result.price == element.price) !=
             null) {
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: Text(
-                "Product Error",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              content:
-                  Text("A Product with these characteristics already exists."),
+              title: Text("Add Product Error"),
+              content: Text(
+                  "A product with these characteristics already exists. Please use the description field to distinguish between the two products."),
               actions: <Widget>[
-                ElevatedButton(
+                FlatButton(
+                  child: Text('Ok'),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(ctx).pop();
                   },
-                  child: Text("Ok"),
                 ),
               ],
             ),
           );
         } else {
           setState(() {
-            _editedStore = result.item2;
-            _products.add(result.item1!);
+            _products.add(result);
             _formChanged = true;
           });
         }
@@ -502,7 +500,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             Icons.edit,
                           ),
                           onDeleted: () async {
-                            final Tuple2<ProductDTO, bool>? result =
+                            final Tuple2<ProductDTO?, bool>? result =
                                 await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -523,7 +521,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                       element.name == e.name &&
                                       element.price == e.price &&
                                       element.description == e.description);
-                                  _products.add(result.item1);
+                                  _products.add(result.item1!);
                                   _formChanged = true;
                                 });
                               }
@@ -573,7 +571,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             _editedStore!.address,
             _pickedImage,
             _editedStore!.phoneNumber,
-            _editedStore!.operationHours);
+            openingHours.saveOpenHours());
       default:
         return null;
     }
