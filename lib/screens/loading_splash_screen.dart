@@ -5,10 +5,14 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:f_logs/model/flog/flog.dart';
-import 'package:final_project_yroz/screens/landing_screen.dart';
+import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
+import 'package:final_project_yroz/screens/auth_screen.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:provider/provider.dart';
 
+import '../LogicLayer/User.dart';
 import '../amplifyconfiguration.dart';
 import '../models/ModelProvider.dart';
 
@@ -19,7 +23,8 @@ class LoadingSplashScreen extends StatefulWidget {
   State<LoadingSplashScreen> createState() => _LoadingSplashScreenState();
 }
 
-class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerProviderStateMixin {
+class _LoadingSplashScreenState extends State<LoadingSplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController controller;
 
   @override
@@ -33,10 +38,6 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
         setState(() {});
       });
     TickerFuture ticker = controller.forward();
-    ticker.timeout(Duration(seconds: 20), onTimeout: () {
-      FLog.error(text: "Timeout occurd in ticker");
-      Navigator.of(context).pushReplacementNamed(LandingScreen.routeName);
-    });
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       await _configureAmplify();
@@ -45,19 +46,29 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
       var currentModelIndex = 0;
       var timers = [];
       Stopwatch stopwatch = new Stopwatch()..start();
-      Amplify.Hub.listen([HubChannel.DataStore], (msg) {
+      Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
         if (msg.eventName == 'modelSynced') {
           currentModelIndex++;
           timers.add(stopwatch.elapsed);
-          var avgTime = timers.reduce((value, element) => value + element) ~/ timers.length;
-          var duration = MODEL_COUNT - currentModelIndex > 0 ? avgTime * (MODEL_COUNT - currentModelIndex) : avgTime;
-          duration = 1 - controller.value > 0 ? duration * (1 / (1 - controller.value)) : duration;
+          var avgTime = timers.reduce((value, element) => value + element) ~/
+              timers.length;
+          var duration = MODEL_COUNT - currentModelIndex > 0
+              ? avgTime * (MODEL_COUNT - currentModelIndex)
+              : avgTime;
+          duration = 1 - controller.value > 0
+              ? duration * (1 / (1 - controller.value))
+              : duration;
           controller.duration = duration;
-          if (controller.isAnimating) ticker = controller.forward();
+          ticker = controller.forward();
           stopwatch = new Stopwatch()..start();
         } else if (msg.eventName == 'ready') {
           FLog.info(text: "AWS Amplify is ready");
-          ticker.then((value) => Navigator.pushReplacementNamed(context, LandingScreen.routeName));
+          final isUserAlreadySignedIn = await isSignedIn();
+          ticker.whenCompleteOrCancel(() => Navigator.pushReplacementNamed(
+              context,
+              isUserAlreadySignedIn
+                  ? TabsScreen.routeName
+                  : AuthScreen.routeName));
         }
       });
     });
@@ -91,8 +102,29 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
     try {
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
-      FLog.error(text: "Amplify was already configured. Was the app restarted?");
+      FLog.error(
+          text: "Amplify was already configured. Was the app restarted?");
     }
+  }
+
+  Future<bool> isSignedIn() async {
+    AuthUserAttribute email;
+    try {
+      await Amplify.Auth.getCurrentUser();
+      var res2 = await Amplify.Auth.fetchUserAttributes();
+      email = res2.firstWhere((element) =>
+          element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) ==
+          0);
+    } catch (e) {
+      FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+      return false;
+    }
+    UserModel? model = await UsersStorageProxy().fetchFullUser(email.value);
+    print("isLoggedIn: ${model != null && model.isLoggedIn}");
+    if (model != null)
+      Provider.of<User>(context, listen: false).userFromModel(model);
+    if (model != null && model.isLoggedIn) return true;
+    return false;
   }
 
   @override
@@ -107,7 +139,9 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(height: constraints.maxHeight * 0.15, child: Image.asset('assets/icon/icon.png')),
+                  Container(
+                      height: constraints.maxHeight * 0.15,
+                      child: Image.asset('assets/icon/icon.png')),
                 ],
               ),
             ),
