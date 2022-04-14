@@ -84,7 +84,7 @@ class _StorePreviewState extends State<StorePreview> {
             snapshot.connectionState == ConnectionState.none) {
           final imgBytes = snapshot.data;
           return Expanded(
-            flex: 5,
+            flex: 6,
             child: SingleChildScrollView(
               child: Column(
                 children: [

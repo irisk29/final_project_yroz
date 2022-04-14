@@ -72,8 +72,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
-                          Text(
-                              "We are sorry, we do not have stores from this category"),
+                          Text("We are sorry, we do not have stores from this category",
+                              textAlign: TextAlign.center),
                         ],
                       ),
                     )

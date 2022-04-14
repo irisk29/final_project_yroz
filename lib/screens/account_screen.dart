@@ -1,7 +1,6 @@
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
 import 'package:final_project_yroz/screens/credit_cards_screen.dart';
-import 'package:final_project_yroz/screens/feedback_screen.dart';
 import 'package:final_project_yroz/screens/user_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

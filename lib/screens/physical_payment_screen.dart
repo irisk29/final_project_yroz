@@ -23,6 +23,7 @@ class PhysicalPaymentScreen extends StatefulWidget {
 }
 
 class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -86,7 +87,7 @@ class _PaymentCardState extends State<PaymentCard>
   Future<void> initCreditAndCashback() async {
     String cb =
         await Provider.of<User>(context, listen: false).getEWalletBalance();
-    _cashback = double.parse(cb);
+    _cashback = cb == "" ? 0.0 : double.parse(cb);
 
     Map<String, Map<String, dynamic>> creditCards =
         await Provider.of<User>(context, listen: false)

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -19,22 +20,29 @@ class UserAuthenticator {
 
   Future<Tuple2<UserModel?, bool>> signIn(AuthProvider authProvider) async {
     try {
-      await Amplify.Auth.signInWithWebUI(provider: authProvider);
-      var res = await Amplify.Auth.fetchUserAttributes();
-      var email, name, picture;
-      for (var element in res) {
-        if (element.userAttributeKey.key == "given_name") name = element.value;
-        if (element.userAttributeKey.key == "email") email = element.value;
-        if (element.userAttributeKey.key == "picture") picture = element.value;
-        print('key: ${element.userAttributeKey}; value: ${element.value}');
+      var res1 = await Amplify.Auth.signInWithWebUI(provider: authProvider);
+      if(res1.isSignedIn) {
+        print("**** the user is finally signed in!! ***");
+        var res = await Amplify.Auth.fetchUserAttributes();
+        var email, name, picture;
+        for (var element in res) {
+          if (element.userAttributeKey.key == "given_name")
+            name = element.value;
+          if (element.userAttributeKey.key == "email") email = element.value;
+          if (element.userAttributeKey.key == "picture")
+            picture = element.value;
+          print('key: ${element.userAttributeKey}; value: ${element.value}');
+        }
+        if (authProvider == AuthProvider.facebook) {
+          var map = jsonDecode(picture);
+          picture = map["data"]["url"];
+        }
+        Tuple2<UserModel?, bool> currUser = await UsersStorageProxy()
+            .createUser(email, name, picture);
+        _currentUserId = email;
+        return currUser;
       }
-      if (authProvider == AuthProvider.facebook) {
-        var map = jsonDecode(picture);
-        picture = map["data"]["url"];
-      }
-      Tuple2<UserModel?, bool> currUser = await UsersStorageProxy().createUser(email, name, picture);
-      _currentUserId = email;
-      return currUser;
+      else return new Tuple2(null, false);
     } catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return new Tuple2(null, false);

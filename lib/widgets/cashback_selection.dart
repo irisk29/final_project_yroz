@@ -17,7 +17,7 @@ class _CashbackSelectionState extends State<CashbackSelection> {
 
   @override
   void initState() {
-    myController.text = widget.cashbackAmount.toStringAsFixed(1);
+    myController.text = widget.cashbackAmount.toStringAsFixed(2);
     super.initState();
   }
 

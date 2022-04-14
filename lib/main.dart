@@ -14,6 +14,7 @@ import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
+import 'package:final_project_yroz/screens/physical_payment_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
 import 'package:final_project_yroz/screens/user_purchase_history.dart';
