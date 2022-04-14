@@ -220,7 +220,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         Icons.feedback_rounded,
                         color: Colors.purple,
                       ),
-                      title: Text("Send FeedBack"),
+                      title: Text("Send Feedback"),
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         Navigator.pushNamed(

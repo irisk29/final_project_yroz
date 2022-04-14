@@ -72,7 +72,16 @@ class _FeedBackScreen extends State<FeedBackScreen> {
     if (gmailinstalled) {
       final MailerResponse response = await FlutterMailer.send(mailOptions);
       if (response == MailerResponse.android) {
-        //TODO: succsses snack bar
+        SnackBar snackBar = SnackBar(
+          duration: Duration(seconds: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          behavior: SnackBarBehavior.floating,
+          content: const Text('Mail sent successfully', textAlign: TextAlign.center),
+          width: MediaQuery.of(context).size.width * 0.5,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
 
@@ -83,7 +92,16 @@ class _FeedBackScreen extends State<FeedBackScreen> {
       final url = "mailto:$companyEmail?subject=$subject&body=$finalText";
       if (await canLaunch(url)) {
         await launch(url);
-        //TODO: succsses for snack bar
+        SnackBar snackBar = SnackBar(
+          duration: Duration(seconds: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          behavior: SnackBarBehavior.floating,
+          content: const Text('Mail sent successfully', textAlign: TextAlign.center),
+          width: MediaQuery.of(context).size.width * 0.5,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
         throw 'Could not launch $url';
       }
@@ -94,106 +112,138 @@ class _FeedBackScreen extends State<FeedBackScreen> {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Builder(
-        builder: (context) => Scaffold(
-          appBar: AppBar(
-            title: Text('Yroz FeedBack'),
-          ),
-          body: Directionality(
-            textDirection: TextDirection.ltr,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text("Please rate the following:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(
-                    height: deviceSize.height * 0.05,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Yroz Feedback'),
+      ),
+      body: Directionality(
+        textDirection: TextDirection.ltr,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: deviceSize.height * 0.05,
+              ),
+              Text("Please rate the following:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(
+                height: deviceSize.height * 0.05,
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.03),
+                    child: Text("The app is user friendly"),
                   ),
-                  Row(
-                    children: [
-                      Text("The app is user friendly"),
-                      _ratingBar(0),
-                    ],
+                  _ratingBar(0),
+                ],
+              ),
+              SizedBox(
+                height: deviceSize.height * 0.05,
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.03),
+                    child: Text("The app did not crash"),
                   ),
-                  SizedBox(
-                    height: deviceSize.height * 0.05,
-                  ),
-                  Row(
-                    children: [
-                      Text("The app did not crash"),
-                      _ratingBar(1),
-                    ],
-                  ),
-                  SizedBox(
-                    height: deviceSize.height * 0.05,
-                  ),
-                  Row(
-                    children: [
-                      Text("The app responds fast"),
-                      _ratingBar(2),
-                    ],
-                  ),
-                  SizedBox(
-                    height: deviceSize.height * 0.05,
-                  ),
-                  Row(
-                    children: [
-                      Text("The app's design"),
-                      _ratingBar(3),
-                    ],
-                  ),
-                  SizedBox(
-                    height: deviceSize.height * 0.05,
-                  ),
-                  Container(
-                    width: deviceSize.width * 0.95,
-                    child: TextField(
-                      controller: _textEditingController,
-                      keyboardType: TextInputType.multiline,
-                      minLines: 1,
-                      maxLines: 10,
-                      decoration: InputDecoration(
-                        hintText: 'Please tell us more',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: deviceSize.height * 0.05,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      primary: Theme.of(context).primaryColor,
-                    ),
-                    child: Container(
-                      margin: EdgeInsets.all(deviceSize.width * 0.025),
-                      child: const Text(
-                        'Submit',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    onPressed: () async {
-                      print("submit");
-                      print(_ratings);
-                      print(_textEditingController.text);
-                      await sendEmail();
-                      Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
-                    },
+                  Padding(
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.03),
+                    child: _ratingBar(1),
                   ),
                 ],
               ),
-            ),
+              SizedBox(
+                height: deviceSize.height * 0.05,
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.03),
+                    child: Text("The app responds fast"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.025),
+                    child: _ratingBar(2),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: deviceSize.height * 0.05,
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.03),
+                    child: Text("The app's design"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.11),
+                    child: _ratingBar(3),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: deviceSize.height * 0.05,
+              ),
+              Container(
+                width: deviceSize.width * 0.95,
+                child: TextField(
+                  controller: _textEditingController,
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: 7,
+                  decoration: InputDecoration(
+                    hintText: 'Please tell us more',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: deviceSize.height * 0.05,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  primary: Theme.of(context).primaryColor,
+                ),
+                child: Container(
+                  margin: EdgeInsets.all(deviceSize.width * 0.025),
+                  child: const Text(
+                    'Submit',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                onPressed: () async {
+                  if (_ratings.isEmpty && _textEditingController.text.isEmpty) {
+                    SnackBar snackBar = SnackBar(
+                      duration: Duration(seconds: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      content: const Text('Please fill at least one field', textAlign: TextAlign.center),
+                      width: MediaQuery.of(context).size.width * 0.5,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
+                  print("submit");
+                  print(_ratings);
+                  print(_textEditingController.text);
+                  await sendEmail();
+                  Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+                },
+              ),
+            ],
           ),
         ),
       ),
