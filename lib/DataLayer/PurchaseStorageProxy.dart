@@ -21,8 +21,7 @@ class PurchaseStorageProxy {
       [List<CartProductDTO>? products]) async {
     var date =
         TemporalDateTime.fromString(DateTime.now().toDateTimeIso8601String());
-    var productsJson =
-        products == null ? "" : JsonEncoder.withIndent('  ').convert(products);
+    var productsJson = JsonEncoder.withIndent('  ').convert(products);
     PurchaseHistoryModel purchaseHistoryModel = new PurchaseHistoryModel(
         date: date,
         transactionID: transactionID,

@@ -104,8 +104,8 @@ class UsersStorageProxy {
       FLog.error(text: "No such user - $emailCurrUser");
       return null;
     }
-    user = user.copyWith(isLoggedIn: false);
-    await Amplify.DataStore.save(user);
+    var u = user.copyWith(isLoggedIn: false);
+    await Amplify.DataStore.save(u);
   }
 
   Future<void> saveStoreOwnerViewOption(bool hide) async {

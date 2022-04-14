@@ -43,7 +43,7 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
           ? (purchaseProducts.length > 0
                   ? deviceSize.height * 0.025 +
                       purchaseProducts.length * deviceSize.height * 0.05
-                  : deviceSize.height * 0.05) +
+                  : deviceSize.height * 0.1) +
               deviceSize.height * 0.175
           : deviceSize.height * 0.175,
       child: Card(
