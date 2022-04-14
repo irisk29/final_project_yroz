@@ -84,8 +84,7 @@ class _FeedBackScreen extends State<FeedBackScreen> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
       }
-    }
-    else {
+    } else {
       //IOS
       final bool canSend = await FlutterMailer.canSendMail();
       print("can send: $canSend");
@@ -99,12 +98,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             behavior: SnackBarBehavior.floating,
-            content: const Text(
-                'Mail sent successfully', textAlign: TextAlign.center),
-            width: MediaQuery
-                .of(context)
-                .size
-                .width * 0.5,
+            content: const Text('Mail sent successfully', textAlign: TextAlign.center),
+            width: MediaQuery.of(context).size.width * 0.5,
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
@@ -115,12 +110,41 @@ class _FeedBackScreen extends State<FeedBackScreen> {
     }
   }
 
+  void _exitWithoutSavingDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Are your sure?'),
+        content: Text("You are about to exit without saving your changes."),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('No'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+          FlatButton(
+            child: Text('Yes'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => _exitWithoutSavingDialog(),
+        ),
         title: Text('Yroz Feedback'),
       ),
       body: Directionality(
@@ -259,8 +283,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
   Widget _ratingBar(int questionIndex) {
     return RatingBar.builder(
       direction: Axis.horizontal,
-      itemCount: 5,
       itemSize: MediaQuery.of(context).size.width * 0.08,
+      itemCount: 5,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
       itemBuilder: (context, index) {
         switch (index) {
