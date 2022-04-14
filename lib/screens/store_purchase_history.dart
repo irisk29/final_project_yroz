@@ -44,6 +44,7 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
     await user.storeOwnerState!.updateLastTimeViewedPurchses(now);
     newStorePurchases = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(lastVisit, now);
+    print(lastVisit);
     earlierStorePurchases = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(monthAgo, lastVisit);
   }

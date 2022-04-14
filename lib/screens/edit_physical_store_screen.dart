@@ -142,8 +142,18 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       _editedStore!.operationHours = openingHours.saveOpenHours();
       final res = await Provider.of<User>(context, listen: false)
           .updatePhysicalStore(_editedStore!);
-      if (res.getTag())
+      if (res.getTag()){
+        SnackBar snackBar = SnackBar(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          behavior: SnackBarBehavior.floating,
+          content: const Text('Changed successfully!', textAlign: TextAlign.center),
+          width: MediaQuery.of(context).size.width * 0.5,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.of(context).pop();
+      }
       else {
         await showDialog(
           context: context,

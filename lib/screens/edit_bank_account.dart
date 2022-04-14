@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/bank_account_form.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +33,7 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
         : null;
   }
 
-  Future<void> _saveForm(
-      BankAccountForm bankAccountForm, BuildContext context) async {
+  Future<void> _saveForm(BankAccountForm bankAccountForm, BuildContext context) async {
     setState(() {
       _isLoading = true;
     });
@@ -41,8 +42,32 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
     if (saveFormRes) {
       final editRes = await Provider.of<User>(context, listen: false)
           .editStoreBankAccount(bankAccountForm.buildBankAccountDTO()!);
-      if (editRes.getTag())
+      if (editRes.getTag()) {
+        setState(() {
+          _isLoading = false;
+        });
+        SnackBar snackBar = SnackBar(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          behavior: SnackBarBehavior.floating,
+          content: const Text('Changed successfully!', textAlign: TextAlign.center),
+          width: MediaQuery.of(context).size.width * 0.5,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        // await showDialog(
+        //     context: context,
+        //     builder: (ctx) {
+        //       Future.delayed(Duration(seconds: 2), () {
+        //         Navigator.of(context).pop(true);
+        //       });
+        //       return AlertDialog(
+        //         title: new Text("Changed successfully!"),
+        //       );
+        //     }
+        // );
         Navigator.of(context).pop();
+      }
       else {
         await showDialog(
           context: context,
