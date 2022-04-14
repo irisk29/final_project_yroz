@@ -29,6 +29,7 @@ class _FeedBackScreen extends State<FeedBackScreen> {
     "The app's design looks good"
   ];
   var _formChanged;
+  var _showError = false;
 
   @override
   void didChangeDependencies() {
@@ -234,6 +235,13 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                         Center(child: _ratingBar(3)),
                       ],
                     ),
+                    _showError
+                        ? Text(
+                            "Please fill at least one field",
+                            style:
+                                TextStyle(color: Theme.of(context).errorColor),
+                          )
+                        : SizedBox(),
                     TextField(
                       controller: _textEditingController,
                       keyboardType: TextInputType.multiline,
@@ -265,18 +273,7 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                       onPressed: () async {
                         if (_ratings.isEmpty &&
                             _textEditingController.text.isEmpty) {
-                          SnackBar snackBar = SnackBar(
-                            duration: Duration(seconds: 2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            content: const Text(
-                                'Please fill at least one field',
-                                textAlign: TextAlign.center),
-                            width: MediaQuery.of(context).size.width * 0.5,
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          setState(() => _showError = true);
                           return;
                         }
                         await sendEmail();
