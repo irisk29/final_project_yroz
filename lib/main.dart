@@ -116,6 +116,7 @@ class _MyAppState extends State<MyApp> {
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
           TutorialScreen.routeName: (ctx) => TutorialScreen(),
           InvoiceScreen.routeName: (ctx) => InvoiceScreen(ctx),
+          // PhysicalPaymentScreen.routeName: (ctx) => PhysicalPaymentScreen(),
         },
       ),
     );

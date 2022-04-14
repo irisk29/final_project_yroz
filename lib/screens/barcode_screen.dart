@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:final_project_yroz/screens/physical_payment_screen.dart';
+import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -46,8 +47,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       if (result != null)
-                        _openUrl(result!)
-                            .build(context) // to change for another action
+                        Text('Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}') // to change for another action
                       else
                         Container(
                           margin: EdgeInsets.all(deviceSize.width * 0.05),
@@ -106,6 +106,13 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (ctx) =>
+                    PhysicalPaymentScreen(result!.code)));
+        // Navigator.of(context).pushNamed(PhysicalPaymentScreen.routeName, arguments: {'store': result!.code});
       });
     });
   }
@@ -123,21 +130,5 @@ class _QRViewExampleState extends State<QRViewExample> {
   void dispose() {
     controller?.dispose();
     super.dispose();
-  }
-}
-
-class _openUrl {
-  final Barcode result;
-
-  _openUrl(this.result);
-
-  void _launchPayment(context, url) async =>
-      PhysicalPaymentScreen(url.toString());
-
-  @override
-  Widget build(BuildContext context) {
-    _launchPayment(context, result.code);
-    return Text(
-        'Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}');
   }
 }
