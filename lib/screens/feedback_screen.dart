@@ -82,28 +82,35 @@ class _FeedBackScreen extends State<FeedBackScreen> {
           width: MediaQuery.of(context).size.width * 0.5,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
       }
     }
-
-    //IOS
-    final bool canSend = await FlutterMailer.canSendMail();
-    print("can send: $canSend");
-    if (!canSend && Platform.isIOS) {
-      final url = "mailto:$companyEmail?subject=$subject&body=$finalText";
-      if (await canLaunch(url)) {
-        await launch(url);
-        SnackBar snackBar = SnackBar(
-          duration: Duration(seconds: 2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          behavior: SnackBarBehavior.floating,
-          content: const Text('Mail sent successfully', textAlign: TextAlign.center),
-          width: MediaQuery.of(context).size.width * 0.5,
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else {
-        throw 'Could not launch $url';
+    else {
+      //IOS
+      final bool canSend = await FlutterMailer.canSendMail();
+      print("can send: $canSend");
+      if (!canSend && Platform.isIOS) {
+        final url = "mailto:$companyEmail?subject=$subject&body=$finalText";
+        if (await canLaunch(url)) {
+          await launch(url);
+          SnackBar snackBar = SnackBar(
+            duration: Duration(seconds: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            behavior: SnackBarBehavior.floating,
+            content: const Text(
+                'Mail sent successfully', textAlign: TextAlign.center),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.5,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
+        } else {
+          throw 'Could not launch $url';
+        }
       }
     }
   }
@@ -240,7 +247,6 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                   print(_ratings);
                   print(_textEditingController.text);
                   await sendEmail();
-                  Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
                 },
               ),
             ],
