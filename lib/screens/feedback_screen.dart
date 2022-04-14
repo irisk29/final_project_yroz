@@ -260,6 +260,7 @@ class _FeedBackScreen extends State<FeedBackScreen> {
     return RatingBar.builder(
       direction: Axis.horizontal,
       itemCount: 5,
+      itemSize: MediaQuery.of(context).size.width * 0.08,
       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
       itemBuilder: (context, index) {
         switch (index) {
