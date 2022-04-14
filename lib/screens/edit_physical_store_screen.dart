@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'dart:math';
+import 'package:f_logs/model/flog/flog.dart';
+import 'package:http/http.dart' as http;
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -8,6 +12,7 @@ import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 
@@ -27,8 +32,7 @@ class EditPhysicalStorePipeline extends StatefulWidget {
   }
 
   //for test purposes
-  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) =>
-      MaterialApp(
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) => MaterialApp(
         routes: {
           TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
         },
@@ -61,6 +65,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   final List<String> _selectedItems = [];
 
   late Secret secret;
+  late File localFile;
 
   var _isInit = true;
   var _isLoading = false;
@@ -70,14 +75,21 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   @override
   void initState() {
     _formChanged = false;
-    _editedStore = Provider.of<User>(context, listen: false)
-        .storeOwnerState!
-        .physicalStore;
-    openingHours = OpeningHours(
-        _editedStore!.operationHours.clone(), () => _formChanged = true);
-    _pickedImage =
-        _editedStore!.image != null ? XFile(_editedStore!.image!) : null;
+    _editedStore = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore;
+    openingHours = OpeningHours(_editedStore!.operationHours.clone(), () => _formChanged = true);
     super.initState();
+  }
+
+  Future<String> urlToFile(String imageUrl) async {
+    var rng = new Random();
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
+    final Uri uri = Uri.parse(imageUrl);
+    http.Response response = await http.get(uri);
+    await file.writeAsBytes(response.bodyBytes);
+    localFile = file;
+    return file.path;
   }
 
   @override
@@ -93,10 +105,16 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           controller: EditPhysicalStorePipeline._controller,
           builder: AddressDialogBuilder(),
           onDone: (Address address) => address);
-      _editedStore = Provider.of<User>(context, listen: false)
-          .storeOwnerState!
-          .physicalStore;
+      _editedStore = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore;
       _selectedItems.addAll(_editedStore!.categories);
+      _pickedImage = null;
+      if (_editedStore!.image != null) {
+        String path = await urlToFile(_editedStore!.image!);
+        FLog.fatal(text: "path: $path");
+        setState(() {
+          _pickedImage = XFile(path);
+        });
+      }
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -124,10 +142,14 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     if (_formChanged) {
       _editedStore!.categories = _selectedItems;
       _editedStore!.operationHours = openingHours.saveOpenHours();
-      _editedStore!.image = _pickedImage != null ? _pickedImage!.path : null;
-      final res = await Provider.of<User>(context, listen: false)
-          .updatePhysicalStore(_editedStore!);
+      _editedStore!.imageFromPhone = _pickedImage != null ? File(_pickedImage!.path) : null;
+      final res = await Provider.of<User>(context, listen: false).updatePhysicalStore(_editedStore!);
       if (res.getTag()) {
+        try {
+          await localFile.delete();
+        } on Exception catch (e) {
+          FLog.error(text: e.toString(), stacktrace: StackTrace.current);
+        }
         SnackBar snackBar = SnackBar(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -135,8 +157,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           backgroundColor: Theme.of(context).primaryColor,
           behavior: SnackBarBehavior.floating,
           content: const Text('Saved Store Details Successfully!',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black87)),
+              textAlign: TextAlign.center, style: TextStyle(color: Colors.black87)),
           width: MediaQuery.of(context).size.width * 0.75,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -198,8 +219,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(
-                          _selectImage, _unselectImage, _pickedImage, true),
+                      ImageInput(_selectImage, _unselectImage, _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         initialValue: _editedStore!.name,
@@ -254,9 +274,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         key: const Key('storeAddress'),
                         initialValue: _editedStore!.address,
                         decoration: InputDecoration(labelText: 'Address'),
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => destinationBuilder),
+                        onTap: () => showDialog(context: context, builder: (context) => destinationBuilder),
                         onChanged: (_) => _formChanged = true,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -304,8 +322,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isChecked) =>
-                      _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
+                  onChanged: (isChecked) => _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
                 ),
               ),
             ),
@@ -318,9 +335,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                         shrinkWrap: true,
                         children: _selectedItems
                             .map((e) => Padding(
-                                padding: EdgeInsets.only(
-                                    right: deviceSize.width * 0.01,
-                                    left: deviceSize.width * 0.01),
+                                padding: EdgeInsets.only(right: deviceSize.width * 0.01, left: deviceSize.width * 0.01),
                                 child: Chip(
                                   deleteIcon: Icon(
                                     Icons.close,
@@ -346,12 +361,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       case 2:
         return openingHours;
       case 3:
-        return StorePreview(
-            false,
-            _editedStore!.name,
-            _editedStore!.address,
-            _pickedImage,
-            _editedStore!.phoneNumber,
+        return StorePreview(false, _editedStore!.name, _editedStore!.address, _pickedImage, _editedStore!.phoneNumber,
             openingHours.saveOpenHours());
       default:
         return null;
@@ -445,12 +455,10 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                               children: [
                                 _currentStep > 0
                                     ? Padding(
-                                        padding: EdgeInsets.only(
-                                            left: deviceSize.width * 0.025),
+                                        padding: EdgeInsets.only(left: deviceSize.width * 0.025),
                                         child: CircleAvatar(
                                           radius: 25,
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
+                                          backgroundColor: Theme.of(context).primaryColor,
                                           child: IconButton(
                                             color: Colors.black54,
                                             onPressed: cancel,
@@ -460,19 +468,15 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                                       )
                                     : Container(),
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                      right: deviceSize.width * 0.025),
+                                  padding: EdgeInsets.only(right: deviceSize.width * 0.025),
                                   child: CircleAvatar(
                                     radius: 25,
-                                    backgroundColor:
-                                        Theme.of(context).primaryColor,
+                                    backgroundColor: Theme.of(context).primaryColor,
                                     child: IconButton(
                                       key: const Key("continue_button"),
                                       color: Colors.black54,
                                       onPressed: continued,
-                                      icon: Icon(_currentStep < 3
-                                          ? Icons.arrow_forward
-                                          : Icons.done),
+                                      icon: Icon(_currentStep < 3 ? Icons.arrow_forward : Icons.done),
                                     ),
                                   ),
                                 )
