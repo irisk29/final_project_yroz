@@ -158,8 +158,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 key: _form,
                 child: ListView(
                   children: <Widget>[
-                    ImageInput(
-                        _selectImage, _unselectImage, _pickedImage, false),
+                    ImageInput(_selectImage, _unselectImage,
+                        _editedProduct!.imageUrl, false),
                     TextFormField(
                       initialValue: _editedProduct!.name,
                       decoration: InputDecoration(labelText: 'Title'),

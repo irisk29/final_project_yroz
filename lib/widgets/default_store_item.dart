@@ -86,6 +86,7 @@ class StoreItem extends StatelessWidget {
                   ),
                   Container(
                     height: constraints.maxHeight * 0.09,
+                    width: constraints.maxWidth * 0.9,
                     child: Column(
                       children: [
                         Expanded(
