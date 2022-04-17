@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class StoreItem extends StatelessWidget {
   final StoreDTO store;
 
-  StoreItem(this.store) {}
+  StoreItem(this.store);
 
   void selectStore(BuildContext ctx) {
     this.store is OnlineStoreDTO

@@ -66,7 +66,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   final List<String> _selectedItems = [];
 
   late Secret secret;
-  late File localFile;
 
   var _isInit = true;
   var _isLoading = false;
@@ -82,18 +81,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     openingHours = OpeningHours(
         _editedStore!.operationHours.clone(), () => _formChanged = true);
     super.initState();
-  }
-
-  Future<String> urlToFile(String imageUrl) async {
-    var rng = new Random();
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    File file = new File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
-    final Uri uri = Uri.parse(imageUrl);
-    http.Response response = await http.get(uri);
-    await file.writeAsBytes(response.bodyBytes);
-    localFile = file;
-    return file.path;
   }
 
   @override
@@ -113,14 +100,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           .storeOwnerState!
           .physicalStore;
       _selectedItems.addAll(_editedStore!.categories);
-      _pickedImage = null;
-      if (_editedStore!.image != null) {
-        String path = await urlToFile(_editedStore!.image!);
-        FLog.fatal(text: "path: $path");
-        setState(() {
-          _pickedImage = XFile(path);
-        });
-      }
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -134,6 +113,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   void _unselectImage() {
     _pickedImage = null;
+    _editedStore!.image = null;
     _formChanged = true;
     setState(() {});
   }
@@ -153,11 +133,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       final res = await Provider.of<User>(context, listen: false)
           .updatePhysicalStore(_editedStore!);
       if (res.getTag()) {
-        try {
-          await localFile.delete();
-        } on Exception catch (e) {
-          FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-        }
         SnackBar snackBar = SnackBar(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -438,7 +413,31 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           ),
         ),
         body: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Align(
+                alignment: Alignment.center,
+                child: ListView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          height: deviceSize.height * 0.8,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                              Container(
+                                width: deviceSize.width * 0.6,
+                                child: Text("Updating Store Details...",
+                                    textAlign: TextAlign.center),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+              )
             : SingleChildScrollView(
                 child: Center(
                   child: SizedBox(

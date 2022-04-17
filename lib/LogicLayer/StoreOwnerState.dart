@@ -52,44 +52,59 @@ class StoreOwnerState {
   String get getStoreOwnerID => _storeOwnerID;
   void setStoreOwnerID(id) => _storeOwnerID = id;
 
-  Openings decodeOpenings(String hours){
+  Openings decodeOpenings(String hours) {
     List<OpeningTimes> days = [];
     LineSplitter ls = new LineSplitter();
     List<String> lines = ls.convert(hours);
-    for(String line in lines){
-      if(line.contains("closed")){
-        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: true, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))));
-      }
-      else{
+    for (String line in lines) {
+      if (line.contains("closed")) {
+        days.add(OpeningTimes(
+            day: line.substring(0, line.indexOf("-")),
+            closed: true,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))));
+      } else {
         int firsthour = 0;
         int firstminute = 0;
         int secondhour = 0;
         int secondminute = 0;
-        String firsttime = line.substring(line.indexOf("-")+1,line.indexOf(","));
-        if(firsttime.contains("AM")){
-          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":")));
-          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":")+1,firsttime.indexOf(" ")));
+        String firsttime =
+            line.substring(line.indexOf("-") + 1, line.indexOf(","));
+        if (firsttime.contains("AM")) {
+          firsthour = int.parse(firsttime.substring(0, firsttime.indexOf(":")));
+          firstminute = int.parse(firsttime.substring(
+              firsttime.indexOf(":") + 1, firsttime.indexOf(" ")));
+        } else {
+          firsthour =
+              int.parse(firsttime.substring(0, firsttime.indexOf(":"))) + 12;
+          firstminute = int.parse(firsttime.substring(
+              firsttime.indexOf(":") + 1, firsttime.indexOf(" ")));
         }
-        else{
-          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":"))) + 12;
-          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":")+1,firsttime.indexOf(" ")));
+        String secondtime = line.substring(line.indexOf(",") + 1);
+        if (secondtime.contains("AM")) {
+          secondhour =
+              int.parse(secondtime.substring(0, secondtime.indexOf(":")));
+          secondminute = int.parse(secondtime.substring(
+              secondtime.indexOf(":") + 1, secondtime.indexOf(" ")));
+        } else {
+          secondhour =
+              int.parse(secondtime.substring(0, secondtime.indexOf(":"))) + 12;
+          secondminute = int.parse(secondtime.substring(
+              secondtime.indexOf(":") + 1, secondtime.indexOf(" ")));
         }
-        String secondtime = line.substring(line.indexOf(",")+1);
-        if(secondtime.contains("AM")){
-          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":")));
-          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":")+1,secondtime.indexOf(" ")));
-        }
-        else{
-          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":"))) + 12;
-          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":")+1,secondtime.indexOf(" ")));
-        }
-        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: false, operationHours: Tuple2(TimeOfDay(hour: firsthour, minute: firstminute), TimeOfDay(hour: secondhour, minute: secondminute))));
+        days.add(OpeningTimes(
+            day: line.substring(0, line.indexOf("-")),
+            closed: false,
+            operationHours: Tuple2(
+                TimeOfDay(hour: firsthour, minute: firstminute),
+                TimeOfDay(hour: secondhour, minute: secondminute))));
       }
     }
     return Openings(days: days);
   }
 
-  Future<void> setOnlineStoreFromModel(OnlineStoreModel onlineStoreModel) async {
+  Future<void> setOnlineStoreFromModel(
+      OnlineStoreModel onlineStoreModel) async {
     var categories = jsonDecode(onlineStoreModel.categories);
     var op = decodeOpenings(onlineStoreModel.operationHours);
     List<ProductDTO> products = [];
@@ -106,7 +121,10 @@ class StoreOwnerState {
         address: onlineStoreModel.address,
         categories: List<String>.from(categories),
         operationHours: op,
-        image: onlineStoreModel.imageUrl,
+        image: onlineStoreModel.imageUrl != null &&
+                onlineStoreModel.imageUrl!.isEmpty
+            ? null
+            : onlineStoreModel.imageUrl,
         products: products,
         qrCode: onlineStoreModel.qrCode);
   }
@@ -125,7 +143,10 @@ class StoreOwnerState {
         address: physicalStoreModel.address,
         categories: List<String>.from(categories),
         operationHours: op,
-        image: physicalStoreModel.imageUrl,
+        image: physicalStoreModel.imageUrl != null &&
+                physicalStoreModel.imageUrl!.isEmpty
+            ? null
+            : physicalStoreModel.imageUrl,
         qrCode: physicalStoreModel.qrCode!);
   }
 
