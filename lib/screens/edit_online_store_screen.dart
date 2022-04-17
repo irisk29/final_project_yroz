@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:f_logs/f_logs.dart';
 import 'package:address_search_field/address_search_field.dart';
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
@@ -79,8 +81,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
         Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
     openingHours = OpeningHours(
         _editedStore!.operationHours.clone(), () => _formChanged = true);
-    _pickedImage =
-        _editedStore!.image != null ? XFile(_editedStore!.image!) : null;
     super.initState();
   }
 
@@ -115,6 +115,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   void _unselectImage() {
     _pickedImage = null;
+    _editedStore!.image = null;
     _formChanged = true;
     setState(() {});
   }
@@ -130,7 +131,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.categories = _selectedItems;
       _editedStore!.products = _products;
       _editedStore!.operationHours = openingHours.saveOpenHours();
-      _editedStore!.image = _pickedImage != null ? _pickedImage!.path : null;
+      _editedStore!.imageFromPhone =
+          _pickedImage != null ? File(_pickedImage!.path) : null;
       final res =
           await Provider.of<User>(context, listen: false).updateOnlineStore(
         _editedStore!,
@@ -265,8 +267,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(
-                          _selectImage, _unselectImage, _pickedImage, true),
+                      ImageInput(_selectImage, _unselectImage,
+                          _editedStore!.image, true),
                       TextFormField(
                         key: const Key('storeName'),
                         initialValue: _editedStore!.name,
@@ -289,6 +291,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                               address: _editedStore!.address,
                               categories: _editedStore!.categories,
                               operationHours: _editedStore!.operationHours,
+                              qrCode: _editedStore!.qrCode,
                               products: _editedStore!.products,
                               image: _editedStore!.image,
                               id: _editedStore!.id);
@@ -334,6 +337,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                               categories: _editedStore!.categories,
                               operationHours: _editedStore!.operationHours,
                               products: _editedStore!.products,
+                              qrCode: _editedStore!.qrCode,
                               image: _editedStore!.image,
                               id: _editedStore!.id);
                         },
@@ -546,7 +550,31 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           ),
         ),
         body: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Align(
+                alignment: Alignment.center,
+                child: ListView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          height: deviceSize.height * 0.8,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                              Container(
+                                width: deviceSize.width * 0.6,
+                                child: Text("Updating Store Details...",
+                                    textAlign: TextAlign.center),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+              )
             : SingleChildScrollView(
                 child: Center(
                   child: SizedBox(

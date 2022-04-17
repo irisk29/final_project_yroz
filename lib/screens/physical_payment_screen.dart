@@ -23,28 +23,30 @@ class PhysicalPaymentScreen extends StatefulWidget {
 }
 
 class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
-
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) => Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          toolbarHeight: constraints.maxHeight * 0.1,
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Text("Physical Payment"),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: LayoutBuilder(
+        builder: (context, constraints) => Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            toolbarHeight: constraints.maxHeight * 0.1,
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Text("Physical Payment"),
+            ),
           ),
-        ),
-        body: Container(
-          height: constraints.maxHeight * 0.85,
-          width: constraints.maxWidth,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              PaymentCard(widget.storeID),
-            ],
+          body: Container(
+            height: constraints.maxHeight * 0.85,
+            width: constraints.maxWidth,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                PaymentCard(widget.storeID),
+              ],
+            ),
           ),
         ),
       ),
@@ -245,7 +247,7 @@ class _PaymentCardState extends State<PaymentCard>
                                   if (value!.isEmpty) {
                                     return 'Please enter a value.';
                                   }
-                                  if(double.tryParse(value)==null){
+                                  if (double.tryParse(value) == null) {
                                     return 'Amount has be a number';
                                   }
                                   return null;

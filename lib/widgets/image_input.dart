@@ -6,25 +6,21 @@ import 'package:image_picker/image_picker.dart';
 class ImageInput extends StatefulWidget {
   final Function onSelectImage;
   final Function onUnselectImage;
-  XFile? image;
+  String? imageUrl;
   bool isStore = true;
 
   ImageInput(
-      this.onSelectImage, this.onUnselectImage, this.image, this.isStore);
+      this.onSelectImage, this.onUnselectImage, this.imageUrl, this.isStore);
 
   @override
-  _ImageInputState createState() => _ImageInputState(image);
+  _ImageInputState createState() => _ImageInputState(this.imageUrl);
 }
 
 class _ImageInputState extends State<ImageInput> {
-  XFile? _storedImage;
-  String? imagePath;
+  XFile? imageFromPhone;
+  String? imageUrl;
 
-  _ImageInputState(this._storedImage) {
-    this._storedImage == null
-        ? this.imagePath = null
-        : this.imagePath = this._storedImage!.path;
-  }
+  _ImageInputState(this.imageUrl);
 
   Future<void> _takePicture() async {
     final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -32,9 +28,9 @@ class _ImageInputState extends State<ImageInput> {
       return;
     }
     setState(() {
-      _storedImage = imageFile;
+      imageFromPhone = imageFile;
     });
-    imagePath = imageFile.path;
+    imageUrl = imageFile.path;
 
     widget.onSelectImage(imageFile);
   }
@@ -46,15 +42,16 @@ class _ImageInputState extends State<ImageInput> {
       return;
     }
     setState(() {
-      _storedImage = imageFile;
+      imageFromPhone = imageFile;
     });
-    imagePath = imageFile.path;
+    imageUrl = imageFile.path;
     widget.onSelectImage(imageFile);
   }
 
   Future<void> _cancelPicture() async {
     setState(() {
-      _storedImage = null;
+      imageFromPhone = null;
+      imageUrl = null;
     });
     widget.onUnselectImage();
   }
@@ -72,12 +69,14 @@ class _ImageInputState extends State<ImageInput> {
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
           ),
-          child: _storedImage != null
-              ? Image.file(File(imagePath!))
-              : Image(
-                  image: widget.isStore
-                      ? AssetImage('assets/images/default-store.png')
-                      : AssetImage('assets/images/default_product.png')),
+          child: imageFromPhone != null
+              ? Image.file(File(imageUrl!))
+              : imageFromPhone == null && imageUrl != null
+                  ? Image(image: NetworkImage(imageUrl!))
+                  : Image(
+                      image: widget.isStore
+                          ? AssetImage('assets/images/default-store.png')
+                          : AssetImage('assets/images/default_product.png')),
           alignment: Alignment.center,
         ),
         SizedBox(

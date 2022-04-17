@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class StoreItem extends StatelessWidget {
   final StoreDTO store;
 
-  StoreItem(this.store) {}
+  StoreItem(this.store);
 
   void selectStore(BuildContext ctx) {
     this.store is OnlineStoreDTO
@@ -86,6 +86,7 @@ class StoreItem extends StatelessWidget {
                   ),
                   Container(
                     height: constraints.maxHeight * 0.09,
+                    width: constraints.maxWidth * 0.9,
                     child: Column(
                       children: [
                         Expanded(

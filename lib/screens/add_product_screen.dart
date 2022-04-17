@@ -160,8 +160,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 key: _form,
                 child: ListView(
                   children: <Widget>[
-                    ImageInput(
-                        _selectImage, _unselectImage, _pickedImage, false),
+                    ImageInput(_selectImage, _unselectImage, null, false),
                     TextFormField(
                       key: const Key('title'),
                       decoration: InputDecoration(labelText: 'Title'),

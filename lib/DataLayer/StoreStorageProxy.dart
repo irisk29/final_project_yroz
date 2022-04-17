@@ -185,16 +185,18 @@ class StoreStorageProxy {
     return file;
   }
 
-  String openingsToJson(Openings openings){
+  String openingsToJson(Openings openings) {
     String json = "";
-    for(OpeningTimes t in openings.days){
+    for (OpeningTimes t in openings.days) {
       json = json + t.day + "-";
-      if(t.closed)
+      if (t.closed)
         json = json + "closed";
-      else{
+      else {
         final now = new DateTime.now();
-        final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
-        final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
+        final dt = DateTime(now.year, now.month, now.day,
+            t.operationHours.item1.hour, t.operationHours.item1.minute);
+        final dt2 = DateTime(now.year, now.month, now.day,
+            t.operationHours.item2.hour, t.operationHours.item2.minute);
         final format = DateFormat.jm();
         json = json + format.format(dt) + "," + format.format(dt2);
       }
@@ -203,7 +205,8 @@ class StoreStorageProxy {
     return json;
   }
 
-  Future<ResultInterface> openPhysicalStore(StoreDTO store, [DateTime? lastViewPurchase]) async {
+  Future<ResultInterface> openPhysicalStore(StoreDTO store,
+      [DateTime? lastViewPurchase]) async {
     PhysicalStoreModel physicalModelNotComplete = PhysicalStoreModel(
         name: store.name,
         phoneNumber: store.phoneNumber,
@@ -522,44 +525,59 @@ class StoreStorageProxy {
     }
   }
 
-  Openings decodeOpenings(String hours){
+  Openings decodeOpenings(String hours) {
     List<OpeningTimes> days = [];
     LineSplitter ls = new LineSplitter();
     List<String> lines = ls.convert(hours);
-    for(String line in lines){
-      if(line.contains("closed")){
-        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: true, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))));
-      }
-      else{
+    for (String line in lines) {
+      if (line.contains("closed")) {
+        days.add(OpeningTimes(
+            day: line.substring(0, line.indexOf("-")),
+            closed: true,
+            operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0),
+                TimeOfDay(hour: 23, minute: 59))));
+      } else {
         int firsthour = 0;
         int firstminute = 0;
         int secondhour = 0;
         int secondminute = 0;
-        String firsttime = line.substring(line.indexOf("-")+1,line.indexOf(","));
-        if(firsttime.contains("AM")){
-          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":")));
-          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":")+1,firsttime.indexOf(" ")));
+        String firsttime =
+            line.substring(line.indexOf("-") + 1, line.indexOf(","));
+        if (firsttime.contains("AM")) {
+          firsthour = int.parse(firsttime.substring(0, firsttime.indexOf(":")));
+          firstminute = int.parse(firsttime.substring(
+              firsttime.indexOf(":") + 1, firsttime.indexOf(" ")));
+        } else {
+          firsthour =
+              int.parse(firsttime.substring(0, firsttime.indexOf(":"))) + 12;
+          firstminute = int.parse(firsttime.substring(
+              firsttime.indexOf(":") + 1, firsttime.indexOf(" ")));
         }
-        else{
-          firsthour = int.parse(firsttime.substring(0,firsttime.indexOf(":"))) + 12;
-          firstminute = int.parse(firsttime.substring(firsttime.indexOf(":")+1,firsttime.indexOf(" ")));
+        String secondtime = line.substring(line.indexOf(",") + 1);
+        if (secondtime.contains("AM")) {
+          secondhour =
+              int.parse(secondtime.substring(0, secondtime.indexOf(":")));
+          secondminute = int.parse(secondtime.substring(
+              secondtime.indexOf(":") + 1, secondtime.indexOf(" ")));
+        } else {
+          secondhour =
+              int.parse(secondtime.substring(0, secondtime.indexOf(":"))) + 12;
+          secondminute = int.parse(secondtime.substring(
+              secondtime.indexOf(":") + 1, secondtime.indexOf(" ")));
         }
-        String secondtime = line.substring(line.indexOf(",")+1);
-        if(secondtime.contains("AM")){
-          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":")));
-          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":")+1,secondtime.indexOf(" ")));
-        }
-        else{
-          secondhour = int.parse(secondtime.substring(0,secondtime.indexOf(":"))) + 12;
-          secondminute = int.parse(secondtime.substring(secondtime.indexOf(":")+1,secondtime.indexOf(" ")));
-        }
-        days.add(OpeningTimes(day: line.substring(0,line.indexOf("-")), closed: false, operationHours: Tuple2(TimeOfDay(hour: firsthour, minute: firstminute), TimeOfDay(hour: secondhour, minute: secondminute))));
+        days.add(OpeningTimes(
+            day: line.substring(0, line.indexOf("-")),
+            closed: false,
+            operationHours: Tuple2(
+                TimeOfDay(hour: firsthour, minute: firstminute),
+                TimeOfDay(hour: secondhour, minute: secondminute))));
       }
     }
     return Openings(days: days);
   }
 
-  Future<List<StoreDTO>> convertPhysicalStoreModelToDTO(List<PhysicalStoreModel> physicalStores) async {
+  Future<List<StoreDTO>> convertPhysicalStoreModelToDTO(
+      List<PhysicalStoreModel> physicalStores) async {
     List<StoreDTO> lst = [];
     for (PhysicalStoreModel model in physicalStores) {
       StoreDTO dto = StoreDTO(
@@ -569,7 +587,9 @@ class StoreStorageProxy {
           phoneNumber: model.phoneNumber,
           categories: jsonDecode(model.categories).cast<String>(),
           operationHours: decodeOpenings(model.operationHours),
-          image: model.imageUrl,
+          image: model.imageUrl != null && model.imageUrl!.isEmpty
+              ? null
+              : model.imageUrl,
           qrCode: model.qrCode!);
       lst.add(dto);
     }
@@ -587,7 +607,9 @@ class StoreStorageProxy {
           phoneNumber: model.phoneNumber,
           categories: jsonDecode(model.categories).cast<String>(),
           operationHours: decodeOpenings(model.operationHours),
-          image: model.imageUrl,
+          image: model.imageUrl != null && model.imageUrl!.isEmpty
+              ? null
+              : model.imageUrl,
           products: await fetchStoreProducts(model.id),
           qrCode: model.qrCode);
       lst.add(dto);
@@ -647,7 +669,7 @@ class StoreStorageProxy {
         return new Failure("No physical store is found!", null);
       }
 
-      String? imageUrl = null;
+      String? imageUrl = newStore.image;
       if (newStore.imageFromPhone != null) {
         var res = await updatePicture(newStore.imageFromPhone!, newStore.id);
         if (!res.getTag()) return res;
@@ -662,7 +684,7 @@ class StoreStorageProxy {
           categories: JsonEncoder.withIndent('  ').convert(newStore.categories),
           operationHours: openingsToJson(newStore.operationHours),
           qrCode: newStore.qrCode,
-          imageUrl: imageUrl);
+          imageUrl: imageUrl == null ? "" : imageUrl);
 
       await Amplify.DataStore.save(updatedStore);
       FLog.info(text: "updated physical store succssefully");
@@ -683,13 +705,12 @@ class StoreStorageProxy {
         return new Failure("No online store is found!", null);
       }
 
-      String? imageUrl = null;
+      String? imageUrl = newStore.image;
       if (newStore.imageFromPhone != null) {
         var res = await updatePicture(newStore.imageFromPhone!, newStore.id);
         if (!res.getTag()) return res;
         imageUrl = await getDownloadUrl(onlineStores[0].id);
       }
-
       OnlineStoreModel updatedStore = onlineStores[0].copyWith(
           id: newStore.id,
           name: newStore.name,
@@ -698,7 +719,7 @@ class StoreStorageProxy {
           categories: JsonEncoder.withIndent('  ').convert(newStore.categories),
           operationHours: openingsToJson(newStore.operationHours),
           qrCode: newStore.qrCode,
-          imageUrl: imageUrl);
+          imageUrl: imageUrl == null ? "" : imageUrl);
 
       await Amplify.DataStore.save(updatedStore);
       ResultInterface prodRes =
@@ -898,7 +919,9 @@ class StoreStorageProxy {
             name: store.name,
             phoneNumber: store.phoneNumber,
             address: store.address,
-            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            categories: store.categories.isEmpty
+                ? ""
+                : jsonDecode(store.categories).cast<String>(),
             operationHours: decodeOpenings(store.operationHours),
             qrCode: store.qrCode,
             image: store.imageUrl));
@@ -921,7 +944,9 @@ class StoreStorageProxy {
             name: store.name,
             phoneNumber: store.phoneNumber,
             address: store.address,
-            categories: store.categories.isEmpty ? "" : jsonDecode(store.categories).cast<String>(),
+            categories: store.categories.isEmpty
+                ? ""
+                : jsonDecode(store.categories).cast<String>(),
             operationHours: decodeOpenings(store.operationHours),
             products: products,
             qrCode: store.qrCode,

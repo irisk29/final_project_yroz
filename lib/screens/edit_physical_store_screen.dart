@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'dart:math';
+import 'package:f_logs/model/flog/flog.dart';
+import 'package:http/http.dart' as http;
 import 'package:address_search_field/address_search_field.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -8,6 +12,7 @@ import 'package:final_project_yroz/widgets/store_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:im_stepper/stepper.dart';
 
@@ -75,8 +80,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
         .physicalStore;
     openingHours = OpeningHours(
         _editedStore!.operationHours.clone(), () => _formChanged = true);
-    _pickedImage =
-        _editedStore!.image != null ? XFile(_editedStore!.image!) : null;
     super.initState();
   }
 
@@ -110,6 +113,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   void _unselectImage() {
     _pickedImage = null;
+    _editedStore!.image = null;
     _formChanged = true;
     setState(() {});
   }
@@ -124,7 +128,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     if (_formChanged) {
       _editedStore!.categories = _selectedItems;
       _editedStore!.operationHours = openingHours.saveOpenHours();
-      _editedStore!.image = _pickedImage != null ? _pickedImage!.path : null;
+      _editedStore!.imageFromPhone =
+          _pickedImage != null ? File(_pickedImage!.path) : null;
       final res = await Provider.of<User>(context, listen: false)
           .updatePhysicalStore(_editedStore!);
       if (res.getTag()) {
@@ -198,8 +203,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(
-                          _selectImage, _unselectImage, _pickedImage, true),
+                      ImageInput(_selectImage, _unselectImage,
+                          _editedStore!.image, true),
                       TextFormField(
                         key: const Key('storeName'),
                         initialValue: _editedStore!.name,
@@ -408,7 +413,31 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           ),
         ),
         body: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? Align(
+                alignment: Alignment.center,
+                child: ListView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          height: deviceSize.height * 0.8,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                              Container(
+                                width: deviceSize.width * 0.6,
+                                child: Text("Updating Store Details...",
+                                    textAlign: TextAlign.center),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]),
+              )
             : SingleChildScrollView(
                 child: Center(
                   child: SizedBox(

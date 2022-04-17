@@ -25,28 +25,31 @@ class OnlinePaymentScreen extends StatefulWidget {
 class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) => Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          toolbarHeight: constraints.maxHeight * 0.1,
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Online Payment',
-              style: const TextStyle(fontSize: 22),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: LayoutBuilder(
+        builder: (context, constraints) => Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            toolbarHeight: constraints.maxHeight * 0.1,
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Online Payment',
+                style: const TextStyle(fontSize: 22),
+              ),
             ),
           ),
-        ),
-        body: Container(
-          height: constraints.maxHeight * 0.85,
-          width: constraints.maxWidth,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              PaymentCard(widget.storeID),
-            ],
+          body: Container(
+            height: constraints.maxHeight * 0.85,
+            width: constraints.maxWidth,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                PaymentCard(widget.storeID),
+              ],
+            ),
           ),
         ),
       ),
