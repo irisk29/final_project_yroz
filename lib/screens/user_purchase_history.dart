@@ -26,15 +26,17 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
 
   Future<List<Tuple2<String, PurchaseHistoryDTO>>> _initPurchases() async {
     User user = Provider.of<User>(context, listen: false);
-    final start =
-        DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
+    final start = DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
     final end = DateTime.now();
-    final purchases =
-        await user.getSuccssefulPurchaseHistoryForUserInRange(start, end);
+    final purchases = await user.getSuccssefulPurchaseHistoryForUserInRange(start, end);
     List<Tuple2<String, PurchaseHistoryDTO>> purchaseTuples = [];
     for (var purchase in purchases) {
       var res = await StoreStorageProxy().getStoreNameByID(purchase.storeID);
-      purchaseTuples.add(Tuple2(res.getValue(), purchase));
+      if (res.getTag()) {
+        purchaseTuples.add(Tuple2(res.getValue(), purchase));
+      } else {
+        purchaseTuples.add(Tuple2("The store does not exist anymore", purchase));
+      }
     }
     return purchaseTuples;
   }
@@ -67,8 +69,8 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           itemCount: snap.data.length,
-                          itemBuilder: (context, index) => HistoryPurchaseItem(
-                              snap.data[index].item2, snap.data[index].item1)),
+                          itemBuilder: (context, index) =>
+                              HistoryPurchaseItem(snap.data[index].item2, snap.data[index].item1)),
                     )
                   : Container(
                       width: deviceSize.width,
@@ -87,9 +89,8 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
                           ),
                           Padding(
                             padding: EdgeInsets.all(deviceSize.height * 0.01),
-                            child: Text("Latest Purchases",
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            child:
+                                Text("Latest Purchases", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                           Text("No Purchases made yet"),
                         ],
