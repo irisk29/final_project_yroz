@@ -42,6 +42,13 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: deviceSize.height * 0.1,
+        automaticallyImplyLeading: false,
+        leading: isLoading
+            ? Container()
+            : IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
         centerTitle: true,
         title: Column(
           children: [
@@ -129,11 +136,13 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                                               BorderRadius.circular(6),
                                         ),
                                         constraints: BoxConstraints(
-                                          minWidth: 12,
-                                          minHeight: 12,
+                                          minWidth: 13,
+                                          minHeight: 13,
                                         ),
                                         child: Text(
-                                          '$notificationCount',
+                                          notificationCount > 9
+                                              ? "9+"
+                                              : notificationCount.toString(),
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 8,

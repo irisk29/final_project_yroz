@@ -126,10 +126,13 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: deviceSize.height * 0.1,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => _exitWithoutSavingDialog(),
-          ),
+          automaticallyImplyLeading: false,
+          leading: _isLoading
+              ? Container()
+              : IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => _exitWithoutSavingDialog(),
+                ),
           title: Align(
             alignment: Alignment.centerLeft,
             child: Text(

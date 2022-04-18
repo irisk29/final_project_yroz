@@ -465,10 +465,13 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => _exitWithoutSavingDialog(),
-          ),
+          automaticallyImplyLeading: false,
+          leading: _isLoading
+              ? Container()
+              : IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => _exitWithoutSavingDialog(),
+                ),
           toolbarHeight: deviceSize.height * 0.1,
           title: Align(
             alignment: Alignment.centerLeft,

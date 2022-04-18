@@ -30,6 +30,7 @@ class _FeedBackScreen extends State<FeedBackScreen> {
   ];
   var _formChanged;
   var _showError = false;
+  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -47,6 +48,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
   }
 
   Future<void> sendEmail() async {
+    setState(() => _isLoading = true);
+
     String finalText = "";
     Secret secret =
         await SecretLoader(secretPath: "assets/secrets.json").load();
@@ -103,14 +106,15 @@ class _FeedBackScreen extends State<FeedBackScreen> {
         if (await canLaunch(url)) {
           await launch(url);
           SnackBar snackBar = SnackBar(
-            duration: Duration(seconds: 2),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(20.0),
             ),
+            backgroundColor: Theme.of(context).primaryColor,
             behavior: SnackBarBehavior.floating,
-            content: const Text('Mail sent successfully',
-                textAlign: TextAlign.center),
-            width: MediaQuery.of(context).size.width * 0.5,
+            content: const Text('Thank you for your feedback!',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black87)),
+            width: MediaQuery.of(context).size.width * 0.75,
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
@@ -119,6 +123,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
         }
       }
     }
+
+    setState(() => _isLoading = false);
   }
 
   void _exitWithoutSavingDialog() {
@@ -158,10 +164,13 @@ class _FeedBackScreen extends State<FeedBackScreen> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => _exitWithoutSavingDialog(),
-          ),
+          automaticallyImplyLeading: false,
+          leading: _isLoading
+              ? Container()
+              : IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => _exitWithoutSavingDialog(),
+                ),
           toolbarHeight: deviceSize.height * 0.1,
           title: Align(
             alignment: Alignment.centerLeft,
@@ -173,118 +182,151 @@ class _FeedBackScreen extends State<FeedBackScreen> {
             ),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            child: SizedBox(
-              height: deviceSize.height * 0.85,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    left: deviceSize.width * 0.05,
-                    right: deviceSize.width * 0.05),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                        "Your feedback is important for us, please rate the following:",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              bottom: deviceSize.height * 0.015),
-                          child: Text(questions[0], textAlign: TextAlign.left),
-                        ),
-                        Center(child: _ratingBar(0)),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              bottom: deviceSize.height * 0.015),
-                          child: Text(questions[1], textAlign: TextAlign.left),
-                        ),
-                        Center(child: _ratingBar(1)),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              bottom: deviceSize.height * 0.015),
-                          child: Text(questions[2], textAlign: TextAlign.left),
-                        ),
-                        Center(child: _ratingBar(2)),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              bottom: deviceSize.height * 0.015),
-                          child: Text(questions[3], textAlign: TextAlign.left),
-                        ),
-                        Center(child: _ratingBar(3)),
-                      ],
-                    ),
-                    _showError
-                        ? Text(
-                            "Please fill at least one field",
-                            style:
-                                TextStyle(color: Theme.of(context).errorColor),
-                          )
-                        : SizedBox(),
-                    TextField(
-                      controller: _textEditingController,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        hintText: 'Please tell us more',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        body: _isLoading
+            ? Align(
+                alignment: Alignment.center,
+                child: ListView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        height: deviceSize.height * 0.8,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            Container(
+                              width: deviceSize.width * 0.6,
+                              child: Text(
+                                  "We are sending your feedback to us, it might take a few seconds...",
+                                  textAlign: TextAlign.center),
+                            )
+                          ],
                         ),
                       ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        primary: Theme.of(context).primaryColor,
-                      ),
-                      child: Container(
-                        margin: EdgeInsets.all(deviceSize.width * 0.025),
-                        child: const Text(
-                          'Submit',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (_ratings.isEmpty &&
-                            _textEditingController.text.isEmpty) {
-                          setState(() => _showError = true);
-                          return;
-                        }
-                        await sendEmail();
-                      },
                     ),
                   ],
                 ),
+              )
+            : SingleChildScrollView(
+                child: Container(
+                  child: SizedBox(
+                    height: deviceSize.height * 0.85,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left: deviceSize.width * 0.05,
+                          right: deviceSize.width * 0.05),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                              "Your feedback is important for us, please rate the following:",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[0],
+                                    textAlign: TextAlign.left),
+                              ),
+                              Center(child: _ratingBar(0)),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[1],
+                                    textAlign: TextAlign.left),
+                              ),
+                              Center(child: _ratingBar(1)),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[2],
+                                    textAlign: TextAlign.left),
+                              ),
+                              Center(child: _ratingBar(2)),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[3],
+                                    textAlign: TextAlign.left),
+                              ),
+                              Center(child: _ratingBar(3)),
+                            ],
+                          ),
+                          _showError
+                              ? Text(
+                                  "Please fill at least one field",
+                                  style: TextStyle(
+                                      color: Theme.of(context).errorColor),
+                                )
+                              : SizedBox(),
+                          TextField(
+                            controller: _textEditingController,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 3,
+                            decoration: InputDecoration(
+                              hintText: 'Please tell us more',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0)),
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              primary: Theme.of(context).primaryColor,
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.all(deviceSize.width * 0.025),
+                              child: const Text(
+                                'Submit',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              if (_ratings.isEmpty &&
+                                  _textEditingController.text.isEmpty) {
+                                setState(() => _showError = true);
+                                return;
+                              }
+                              await sendEmail();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
