@@ -400,10 +400,13 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => _exitWithoutSavingDialog(),
-          ),
+          automaticallyImplyLeading: false,
+          leading: _isLoading
+              ? Container()
+              : IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => _exitWithoutSavingDialog(),
+                ),
           toolbarHeight: deviceSize.height * 0.1,
           title: Text(
             'Edit Store',
@@ -429,7 +432,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                               CircularProgressIndicator(),
                               Container(
                                 width: deviceSize.width * 0.6,
-                                child: Text("Updating Store Details...",
+                                child: Text(
+                                    "We are updating your store details, it might take a few seconds...",
                                     textAlign: TextAlign.center),
                               )
                             ],

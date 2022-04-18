@@ -23,6 +23,8 @@ class OnlinePaymentScreen extends StatefulWidget {
 }
 
 class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
+  var isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -32,6 +34,13 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
             toolbarHeight: constraints.maxHeight * 0.1,
+            automaticallyImplyLeading: false,
+            leading: isLoading
+                ? Container()
+                : IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
             title: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -47,7 +56,8 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                PaymentCard(widget.storeID),
+                PaymentCard(
+                    widget.storeID, () => setState(() => isLoading = true)),
               ],
             ),
           ),
@@ -59,10 +69,9 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
 
 class PaymentCard extends StatefulWidget {
   String? storeID;
-  late String userName;
-  late ShoppingBagDTO? bag;
+  VoidCallback onLoading;
 
-  PaymentCard(this.storeID);
+  PaymentCard(this.storeID, this.onLoading);
 
   @override
   _PaymentCardState createState() => _PaymentCardState();
@@ -71,16 +80,18 @@ class PaymentCard extends StatefulWidget {
 class _PaymentCardState extends State<PaymentCard>
     with SingleTickerProviderStateMixin {
   var _cashback;
+  late String userName;
+  late ShoppingBagDTO bag;
   String dropdownvalue = '';
   List<Tuple2<String, String>> items = [];
-  late bool _isLoading = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     final user = Provider.of<User>(context, listen: false);
-    widget.userName = user.name!;
-    widget.bag = user.getShoppingBag(widget.storeID!);
+    userName = user.name!;
+    bag = user.getShoppingBag(widget.storeID!)!;
   }
 
   Future<void> initCreditAndCashback() async {
@@ -148,20 +159,21 @@ class _PaymentCardState extends State<PaymentCard>
     if (cashbackSelection.form.currentState == null ||
         cashbackSelection.form.currentState!.validate()) {
       setState(() => _isLoading = true);
+      widget.onLoading();
 
       var res = await Provider.of<User>(context, listen: false)
           .makePaymentOnlineStore(
               dropdownvalue,
               cashbackSelection.cashbackAmount,
               totalPrice - cashbackSelection.cashbackAmount,
-              widget.bag!);
+              bag);
       if (res.getTag()) {
         Navigator.of(context).pushReplacementNamed(
           InvoiceScreen.routeName,
           arguments: {
-            'userName': widget.userName,
+            'userName': userName,
             'purchaseDate': DateTime.now(),
-            'shoppingBag': widget.bag,
+            'shoppingBag': bag,
             'cashbackAmount': cashbackSelection.cashbackAmount,
             'creditAmount': totalPrice - cashbackSelection.cashbackAmount
           },
@@ -189,7 +201,7 @@ class _PaymentCardState extends State<PaymentCard>
 
   @override
   Widget build(BuildContext context) {
-    final totalPrice = widget.bag!.calculateTotalPrice();
+    final totalPrice = bag.calculateTotalPrice();
     var cashbackSelection;
 
     return FutureBuilder(

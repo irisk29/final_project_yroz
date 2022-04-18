@@ -89,156 +89,165 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var deviceSize = MediaQuery.of(context).size;
-
     return FutureBuilder(
         future: _fetchCreditCards(),
         builder: (BuildContext context, AsyncSnapshot snap) {
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              toolbarHeight: deviceSize.height * 0.1,
-              title: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Credit Cards",
-                  style: const TextStyle(fontSize: 22),
-                ),
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(
-                    IconData(0xf04b7, fontFamily: 'MaterialIcons'),
+          return LayoutBuilder(
+            builder: (context, constraints) => Scaffold(
+              appBar: AppBar(
+                toolbarHeight: constraints.maxHeight * 0.1,
+                title: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Credit Cards",
+                    style: const TextStyle(fontSize: 22),
                   ),
-                  onPressed: () async {
-                    bool? res = await Navigator.of(context)
-                        .pushNamed(AddCreditCardScreen.routeName) as bool?;
-                    if (res != null && res) setState(() {});
-                  },
                 ),
-              ],
-            ),
-            body: snap.connectionState != ConnectionState.done
-                ? Center(child: CircularProgressIndicator())
-                : activeCards.isEmpty && disabledCards.isEmpty
-                    ? Container(
-                        width: deviceSize.width,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: deviceSize.width * 0.11,
-                              backgroundColor: Theme.of(context).primaryColor,
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                child: Icon(Icons.credit_card, size: 40),
-                                radius: deviceSize.width * 0.1,
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      IconData(0xf04b7, fontFamily: 'MaterialIcons'),
+                    ),
+                    onPressed: () async {
+                      bool? res = await Navigator.of(context)
+                          .pushNamed(AddCreditCardScreen.routeName) as bool?;
+                      if (res != null && res) setState(() {});
+                    },
+                  ),
+                ],
+              ),
+              body: snap.connectionState != ConnectionState.done
+                  ? Center(child: CircularProgressIndicator())
+                  : activeCards.isEmpty && disabledCards.isEmpty
+                      ? Container(
+                          width: constraints.maxWidth,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: constraints.maxWidth * 0.11,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: Icon(Icons.credit_card, size: 40),
+                                  radius: constraints.maxWidth * 0.1,
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(deviceSize.height * 0.01),
-                              child: Text("Credit Cards",
+                              Padding(
+                                padding: EdgeInsets.all(
+                                    constraints.maxHeight * 0.01),
+                                child: Text("Credit Cards",
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              Text("You haven't saved any credit card yet"),
+                              TextButton(
+                                onPressed: () async {
+                                  bool? res = await Navigator.of(context)
+                                          .pushNamed(
+                                              AddCreditCardScreen.routeName)
+                                      as bool?;
+                                  if (res != null && res) setState(() {});
+                                },
+                                child: Text(
+                                  "Click here to add one",
                                   style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            Text("You haven't saved any credit card yet"),
-                            TextButton(
-                              onPressed: () async {
-                                bool? res = await Navigator.of(context)
-                                    .pushNamed(
-                                        AddCreditCardScreen.routeName) as bool?;
-                                if (res != null && res) setState(() {});
-                              },
-                              child: Text(
-                                "Click here to add one",
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            activeCards.isEmpty
-                                ? SizedBox()
-                                : Column(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.05,
-                                              top: deviceSize.height * 0.025),
-                                          child: Text(
-                                            "Active",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
+                                      decoration: TextDecoration.underline),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              activeCards.isEmpty
+                                  ? SizedBox()
+                                  : Column(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                    constraints.maxWidth * 0.05,
+                                                top: constraints.maxHeight *
+                                                    0.025),
+                                            child: Text(
+                                              "Active",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: deviceSize.height * 0.3,
-                                        child: GridView.count(
-                                          padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.025,
-                                              right: deviceSize.width * 0.025),
-                                          scrollDirection: Axis.horizontal,
-                                          shrinkWrap: true,
-                                          physics: ScrollPhysics(),
-                                          crossAxisCount: 1,
-                                          childAspectRatio: 0.825,
-                                          crossAxisSpacing:
-                                              deviceSize.width * 0.025,
-                                          children: activeCards,
-                                        ),
-                                      ),
-                                      Divider(),
-                                    ],
-                                  ),
-                            disabledCards.isEmpty
-                                ? SizedBox()
-                                : Column(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.05,
-                                              top: deviceSize.height * 0.025),
-                                          child: Text(
-                                            "Disabled",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
+                                        SizedBox(
+                                          height: constraints.maxHeight * 0.3,
+                                          child: GridView.count(
+                                            padding: EdgeInsets.only(
+                                                left: constraints.maxWidth *
+                                                    0.025,
+                                                right: constraints.maxWidth *
+                                                    0.025),
+                                            scrollDirection: Axis.horizontal,
+                                            shrinkWrap: true,
+                                            physics: ScrollPhysics(),
+                                            crossAxisCount: 1,
+                                            childAspectRatio: 0.825,
+                                            crossAxisSpacing:
+                                                constraints.maxWidth * 0.025,
+                                            children: activeCards,
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        height: deviceSize.height * 0.3,
-                                        child: GridView.count(
-                                          padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.025,
-                                              right: deviceSize.width * 0.025),
-                                          scrollDirection: Axis.horizontal,
-                                          shrinkWrap: true,
-                                          physics: ScrollPhysics(),
-                                          crossAxisCount: 1,
-                                          childAspectRatio: 0.825,
-                                          crossAxisSpacing:
-                                              deviceSize.width * 0.025,
-                                          children: disabledCards,
+                                        Divider(),
+                                      ],
+                                    ),
+                              disabledCards.isEmpty
+                                  ? SizedBox()
+                                  : Column(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left:
+                                                    constraints.maxWidth * 0.05,
+                                                top: constraints.maxHeight *
+                                                    0.025),
+                                            child: Text(
+                                              "Disabled",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                          ],
+                                        SizedBox(
+                                          height: constraints.maxHeight * 0.3,
+                                          child: GridView.count(
+                                            padding: EdgeInsets.only(
+                                                left: constraints.maxWidth *
+                                                    0.025,
+                                                right: constraints.maxWidth *
+                                                    0.025),
+                                            scrollDirection: Axis.horizontal,
+                                            shrinkWrap: true,
+                                            physics: ScrollPhysics(),
+                                            crossAxisCount: 1,
+                                            childAspectRatio: 0.825,
+                                            crossAxisSpacing:
+                                                constraints.maxWidth * 0.025,
+                                            children: disabledCards,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ],
+                          ),
                         ),
-                      ),
+            ),
           );
         });
   }

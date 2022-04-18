@@ -23,6 +23,8 @@ class PhysicalPaymentScreen extends StatefulWidget {
 }
 
 class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
+  var isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -44,7 +46,8 @@ class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                PaymentCard(widget.storeID),
+                PaymentCard(
+                    widget.storeID, () => setState(() => isLoading = true)),
               ],
             ),
           ),
@@ -56,19 +59,21 @@ class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
 
 class PaymentCard extends StatefulWidget {
   final String? storeID;
-  late String userName;
+  VoidCallback onLoading;
 
-  PaymentCard(this.storeID);
+  PaymentCard(this.storeID, this.onLoading);
 
   @override
   _PaymentCardState createState() => _PaymentCardState();
 }
 
-class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStateMixin {
+class _PaymentCardState extends State<PaymentCard>
+    with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   final cashbackController = TextEditingController();
   final amountController = TextEditingController();
   late bool _isLoading = false;
+  late String userName;
   var _cashback;
 
   String dropdownvalue = '';
@@ -78,29 +83,37 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
 
     final user = Provider.of<User>(context, listen: false);
-    widget.userName = user.name!;
+    userName = user.name!;
   }
 
   Future<void> initCreditAndCashback() async {
-    String cb = await Provider.of<User>(context, listen: false).getEWalletBalance();
+    String cb =
+        await Provider.of<User>(context, listen: false).getEWalletBalance();
     _cashback = cb == "" ? 0.0 : double.parse(cb);
 
     Map<String, Map<String, dynamic>> creditCards =
-        await Provider.of<User>(context, listen: false).getUserCreditCardDetails();
+        await Provider.of<User>(context, listen: false)
+            .getUserCreditCardDetails();
     items = [];
-    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    Secret secret =
+        await SecretLoader(secretPath: "assets/secrets.json").load();
     creditCards.forEach((token, creditCard) {
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
       final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
-      encrypt.Encrypted enc = encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
+      encrypt.Encrypted enc =
+          encrypt.Encrypted.fromBase16(creditCard['cardNumber']);
       String number = encrypter.decrypt(enc, iv: iv);
-      DateTime expirationDate = new DateFormat('MM/yy').parse(creditCard['expiryDate']);
+      DateTime expirationDate =
+          new DateFormat('MM/yy').parse(creditCard['expiryDate']);
       if (DateTime.now().isBefore(expirationDate) &&
-          !items.where((element) => element.item1 == token).isNotEmpty) //not expired
+          !items
+              .where((element) => element.item1 == token)
+              .isNotEmpty) //not expired
       {
         items.add(Tuple2<String, String>(number.substring(15), token));
       }
@@ -112,13 +125,16 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
           title: Text("Missing Credit Card"),
-          content: Text("You have no credit cards available, please enter a credit card to proceed"),
+          content: Text(
+              "You have no credit cards available, please enter a credit card to proceed"),
           actions: <Widget>[
             FlatButton(
               child: Text('Okay'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pushNamed(AddCreditCardScreen.routeName).then((_) => setState(() {}));
+                Navigator.of(context)
+                    .pushNamed(AddCreditCardScreen.routeName)
+                    .then((_) => setState(() {}));
               },
             ),
             FlatButton(
@@ -134,17 +150,24 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
     }
   }
 
-  Future<void> _makePayment(double totalPrice, CashbackSelection cashbackSelection) async {
-    if (cashbackSelection.form.currentState == null || cashbackSelection.form.currentState!.validate()) {
+  Future<void> _makePayment(
+      double totalPrice, CashbackSelection cashbackSelection) async {
+    if (cashbackSelection.form.currentState == null ||
+        cashbackSelection.form.currentState!.validate()) {
       setState(() => _isLoading = true);
+      widget.onLoading();
 
-      var res = await Provider.of<User>(context, listen: false).makePaymentPhysicalStore(dropdownvalue,
-          cashbackSelection.cashbackAmount, totalPrice - cashbackSelection.cashbackAmount, widget.storeID!);
+      var res = await Provider.of<User>(context, listen: false)
+          .makePaymentPhysicalStore(
+              dropdownvalue,
+              cashbackSelection.cashbackAmount,
+              totalPrice - cashbackSelection.cashbackAmount,
+              widget.storeID!);
       if (res.getTag()) {
         Navigator.of(context).pushReplacementNamed(
           InvoiceScreen.routeName,
           arguments: {
-            'userName': widget.userName,
+            'userName': userName,
             'purchaseDate': DateTime.now(),
             'cashbackAmount': cashbackSelection.cashbackAmount,
             'creditAmount': totalPrice - cashbackSelection.cashbackAmount
@@ -215,11 +238,16 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                             children: <Widget>[
                               Text(
                                 "AMOUNT TO PAY",
-                                style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold),
                               ),
                               TextFormField(
-                                decoration: InputDecoration(labelText: 'Purchase amount'),
-                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                decoration: InputDecoration(
+                                    labelText: 'Purchase amount'),
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
                                 controller: amountController,
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -240,12 +268,14 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                               Divider(),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    top: constraints.maxWidth * 0.025, bottom: constraints.maxWidth * 0.025),
+                                    top: constraints.maxWidth * 0.025,
+                                    bottom: constraints.maxWidth * 0.025),
                                 child: cashbackSelection,
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    top: constraints.maxWidth * 0.025, bottom: constraints.maxWidth * 0.025),
+                                    top: constraints.maxWidth * 0.025,
+                                    bottom: constraints.maxWidth * 0.025),
                                 child: AnimatedContainer(
                                   duration: Duration(milliseconds: 300),
                                   curve: Curves.easeIn,
@@ -264,11 +294,14 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                                       Center(
                                         child: DropdownButton(
                                           value: dropdownvalue,
-                                          icon: const Icon(Icons.keyboard_arrow_down),
-                                          items: items.map((Tuple2<String, String> item) {
+                                          icon: const Icon(
+                                              Icons.keyboard_arrow_down),
+                                          items: items.map(
+                                              (Tuple2<String, String> item) {
                                             return DropdownMenuItem(
                                               value: item.item2,
-                                              child: Text("XXXX-XXXX-XXXX-" + item.item1),
+                                              child: Text("XXXX-XXXX-XXXX-" +
+                                                  item.item1),
                                             );
                                           }).toList(),
                                           onChanged: (String? newValue) {
@@ -286,7 +319,8 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                       ),
                       Container(
                         width: constraints.maxWidth * 0.75,
-                        padding: EdgeInsets.only(top: constraints.maxWidth * 0.025),
+                        padding:
+                            EdgeInsets.only(top: constraints.maxWidth * 0.025),
                         child: ElevatedButton(
                           child: Text(
                             'Pay',
@@ -295,7 +329,8 @@ class _PaymentCardState extends State<PaymentCard> with SingleTickerProviderStat
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          onPressed: () => _makePayment(totalPrice, cashbackSelection),
+                          onPressed: () =>
+                              _makePayment(totalPrice, cashbackSelection),
                         ),
                       ),
                     ],

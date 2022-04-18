@@ -1,13 +1,11 @@
 import 'dart:io';
 
-import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:final_project_yroz/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 import '../LogicLayer/User.dart';
 import 'open_online_store_screen.dart';
@@ -22,7 +20,8 @@ class AddProductScreen extends StatefulWidget {
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
         routes: {
           TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-          OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline().wrapWithMaterial(nav),
+          OpenOnlineStorePipeline.routeName: (ctx) =>
+              OpenOnlineStorePipeline().wrapWithMaterial(nav),
         },
         home: MultiProvider(
           providers: [
@@ -47,7 +46,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
   XFile? _pickedImage = null;
 
   ProductDTO? _editedProduct = ProductDTO(
-      id: '', name: '', price: 0, description: '', imageUrl: '', category: '', storeID: '', imageFromPhone: null);
+      id: '',
+      name: '',
+      price: 0,
+      description: '',
+      imageUrl: '',
+      category: '',
+      storeID: '',
+      imageFromPhone: null);
 
   var _isLoading = false;
   var _formChanged;
@@ -124,10 +130,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => _exitWithoutSavingDialog(),
-        ),
+        automaticallyImplyLeading: false,
+        leading: _isLoading
+            ? Container()
+            : IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () => _exitWithoutSavingDialog(),
+              ),
         title: Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -179,17 +188,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
                       key: const Key('price'),
                       decoration: InputDecoration(labelText: 'Price'),
                       textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
                       focusNode: _priceFocusNode,
                       onFieldSubmitted: (_) {
-                        FocusScope.of(context).requestFocus(_descriptionFocusNode);
+                        FocusScope.of(context)
+                            .requestFocus(_descriptionFocusNode);
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -213,7 +226,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -238,7 +253,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null
+                                ? null
+                                : File(_pickedImage!.path));
                       },
                     ),
                   ],

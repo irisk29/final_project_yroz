@@ -67,7 +67,7 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                           arguments: {'store': widget.store.id});
                     },
                   ),
-                  value: productsAmount.toString(),
+                  value: productsAmount > 9 ? "9+" : productsAmount.toString(),
                 )
               : IconButton(
                   icon: Icon(

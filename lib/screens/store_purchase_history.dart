@@ -44,9 +44,12 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
     await user.storeOwnerState!.updateLastTimeViewedPurchses(now);
     newStorePurchases = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(lastVisit, now);
-    print(lastVisit);
+    newStorePurchases
+        .sort((p1, p2) => p1.purchaseDate.compareTo(p2.purchaseDate));
     earlierStorePurchases = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(monthAgo, lastVisit);
+    earlierStorePurchases
+        .sort((p1, p2) => p1.purchaseDate.compareTo(p2.purchaseDate));
   }
 
   Future<void> _pullRefresh() async {
@@ -56,10 +59,14 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
     DateTime lastVisit = user.storeOwnerState!.lastTimeViewedPurchases;
 
     await user.storeOwnerState!.updateLastTimeViewedPurchses(now);
-    final newPurchasesTemp = await user.storeOwnerState!
+    var newPurchasesTemp = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(lastVisit, now);
-    final earlierPurchasesTemp = await user.storeOwnerState!
+    newPurchasesTemp
+        .sort((p1, p2) => p1.purchaseDate.compareTo(p2.purchaseDate));
+    var earlierPurchasesTemp = await user.storeOwnerState!
         .getSuccssefulPurchaseHistoryForStoreInDateRange(monthAgo, lastVisit);
+    earlierPurchasesTemp
+        .sort((p1, p2) => p1.purchaseDate.compareTo(p2.purchaseDate));
     setState(() {
       newStorePurchases = newPurchasesTemp;
       earlierStorePurchases = earlierPurchasesTemp;
@@ -154,7 +161,11 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
                                     return Column(children: [
                                       ListTile(title: Text("New")),
                                       HistoryPurchaseItem(
-                                          newStorePurchases[index], storeName)
+                                          newStorePurchases[
+                                              newStorePurchases.length -
+                                                  index -
+                                                  1],
+                                          storeName)
                                     ]);
                                   } else if (index ==
                                       newStorePurchases.length) {
@@ -162,16 +173,27 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
                                       ListTile(title: Text("Earlier")),
                                       HistoryPurchaseItem(
                                           earlierStorePurchases[
-                                              index - newStorePurchases.length],
+                                              earlierStorePurchases.length -
+                                                  (index -
+                                                      newStorePurchases
+                                                          .length) -
+                                                  1],
                                           storeName)
                                     ]);
                                   } else if (index < newStorePurchases.length) {
                                     return HistoryPurchaseItem(
-                                        newStorePurchases[index], storeName);
+                                        newStorePurchases[
+                                            newStorePurchases.length -
+                                                index -
+                                                1],
+                                        storeName);
                                   }
                                   return HistoryPurchaseItem(
                                       earlierStorePurchases[
-                                          index - newStorePurchases.length],
+                                          earlierStorePurchases.length -
+                                              (index -
+                                                  newStorePurchases.length) -
+                                              1],
                                       storeName);
                                 },
                               ),
