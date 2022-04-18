@@ -267,6 +267,9 @@ class User extends ChangeNotifier {
       var res = await StoreStorageProxy().deleteStore(id, isOnline);
       if (!res.getTag()) return res; //failure
 
+      this.favoriteStores.removeWhere((element) => element.item1 == id && element.item2 == isOnline);
+      await UsersStorageProxy().removeFavoriteStore(id, isOnline);
+
       this.storeOwnerState = null;
       _deleteStoreAccount(id);
       notifyListeners();
@@ -313,6 +316,15 @@ class User extends ChangeNotifier {
     }
   }
 
+  Future<void> _updateFavoriteAfterConvert(String id) async {
+    var res = this.favoriteStores.firstWhereOrNull((element) => element.item1 == id);
+    if (res == null) return;
+    this.favoriteStores.removeWhere((element) => element.item1 == id);
+    this.favoriteStores.add(new Tuple2(id, true));
+    await UsersStorageProxy().removeFavoriteStore(id, false);
+    await UsersStorageProxy().addFavoriteStore(id, true);
+  }
+
   Future<ResultInterface> convertPhysicalStoreToOnline(StoreDTO physicalStore) async {
     try {
       var res = await StoreStorageProxy()
@@ -325,7 +337,7 @@ class User extends ChangeNotifier {
       this.storeOwnerState!.setOnlineStoreFromModel(retVal.item1);
       this.storeOwnerState!.physicalStore = null;
       this.storeOwnerState!.createPurchasesSubscription();
-
+      await _updateFavoriteAfterConvert(retVal.item1.id);
       notifyListeners();
       return new Ok("Upgraded Physical Store Succssefully", retVal.item1.id);
     } on Exception catch (e) {

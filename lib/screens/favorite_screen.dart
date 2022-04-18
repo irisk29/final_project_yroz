@@ -22,26 +22,38 @@ class FavoriteScreen extends StatefulWidget {
 class _FavoriteScreenState extends State<FavoriteScreen> {
   late List<StoreDTO> favoriteStores;
 
+  Future<ResultInterface> saveOnlineFavorite(String id) async {
+    ResultInterface res = await StoreStorageProxy().getOnlineStore(id);
+    if (res.getTag()) {
+      if (favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+        favoriteStores.add(res.getValue() as OnlineStoreDTO);
+    }
+    return res;
+  }
+
+  Future<ResultInterface> savePhysicalFavorite(String id) async {
+    ResultInterface res = await StoreStorageProxy().getPhysicalStore(id);
+    if (res.getTag()) {
+      if (favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
+        favoriteStores.add(res.getValue() as StoreDTO);
+    }
+    return res;
+  }
+
   Future<void> _fetchFavorites(User user) async {
     favoriteStores = [];
     for (Tuple2<String, bool> store in user.favoriteStores) {
       if (store.item2) //online store
       {
-        ResultInterface res =
-            await StoreStorageProxy().getOnlineStore(store.item1);
-        if (res.getTag()) {
-          if (favoriteStores
-                  .firstWhereOrNull((e) => e.id == res.getValue().id) ==
-              null) favoriteStores.add(res.getValue() as OnlineStoreDTO);
+        ResultInterface res = await saveOnlineFavorite(store.item1);
+        if (!res.getTag()) {
+          await savePhysicalFavorite(store.item1); //for when we do the upgrade
         }
       } else //physical store
       {
-        ResultInterface res =
-            await StoreStorageProxy().getPhysicalStore(store.item1);
-        if (res.getTag()) {
-          if (favoriteStores
-                  .firstWhereOrNull((e) => e.id == res.getValue().id) ==
-              null) favoriteStores.add(res.getValue() as StoreDTO);
+        ResultInterface res = await savePhysicalFavorite(store.item1);
+        if (!res.getTag()) {
+          await saveOnlineFavorite(store.item1);
         }
       }
     }
@@ -75,20 +87,16 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                           ),
                           Padding(
                             padding: EdgeInsets.all(deviceSize.height * 0.01),
-                            child: Text("Favorites",
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            child: Text("Favorites", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                           Text(
                               "Save here stores that you want to visit again.\n For now, you have no favorite stores...",
                               textAlign: TextAlign.center),
                           TextButton(
-                            onPressed: () => Navigator.pushReplacementNamed(
-                                context, TabsScreen.routeName),
+                            onPressed: () => Navigator.pushReplacementNamed(context, TabsScreen.routeName),
                             child: Text(
                               "Click here to find some",
-                              style: TextStyle(
-                                  decoration: TextDecoration.underline),
+                              style: TextStyle(decoration: TextDecoration.underline),
                             ),
                           )
                         ],
@@ -106,9 +114,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       childAspectRatio: 1.6,
                       mainAxisSpacing: deviceSize.height * 0.025,
                       crossAxisSpacing: deviceSize.width * 0.025,
-                      children: favoriteStores
-                          .map((storeData) => SecondaryStoreItem(storeData))
-                          .toList(),
+                      children: favoriteStores.map((storeData) => SecondaryStoreItem(storeData)).toList(),
                     );
         },
       ),
