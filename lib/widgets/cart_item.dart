@@ -95,7 +95,7 @@ class _CartItemState extends State<CartItem> {
                 child: Padding(
                   padding: EdgeInsets.all(deviceSize.width * 0.01),
                   child: FittedBox(
-                    child: Text('\€${widget.price * widget.quantity}'),
+                    child: Text('\€${(widget.price * widget.quantity).toStringAsFixed(2)}'),
                   ),
                 ),
               ),
