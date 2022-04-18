@@ -37,11 +37,6 @@
 		<true/>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
-		<string>https</string>
-		<string>http</string>
-		</array>
-		<key>LSApplicationQueriesSchemes</key>
-		<array>
 			<string>googlegmail</string>
 			<string>x-dispatch</string>
 			<string>readdle-spark</string>
@@ -51,6 +46,10 @@
 			<string>fastmail</string>
 			<string>superhuman</string>
 			<string>protonmail</string>
+			<string>googlechromes</string>
+    		<string>comgooglemaps</string>
+			<string>https</string>
+  			<string>http</string>
 		</array>
 		<key>NSAppleMusicUsageDescription</key>
 		<string>Music!</string>

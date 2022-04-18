@@ -30,14 +30,8 @@ class _AccountScreenState extends State<AccountScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       if (Provider.of<User>(context, listen: false).storeOwnerState != null) {
-        _physicalStoreOwner = Provider.of<User>(context, listen: false)
-                .storeOwnerState!
-                .physicalStore !=
-            null;
-        _onlineStoreOwner = Provider.of<User>(context, listen: false)
-                .storeOwnerState!
-                .onlineStore !=
-            null;
+        _physicalStoreOwner = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore != null;
+        _onlineStoreOwner = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore != null;
       }
     }
     _isInit = false;
@@ -50,10 +44,8 @@ class _AccountScreenState extends State<AccountScreen> {
     final deviceSize = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.only(
-          top: deviceSize.height * 0.02,
-          left: deviceSize.width * 0.03,
-          right: deviceSize.width * 0.03),
+      padding:
+          EdgeInsets.only(top: deviceSize.height * 0.02, left: deviceSize.width * 0.03, right: deviceSize.width * 0.03),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -61,8 +53,7 @@ class _AccountScreenState extends State<AccountScreen> {
             height: deviceSize.height * 0.15,
             child: Card(
               elevation: 8.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
               child: Padding(
                 padding: EdgeInsets.only(
                     top: deviceSize.height * 0.015,
@@ -90,17 +81,14 @@ class _AccountScreenState extends State<AccountScreen> {
                               Consumer<User>(
                                 builder: (context, user, child) => Container(
                                   width: deviceSize.width * 0.3,
-                                  height: deviceSize.height * 0.04,
+                                  height: deviceSize.height * 0.055,
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right: deviceSize.width * 0.035),
+                                    padding: EdgeInsets.only(right: deviceSize.width * 0.035),
                                     child: SwitchListTile(
                                         activeColor: Colors.purple,
                                         value: !user.hideStoreOwnerOptions,
-                                        controlAffinity:
-                                            ListTileControlAffinity.trailing,
-                                        onChanged: (_) =>
-                                            user.toggleStoreOwnerViewOption()),
+                                        controlAffinity: ListTileControlAffinity.trailing,
+                                        onChanged: (_) => user.toggleStoreOwnerViewOption()),
                                   ),
                                 ),
                               ),
@@ -120,8 +108,7 @@ class _AccountScreenState extends State<AccountScreen> {
             padding: EdgeInsets.all(deviceSize.width * 0.03),
             child: Card(
               elevation: 4.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
               child: Container(
                 child: Column(
                   children: <Widget>[
@@ -150,8 +137,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       title: Text("My Credit Cards"),
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(CreditCardsScreen.routeName);
+                        Navigator.of(context).pushNamed(CreditCardsScreen.routeName);
                         //open change language
                       },
                     ),
@@ -163,8 +149,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                       title: Text("My Purchases"),
                       trailing: Icon(Icons.keyboard_arrow_right),
-                      onTap: () => Navigator.of(context)
-                          .pushNamed(UserPurchasesScreen.routeName),
+                      onTap: () => Navigator.of(context).pushNamed(UserPurchasesScreen.routeName),
                     ),
                   ],
                 ),
@@ -172,16 +157,13 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
           ),
           Consumer<User>(
-            builder: (context, user, child) => _physicalStoreOwner ||
-                    _onlineStoreOwner ||
-                    user.hideStoreOwnerOptions
+            builder: (context, user, child) => _physicalStoreOwner || _onlineStoreOwner || user.hideStoreOwnerOptions
                 ? Container()
                 : Padding(
                     padding: EdgeInsets.all(deviceSize.width * 0.03),
                     child: Card(
                       elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                       child: Column(
                         children: <Widget>[
                           ListTile(
@@ -216,8 +198,7 @@ class _AccountScreenState extends State<AccountScreen> {
             padding: EdgeInsets.all(deviceSize.width * 0.03),
             child: Card(
               elevation: 4.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
               child: ListTile(
                 leading: Icon(
                   Icons.qr_code_scanner,
@@ -235,8 +216,7 @@ class _AccountScreenState extends State<AccountScreen> {
             padding: EdgeInsets.all(deviceSize.width * 0.03),
             child: Card(
               elevation: 4.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
               child: ListTile(
                 leading: Icon(
                   Icons.exit_to_app,

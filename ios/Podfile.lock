@@ -138,6 +138,7 @@ DEPENDENCIES:
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
+  - GoogleMaps (= 6.1.1)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - location (from `.symlinks/plugins/location/ios`)
@@ -254,6 +255,6 @@ SPEC CHECKSUMS:
   SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
 
-PODFILE CHECKSUM: 9e080a3e005bcf6e050d2da78b02efb919a799eb
+PODFILE CHECKSUM: 1fbe449e2e5ee52a138db36f8e3c5d5b4810c4f7
 
 COCOAPODS: 1.11.2
