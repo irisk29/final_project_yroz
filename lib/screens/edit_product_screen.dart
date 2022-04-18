@@ -24,14 +24,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   XFile? _pickedImage = null;
 
   ProductDTO? _editedProduct = ProductDTO(
-      id: '',
-      name: '',
-      price: 0,
-      description: '',
-      imageUrl: '',
-      category: '',
-      storeID: '',
-      imageFromPhone: null);
+      id: '', name: '', price: 0, description: '', imageUrl: '', category: '', storeID: '', imageFromPhone: null);
 
   var _isInit = true;
   var _isLoading = false;
@@ -158,8 +151,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 key: _form,
                 child: ListView(
                   children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage,
-                        _editedProduct!.imageUrl, false),
+                    ImageInput(_selectImage, _unselectImage, _editedProduct!.imageUrl, false),
                     TextFormField(
                       initialValue: _editedProduct!.name,
                       decoration: InputDecoration(labelText: 'Title'),
@@ -186,20 +178,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
                       initialValue: _editedProduct!.price.toString(),
                       decoration: InputDecoration(labelText: 'Price'),
                       textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                       focusNode: _priceFocusNode,
                       onFieldSubmitted: (_) {
-                        FocusScope.of(context)
-                            .requestFocus(_descriptionFocusNode);
+                        FocusScope.of(context).requestFocus(_descriptionFocusNode);
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -223,9 +212,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -250,9 +237,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                   ],

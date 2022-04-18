@@ -62,34 +62,24 @@ class _CashbackSelectionState extends State<CashbackSelection> {
                             Row(
                               children: [
                                 Icon(Icons.account_balance_wallet_outlined),
-                                Text(" Cashback Available",
-                                    style: TextStyle(fontSize: 15.0)),
+                                Text(" Cashback Available", style: TextStyle(fontSize: 15.0)),
                               ],
                             ),
-                            Text("\€" + widget.cashbackAvailable.toString(),
-                                style: TextStyle(fontSize: 15.0)),
+                            Text("\€" + widget.cashbackAvailable.toString(), style: TextStyle(fontSize: 15.0)),
                           ],
                         ),
                         TextFormField(
-                          decoration:
-                              InputDecoration(labelText: 'Cashback to use'),
-                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(labelText: 'Cashback to use'),
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
                           controller: myController,
                           validator: (value) {
-                            if (value != null &&
-                                value.isNotEmpty &&
-                                double.parse(value) < 0) {
+                            if (value != null && value.isNotEmpty && double.parse(value) < 0) {
                               return 'Please enter a positive amount';
                             }
-                            if (value != null &&
-                                value.isNotEmpty &&
-                                double.parse(value) >
-                                    widget.cashbackAvailable) {
+                            if (value != null && value.isNotEmpty && double.parse(value) > widget.cashbackAvailable) {
                               return 'You do not have enough cashback';
                             }
-                            if(value != null &&
-                                value.isNotEmpty &&
-                                double.tryParse(value)==null){
+                            if (value != null && value.isNotEmpty && double.tryParse(value) == null) {
                               return 'Amount has be a number';
                             }
                             return null;

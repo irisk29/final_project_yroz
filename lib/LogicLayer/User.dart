@@ -23,7 +23,6 @@ import 'package:final_project_yroz/screens/auth_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:tuple/tuple.dart';
 
 import 'StoreOwnerState.dart';

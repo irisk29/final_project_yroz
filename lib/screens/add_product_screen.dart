@@ -22,8 +22,7 @@ class AddProductScreen extends StatefulWidget {
   Widget wrapWithMaterial(List<NavigatorObserver> nav) => MaterialApp(
         routes: {
           TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
-          OpenOnlineStorePipeline.routeName: (ctx) =>
-              OpenOnlineStorePipeline().wrapWithMaterial(nav),
+          OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline().wrapWithMaterial(nav),
         },
         home: MultiProvider(
           providers: [
@@ -48,14 +47,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   XFile? _pickedImage = null;
 
   ProductDTO? _editedProduct = ProductDTO(
-      id: '',
-      name: '',
-      price: 0,
-      description: '',
-      imageUrl: '',
-      category: '',
-      storeID: '',
-      imageFromPhone: null);
+      id: '', name: '', price: 0, description: '', imageUrl: '', category: '', storeID: '', imageFromPhone: null);
 
   var _isLoading = false;
   var _formChanged;
@@ -187,20 +179,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
                       key: const Key('price'),
                       decoration: InputDecoration(labelText: 'Price'),
                       textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                       focusNode: _priceFocusNode,
                       onFieldSubmitted: (_) {
-                        FocusScope.of(context)
-                            .requestFocus(_descriptionFocusNode);
+                        FocusScope.of(context).requestFocus(_descriptionFocusNode);
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -224,9 +213,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                     TextFormField(
@@ -251,9 +238,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             id: _editedProduct!.id,
                             category: '',
                             storeID: '',
-                            imageFromPhone: _pickedImage == null
-                                ? null
-                                : File(_pickedImage!.path));
+                            imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                       },
                     ),
                   ],
