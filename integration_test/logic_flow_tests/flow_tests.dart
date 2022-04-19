@@ -30,6 +30,36 @@ import 'package:tuple/tuple.dart';
 
 void main() {
   bool configured = false;
+  Openings op = Openings(days: [
+    new OpeningTimes(
+        day: "Sunday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Monday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Tuesday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Wednesday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Thursday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Friday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Saturday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+  ]);
 
   Future<void> _configureAmplify() async {
     if (!configured) {
@@ -46,6 +76,24 @@ void main() {
         print("Amplify was already configured. Was the app restarted?");
       }
     }
+  }
+
+  String openingsToJson(Openings openings) {
+    String json = "";
+    for (OpeningTimes t in openings.days) {
+      json = json + t.day + "-";
+      if (t.closed)
+        json = json + "closed";
+      else {
+        final now = new DateTime.now();
+        final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
+        final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
+        final format = DateFormat.jm();
+        json = json + format.format(dt) + "," + format.format(dt2);
+      }
+      json = json + "\n";
+    }
+    return json;
   }
 
   Future<void> clearDB() async {
@@ -107,15 +155,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "prod",
@@ -189,15 +228,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "prod",
@@ -289,15 +319,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
@@ -356,15 +377,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
@@ -434,15 +446,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "prod",
@@ -494,15 +497,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "prod",
@@ -566,15 +560,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "prod",
@@ -667,15 +652,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
@@ -717,15 +693,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
@@ -779,15 +746,6 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
@@ -862,15 +820,6 @@ void main() {
       User user1 = User.fromModel(firstUser);
       await user1.createEWallet();
 
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
@@ -896,18 +845,7 @@ void main() {
       expect(onlineStore.address, physicalStoreDTO.address);
       expect(onlineStore.phoneNumber, physicalStoreDTO.phoneNumber);
       expect(onlineStore.categories, JsonEncoder.withIndent('  ').convert(physicalStoreDTO.categories));
-      expect(
-          onlineStore.operationHours,
-          JsonEncoder.withIndent('  ', (value) {
-            if (value is TimeOfDay) {
-              final now = new DateTime.now();
-              final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
-              final format = DateFormat.jm();
-              return format.format(dt);
-            } else {
-              return value.toJson();
-            }
-          }).convert(physicalStoreDTO.operationHours));
+      expect(onlineStore.operationHours, openingsToJson(physicalStoreDTO.operationHours));
       expect(onlineStore.storeProductModels!.length, 0);
     });
 
@@ -919,15 +857,6 @@ void main() {
       User user1 = User.fromModel(firstUser);
       await user1.createEWallet();
 
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
@@ -953,18 +882,7 @@ void main() {
       expect(onlineStore.address, physicalStoreDTO.address);
       expect(onlineStore.phoneNumber, physicalStoreDTO.phoneNumber);
       expect(onlineStore.categories, JsonEncoder.withIndent('  ').convert(physicalStoreDTO.categories));
-      expect(
-          onlineStore.operationHours,
-          JsonEncoder.withIndent('  ', (value) {
-            if (value is TimeOfDay) {
-              final now = new DateTime.now();
-              final dt = DateTime(now.year, now.month, now.day, value.hour, value.minute);
-              final format = DateFormat.jm();
-              return format.format(dt);
-            } else {
-              return value.toJson();
-            }
-          }).convert(physicalStoreDTO.operationHours));
+      expect(onlineStore.operationHours, openingsToJson(physicalStoreDTO.operationHours));
       expect(onlineStore.storeProductModels!.length, 0);
 
       ProductDTO productDTO = ProductDTO(
