@@ -275,7 +275,7 @@ class StoreOwnerState {
       return new Ok("Added bank token $token", token);
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return Failure(e.toString());
+      return Failure("Something went wrong, please try again later...");
     }
   }
 
@@ -298,7 +298,7 @@ class StoreOwnerState {
       return new Ok("Added bank token $token", token);
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return Failure(e.toString());
+      return Failure("Something went wrong, please try again later...");
     }
   }
 }

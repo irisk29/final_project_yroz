@@ -50,58 +50,65 @@ class _AccountScreenState extends State<AccountScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            height: deviceSize.height * 0.15,
+            height: deviceSize.height * 0.13,
             child: Card(
               elevation: 8.0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
               child: Padding(
-                padding: EdgeInsets.only(
-                    top: deviceSize.height * 0.015,
-                    bottom: deviceSize.height * 0.015,
-                    left: deviceSize.width * 0.02,
-                    right: deviceSize.width * 0.02),
-                child: Center(
-                  child: ListTile(
-                    onTap: null,
-                    title: Text(
-                      user.name!,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
+                  padding: EdgeInsets.only(
+                      top: deviceSize.height * 0.015,
+                      bottom: deviceSize.height * 0.015,
+                      left: deviceSize.width * 0.02,
+                      right: deviceSize.width * 0.02),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+                      CircleAvatar(
+                        radius: deviceSize.width * 0.065,
+                        backgroundImage: Image.network(user.imageUrl!).image,
                       ),
-                    ),
-                    leading: CircleAvatar(
-                      radius: deviceSize.width * 0.075,
-                      backgroundImage: Image.network(user.imageUrl!).image,
-                    ),
-                    trailing: !_physicalStoreOwner && !_onlineStoreOwner
-                        ? Column(
-                            children: [
-                              Consumer<User>(
-                                builder: (context, user, child) => Container(
-                                  width: deviceSize.width * 0.3,
-                                  height: deviceSize.height * 0.055,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(right: deviceSize.width * 0.035),
-                                    child: SwitchListTile(
-                                        activeColor: Colors.purple,
-                                        value: !user.hideStoreOwnerOptions,
-                                        controlAffinity: ListTileControlAffinity.trailing,
-                                        onChanged: (_) => user.toggleStoreOwnerViewOption()),
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                "Advanced Options",
-                                style: TextStyle(fontSize: 10),
-                              ),
-                            ],
-                          )
-                        : null,
-                  ),
-                ),
-              ),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.03),
+                      Text(user.name!,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                          )),
+                      Expanded(
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.only(top: deviceSize.height * 0.01, right: deviceSize.width * 0.03),
+                            alignment: Alignment.centerRight,
+                            child: !_physicalStoreOwner && !_onlineStoreOwner
+                                ? Column(
+                                    children: [
+                                      Consumer<User>(
+                                        builder: (context, user, child) => Container(
+                                          width: deviceSize.width * 0.3,
+                                          height: deviceSize.height * 0.05,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(right: deviceSize.width * 0.035),
+                                            child: SwitchListTile(
+                                                activeColor: Colors.purple,
+                                                value: !user.hideStoreOwnerOptions,
+                                                controlAffinity: ListTileControlAffinity.trailing,
+                                                onChanged: (_) => user.toggleStoreOwnerViewOption()),
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        "Advanced Options",
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ],
+                                  )
+                                : null,
+                          ),
+                        ),
+                      )
+                    ],
+                  )),
             ),
           ),
           Padding(

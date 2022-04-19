@@ -218,8 +218,52 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                                         user
                                             .convertPhysicalStoreToOnline(
                                                 widget.store)
-                                            .then((_) => Navigator.of(context)
-                                                .pop(false));
+                                            .then((res) {
+                                          if (res.getTag()) {
+                                            SnackBar snackBar = SnackBar(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
+                                              backgroundColor: Theme.of(context)
+                                                  .primaryColor,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              content: const Text(
+                                                  'Upgrade to Online Store Successfully!',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: Colors.black87)),
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.75,
+                                            );
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                            Navigator.of(context).pop(false);
+                                          } else {
+                                            setState(() {
+                                              isLoading = false;
+                                            });
+                                            showDialog(
+                                              context: context,
+                                              builder: (ctx) => AlertDialog(
+                                                title:
+                                                    Text('Upgrade Store Error'),
+                                                content: Text(res.getMessage()),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    child: Text('Okay'),
+                                                    onPressed: () {
+                                                      Navigator.of(ctx).pop();
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                        });
                                       },
                                     ),
                                   ],
@@ -267,8 +311,50 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                user.deleteStore(widget.store.id, false).then(
-                                    (_) => Navigator.of(context).pop(false));
+                                user
+                                    .deleteStore(widget.store.id, false)
+                                    .then((res) {
+                                  if (res.getTag()) {
+                                    SnackBar snackBar = SnackBar(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      behavior: SnackBarBehavior.floating,
+                                      content: const Text(
+                                          'Deleted Store Successfully!',
+                                          textAlign: TextAlign.center,
+                                          style:
+                                              TextStyle(color: Colors.black87)),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.75,
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                    Navigator.of(context).pop(false);
+                                  } else {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: Text('Delete Store Error'),
+                                        content: Text(res.getMessage()),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('Okay'),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                });
                               },
                             ),
                           ],
