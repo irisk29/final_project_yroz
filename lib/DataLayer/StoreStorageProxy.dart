@@ -737,10 +737,13 @@ class StoreStorageProxy {
     }
   }
 
-  Future<ResultInterface> updateOnlineStoreProducts(
-      List<ProductDTO> products, String storeID) async {
-    List<StoreProductModel> productsModels = await Amplify.DataStore.query(
-        StoreProductModel.classType,
+  Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
+    List<OnlineStoreModel> stores =
+        await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(storeID));
+    if (stores.isEmpty) {
+      return new Failure("No such store with id $storeID");
+    }
+    List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     //can be empty when upgrading from physical to online
     if (productsModels.isNotEmpty) {

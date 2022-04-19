@@ -23,6 +23,36 @@ import 'package:tuple/tuple.dart';
 
 void main() {
   bool configured = false;
+  Openings op = Openings(days: [
+    new OpeningTimes(
+        day: "Sunday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Monday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Tuesday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Wednesday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Thursday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Friday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Saturday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+  ]);
 
   Future<void> _configureAmplify() async {
     if (!configured) {
@@ -43,14 +73,58 @@ void main() {
 
   IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
 
+  String openingsToJson(Openings openings) {
+    String json = "";
+    for (OpeningTimes t in openings.days) {
+      json = json + t.day + "-";
+      if (t.closed)
+        json = json + "closed";
+      else {
+        final now = new DateTime.now();
+        final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
+        final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
+        final format = DateFormat.jm();
+        json = json + format.format(dt) + "," + format.format(dt2);
+      }
+      json = json + "\n";
+    }
+    return json;
+  }
+
+  Future<void> clearDB() async {
+    List<StoreProductModel> prods = await Amplify.DataStore.query(StoreProductModel.classType);
+    for (var p in prods) await Amplify.DataStore.delete(p);
+
+    List<OnlineStoreModel> onlines = await Amplify.DataStore.query(OnlineStoreModel.classType);
+    for (var o in onlines) await Amplify.DataStore.delete(o);
+
+    List<PhysicalStoreModel> phys = await Amplify.DataStore.query(PhysicalStoreModel.classType);
+    for (var p in phys) await Amplify.DataStore.delete(p);
+
+    List<CartProductModel> carts = await Amplify.DataStore.query(CartProductModel.classType);
+    for (var c in carts) await Amplify.DataStore.delete(c);
+
+    List<ShoppingBagModel> bags = await Amplify.DataStore.query(ShoppingBagModel.classType);
+    for (var b in bags) await Amplify.DataStore.delete(b);
+
+    List<StoreOwnerModel> owners = await Amplify.DataStore.query(StoreOwnerModel.classType);
+    for (var o in owners) await Amplify.DataStore.delete(o);
+
+    List<UserModel> users = await Amplify.DataStore.query(UserModel.classType);
+    for (var u in users) await Amplify.DataStore.delete(u);
+
+    List<PurchaseHistoryModel> purchases = await Amplify.DataStore.query(PurchaseHistoryModel.classType);
+    for (var p in purchases) await Amplify.DataStore.delete(p);
+  }
+
   group('open online store', () {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
     setUp(() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
-        UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+        UserModel currUser = new UserModel(
+            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -62,16 +136,14 @@ void main() {
       });
     });
 
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
+      });
+    });
+
     test('good scenario', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       List<ProductDTO> prods = [
         ProductDTO(
             id: "",
@@ -103,15 +175,6 @@ void main() {
     });
 
     test('sad scenario - wrong phone format', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       List<ProductDTO> prods = [
         ProductDTO(
             id: "",
@@ -156,8 +219,8 @@ void main() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
-        UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+        UserModel currUser = new UserModel(
+            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -169,16 +232,14 @@ void main() {
       });
     });
 
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
+      });
+    });
+
     test('good scenario', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "",
           name: "physical test",
@@ -198,15 +259,6 @@ void main() {
     });
 
     test('sad scenario - wrong phone format', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "",
           name: "physical test",
@@ -242,22 +294,20 @@ void main() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
-        UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+        UserModel currUser = new UserModel(
+            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         OnlineStoreModel onlineStoreModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
             address: "Ashdod, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         PhysicalStoreModel physicalStoreModel = PhysicalStoreModel(
             name: "physical store",
             phoneNumber: "+972123456789",
             address: "Tel Aviv, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         onlineModel = onlineStoreModel;
@@ -277,6 +327,13 @@ void main() {
       });
     });
 
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
+      });
+    });
+
     test('fetch by category', () async {
       List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("food");
       expect(res.length, 2);
@@ -291,13 +348,13 @@ void main() {
     });
 
     test('fetch by name', () async {
-      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("physical store");
+      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("physical");
       expect(res.length, 1);
       expect(res.first.name, "physical store");
     });
 
     test('fetch by address', () async {
-      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("Ashdod, Israel");
+      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("Ashdod");
       expect(res.length, 1);
       expect(res.first.name, "online test");
     });
@@ -316,14 +373,13 @@ void main() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
-        UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+        UserModel currUser = new UserModel(
+            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         OnlineStoreModel onlineStoreModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
             address: "Ashdod, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         onlineModel = onlineStoreModel;
@@ -337,6 +393,13 @@ void main() {
         var res = await UsersStorageProxy().deleteUser("unittest@gmail.com");
         await Amplify.DataStore.delete(onlineModel);
         print("in tear down: ${res.getMessage()}");
+      });
+    });
+
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
       });
     });
 
@@ -385,14 +448,13 @@ void main() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
-        UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+        UserModel currUser = new UserModel(
+            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         PhysicalStoreModel physicalStoreModel = PhysicalStoreModel(
             name: "physical store",
             phoneNumber: "+972123456789",
             address: "Tel Aviv, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         physicalModel = physicalStoreModel;
@@ -409,16 +471,14 @@ void main() {
       });
     });
 
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
+      });
+    });
+
     test('good scenario', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO storeDTO = StoreDTO(
           id: physicalModel.id,
           name: "new name", //changed name
@@ -435,15 +495,6 @@ void main() {
     });
 
     test('bad scenario - no such store', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "",
           name: "new name", //changed name
@@ -469,14 +520,13 @@ void main() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
-        UserModel currUser =
-            new UserModel(email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+        UserModel currUser = new UserModel(
+            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
         onlineModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
             address: "Ashdod, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         productModel = StoreProductModel(
@@ -501,16 +551,14 @@ void main() {
       });
     });
 
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
+      });
+    });
+
     test('good scenario - update online store info', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "product test",
@@ -537,15 +585,6 @@ void main() {
     });
 
     test('good scenario - update online store\'s product', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "product test",
@@ -606,15 +645,6 @@ void main() {
     });
 
     test('bad scenario - no such store', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       ProductDTO productDTO = ProductDTO(
           id: "",
           name: "product test",
@@ -671,8 +701,7 @@ void main() {
             name: "physical store",
             phoneNumber: "+972123456789",
             address: "Tel Aviv, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         StoreOwnerModel storeOwnerModel = StoreOwnerModel(
@@ -685,7 +714,7 @@ void main() {
             name: "test name",
             hideStoreOwnerOptions: false,
             storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id, 
+            userModelStoreOwnerModelId: storeOwnerModel.id,
             isLoggedIn: true);
         await Amplify.DataStore.save(physicalModel);
         await Amplify.DataStore.save(storeOwnerModel);
@@ -697,6 +726,13 @@ void main() {
       return Future(() async {
         var res = await UsersStorageProxy().deleteUser("unittest@gmail.com");
         print("in tear down: ${res.getMessage()}");
+      });
+    });
+
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
       });
     });
 
@@ -739,8 +775,7 @@ void main() {
             name: "online test",
             phoneNumber: "+972123456789",
             address: "Ashdod, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         productModel = StoreProductModel(
@@ -760,7 +795,7 @@ void main() {
             name: "test name",
             hideStoreOwnerOptions: false,
             storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id, 
+            userModelStoreOwnerModelId: storeOwnerModel.id,
             isLoggedIn: true);
         await Amplify.DataStore.save(productModel);
         await Amplify.DataStore.save(onlineModel);
@@ -773,6 +808,13 @@ void main() {
       return Future(() async {
         var res = await UsersStorageProxy().deleteUser("unittest@gmail.com");
         print("in tear down: ${res.getMessage()}");
+      });
+    });
+
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
       });
     });
 
@@ -818,8 +860,7 @@ void main() {
             name: "physical store",
             phoneNumber: "+972123456789",
             address: "Tel Aviv, Israel",
-            operationHours:
-                "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+            operationHours: openingsToJson(op),
             categories: "[\"Food\"]",
             qrCode: "");
         StoreOwnerModel storeOwnerModel = StoreOwnerModel(
@@ -847,16 +888,14 @@ void main() {
       });
     });
 
+    tearDownAll(() {
+      return Future(() async {
+        await clearDB();
+        print("cleared db");
+      });
+    });
+
     test('good scenario', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO storeDTO = StoreDTO(
           id: physicalModel.id,
           name: "physical store",
@@ -877,15 +916,6 @@ void main() {
     });
 
     test('bad scenario - no such store', () async {
-      Openings op = Openings(days: [
-        new OpeningTimes(day: "Sunday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Monday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Tuesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Wednesday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Thursday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Friday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-        new OpeningTimes(day: "Saturday", closed: false, operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
-      ]);
       StoreDTO storeDTO = StoreDTO(
           id: "aa",
           name: "physical store",
