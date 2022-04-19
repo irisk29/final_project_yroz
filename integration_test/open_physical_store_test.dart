@@ -59,7 +59,8 @@ void main() {
     setUp(() async {
       await _configureAmplify();
       UserAuthenticator().setCurrentUserId("test@gmail.com");
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+      UserModel currUser =
+          new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
       await Amplify.DataStore.save(currUser);
       mockObserver = MockNavigatorObserver();
       return Future(() => print("starting test.."));
@@ -162,7 +163,7 @@ void main() {
       await tester.pump();
 
       fab = find.byKey(Key('phoneNumber'));
-      await tester.enterText(fab, "+1234567"); //wrong phone format
+      await tester.enterText(fab, "123456789");
       await tester.pump();
 
       fab = find.byKey(Key('storeAddress'));
@@ -189,6 +190,7 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
+      //wrong bank details
       fab = find.byKey(Key('bank_name'));
       await tester.enterText(fab, "leumi");
       await tester.pump();
@@ -204,11 +206,11 @@ void main() {
       FocusManager.instance.primaryFocus?.unfocus();
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      fab = find.byKey(Key("continue_button"));
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key("continue_button")); //when pressing this button it creates the store
+      fab = find.byKey(Key("fail_bank_account"));
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
@@ -225,12 +227,6 @@ void main() {
         }
       });
       await Future.delayed(Duration(seconds: 10));
-
-      await tester.tap(find.byKey(Key("tutorial_okay_button"))); //tap the alert dialog for the store owner
-      await tester.pumpAndSettle();
-
-      expect(find.byType(StoreItem), findsNothing); // no store should apear because the open was not succssefull
-      
     });
   });
 }

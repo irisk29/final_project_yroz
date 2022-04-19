@@ -6,6 +6,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
+import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:final_project_yroz/Result/ResultInterface.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
@@ -17,11 +18,43 @@ import 'package:integration_test/integration_test.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart' as app;
 import 'package:intl/intl.dart';
 import 'package:mockito/mockito.dart';
+import 'package:tuple/tuple.dart';
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
 void main() {
   bool configured = false;
+  Openings op = Openings(days: [
+    new OpeningTimes(
+        day: "Sunday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Monday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Tuesday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Wednesday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Thursday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Friday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+    new OpeningTimes(
+        day: "Saturday",
+        closed: false,
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+  ]);
+
   takeScreenshot(tester, binding) async {
     if (Platform.isAndroid) {
       await binding.convertFlutterSurfaceToImage();
@@ -49,6 +82,24 @@ void main() {
 
   IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
 
+  String openingsToJson(Openings openings) {
+    String json = "";
+    for (OpeningTimes t in openings.days) {
+      json = json + t.day + "-";
+      if (t.closed)
+        json = json + "closed";
+      else {
+        final now = new DateTime.now();
+        final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
+        final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
+        final format = DateFormat.jm();
+        json = json + format.format(dt) + "," + format.format(dt2);
+      }
+      json = json + "\n";
+    }
+    return json;
+  }
+
   group('end-to-end test', () {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
     late NavigatorObserver mockObserver;
@@ -61,13 +112,22 @@ void main() {
           name: "physical store test",
           phoneNumber: "+972123456789",
           address: "Ashdod, Israel",
-          operationHours: "{ \"sunday\": [ \"7:00 AM\", \"11:59 PM\" ], \"monday\": [ \"7:00 AM\", \"11:59 PM\" ], \"tuesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"wednesday\": [ \"7:00 AM\", \"11:59 PM\" ], \"thursday\": [ \"7:00 AM\", \"11:59 PM\" ], \"friday\": [ \"7:00 AM\", \"11:59 PM\" ], \"saturday\": [ \"7:00 AM\", \"11:59 PM\" ] }",
+          operationHours: openingsToJson(op),
           categories: "[\"Food\"]",
           qrCode: "");
       TemporalDateTime time = TemporalDateTime.fromString(
           DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String());
-      StoreOwnerModel storeOwnerModel = StoreOwnerModel(storeOwnerModelPhysicalStoreModelId: physicalStoreModel.id, physicalStoreModel: physicalStoreModel, lastPurchasesView: time);
-      UserModel currUser = new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, userModelStoreOwnerModelId: storeOwnerModel.id, storeOwnerModel: storeOwnerModel, isLoggedIn: true);
+      StoreOwnerModel storeOwnerModel = StoreOwnerModel(
+          storeOwnerModelPhysicalStoreModelId: physicalStoreModel.id,
+          physicalStoreModel: physicalStoreModel,
+          lastPurchasesView: time);
+      UserModel currUser = new UserModel(
+          email: "test@gmail.com",
+          name: "test name",
+          hideStoreOwnerOptions: false,
+          userModelStoreOwnerModelId: storeOwnerModel.id,
+          storeOwnerModel: storeOwnerModel,
+          isLoggedIn: true);
       await Amplify.DataStore.save(physicalStoreModel);
       await Amplify.DataStore.save(storeOwnerModel);
       await Amplify.DataStore.save(currUser);
@@ -116,6 +176,32 @@ void main() {
       assert(storeOwnerRes.getTag() == true);
       StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
       assert(storeOwnerModel.physicalStoreModel!.name == "physical store check");
+      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null);
+      assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!.isNotEmpty);
+    });
+
+    testWidgets('edit physical store - sad scenario', (WidgetTester tester) async {
+      await tester.pumpWidget(app.EditPhysicalStorePipeline().wrapWithMaterial([mockObserver], user));
+      await tester.pumpAndSettle();
+
+      Finder fab = find.byKey(Key('phoneNumber'));
+      await tester.enterText(fab, "");
+      await tester.enterText(fab, "+9722222");
+      await tester.pumpAndSettle();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(Key('store_category_2')), findsNothing);
+
+      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
+      assert(storeOwnerRes.getTag() == true);
+      StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
+      assert(storeOwnerModel.physicalStoreModel!.phoneNumber != "+9722222");
       assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null);
       assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!.isNotEmpty);
     });
