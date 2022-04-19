@@ -30,7 +30,7 @@ class InternalPaymentGateway {
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return new Failure(e.toString());
+      return new Failure("Something went wrong, please try again later...");
     }
   }
 
@@ -45,7 +45,7 @@ class InternalPaymentGateway {
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return new Failure(e.toString());
+      return new Failure("Something went wrong, please try again later...");
     }
   }
 
@@ -60,7 +60,7 @@ class InternalPaymentGateway {
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return new Failure(e.toString());
+      return new Failure("Something went wrong, please try again later...");
     }
   }
 
@@ -76,7 +76,7 @@ class InternalPaymentGateway {
       return new Failure(responseBody["msg"]);
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
-      return new Failure(e.toString());
+      return new Failure("Something went wrong, please try again later...");
     }
   }
 
