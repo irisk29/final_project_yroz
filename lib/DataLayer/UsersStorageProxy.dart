@@ -58,7 +58,7 @@ class UsersStorageProxy {
         userModelStoreOwnerModelId: storeOwner == null ? "" : storeOwner.id,
         isLoggedIn: !user.isLoggedIn);
     FLog.info(text: "Fetched existing user");
-    if(!user.isLoggedIn) //only save if the user wasn't logged in already
+    if (!user.isLoggedIn) //only save if the user wasn't logged in already
       await Amplify.DataStore.save(fullUser);
     return fullUser;
   }
@@ -554,14 +554,15 @@ class UsersStorageProxy {
     return new Ok("Succssefully added eWallet token $eWallet", eWallet);
   }
 
-  Future<void> saveStoreBankAccount(String token) async {
-    var storeOwnerRes = await getStoreOwnerState(UserAuthenticator().getCurrentUserId());
-    if (!storeOwnerRes.getTag()) {
-      FLog.error(text: storeOwnerRes.getMessage());
+  Future<void> saveStoreBankAccount(String token, String storeOwnerID) async {
+    List<StoreOwnerModel> owners =
+        await Amplify.DataStore.query(StoreOwnerModel.classType, where: StoreOwnerModel.ID.eq(storeOwnerID));
+    if (owners.isEmpty) {
+      FLog.error(text: "No store owners were found for id $storeOwnerID");
       return;
     }
-    StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
-    storeOwnerModel = storeOwnerModel.copyWith(bankAccountToken: token);
+
+    StoreOwnerModel storeOwnerModel = owners.first.copyWith(bankAccountToken: token);
     await Amplify.DataStore.save(storeOwnerModel);
   }
 

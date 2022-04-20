@@ -69,7 +69,11 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            imageUrl: "https://pic.png",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -145,7 +149,7 @@ void main() {
             name: "test name",
             imageUrl: "https://pic.png",
             hideStoreOwnerOptions: false,
-            favoriteStores: favStores, 
+            favoriteStores: favStores,
             isLoggedIn: true);
         await Amplify.DataStore.save(onlineModel);
         await Amplify.DataStore.save(physicalModel);
@@ -228,7 +232,11 @@ void main() {
         storeProductModel2 = StoreProductModel(
             name: "product2", categories: "", price: 7.89, onlinestoremodelID: onlineModel.id, description: "cheap");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            imageUrl: "https://pic.png",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         userID = currUser.id;
         await Amplify.DataStore.save(onlineModel);
         await Amplify.DataStore.save(storeProductModel1);
@@ -395,7 +403,11 @@ void main() {
         storeProductModel2 = StoreProductModel(
             name: "product2", categories: "", price: 7.89, onlinestoremodelID: onlineModel.id, description: "cheap");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            imageUrl: "https://pic.png",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         userID = currUser.id;
         shoppingBagModel = ShoppingBagModel(usermodelID: userID, onlineStoreID: onlineModel.id);
         cartProductModel = CartProductModel(
@@ -587,7 +599,11 @@ void main() {
         storeProductModel2 = StoreProductModel(
             name: "product2", categories: "", price: 7.89, onlinestoremodelID: onlineModel.id, description: "cheap");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", imageUrl: "https://pic.png", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            imageUrl: "https://pic.png",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         userID = currUser.id;
         shoppingBagModel = ShoppingBagModel(usermodelID: userID, onlineStoreID: onlineModel.id);
         cartProductModel = CartProductModel(
@@ -791,6 +807,7 @@ void main() {
 
   group('save and remove store owner\'s bank account', () {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    late String storeOwnerID;
 
     setUp(() {
       return Future(() async {
@@ -803,8 +820,9 @@ void main() {
             imageUrl: "https://pic.png",
             hideStoreOwnerOptions: false,
             storeOwnerModel: storeOwnerModel,
-            userModelStoreOwnerModelId: storeOwnerModel.id, 
+            userModelStoreOwnerModelId: storeOwnerModel.id,
             isLoggedIn: true);
+        storeOwnerID = storeOwnerModel.id;
         await Amplify.DataStore.save(storeOwnerModel);
         await Amplify.DataStore.save(currUser);
       });
@@ -819,7 +837,7 @@ void main() {
 
     test('save bank account - good scenario', () async {
       String token = "token";
-      await UsersStorageProxy().saveStoreBankAccount(token);
+      await UsersStorageProxy().saveStoreBankAccount(token, storeOwnerID);
       var storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("unittest@gmail.com");
       expect(storeOwnerRes.getTag(), true);
       StoreOwnerModel owner = storeOwnerRes.getValue();
