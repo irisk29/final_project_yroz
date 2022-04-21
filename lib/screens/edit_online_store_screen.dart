@@ -82,8 +82,13 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     _formChanged = false;
     _editedStore =
         Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
+    EditOnlineStorePipeline._controller.text = _editedStore!.address;
     openingHours = OpeningHours(
         _editedStore!.operationHours.clone(), () => _formChanged = true);
+    _pickedImage = _editedStore!.imageFromPhone != null
+        ? XFile(_editedStore!.imageFromPhone!.path)
+        : null;
+    _imageUrl = _editedStore!.image;
     super.initState();
   }
 
@@ -103,10 +108,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .onlineStore;
-      _pickedImage = _editedStore!.imageFromPhone != null
-          ? XFile(_editedStore!.imageFromPhone!.path)
-          : null;
-      _imageUrl = _editedStore!.image;
       _selectedItems.addAll(_editedStore!.categories);
       _products.addAll(_editedStore!.products);
     }
@@ -315,7 +316,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         initialCountryCode: 'IL',
                         onChanged: (phone) {
                           _formChanged = true;
-                          print(phone.completeNumber);
                         },
                         onSaved: (value) {
                           _editedStore = OnlineStoreDTO(
@@ -332,12 +332,23 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                       ),
                       TextFormField(
                         key: const Key('storeAddress'),
-                        initialValue: _editedStore!.address,
                         decoration: InputDecoration(labelText: 'Address'),
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => destinationBuilder),
-                        onChanged: (_) => _formChanged = true,
+                        controller: EditOnlineStorePipeline._controller,
+                        onTap: () {
+                          _formChanged = true;
+                          showDialog(
+                              context: context,
+                              builder: (context) => destinationBuilder);
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide a value.';
+                          }
+                          if (value.length < 2) {
+                            return 'Should be at least 2 characters long.';
+                          }
+                          return null;
+                        },
                         onSaved: (value) {
                           _editedStore = OnlineStoreDTO(
                               name: _editedStore!.name,

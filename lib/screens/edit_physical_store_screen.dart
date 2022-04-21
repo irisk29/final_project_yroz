@@ -81,8 +81,13 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     _editedStore = Provider.of<User>(context, listen: false)
         .storeOwnerState!
         .physicalStore;
+    EditPhysicalStorePipeline._controller.text = _editedStore!.address;
     openingHours = OpeningHours(
         _editedStore!.operationHours.clone(), () => _formChanged = true);
+    _pickedImage = _editedStore!.imageFromPhone != null
+        ? XFile(_editedStore!.imageFromPhone!.path)
+        : null;
+    _imageUrl = _editedStore!.image;
     super.initState();
   }
 
@@ -102,10 +107,6 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .physicalStore;
-      _pickedImage = _editedStore!.imageFromPhone != null
-          ? XFile(_editedStore!.imageFromPhone!.path)
-          : null;
-      _imageUrl = _editedStore!.image;
       _selectedItems.addAll(_editedStore!.categories);
     }
     _isInit = false;
@@ -266,12 +267,14 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                       ),
                       TextFormField(
                         key: const Key('storeAddress'),
-                        initialValue: _editedStore!.address,
                         decoration: InputDecoration(labelText: 'Address'),
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => destinationBuilder),
-                        onChanged: (_) => _formChanged = true,
+                        controller: EditPhysicalStorePipeline._controller,
+                        onTap: () {
+                          _formChanged = true;
+                          showDialog(
+                              context: context,
+                              builder: (context) => destinationBuilder);
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please provide a value.';
