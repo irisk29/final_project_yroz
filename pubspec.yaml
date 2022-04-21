@@ -66,6 +66,7 @@ dependencies:
   intl_phone_field: ^3.1.0
   flutter_rating_bar: ^4.0.0
   flutter_mailer: ^2.0.1
+  cached_network_image: ^3.2.0
 
 dev_dependencies:
   integration_test:
@@ -130,8 +131,8 @@ flutter:
      - assets/images/default_product.png
      - assets/images/favorite-stores.png
      - assets/images/favorite-products.png
+     - assets/images/placeholder-image.png
      - assets/secrets.json
-  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -56,13 +57,15 @@ class _ProductItemState extends State<ProductItem> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       widget.product.description != null
-                          ? Text(widget.product.description!, style: TextStyle(color: Colors.black54))
+                          ? Text(widget.product.description!,
+                              style: TextStyle(color: Colors.black54))
                           : Container(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('\€${widget.product.price}', style: TextStyle(fontSize: 16)),
+                          Text('\€${widget.product.price}',
+                              style: TextStyle(fontSize: 16)),
                           IconButton(
                             icon: Icon(Icons.add_shopping_cart),
                             alignment: Alignment.center,
@@ -75,17 +78,25 @@ class _ProductItemState extends State<ProductItem> {
                                   title: Text('Select quantity'),
                                   content: TextField(
                                     controller: myController,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: true),
                                   ),
                                   actions: [
                                     FlatButton(
                                       child: Text('Okay'),
                                       onPressed: () {
-                                        quantity = double.parse(myController.text);
+                                        quantity =
+                                            double.parse(myController.text);
                                         Navigator.of(context).pop();
-                                        user.updateOrCreateCartProduct(widget.product, widget.storeID, quantity);
-                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        user.updateOrCreateCartProduct(
+                                            widget.product,
+                                            widget.storeID,
+                                            quantity);
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               'Added item to cart!',
@@ -120,18 +131,47 @@ class _ProductItemState extends State<ProductItem> {
                       top: constraints.maxHeight * 0.06,
                       bottom: constraints.maxHeight * 0.06),
                   child: FittedBox(
-                    child: Container(
-                      height: constraints.maxHeight,
-                      width: constraints.maxWidth * 0.45,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        image: widget.product.imageUrl != null && widget.product.imageUrl!.isNotEmpty
-                            ? DecorationImage(image: NetworkImage(widget.product.imageUrl!), fit: BoxFit.cover)
-                            : DecorationImage(
-                                image: AssetImage('assets/images/default_product.png'), fit: BoxFit.cover),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
+                    child: widget.product.imageUrl != null &&
+                            widget.product.imageUrl!.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: widget.product.imageUrl!,
+                            imageBuilder: (context, imageProvider) => Container(
+                              height: constraints.maxHeight,
+                              width: constraints.maxWidth * 0.45,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                    image: imageProvider, fit: BoxFit.cover),
+                              ),
+                            ),
+                            placeholder: (context, url) => Container(
+                              height: constraints.maxHeight,
+                              width: constraints.maxWidth * 0.45,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/placeholder-image.png'),
+                                    fit: BoxFit.cover),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                          )
+                        : Container(
+                            height: constraints.maxHeight,
+                            width: constraints.maxWidth * 0.45,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/default_product.png'),
+                                  fit: BoxFit.cover),
+                            ),
+                          ),
                     fit: BoxFit.fill,
                   ),
                 ),

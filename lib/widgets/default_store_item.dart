@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
@@ -29,19 +30,38 @@ class StoreItem extends StatelessWidget {
         child: Container(
             child: Stack(children: <Widget>[
           Positioned(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white10,
-                image: this.store.image != null
-                    ? DecorationImage(
-                        image: NetworkImage(this.store.image!),
-                        fit: BoxFit.cover)
-                    : DecorationImage(
-                        image: AssetImage('assets/images/default-store.png'),
-                        fit: BoxFit.cover),
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
+            child: this.store.image != null
+                ? CachedNetworkImage(
+                    imageUrl: this.store.image!,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(15),
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover),
+                      ),
+                    ),
+                    placeholder: (context, url) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(15),
+                        image: DecorationImage(
+                            image: AssetImage(
+                                'assets/images/placeholder-image.png'),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(15),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
+                    ),
+                  ),
           ),
           Positioned(
             top: constraints.maxHeight * 0.75,

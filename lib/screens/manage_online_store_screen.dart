@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
@@ -75,19 +76,37 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
               child: Column(
                 children: [
                   Center(
-                    child: Container(
-                      height: deviceSize.height * 0.3,
-                      decoration: BoxDecoration(
-                        image: widget.store.image != null
-                            ? DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(widget.store.image!))
-                            : DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/default-store.png'),
-                                fit: BoxFit.cover),
-                      ),
-                    ),
+                    child: widget.store.image != null
+                        ? CachedNetworkImage(
+                            imageUrl: widget.store.image!,
+                            imageBuilder: (context, imageProvider) => Container(
+                              height: deviceSize.height * 0.3,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: imageProvider, fit: BoxFit.cover),
+                              ),
+                            ),
+                            placeholder: (context, url) => Container(
+                              height: deviceSize.height * 0.3,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/placeholder-image.png'),
+                                    fit: BoxFit.cover),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                          )
+                        : Container(
+                            height: deviceSize.height * 0.3,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/default-store.png'),
+                                  fit: BoxFit.cover),
+                            ),
+                          ),
                   ),
                   Card(
                     elevation: 4.0,

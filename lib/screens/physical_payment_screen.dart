@@ -152,6 +152,7 @@ class _PaymentCardState extends State<PaymentCard>
 
   Future<void> _makePayment(
       double totalPrice, CashbackSelection cashbackSelection) async {
+    cashbackSelection.setTotalPrice(totalPrice);
     if (cashbackSelection.form.currentState == null ||
         cashbackSelection.form.currentState!.validate()) {
       setState(() => _isLoading = true);

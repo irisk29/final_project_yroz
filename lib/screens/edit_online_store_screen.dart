@@ -61,11 +61,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   final _detailsform = GlobalKey<FormState>();
 
   late AddressSearchBuilder destinationBuilder;
-  XFile? _pickedImage;
+
   OnlineStoreDTO? _editedStore;
 
   final List<ProductDTO> _products = [];
   final List<String> _selectedItems = [];
+
+  XFile? _pickedImage;
+  String? _imageUrl;
 
   late Secret secret;
 
@@ -79,8 +82,13 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
     _formChanged = false;
     _editedStore =
         Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
+    EditOnlineStorePipeline._controller.text = _editedStore!.address;
     openingHours = OpeningHours(
         _editedStore!.operationHours.clone(), () => _formChanged = true);
+    _pickedImage = _editedStore!.imageFromPhone != null
+        ? XFile(_editedStore!.imageFromPhone!.path)
+        : null;
+    _imageUrl = _editedStore!.image;
     super.initState();
   }
 
@@ -109,13 +117,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
-    _editedStore!.image = null;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
@@ -133,6 +142,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.operationHours = openingHours.saveOpenHours();
       _editedStore!.imageFromPhone =
           _pickedImage != null ? File(_pickedImage!.path) : null;
+      _editedStore!.image = _imageUrl;
       final res =
           await Provider.of<User>(context, listen: false).updateOnlineStore(
         _editedStore!,
@@ -267,8 +277,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage,
-                          _editedStore!.image, true),
+                      ImageInput(_selectImage, _unselectImage, _imageUrl,
+                          _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         initialValue: _editedStore!.name,
@@ -306,7 +316,6 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         initialCountryCode: 'IL',
                         onChanged: (phone) {
                           _formChanged = true;
-                          print(phone.completeNumber);
                         },
                         onSaved: (value) {
                           _editedStore = OnlineStoreDTO(
@@ -323,12 +332,23 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                       ),
                       TextFormField(
                         key: const Key('storeAddress'),
-                        initialValue: _editedStore!.address,
                         decoration: InputDecoration(labelText: 'Address'),
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => destinationBuilder),
-                        onChanged: (_) => _formChanged = true,
+                        controller: EditOnlineStorePipeline._controller,
+                        onTap: () {
+                          _formChanged = true;
+                          showDialog(
+                              context: context,
+                              builder: (context) => destinationBuilder);
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide a value.';
+                          }
+                          if (value.length < 2) {
+                            return 'Should be at least 2 characters long.';
+                          }
+                          return null;
+                        },
                         onSaved: (value) {
                           _editedStore = OnlineStoreDTO(
                               name: _editedStore!.name,
@@ -372,11 +392,11 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                 ),
               ),
             ),
-            _categorySelected
-                ? SizedBox(
-                    height: deviceSize.height * 0.075,
-                    child: Center(
-                      child: ListView(
+            SizedBox(
+              height: deviceSize.height * 0.075,
+              child: Center(
+                child: _categorySelected
+                    ? ListView(
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         children: _selectedItems
@@ -397,13 +417,13 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                                   label: Text(e),
                                 )))
                             .toList(),
+                      )
+                    : Text(
+                        "Please select at least one category",
+                        style: TextStyle(color: Theme.of(context).errorColor),
                       ),
-                    ),
-                  )
-                : Text(
-                    "Please select at least one category",
-                    style: TextStyle(color: Theme.of(context).errorColor),
-                  ),
+              ),
+            )
           ],
         );
       case 2:

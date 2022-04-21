@@ -60,10 +60,13 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
   final _detailsform = GlobalKey<FormState>();
 
   late AddressSearchBuilder destinationBuilder;
-  XFile? _pickedImage;
+
   StoreDTO? _editedStore;
+  String? _imageUrl;
 
   final List<String> _selectedItems = [];
+
+  XFile? _pickedImage;
 
   late Secret secret;
 
@@ -78,8 +81,13 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
     _editedStore = Provider.of<User>(context, listen: false)
         .storeOwnerState!
         .physicalStore;
+    EditPhysicalStorePipeline._controller.text = _editedStore!.address;
     openingHours = OpeningHours(
         _editedStore!.operationHours.clone(), () => _formChanged = true);
+    _pickedImage = _editedStore!.imageFromPhone != null
+        ? XFile(_editedStore!.imageFromPhone!.path)
+        : null;
+    _imageUrl = _editedStore!.image;
     super.initState();
   }
 
@@ -107,13 +115,14 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
-    _editedStore!.image = null;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
@@ -130,6 +139,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       _editedStore!.operationHours = openingHours.saveOpenHours();
       _editedStore!.imageFromPhone =
           _pickedImage != null ? File(_pickedImage!.path) : null;
+      _editedStore!.image = _imageUrl;
       final res = await Provider.of<User>(context, listen: false)
           .updatePhysicalStore(_editedStore!);
       if (res.getTag()) {
@@ -203,8 +213,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage,
-                          _editedStore!.image, true),
+                      ImageInput(_selectImage, _unselectImage, _imageUrl,
+                          _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         initialValue: _editedStore!.name,
@@ -257,12 +267,14 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                       ),
                       TextFormField(
                         key: const Key('storeAddress'),
-                        initialValue: _editedStore!.address,
                         decoration: InputDecoration(labelText: 'Address'),
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => destinationBuilder),
-                        onChanged: (_) => _formChanged = true,
+                        controller: EditPhysicalStorePipeline._controller,
+                        onTap: () {
+                          _formChanged = true;
+                          showDialog(
+                              context: context,
+                              builder: (context) => destinationBuilder);
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please provide a value.';
@@ -314,11 +326,11 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                 ),
               ),
             ),
-            _categorySelected
-                ? SizedBox(
-                    height: deviceSize.height * 0.075,
-                    child: Center(
-                      child: ListView(
+            SizedBox(
+              height: deviceSize.height * 0.075,
+              child: Center(
+                child: _categorySelected
+                    ? ListView(
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         children: _selectedItems
@@ -339,13 +351,13 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
                                   label: Text(e),
                                 )))
                             .toList(),
+                      )
+                    : Text(
+                        "Please select at least one category",
+                        style: TextStyle(color: Theme.of(context).errorColor),
                       ),
-                    ),
-                  )
-                : Text(
-                    "Please select at least one category",
-                    style: TextStyle(color: Theme.of(context).errorColor),
-                  ),
+              ),
+            )
           ],
         );
       case 2:

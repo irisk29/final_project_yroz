@@ -21,17 +21,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  XFile? _pickedImage = null;
 
-  ProductDTO? _editedProduct = ProductDTO(
-      id: '',
-      name: '',
-      price: 0,
-      description: '',
-      imageUrl: '',
-      category: '',
-      storeID: '',
-      imageFromPhone: null);
+  ProductDTO? _editedProduct;
+
+  XFile? _pickedImage;
+  String? _imageUrl;
 
   var _isInit = true;
   var _isLoading = false;
@@ -47,6 +41,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       _editedProduct = widget.product;
+      _pickedImage = _editedProduct!.imageFromPhone != null
+          ? XFile(_editedProduct!.imageFromPhone!.path)
+          : null;
+      _imageUrl = _editedProduct!.imageUrl;
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -61,12 +59,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
@@ -79,6 +79,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     final isValid = _form.currentState!.validate();
     if (isValid) {
       _form.currentState!.save();
+      _editedProduct!.imageUrl = _imageUrl;
       Navigator.of(context).pop(Tuple2(_editedProduct, false));
     }
 
@@ -161,8 +162,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 key: _form,
                 child: ListView(
                   children: <Widget>[
-                    ImageInput(_selectImage, _unselectImage,
-                        _editedProduct!.imageUrl, false),
+                    ImageInput(_selectImage, _unselectImage, _imageUrl,
+                        _pickedImage, false),
                     TextFormField(
                       initialValue: _editedProduct!.name,
                       decoration: InputDecoration(labelText: 'Title'),
