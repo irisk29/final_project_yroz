@@ -1,26 +1,29 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
   final Function onSelectImage;
   final Function onUnselectImage;
+  XFile? imageFromPhone;
   String? imageUrl;
   bool isStore = true;
 
-  ImageInput(
-      this.onSelectImage, this.onUnselectImage, this.imageUrl, this.isStore);
+  ImageInput(this.onSelectImage, this.onUnselectImage, this.imageUrl,
+      this.imageFromPhone, this.isStore);
 
   @override
-  _ImageInputState createState() => _ImageInputState(this.imageUrl);
+  _ImageInputState createState() =>
+      _ImageInputState(this.imageUrl, this.imageFromPhone);
 }
 
 class _ImageInputState extends State<ImageInput> {
   XFile? imageFromPhone;
   String? imageUrl;
 
-  _ImageInputState(this.imageUrl);
+  _ImageInputState(this.imageUrl, this.imageFromPhone);
 
   Future<void> _takePicture() async {
     final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -29,9 +32,8 @@ class _ImageInputState extends State<ImageInput> {
     }
     setState(() {
       imageFromPhone = imageFile;
+      imageUrl = null;
     });
-    imageUrl = imageFile.path;
-
     widget.onSelectImage(imageFile);
   }
 
@@ -43,8 +45,8 @@ class _ImageInputState extends State<ImageInput> {
     }
     setState(() {
       imageFromPhone = imageFile;
+      imageUrl = null;
     });
-    imageUrl = imageFile.path;
     widget.onSelectImage(imageFile);
   }
 
@@ -70,9 +72,16 @@ class _ImageInputState extends State<ImageInput> {
             border: Border.all(width: 1, color: Colors.grey),
           ),
           child: imageFromPhone != null
-              ? Image.file(File(imageUrl!))
+              ? Image.file(File(imageFromPhone!.path))
               : imageFromPhone == null && imageUrl != null
-                  ? Image(image: NetworkImage(imageUrl!))
+                  ? CachedNetworkImage(
+                      imageUrl: imageUrl!,
+                      placeholder: (context, url) => Image(
+                          image: AssetImage(
+                              'assets/images/placeholder-image.png')),
+                      errorWidget: (context, url, error) =>
+                          new Icon(Icons.error),
+                    )
                   : Image(
                       image: widget.isStore
                           ? AssetImage('assets/images/default-store.png')

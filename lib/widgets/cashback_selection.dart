@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 
 class CashbackSelection extends StatefulWidget {
   final form = GlobalKey<FormState>();
+
+  late double totalPrice;
   double cashbackAmount = 0.0;
   final double cashbackAvailable;
 
   CashbackSelection(this.cashbackAvailable);
+
+  void setTotalPrice(double totalPrice) {
+    this.totalPrice = totalPrice;
+  }
 
   @override
   _CashbackSelectionState createState() => _CashbackSelectionState();
@@ -62,25 +68,41 @@ class _CashbackSelectionState extends State<CashbackSelection> {
                             Row(
                               children: [
                                 Icon(Icons.account_balance_wallet_outlined),
-                                Text(" Cashback Available", style: TextStyle(fontSize: 15.0)),
+                                Text(" Cashback Available",
+                                    style: TextStyle(fontSize: 15.0)),
                               ],
                             ),
-                            Text("\€" + widget.cashbackAvailable.toString(), style: TextStyle(fontSize: 15.0)),
+                            Text("\€" + widget.cashbackAvailable.toString(),
+                                style: TextStyle(fontSize: 15.0)),
                           ],
                         ),
                         TextFormField(
-                          decoration: InputDecoration(labelText: 'Cashback to use'),
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          decoration:
+                              InputDecoration(labelText: 'Cashback to use'),
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
                           controller: myController,
                           validator: (value) {
-                            if (value != null && value.isNotEmpty && double.parse(value) < 0) {
+                            if (value != null &&
+                                value.isNotEmpty &&
+                                double.tryParse(value) == null) {
+                              return 'Amount has to be a number';
+                            }
+                            if (value != null &&
+                                value.isNotEmpty &&
+                                double.parse(value) < 0) {
                               return 'Please enter a positive amount';
                             }
-                            if (value != null && value.isNotEmpty && double.parse(value) > widget.cashbackAvailable) {
+                            if (value != null &&
+                                value.isNotEmpty &&
+                                double.parse(value) >
+                                    widget.cashbackAvailable) {
                               return 'You do not have enough cashback';
                             }
-                            if (value != null && value.isNotEmpty && double.tryParse(value) == null) {
-                              return 'Amount has be a number';
+                            if (value != null &&
+                                value.isNotEmpty &&
+                                double.parse(value) > widget.totalPrice) {
+                              return 'maximum cashback amount - \€${widget.totalPrice.toStringAsFixed(2)}';
                             }
                             return null;
                           },

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
@@ -28,32 +29,77 @@ class SecondaryStoreItem extends StatelessWidget {
         child: Container(
             child: Stack(children: <Widget>[
           Positioned(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white10,
-                image: this.store.image != null
-                    ? DecorationImage(
-                        image: NetworkImage(this.store.image!),
-                        fit: BoxFit.cover)
-                    : DecorationImage(
-                        image: AssetImage('assets/images/default-store.png'),
-                        fit: BoxFit.cover),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20.0),
-                  bottomRight: Radius.circular(20.0),
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.25),
-                    blurRadius: 5.0,
-                    spreadRadius: 0,
-                    offset: new Offset(10.0, 0.0),
+            child: this.store.image != null
+                ? CachedNetworkImage(
+                    imageUrl: this.store.image!,
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.25),
+                            blurRadius: 5.0,
+                            spreadRadius: 0,
+                            offset: new Offset(10.0, 0.0),
+                          ),
+                        ],
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover),
+                      ),
+                    ),
+                    placeholder: (context, url) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.25),
+                            blurRadius: 5.0,
+                            spreadRadius: 0,
+                            offset: new Offset(10.0, 0.0),
+                          ),
+                        ],
+                        image: DecorationImage(
+                            image: AssetImage(
+                                'assets/images/placeholder-image.png'),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20.0),
+                        bottomRight: Radius.circular(20.0),
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.25),
+                          blurRadius: 5.0,
+                          spreadRadius: 0,
+                          offset: new Offset(10.0, 0.0),
+                        ),
+                      ],
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/default-store.png'),
+                          fit: BoxFit.cover),
+                    ),
                   ),
-                ],
-              ),
-            ),
           ),
           Positioned(
             top: constraints.maxHeight * 0.75,

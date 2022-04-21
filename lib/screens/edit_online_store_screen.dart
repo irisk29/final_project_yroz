@@ -61,11 +61,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   final _detailsform = GlobalKey<FormState>();
 
   late AddressSearchBuilder destinationBuilder;
-  XFile? _pickedImage;
+
   OnlineStoreDTO? _editedStore;
 
   final List<ProductDTO> _products = [];
   final List<String> _selectedItems = [];
+
+  XFile? _pickedImage;
+  String? _imageUrl;
 
   late Secret secret;
 
@@ -100,6 +103,10 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore = Provider.of<User>(context, listen: false)
           .storeOwnerState!
           .onlineStore;
+      _pickedImage = _editedStore!.imageFromPhone != null
+          ? XFile(_editedStore!.imageFromPhone!.path)
+          : null;
+      _imageUrl = _editedStore!.image;
       _selectedItems.addAll(_editedStore!.categories);
       _products.addAll(_editedStore!.products);
     }
@@ -109,13 +116,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
 
   void _selectImage(XFile pickedImage) {
     _pickedImage = pickedImage;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
 
   void _unselectImage() {
     _pickedImage = null;
-    _editedStore!.image = null;
+    _imageUrl = null;
     _formChanged = true;
     setState(() {});
   }
@@ -133,6 +141,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.operationHours = openingHours.saveOpenHours();
       _editedStore!.imageFromPhone =
           _pickedImage != null ? File(_pickedImage!.path) : null;
+      _editedStore!.image = _imageUrl;
       final res =
           await Provider.of<User>(context, listen: false).updateOnlineStore(
         _editedStore!,
@@ -267,8 +276,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage,
-                          _editedStore!.image, true),
+                      ImageInput(_selectImage, _unselectImage, _imageUrl,
+                          _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         initialValue: _editedStore!.name,
@@ -372,11 +381,11 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                 ),
               ),
             ),
-            _categorySelected
-                ? SizedBox(
-                    height: deviceSize.height * 0.075,
-                    child: Center(
-                      child: ListView(
+            SizedBox(
+              height: deviceSize.height * 0.075,
+              child: Center(
+                child: _categorySelected
+                    ? ListView(
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         children: _selectedItems
@@ -397,13 +406,13 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                                   label: Text(e),
                                 )))
                             .toList(),
+                      )
+                    : Text(
+                        "Please select at least one category",
+                        style: TextStyle(color: Theme.of(context).errorColor),
                       ),
-                    ),
-                  )
-                : Text(
-                    "Please select at least one category",
-                    style: TextStyle(color: Theme.of(context).errorColor),
-                  ),
+              ),
+            )
           ],
         );
       case 2:

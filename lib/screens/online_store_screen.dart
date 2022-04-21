@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -47,10 +48,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     //String hour = DateFormat('Hm').format(DateTime.now());
     for (OpeningTimes e in widget.store.operationHours.days) {
       if (e.day.toLowerCase() == day) {
-        if(e.closed)
-          return 2;
+        if (e.closed) return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
+        if (opBigger(time, e.operationHours.item1) &&
+            opSmaller(time, e.operationHours.item2)) {
           if (lessthanfifteen(e.operationHours.item2, time)) {
             return 1;
           }
@@ -66,10 +67,13 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
     String map = "";
     for (OpeningTimes e in widget.store.operationHours.days) {
       map = map + e.day + ": ";
-      if(e.closed)
+      if (e.closed)
         map = map + "Closed";
       else {
-        map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
+        map = map +
+            e.operationHours.item1.format(context) +
+            " - " +
+            e.operationHours.item2.format(context);
       }
       map = map + '\n';
     }
@@ -114,18 +118,36 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
         child: Column(
           children: [
             Center(
-              child: Container(
-                height: deviceSize.height * 0.35,
-                decoration: BoxDecoration(
-                  image: widget.store.image != null
-                      ? DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(widget.store.image!))
-                      : DecorationImage(
-                          image: AssetImage('assets/images/default-store.png'),
-                          fit: BoxFit.cover),
-                ),
-              ),
+              child: widget.store.image != null
+                  ? CachedNetworkImage(
+                      imageUrl: widget.store.image!,
+                      imageBuilder: (context, imageProvider) => Container(
+                        height: deviceSize.height * 0.35,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
+                      ),
+                      placeholder: (context, url) => Container(
+                        height: deviceSize.height * 0.35,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage(
+                                  'assets/images/placeholder-image.png'),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    )
+                  : Container(
+                      height: deviceSize.height * 0.35,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image:
+                                AssetImage('assets/images/default-store.png'),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
             ),
             ListTile(
               title: Text(

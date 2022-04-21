@@ -247,7 +247,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage, null, true),
+                      ImageInput(_selectImage, _unselectImage, null,
+                          _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         controller: _nameController,
@@ -366,11 +367,11 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                 ),
               ),
             ),
-            _categorySelected
-                ? SizedBox(
-                    height: deviceSize.height * 0.075,
-                    child: Center(
-                      child: ListView(
+            SizedBox(
+              height: deviceSize.height * 0.075,
+              child: Center(
+                child: _categorySelected
+                    ? ListView(
                         scrollDirection: Axis.horizontal,
                         shrinkWrap: true,
                         children: _selectedItems
@@ -391,13 +392,13 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                                   label: Text(e),
                                 )))
                             .toList(),
+                      )
+                    : Text(
+                        "Please select at least one category",
+                        style: TextStyle(color: Theme.of(context).errorColor),
                       ),
-                    ),
-                  )
-                : Text(
-                    "Please select at least one category",
-                    style: TextStyle(color: Theme.of(context).errorColor),
-                  ),
+              ),
+            )
           ],
         );
       case 2:
