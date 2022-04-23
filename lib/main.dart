@@ -82,6 +82,12 @@ class _MyAppState extends State<MyApp> {
         ),
       ],
       child: MaterialApp(
+        builder: (context, child) {
+          return MediaQuery(
+            child: child!,
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          );
+        },
         title: 'MyShop',
         theme: ThemeData(
           primarySwatch: MaterialColor(0xFFFF9191, color),
@@ -99,8 +105,7 @@ class _MyAppState extends State<MyApp> {
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) =>
-              OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
           LoadingSplashScreen.routeName: (ctx) => LoadingSplashScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
           EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
