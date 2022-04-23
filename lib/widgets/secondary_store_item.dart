@@ -76,7 +76,31 @@ class SecondaryStoreItem extends StatelessWidget {
                             fit: BoxFit.cover),
                       ),
                     ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    errorWidget: (context, url, error) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20.0),
+                          bottomRight: Radius.circular(20.0),
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.25),
+                            blurRadius: 5.0,
+                            spreadRadius: 0,
+                            offset: new Offset(10.0, 0.0),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                          child: Icon(
+                        Icons.error_outline,
+                        color: Theme.of(context).errorColor,
+                        size: 60,
+                      )),
+                    ),
                   )
                 : Container(
                     decoration: BoxDecoration(

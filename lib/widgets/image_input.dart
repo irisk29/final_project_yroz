@@ -79,8 +79,9 @@ class _ImageInputState extends State<ImageInput> {
                       placeholder: (context, url) => Image(
                           image: AssetImage(
                               'assets/images/placeholder-image.png')),
-                      errorWidget: (context, url, error) =>
-                          new Icon(Icons.error),
+                      errorWidget: (context, url, error) => Center(
+                          child: Icon(Icons.error_outline,
+                              color: Theme.of(context).errorColor)),
                     )
                   : Image(
                       image: widget.isStore

@@ -51,7 +51,18 @@ class StoreItem extends StatelessWidget {
                             fit: BoxFit.cover),
                       ),
                     ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    errorWidget: (context, url, error) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Center(
+                          child: Icon(
+                        Icons.error_outline,
+                        color: Theme.of(context).errorColor,
+                        size: 30,
+                      )),
+                    ),
                   )
                 : Container(
                     decoration: BoxDecoration(

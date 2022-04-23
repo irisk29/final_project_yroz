@@ -137,7 +137,15 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                               fit: BoxFit.cover),
                         ),
                       ),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      errorWidget: (context, url, error) => Container(
+                        height: deviceSize.height * 0.35,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Center(
+                              child: Icon(Icons.error_outline,
+                                  color: Theme.of(context).errorColor)),
+                        ),
+                      ),
                     )
                   : Container(
                       height: deviceSize.height * 0.35,
