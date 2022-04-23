@@ -157,8 +157,20 @@ class _ProductItemState extends State<ProductItem> {
                                     fit: BoxFit.cover),
                               ),
                             ),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
+                            errorWidget: (context, url, error) => Container(
+                              height: constraints.maxHeight,
+                              width: constraints.maxWidth * 0.45,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: Center(
+                                      child: Icon(Icons.error_outline,
+                                          color:
+                                              Theme.of(context).errorColor))),
+                            ),
                           )
                         : Container(
                             height: constraints.maxHeight,
