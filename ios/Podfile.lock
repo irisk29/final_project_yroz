@@ -102,6 +102,8 @@ PODS:
     - Flutter
   - location (0.0.1):
     - Flutter
+  - maps_launcher (0.0.1):
+    - Flutter
   - MTBBarcodeScanner (5.0.11)
   - ObjectMapper (4.2.0)
   - path_provider_ios (0.0.1):
@@ -142,6 +144,7 @@ DEPENDENCIES:
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - location (from `.symlinks/plugins/location/ios`)
+  - maps_launcher (from `.symlinks/plugins/maps_launcher/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
@@ -201,6 +204,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
   location:
     :path: ".symlinks/plugins/location/ios"
+  maps_launcher:
+    :path: ".symlinks/plugins/maps_launcher/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   permission_handler_apple:
@@ -242,6 +247,7 @@ SPEC CHECKSUMS:
   image_picker: 541dcbb3b9cf32d87eacbd957845d8651d6c62c3
   integration_test: a1e7d09bd98eca2fc37aefd79d4f41ad37bdbbe5
   location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
+  maps_launcher: 2e5b6a2d664ec6c27f82ffa81b74228d770ab203
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02

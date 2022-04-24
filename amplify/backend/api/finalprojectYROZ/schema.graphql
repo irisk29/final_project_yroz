@@ -79,5 +79,4 @@ type StoreProductModel @model @auth(rules: [{allow: public}]) {
   imageUrl: String
   description: String
   onlinestoremodelID: ID! @index(name: "byOnlineStoreModel")
-}
- 
+} 
