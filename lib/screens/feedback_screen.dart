@@ -14,6 +14,7 @@ class FeedBackScreen extends StatefulWidget {
   static const routeName = '/feedback';
 
   late String userEmail;
+  late bool isStoreOwner;
 
   @override
   _FeedBackScreen createState() => _FeedBackScreen();
@@ -37,6 +38,7 @@ class _FeedBackScreen extends State<FeedBackScreen> {
   void didChangeDependencies() {
     final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     widget.userEmail = routeArgs['email'] as String;
+    widget.isStoreOwner = routeArgs['isStoreOwner'] as bool;
     super.didChangeDependencies();
   }
 
@@ -252,16 +254,18 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                               Center(child: _ratingBar(3)),
                             ],
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: deviceSize.height * 0.015),
-                                child: Text(questions[4], textAlign: TextAlign.left),
-                              ),
-                              Center(child: _ratingBar(4)),
-                            ],
-                          ),
+                          widget.isStoreOwner
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: deviceSize.height * 0.015),
+                                      child: Text(questions[4], textAlign: TextAlign.left),
+                                    ),
+                                    Center(child: _ratingBar(4)),
+                                  ],
+                                )
+                              : Container(),
                           _showError
                               ? Text(
                                   "Please fill at least one field",
