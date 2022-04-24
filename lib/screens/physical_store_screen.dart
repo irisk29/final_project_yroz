@@ -6,10 +6,15 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/favorite_screen.dart';
 import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_geocoding/google_geocoding.dart';
 import 'package:intl/intl.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 import '../LogicModels/OpeningTimes.dart';
+import '../LogicModels/place.dart';
 import '../models/UserModel.dart';
 
 class PhysicalStoreScreen extends StatefulWidget {
@@ -242,7 +247,18 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                 color: Colors.grey,
               ),
               title: Text(widget.store.address),
-              onTap: () {
+              onTap: () async {
+                Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+                var googleGeocoding = GoogleGeocoding(secret.API_KEY);
+                GeocodingResponse? address = await googleGeocoding.geocoding.get(widget.store.address, []);
+                if(address!=null) {
+                  Place place = Place.fromStore(
+                      widget.store.name, address, widget.store.address);
+                  String dest_lat = place.geometry.location.lat.toString();
+                  String dest_lng = place.geometry.location.lng.toString();
+                  MapsLauncher.launchCoordinates(
+                      double.parse(dest_lat), double.parse(dest_lng));
+                }
                 //open change location
               },
             ),

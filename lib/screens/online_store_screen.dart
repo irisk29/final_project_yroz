@@ -4,10 +4,15 @@ import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_geocoding/google_geocoding.dart';
 import 'package:intl/intl.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
 
+import '../LogicLayer/Secret.dart';
+import '../LogicLayer/SecretLoader.dart';
 import '../LogicModels/OpeningTimes.dart';
+import '../LogicModels/place.dart';
 
 class OnlineStoreScreen extends StatefulWidget {
   static const routeName = '/online-store';
@@ -218,7 +223,18 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 color: Colors.grey,
               ),
               title: Text(widget.store.address),
-              onTap: () {
+              onTap: () async {
+                Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+                var googleGeocoding = GoogleGeocoding(secret.API_KEY);
+                GeocodingResponse? address = await googleGeocoding.geocoding.get(widget.store.address, []);
+                if(address!=null) {
+                  Place place = Place.fromStore(
+                      widget.store.name, address, widget.store.address);
+                  String dest_lat = place.geometry.location.lat.toString();
+                  String dest_lng = place.geometry.location.lng.toString();
+                  MapsLauncher.launchCoordinates(
+                      double.parse(dest_lat), double.parse(dest_lng));
+                }
                 //open change location
               },
             ),
