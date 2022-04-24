@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/src/iterable_extensions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -269,6 +270,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               ),
               title: Text(widget.store.phoneNumber),
               onTap: () {
+                launch("tel://${widget.store.phoneNumber}");
                 //open change language
               },
             ),

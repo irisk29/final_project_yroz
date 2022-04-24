@@ -8,6 +8,7 @@ import 'package:google_geocoding/google_geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
@@ -245,6 +246,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               ),
               title: Text(widget.store.phoneNumber),
               onTap: () {
+                launch("tel://${widget.store.phoneNumber}");
                 //open change language
               },
             ),
