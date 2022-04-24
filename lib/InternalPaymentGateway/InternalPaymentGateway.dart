@@ -359,7 +359,7 @@ class InternalPaymentGateway {
   Future<ResultInterface<List<Map<String, Object>>>> getPurchaseHistory(
       DateTime startDate, DateTime endDate,
       {String userId = "*", String storeId = "*", bool? succeeded}) async {
-    final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
+    final DateFormat formatter = DateFormat('yyyy/MM/dd HH:mm:ss');
     var body = {
       "startDate": formatter.format(startDate),
       "endDate": formatter.format(endDate),
