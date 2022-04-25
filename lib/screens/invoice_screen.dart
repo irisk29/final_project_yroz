@@ -308,8 +308,7 @@ class InvoiceScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   "\€" +
-                                      ((cashbackAmount + creditAmount) * 0.07)
-                                          .toStringAsFixed(2),
+                                      (creditAmount * 0.07).toStringAsFixed(2),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
