@@ -1,4 +1,4 @@
-package com.example.final_project_yroz
+package com.yroz.yroz
 
 import io.flutter.embedding.android.FlutterActivity
 
