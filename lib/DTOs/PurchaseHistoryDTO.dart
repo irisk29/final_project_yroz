@@ -25,6 +25,6 @@ class PurchaseHistoryDTO {
         cashBackAmount = double.parse(json['cashBackAmount']),
         creditAmount = double.parse(json['creditAmount']),
         purchaseDate =
-            DateFormat('dd/MM/yyyy HH:mm:ss').parse(json['purchaseDate']),
+            DateFormat('yyyy/MM/dd HH:mm:ss').parse(json['purchaseDate']),
         succeeded = json['info']['succeeded'] == 'true';
 }

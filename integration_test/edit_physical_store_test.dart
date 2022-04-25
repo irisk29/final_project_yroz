@@ -15,7 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:final_project_yroz/screens/edit_physical_store_screen.dart' as app;
+import 'package:final_project_yroz/screens/edit_physical_store_screen.dart'
+    as app;
 import 'package:intl/intl.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tuple/tuple.dart';
@@ -28,31 +29,38 @@ void main() {
     new OpeningTimes(
         day: "Sunday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Monday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Tuesday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Wednesday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Thursday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Friday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Saturday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
   ]);
 
   takeScreenshot(tester, binding) async {
@@ -67,7 +75,8 @@ void main() {
     if (!configured) {
       Amplify.addPlugin(AmplifyAuthCognito());
       Amplify.addPlugin(AmplifyStorageS3());
-      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
+      Amplify.addPlugin(
+          AmplifyDataStore(modelProvider: ModelProvider.instance));
       //Amplify.addPlugin(AmplifyAPI());
 
       // Amplify can only be configured once.
@@ -80,7 +89,8 @@ void main() {
     }
   }
 
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
+  IntegrationTestWidgetsFlutterBinding
+      .ensureInitialized(); // to make the tests work
 
   String openingsToJson(Openings openings) {
     String json = "";
@@ -90,8 +100,10 @@ void main() {
         json = json + "closed";
       else {
         final now = new DateTime.now();
-        final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
-        final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
+        final dt = DateTime(now.year, now.month, now.day,
+            t.operationHours.item1.hour, t.operationHours.item1.minute);
+        final dt2 = DateTime(now.year, now.month, now.day,
+            t.operationHours.item2.hour, t.operationHours.item2.minute);
         final format = DateFormat.jm();
         json = json + format.format(dt) + "," + format.format(dt2);
       }
@@ -101,7 +113,8 @@ void main() {
   }
 
   group('end-to-end test', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late NavigatorObserver mockObserver;
     late UserModel user;
 
@@ -116,7 +129,9 @@ void main() {
           categories: "[\"Food\"]",
           qrCode: "");
       TemporalDateTime time = TemporalDateTime.fromString(
-          DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String());
+          DateFormat('yyyy/MM/dd, hh:mm:ss')
+              .parse('1/1/2022, 10:00:00')
+              .toDateTimeIso8601String());
       StoreOwnerModel storeOwnerModel = StoreOwnerModel(
           storeOwnerModelPhysicalStoreModelId: physicalStoreModel.id,
           physicalStoreModel: physicalStoreModel,
@@ -136,8 +151,10 @@ void main() {
       return Future(() => print("starting test.."));
     });
 
-    testWidgets('edit physical store - positive scenario', (WidgetTester tester) async {
-      await tester.pumpWidget(app.EditPhysicalStorePipeline().wrapWithMaterial([mockObserver], user));
+    testWidgets('edit physical store - positive scenario',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(app.EditPhysicalStorePipeline()
+          .wrapWithMaterial([mockObserver], user));
       await tester.pumpAndSettle();
 
       //start to fill the form
@@ -149,7 +166,8 @@ void main() {
       FocusManager.instance.primaryFocus?.unfocus();
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      fab = find.byKey(
+          Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
@@ -157,31 +175,38 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      fab = find.byKey(
+          Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      fab = find.byKey(
+          Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      fab = find.byKey(
+          Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
       await Future.delayed(Duration(seconds: 10));
 
       // Verify the store was created
-      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
+      ResultInterface storeOwnerRes =
+          await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
       assert(storeOwnerRes.getTag() == true);
       StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
-      assert(storeOwnerModel.physicalStoreModel!.name == "physical store check");
+      assert(
+          storeOwnerModel.physicalStoreModel!.name == "physical store check");
       assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId != null);
       assert(storeOwnerModel.storeOwnerModelPhysicalStoreModelId!.isNotEmpty);
     });
 
-    testWidgets('edit physical store - sad scenario', (WidgetTester tester) async {
-      await tester.pumpWidget(app.EditPhysicalStorePipeline().wrapWithMaterial([mockObserver], user));
+    testWidgets('edit physical store - sad scenario',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(app.EditPhysicalStorePipeline()
+          .wrapWithMaterial([mockObserver], user));
       await tester.pumpAndSettle();
 
       Finder fab = find.byKey(Key('phoneNumber'));
@@ -192,13 +217,15 @@ void main() {
       FocusManager.instance.primaryFocus?.unfocus();
       await tester.pumpAndSettle();
 
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      fab = find.byKey(
+          Key("continue_button")); //move forward from one form to another
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
       expect(find.byKey(Key('store_category_2')), findsNothing);
 
-      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
+      ResultInterface storeOwnerRes =
+          await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
       assert(storeOwnerRes.getTag() == true);
       StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
       assert(storeOwnerModel.physicalStoreModel!.phoneNumber != "+9722222");

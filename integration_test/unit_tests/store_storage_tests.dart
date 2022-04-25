@@ -27,38 +27,46 @@ void main() {
     new OpeningTimes(
         day: "Sunday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Monday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Tuesday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Wednesday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Thursday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Friday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Saturday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
   ]);
 
   Future<void> _configureAmplify() async {
     if (!configured) {
       Amplify.addPlugin(AmplifyAuthCognito());
       Amplify.addPlugin(AmplifyStorageS3());
-      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
+      Amplify.addPlugin(
+          AmplifyDataStore(modelProvider: ModelProvider.instance));
       Amplify.addPlugin(AmplifyAPI());
 
       // Amplify can only be configured once.
@@ -71,7 +79,8 @@ void main() {
     }
   }
 
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
+  IntegrationTestWidgetsFlutterBinding
+      .ensureInitialized(); // to make the tests work
 
   String openingsToJson(Openings openings) {
     String json = "";
@@ -81,8 +90,10 @@ void main() {
         json = json + "closed";
       else {
         final now = new DateTime.now();
-        final dt = DateTime(now.year, now.month, now.day, t.operationHours.item1.hour, t.operationHours.item1.minute);
-        final dt2 = DateTime(now.year, now.month, now.day, t.operationHours.item2.hour, t.operationHours.item2.minute);
+        final dt = DateTime(now.year, now.month, now.day,
+            t.operationHours.item1.hour, t.operationHours.item1.minute);
+        final dt2 = DateTime(now.year, now.month, now.day,
+            t.operationHours.item2.hour, t.operationHours.item2.minute);
         final format = DateFormat.jm();
         json = json + format.format(dt) + "," + format.format(dt2);
       }
@@ -92,39 +103,50 @@ void main() {
   }
 
   Future<void> clearDB() async {
-    List<StoreProductModel> prods = await Amplify.DataStore.query(StoreProductModel.classType);
+    List<StoreProductModel> prods =
+        await Amplify.DataStore.query(StoreProductModel.classType);
     for (var p in prods) await Amplify.DataStore.delete(p);
 
-    List<OnlineStoreModel> onlines = await Amplify.DataStore.query(OnlineStoreModel.classType);
+    List<OnlineStoreModel> onlines =
+        await Amplify.DataStore.query(OnlineStoreModel.classType);
     for (var o in onlines) await Amplify.DataStore.delete(o);
 
-    List<PhysicalStoreModel> phys = await Amplify.DataStore.query(PhysicalStoreModel.classType);
+    List<PhysicalStoreModel> phys =
+        await Amplify.DataStore.query(PhysicalStoreModel.classType);
     for (var p in phys) await Amplify.DataStore.delete(p);
 
-    List<CartProductModel> carts = await Amplify.DataStore.query(CartProductModel.classType);
+    List<CartProductModel> carts =
+        await Amplify.DataStore.query(CartProductModel.classType);
     for (var c in carts) await Amplify.DataStore.delete(c);
 
-    List<ShoppingBagModel> bags = await Amplify.DataStore.query(ShoppingBagModel.classType);
+    List<ShoppingBagModel> bags =
+        await Amplify.DataStore.query(ShoppingBagModel.classType);
     for (var b in bags) await Amplify.DataStore.delete(b);
 
-    List<StoreOwnerModel> owners = await Amplify.DataStore.query(StoreOwnerModel.classType);
+    List<StoreOwnerModel> owners =
+        await Amplify.DataStore.query(StoreOwnerModel.classType);
     for (var o in owners) await Amplify.DataStore.delete(o);
 
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType);
     for (var u in users) await Amplify.DataStore.delete(u);
 
-    List<PurchaseHistoryModel> purchases = await Amplify.DataStore.query(PurchaseHistoryModel.classType);
+    List<PurchaseHistoryModel> purchases =
+        await Amplify.DataStore.query(PurchaseHistoryModel.classType);
     for (var p in purchases) await Amplify.DataStore.delete(p);
   }
 
   group('open online store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     setUp(() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -199,10 +221,12 @@ void main() {
       String storeId = (res.getValue() as Tuple2).item1.id;
       await Amplify.DataStore.clear();
       await Amplify.DataStore.start();
-      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
+      var hubSubscription =
+          Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
         if (msg.eventName == 'ready') {
           print("ready to check");
-          OnlineStoreModel? model = await StoreStorageProxy().fetchOnlineStore(storeId);
+          OnlineStoreModel? model =
+              await StoreStorageProxy().fetchOnlineStore(storeId);
           assert(model == null);
           print("finished check");
         } else {
@@ -214,13 +238,17 @@ void main() {
   });
 
   group('open physical store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     setUp(() {
       return Future(() async {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         await Amplify.DataStore.save(currUser);
       });
     });
@@ -248,7 +276,8 @@ void main() {
           categories: ["Food"],
           operationHours: op);
 
-      ResultInterface res = await StoreStorageProxy().openPhysicalStore(storeDTO);
+      ResultInterface res =
+          await StoreStorageProxy().openPhysicalStore(storeDTO);
       expect(res.getTag(), true);
       String storeID = (res.getValue() as Tuple2).item1.id;
       var store = await StoreStorageProxy().fetchPhysicalStore(storeID);
@@ -267,14 +296,17 @@ void main() {
           categories: ["Food"],
           operationHours: op);
 
-      ResultInterface res = await StoreStorageProxy().openPhysicalStore(storeDTO);
+      ResultInterface res =
+          await StoreStorageProxy().openPhysicalStore(storeDTO);
       String storeId = (res.getValue() as Tuple2).item1.id;
       await Amplify.DataStore.clear();
       await Amplify.DataStore.start();
-      var hubSubscription = Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
+      var hubSubscription =
+          Amplify.Hub.listen([HubChannel.DataStore], (msg) async {
         if (msg.eventName == 'ready') {
           print("ready to check");
-          PhysicalStoreModel? model = await StoreStorageProxy().fetchPhysicalStore(storeId);
+          PhysicalStoreModel? model =
+              await StoreStorageProxy().fetchPhysicalStore(storeId);
           assert(model == null);
           print("finished check");
         } else {
@@ -286,7 +318,8 @@ void main() {
   });
 
   group('fetch stores by keywords', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late OnlineStoreModel onlineModel;
     late PhysicalStoreModel physicalModel;
 
@@ -295,7 +328,10 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         OnlineStoreModel onlineStoreModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
@@ -335,12 +371,15 @@ void main() {
     });
 
     test('fetch by category', () async {
-      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("food");
+      List<StoreDTO> res =
+          await StoreStorageProxy().fetchStoresByKeywords("food");
       expect(res.length, 2);
       try {
-        var online = res.singleWhere((element) => element.name == "online test", orElse: null);
+        var online = res.singleWhere((element) => element.name == "online test",
+            orElse: null);
         expect(online != null, true);
-        var phy = res.singleWhere((element) => element.name == "physical store", orElse: null);
+        var phy = res.singleWhere((element) => element.name == "physical store",
+            orElse: null);
         expect(phy != null, true);
       } on StateError catch (e) {
         expect(true, false);
@@ -348,25 +387,29 @@ void main() {
     });
 
     test('fetch by name', () async {
-      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("physical");
+      List<StoreDTO> res =
+          await StoreStorageProxy().fetchStoresByKeywords("physical");
       expect(res.length, 1);
       expect(res.first.name, "physical store");
     });
 
     test('fetch by address', () async {
-      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("Ashdod");
+      List<StoreDTO> res =
+          await StoreStorageProxy().fetchStoresByKeywords("Ashdod");
       expect(res.length, 1);
       expect(res.first.name, "online test");
     });
 
     test('no such store for keyword', () async {
-      List<StoreDTO> res = await StoreStorageProxy().fetchStoresByKeywords("Shoes"); //no such store in this category
+      List<StoreDTO> res = await StoreStorageProxy()
+          .fetchStoresByKeywords("Shoes"); //no such store in this category
       expect(res.length, 0);
     });
   });
 
   group('create products for online store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late OnlineStoreModel onlineModel;
 
     setUp(() {
@@ -374,7 +417,10 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         OnlineStoreModel onlineStoreModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
@@ -422,17 +468,24 @@ void main() {
           description: "wow",
           storeID: onlineModel.id,
           imageFromPhone: null);
-      var res = await StoreStorageProxy().createProductForOnlineStore(productDTO1, onlineModel.id);
+      var res = await StoreStorageProxy()
+          .createProductForOnlineStore(productDTO1, onlineModel.id);
       expect(res.getTag(), true);
-      res = await StoreStorageProxy().createProductForOnlineStore(productDTO2, onlineModel.id);
+      res = await StoreStorageProxy()
+          .createProductForOnlineStore(productDTO2, onlineModel.id);
       expect(res.getTag(), true);
       //check that the connection between the products and the online store is working
-      List<ProductDTO> prods = await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
+      List<ProductDTO> prods =
+          await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
       expect(prods.length, 2);
       try {
-        var prod1 = prods.singleWhere((element) => element.name == "product test", orElse: null);
+        var prod1 = prods.singleWhere(
+            (element) => element.name == "product test",
+            orElse: null);
         expect(prod1 != null, true);
-        var prod2 = prods.singleWhere((element) => element.name == "product2 test", orElse: null);
+        var prod2 = prods.singleWhere(
+            (element) => element.name == "product2 test",
+            orElse: null);
         expect(prod2 != null, true);
       } on StateError catch (e) {
         expect(true, false);
@@ -441,7 +494,8 @@ void main() {
   });
 
   group('update physical store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late PhysicalStoreModel physicalModel;
 
     setUp(() {
@@ -449,7 +503,10 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         PhysicalStoreModel physicalStoreModel = PhysicalStoreModel(
             name: "physical store",
             phoneNumber: "+972123456789",
@@ -487,9 +544,11 @@ void main() {
           categories: ["Food"],
           operationHours: op);
 
-      ResultInterface res = await StoreStorageProxy().updatePhysicalStore(storeDTO);
+      ResultInterface res =
+          await StoreStorageProxy().updatePhysicalStore(storeDTO);
       expect(res.getTag(), true);
-      var store = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
+      var store =
+          await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(store != null, true);
       expect(store!.name, "new name");
     });
@@ -503,16 +562,20 @@ void main() {
           categories: ["Food"],
           operationHours: op);
 
-      ResultInterface res = await StoreStorageProxy().updatePhysicalStore(storeDTO);
+      ResultInterface res =
+          await StoreStorageProxy().updatePhysicalStore(storeDTO);
       expect(res.getTag(), false);
-      var store = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
+      var store =
+          await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(store != null, true);
-      expect(store!.name, "physical store"); //the update did not happen - the name stayed the same
+      expect(store!.name,
+          "physical store"); //the update did not happen - the name stayed the same
     });
   });
 
   group('update online store and it\'s products', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late OnlineStoreModel onlineModel;
     late StoreProductModel productModel;
 
@@ -521,7 +584,10 @@ void main() {
         await _configureAmplify();
         UserAuthenticator().setCurrentUserId("unittest@gmail.com");
         UserModel currUser = new UserModel(
-            email: "unittest@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+            email: "unittest@gmail.com",
+            name: "test name",
+            hideStoreOwnerOptions: false,
+            isLoggedIn: true);
         onlineModel = OnlineStoreModel(
             name: "online test",
             phoneNumber: "+972123456789",
@@ -577,7 +643,8 @@ void main() {
           operationHours: op,
           products: [productDTO]);
 
-      ResultInterface res = await StoreStorageProxy().updateOnlineStore(storeDTO);
+      ResultInterface res =
+          await StoreStorageProxy().updateOnlineStore(storeDTO);
       expect(res.getTag(), true);
       var store = await StoreStorageProxy().fetchOnlineStore(onlineModel.id);
       expect(store != null, true);
@@ -603,12 +670,14 @@ void main() {
           operationHours: op,
           products: [productDTO]);
 
-      ResultInterface res = await StoreStorageProxy().updateOnlineStore(storeDTO);
+      ResultInterface res =
+          await StoreStorageProxy().updateOnlineStore(storeDTO);
       expect(res.getTag(), true);
       var store = await StoreStorageProxy().fetchOnlineStore(onlineModel.id);
       expect(store != null, true);
       expect(store!.name, "new name");
-      var updatedProd = await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
+      var updatedProd =
+          await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
       expect(updatedProd.length, 1);
       expect(updatedProd.first.price, 7.89);
     });
@@ -635,13 +704,22 @@ void main() {
           storeID: onlineModel.id,
           imageFromPhone: null);
 
-      ResultInterface res =
-          await StoreStorageProxy().updateOnlineStoreProducts([productDTO, productDTO2], onlineModel.id);
+      ResultInterface res = await StoreStorageProxy()
+          .updateOnlineStoreProducts([productDTO, productDTO2], onlineModel.id);
       expect(res.getTag(), true);
-      var products = await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
+      var products =
+          await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
       expect(products.length, 2);
-      expect(products.firstWhere((element) => element.name == "product new name", orElse: null) != null, true);
-      expect(products.firstWhere((element) => element.name == "second product", orElse: null) != null, true);
+      expect(
+          products.firstWhere((element) => element.name == "product new name",
+                  orElse: null) !=
+              null,
+          true);
+      expect(
+          products.firstWhere((element) => element.name == "second product",
+                  orElse: null) !=
+              null,
+          true);
     });
 
     test('bad scenario - no such store', () async {
@@ -663,11 +741,13 @@ void main() {
           operationHours: op,
           products: [productDTO]);
 
-      ResultInterface res = await StoreStorageProxy().updateOnlineStore(storeDTO);
+      ResultInterface res =
+          await StoreStorageProxy().updateOnlineStore(storeDTO);
       expect(res.getTag(), false);
       var store = await StoreStorageProxy().fetchOnlineStore(onlineModel.id);
       expect(store != null, true);
-      expect(store!.name, "online test"); //the update did not happen - the name stayed the same
+      expect(store!.name,
+          "online test"); //the update did not happen - the name stayed the same
     });
 
     test('bad scenario - no such products in store', () async {
@@ -681,16 +761,20 @@ void main() {
           storeID: onlineModel.id,
           imageFromPhone: null);
 
-      ResultInterface res = await StoreStorageProxy().updateOnlineStoreProducts([productDTO], "21");
+      ResultInterface res = await StoreStorageProxy()
+          .updateOnlineStoreProducts([productDTO], "21");
       expect(res.getTag(), false);
-      var products = await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
+      var products =
+          await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
       expect(products.length, 1);
-      expect(products.first.name, "product test"); //the update did not happen - the name stayed the same
+      expect(products.first.name,
+          "product test"); //the update did not happen - the name stayed the same
     });
   });
 
   group('delete physical store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late PhysicalStoreModel physicalModel;
 
     setUp(() {
@@ -708,7 +792,9 @@ void main() {
             physicalStoreModel: physicalModel,
             storeOwnerModelPhysicalStoreModelId: physicalModel.id,
             lastPurchasesView: TemporalDateTime.fromString(
-                DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String()));
+                DateFormat('yyyy/MM/dd, hh:mm:ss')
+                    .parse('1/1/2022, 10:00:00')
+                    .toDateTimeIso8601String()));
         UserModel currUser = new UserModel(
             email: "unittest@gmail.com",
             name: "test name",
@@ -739,14 +825,17 @@ void main() {
     test('good scenario', () async {
       var res = await StoreStorageProxy().deleteStore(physicalModel.id, false);
       expect(res.getTag(), true);
-      var store = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
+      var store =
+          await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(store == null, true);
     });
 
-    test('bad scenario - try to delete online store with physical store id', () async {
+    test('bad scenario - try to delete online store with physical store id',
+        () async {
       var res = await StoreStorageProxy().deleteStore(physicalModel.id, true);
       expect(res.getTag(), false);
-      var store = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
+      var store =
+          await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(store != null, true);
       expect(store!.name, "physical store");
       await Amplify.DataStore.delete(physicalModel); // clean up after the test
@@ -755,7 +844,8 @@ void main() {
     test('bad scenario - no such store', () async {
       var res = await StoreStorageProxy().deleteStore("aa", false);
       expect(res.getTag(), false);
-      var store = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
+      var store =
+          await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(store != null, true);
       expect(store!.name, "physical store");
       await Amplify.DataStore.delete(physicalModel); // clean up after the test
@@ -763,7 +853,8 @@ void main() {
   });
 
   group('delete online store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late OnlineStoreModel onlineModel;
     late StoreProductModel productModel;
 
@@ -789,7 +880,9 @@ void main() {
             onlineStoreModel: onlineModel,
             storeOwnerModelOnlineStoreModelId: onlineModel.id,
             lastPurchasesView: TemporalDateTime.fromString(
-                DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String()));
+                DateFormat('yyyy/MM/dd, hh:mm:ss')
+                    .parse('1/1/2022, 10:00:00')
+                    .toDateTimeIso8601String()));
         UserModel currUser = new UserModel(
             email: "unittest@gmail.com",
             name: "test name",
@@ -823,11 +916,13 @@ void main() {
       expect(res.getTag(), true);
       var store = await StoreStorageProxy().fetchOnlineStore(onlineModel.id);
       expect(store == null, true);
-      var products = await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
+      var products =
+          await StoreStorageProxy().fetchStoreProducts(onlineModel.id);
       expect(products.length, 0);
     });
 
-    test('bad scenario - try to delete physical store with online store id', () async {
+    test('bad scenario - try to delete physical store with online store id',
+        () async {
       var res = await StoreStorageProxy().deleteStore(onlineModel.id, false);
       expect(res.getTag(), false);
       var store = await StoreStorageProxy().fetchOnlineStore(onlineModel.id);
@@ -849,7 +944,8 @@ void main() {
   });
 
   group('convert physical store to online store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
     late PhysicalStoreModel physicalModel;
 
     setUp(() {
@@ -867,7 +963,9 @@ void main() {
             physicalStoreModel: physicalModel,
             storeOwnerModelPhysicalStoreModelId: physicalModel.id,
             lastPurchasesView: TemporalDateTime.fromString(
-                DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM').toDateTimeIso8601String()));
+                DateFormat('yyyy/MM/dd, hh:mm:ss')
+                    .parse('1/1/2022, 10:00:00')
+                    .toDateTimeIso8601String()));
         UserModel currUser = new UserModel(
             email: "unittest@gmail.com",
             name: "test name",
@@ -903,12 +1001,16 @@ void main() {
           phoneNumber: "+972123456789",
           categories: ["Food"],
           operationHours: op);
-      DateTime lastViewed = DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
-      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(storeDTO, lastViewed);
+      DateTime lastViewed =
+          DateFormat('yyyy/MM/dd, hh:mm:ss').parse('1/1/2022, 10:00:00');
+      var res = await StoreStorageProxy()
+          .convertPhysicalStoreToOnline(storeDTO, lastViewed);
       expect(res.getTag(), true);
-      var phyStore = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
+      var phyStore =
+          await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(phyStore == null, true);
-      var onlineStore = await StoreStorageProxy().fetchOnlineStore(physicalModel.id);
+      var onlineStore =
+          await StoreStorageProxy().fetchOnlineStore(physicalModel.id);
       expect(onlineStore != null, true);
       expect(onlineStore!.name, "physical store");
       //cleanup
@@ -923,10 +1025,13 @@ void main() {
           phoneNumber: "+972123456789",
           categories: ["Food"],
           operationHours: op);
-      DateTime lastViewed = DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
-      var res = await StoreStorageProxy().convertPhysicalStoreToOnline(storeDTO, lastViewed);
+      DateTime lastViewed =
+          DateFormat('yyyy/MM/dd, hh:mm:ss').parse('1/1/2022, 10:00:00');
+      var res = await StoreStorageProxy()
+          .convertPhysicalStoreToOnline(storeDTO, lastViewed);
       expect(res.getTag(), false);
-      var phyStore = await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
+      var phyStore =
+          await StoreStorageProxy().fetchPhysicalStore(physicalModel.id);
       expect(phyStore != null, true);
       expect(phyStore!.name, "physical store");
       //cleanup

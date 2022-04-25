@@ -224,7 +224,7 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Text("Please rate our app by the following aspects:",
+                          Text("Please Rate the Following Aspects:",
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center),
@@ -242,7 +242,6 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(
@@ -277,27 +276,25 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                               Center(child: _ratingBar(3)),
                             ],
                           ),
-                          widget.isStoreOwner
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: deviceSize.height * 0.015),
-                                      child: Text(questions[4],
-                                          textAlign: TextAlign.left),
-                                    ),
-                                    Center(child: _ratingBar(4)),
-                                  ],
-                                )
-                              : Container(),
-                          _showError
-                              ? Text(
-                                  "Please fill at least one field",
-                                  style: TextStyle(
-                                      color: Theme.of(context).errorColor),
-                                )
-                              : SizedBox(),
+                          if (widget.isStoreOwner)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: deviceSize.height * 0.015),
+                                  child: Text(questions[4],
+                                      textAlign: TextAlign.left),
+                                ),
+                                Center(child: _ratingBar(4)),
+                              ],
+                            ),
+                          if (_showError)
+                            Text(
+                              "Please fill at least one field",
+                              style: TextStyle(
+                                  color: Theme.of(context).errorColor),
+                            ),
                           TextField(
                             controller: _textEditingController,
                             keyboardType: TextInputType.multiline,

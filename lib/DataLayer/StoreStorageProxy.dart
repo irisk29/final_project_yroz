@@ -84,8 +84,8 @@ class StoreStorageProxy {
           onlineStoreModel: onlineWithProducts,
           storeOwnerModelOnlineStoreModelId: onlineWithProducts.id,
           lastPurchasesView: lastViewPurchase == null
-              ? TemporalDateTime.fromString(DateFormat('dd/MM/yyyy, hh:mm:ss a')
-                  .parse('1/1/2022, 10:00:00 AM')
+              ? TemporalDateTime.fromString(DateFormat('yyyy/MM/dd, hh:mm:ss')
+                  .parse('1/1/2022, 10:00:00')
                   .toDateTimeIso8601String())
               : TemporalDateTime.fromString(
                   lastViewPurchase.toDateTimeIso8601String()));
@@ -236,8 +236,8 @@ class StoreStorageProxy {
           physicalStoreModel: physicalModel,
           storeOwnerModelPhysicalStoreModelId: physicalModel.id,
           lastPurchasesView: lastViewPurchase == null
-              ? TemporalDateTime.fromString(DateFormat('dd/MM/yyyy, hh:mm:ss a')
-                  .parse('1/1/2022, 10:00:00 AM')
+              ? TemporalDateTime.fromString(DateFormat('yyyy/MM/dd, hh:mm:ss')
+                  .parse('1/1/2022, 10:00:00')
                   .toDateTimeIso8601String())
               : TemporalDateTime.fromString(
                   lastViewPurchase.toDateTimeIso8601String()));
@@ -737,13 +737,16 @@ class StoreStorageProxy {
     }
   }
 
-  Future<ResultInterface> updateOnlineStoreProducts(List<ProductDTO> products, String storeID) async {
-    List<OnlineStoreModel> stores =
-        await Amplify.DataStore.query(OnlineStoreModel.classType, where: OnlineStoreModel.ID.eq(storeID));
+  Future<ResultInterface> updateOnlineStoreProducts(
+      List<ProductDTO> products, String storeID) async {
+    List<OnlineStoreModel> stores = await Amplify.DataStore.query(
+        OnlineStoreModel.classType,
+        where: OnlineStoreModel.ID.eq(storeID));
     if (stores.isEmpty) {
       return new Failure("No such store with id $storeID");
     }
-    List<StoreProductModel> productsModels = await Amplify.DataStore.query(StoreProductModel.classType,
+    List<StoreProductModel> productsModels = await Amplify.DataStore.query(
+        StoreProductModel.classType,
         where: StoreProductModel.ONLINESTOREMODELID.eq(storeID));
     //can be empty when upgrading from physical to online
     if (productsModels.isNotEmpty) {

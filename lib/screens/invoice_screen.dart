@@ -206,7 +206,7 @@ class InvoiceScreen extends StatelessWidget {
                                               Text(
                                                   "\€" +
                                                       cashbackAmount
-                                                          .toStringAsFixed(1),
+                                                          .toStringAsFixed(2),
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
@@ -228,7 +228,7 @@ class InvoiceScreen extends StatelessWidget {
                                               Text(
                                                   "\€" +
                                                       creditAmount
-                                                          .toStringAsFixed(1),
+                                                          .toStringAsFixed(2),
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
@@ -251,7 +251,7 @@ class InvoiceScreen extends StatelessWidget {
                                                   "\€" +
                                                       (cashbackAmount +
                                                               creditAmount)
-                                                          .toStringAsFixed(1),
+                                                          .toStringAsFixed(2),
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
