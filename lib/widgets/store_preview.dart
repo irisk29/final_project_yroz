@@ -14,8 +14,7 @@ class StorePreview extends StatefulWidget {
   final String phoneNumber;
   final Openings operationHours;
 
-  StorePreview(this.isOnlineStore, this.title, this.address, this.image,
-      this.phoneNumber, this.operationHours);
+  StorePreview(this.isOnlineStore, this.title, this.address, this.image, this.phoneNumber, this.operationHours);
 
   @override
   _StorePreviewState createState() => _StorePreviewState();
@@ -29,22 +28,18 @@ class _StorePreviewState extends State<StorePreview> {
   }
 
   bool opBigger(TimeOfDay me, TimeOfDay other) {
-    return other.hour < me.hour ||
-        other.hour == me.hour && other.minute < me.minute;
+    return other.hour < me.hour || other.hour == me.hour && other.minute < me.minute;
   }
 
   bool opSmaller(TimeOfDay me, TimeOfDay other) {
-    return other.hour > me.hour ||
-        other.hour == me.hour && other.minute > me.minute;
+    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
   }
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    //String hour = DateFormat('Hm').format(DateTime.now());
     for (OpeningTimes e in widget.operationHours.days) {
       if (e.day.toLowerCase() == day) {
-        if(e.closed)
-          return 2;
+        if (e.closed) return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
         if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
           if (lessthanfifteen(e.operationHours.item2, time)) {
@@ -62,7 +57,7 @@ class _StorePreviewState extends State<StorePreview> {
     String map = "";
     for (OpeningTimes e in widget.operationHours.days) {
       map = map + e.day + ": ";
-      if(e.closed)
+      if (e.closed)
         map = map + "closed";
       else {
         map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
@@ -77,11 +72,9 @@ class _StorePreviewState extends State<StorePreview> {
     var deviceSize = MediaQuery.of(context).size;
 
     return FutureBuilder<Uint8List>(
-      future:
-          widget.image == null ? null : File(widget.image!.path).readAsBytes(),
+      future: widget.image == null ? null : File(widget.image!.path).readAsBytes(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done ||
-            snapshot.connectionState == ConnectionState.none) {
+        if (snapshot.connectionState == ConnectionState.done || snapshot.connectionState == ConnectionState.none) {
           final imgBytes = snapshot.data;
           return Expanded(
             flex: 6,
@@ -93,20 +86,15 @@ class _StorePreviewState extends State<StorePreview> {
                       height: deviceSize.height * 0.3,
                       decoration: BoxDecoration(
                         image: imgBytes != null
-                            ? DecorationImage(
-                                fit: BoxFit.cover, image: MemoryImage(imgBytes))
-                            : DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/default-store.png'),
-                                fit: BoxFit.cover),
+                            ? DecorationImage(fit: BoxFit.cover, image: MemoryImage(imgBytes))
+                            : DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                       ),
                     ),
                   ),
                   ListTile(
                     title: Text(
                       "About the store",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     onTap: null,
                     trailing: Icon(
@@ -156,15 +144,12 @@ class _StorePreviewState extends State<StorePreview> {
                   ListTile(
                     title: Text(
                       "Promotions",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     onTap: null,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: deviceSize.width * 0.02,
-                        right: deviceSize.width * 0.02),
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.02, right: deviceSize.width * 0.02),
                     child: Card(
                       elevation: 2,
                       shape: RoundedRectangleBorder(
@@ -196,9 +181,7 @@ class _StorePreviewState extends State<StorePreview> {
                                           size: 10,
                                         ),
                                       ),
-                                      TextSpan(
-                                          text: ' No Expiration Date',
-                                          style: TextStyle(fontSize: 12)),
+                                      TextSpan(text: ' No Expiration Date', style: TextStyle(fontSize: 12)),
                                     ],
                                   ),
                                 )

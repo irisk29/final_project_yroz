@@ -27,8 +27,7 @@ class OnlineStoreScreen extends StatefulWidget {
 class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   @override
   void didChangeDependencies() {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
     super.didChangeDependencies();
   }
@@ -40,24 +39,20 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   }
 
   bool opBigger(TimeOfDay me, TimeOfDay other) {
-    return other.hour < me.hour ||
-        other.hour == me.hour && other.minute < me.minute;
+    return other.hour < me.hour || other.hour == me.hour && other.minute < me.minute;
   }
 
   bool opSmaller(TimeOfDay me, TimeOfDay other) {
-    return other.hour > me.hour ||
-        other.hour == me.hour && other.minute > me.minute;
+    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
   }
 
   int isStoreOpen() {
     String day = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    //String hour = DateFormat('Hm').format(DateTime.now());
     for (OpeningTimes e in widget.store.operationHours.days) {
       if (e.day.toLowerCase() == day) {
         if (e.closed) return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if (opBigger(time, e.operationHours.item1) &&
-            opSmaller(time, e.operationHours.item2)) {
+        if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
           if (lessthanfifteen(e.operationHours.item2, time)) {
             return 1;
           }
@@ -76,10 +71,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
       if (e.closed)
         map = map + "Closed";
       else {
-        map = map +
-            e.operationHours.item1.format(context) +
-            " - " +
-            e.operationHours.item2.format(context);
+        map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
       }
       map = map + '\n';
     }
@@ -130,36 +122,28 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                       imageBuilder: (context, imageProvider) => Container(
                         height: deviceSize.height * 0.35,
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: imageProvider, fit: BoxFit.cover),
+                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                         ),
                       ),
                       placeholder: (context, url) => Container(
                         height: deviceSize.height * 0.35,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/placeholder-image.png'),
-                              fit: BoxFit.cover),
+                              image: AssetImage('assets/images/placeholder-image.png'), fit: BoxFit.cover),
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(
                         height: deviceSize.height * 0.35,
                         child: FittedBox(
                           fit: BoxFit.fill,
-                          child: Center(
-                              child: Icon(Icons.error_outline,
-                                  color: Theme.of(context).errorColor)),
+                          child: Center(child: Icon(Icons.error_outline, color: Theme.of(context).errorColor)),
                         ),
                       ),
                     )
                   : Container(
                       height: deviceSize.height * 0.35,
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image:
-                                AssetImage('assets/images/default-store.png'),
-                            fit: BoxFit.cover),
+                        image: DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                       ),
                     ),
             ),
@@ -171,20 +155,16 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               onTap: () async {
                 Provider.of<User>(context, listen: false)
                             .favoriteStores
-                            .firstWhereOrNull(
-                                (e) => e.item1 == widget.store.id) ==
+                            .firstWhereOrNull((e) => e.item1 == widget.store.id) ==
                         null
-                    ? await Provider.of<User>(context, listen: false)
-                        .addFavoriteStore(widget.store.id, true)
-                    : await Provider.of<User>(context, listen: false)
-                        .removeFavoriteStore(widget.store.id, true);
+                    ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, true)
+                    : await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, true);
                 setState(() {});
                 //open change language
               },
               trailing: Provider.of<User>(context, listen: false)
                           .favoriteStores
-                          .firstWhereOrNull(
-                              (e) => e.item1 == widget.store.id) !=
+                          .firstWhereOrNull((e) => e.item1 == widget.store.id) !=
                       null
                   ? Icon(
                       Icons.favorite,
@@ -228,13 +208,11 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                 Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
                 var googleGeocoding = GoogleGeocoding(secret.API_KEY);
                 GeocodingResponse? address = await googleGeocoding.geocoding.get(widget.store.address, []);
-                if(address!=null) {
-                  Place place = Place.fromStore(
-                      widget.store.name, address, widget.store.address);
+                if (address != null) {
+                  Place place = Place.fromStore(widget.store.name, address, widget.store.address);
                   String dest_lat = place.geometry.location.lat.toString();
                   String dest_lng = place.geometry.location.lng.toString();
-                  MapsLauncher.launchCoordinates(
-                      double.parse(dest_lat), double.parse(dest_lng));
+                  MapsLauncher.launchCoordinates(double.parse(dest_lat), double.parse(dest_lng));
                 }
                 //open change location
               },
@@ -258,9 +236,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
               onTap: null,
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  left: deviceSize.width * 0.02,
-                  right: deviceSize.width * 0.02),
+              padding: EdgeInsets.only(left: deviceSize.width * 0.02, right: deviceSize.width * 0.02),
               child: Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -292,9 +268,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                                     size: 10,
                                   ),
                                 ),
-                                TextSpan(
-                                    text: ' No Expiration Date',
-                                    style: TextStyle(fontSize: 12)),
+                                TextSpan(text: ' No Expiration Date', style: TextStyle(fontSize: 12)),
                               ],
                             ),
                           )
@@ -318,9 +292,7 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
             ),
             Padding(
               padding: EdgeInsets.only(
-                  left: deviceSize.width * 0.02,
-                  right: deviceSize.width * 0.02,
-                  bottom: deviceSize.width * 0.02),
+                  left: deviceSize.width * 0.02, right: deviceSize.width * 0.02, bottom: deviceSize.width * 0.02),
               child: Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
