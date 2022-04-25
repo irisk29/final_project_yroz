@@ -86,7 +86,7 @@ class StoreStorageProxy {
           storeOwnerModelOnlineStoreModelId: onlineWithProducts.id,
           lastPurchasesView: lastViewPurchase == null
               ? TemporalDateTime.fromString(
-                  DateFormat('yyyy/MM/dd, hh:mm:ss').parse('1/1/2022, 10:00:00').toDateTimeIso8601String())
+                  DateFormat('yyyy/MM/dd hh:mm:ss').parse('2022/1/1 10:00:00').toDateTimeIso8601String())
               : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
       UserModel? oldUserModel = await UsersStorageProxy().getUser(UserAuthenticator().getCurrentUserId());
       if (oldUserModel == null) {
@@ -210,7 +210,7 @@ class StoreStorageProxy {
           storeOwnerModelPhysicalStoreModelId: physicalModel.id,
           lastPurchasesView: lastViewPurchase == null
               ? TemporalDateTime.fromString(
-                  DateFormat('yyyy/MM/dd, hh:mm:ss').parse('1/1/2022, 10:00:00').toDateTimeIso8601String())
+                  DateFormat('yyyy/MM/dd hh:mm:ss').parse('2022/1/1 10:00:00').toDateTimeIso8601String())
               : TemporalDateTime.fromString(lastViewPurchase.toDateTimeIso8601String()));
       await Amplify.DataStore.save(storeOwner);
 
