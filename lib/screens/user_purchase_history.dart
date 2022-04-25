@@ -27,7 +27,7 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
   Future<List<Tuple2<String, PurchaseHistoryDTO>>> _initPurchases() async {
     User user = Provider.of<User>(context, listen: false);
     final start =
-        DateFormat('dd/MM/yyyy, hh:mm:ss a').parse('1/1/2022, 10:00:00 AM');
+        DateFormat('yyyy/MM/dd, hh:mm:ss').parse('1/1/2022, 10:00:00');
     final end = DateTime.now();
     final purchases =
         await user.getSuccssefulPurchaseHistoryForUserInRange(start, end);
@@ -37,8 +37,7 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
       if (res.getTag()) {
         purchaseTuples.add(Tuple2(res.getValue(), purchase));
       } else {
-        purchaseTuples
-            .add(Tuple2("The store does not exist anymore", purchase));
+        purchaseTuples.add(Tuple2("DELETED STORE", purchase));
       }
     }
     return purchaseTuples;
