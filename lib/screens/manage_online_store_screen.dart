@@ -14,8 +14,7 @@ class ManageOnlineStoreScreen extends StatefulWidget {
   late OnlineStoreDTO store;
 
   @override
-  _ManageOnlineStoreScreenState createState() =>
-      _ManageOnlineStoreScreenState();
+  _ManageOnlineStoreScreenState createState() => _ManageOnlineStoreScreenState();
 }
 
 class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
@@ -24,9 +23,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
   @override
   void didChangeDependencies() {
     if (!isLoading) {
-      widget.store = Provider.of<User>(context, listen: false)
-          .storeOwnerState!
-          .onlineStore!;
+      widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
       super.didChangeDependencies();
     }
   }
@@ -82,44 +79,35 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                             imageBuilder: (context, imageProvider) => Container(
                               height: deviceSize.height * 0.3,
                               decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: imageProvider, fit: BoxFit.cover),
+                                image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                               ),
                             ),
                             placeholder: (context, url) => Container(
                               height: deviceSize.height * 0.3,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/placeholder-image.png'),
-                                    fit: BoxFit.cover),
+                                    image: AssetImage('assets/images/placeholder-image.png'), fit: BoxFit.cover),
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
                               height: deviceSize.height * 0.3,
                               child: FittedBox(
                                   fit: BoxFit.fill,
-                                  child: Center(
-                                      child: Icon(Icons.error_outline,
-                                          color:
-                                              Theme.of(context).errorColor))),
+                                  child: Center(child: Icon(Icons.error_outline, color: Theme.of(context).errorColor))),
                             ),
                           )
                         : Container(
                             height: deviceSize.height * 0.3,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/default-store.png'),
-                                  fit: BoxFit.cover),
+                                  image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                             ),
                           ),
                   ),
                   Card(
                     elevation: 4.0,
                     margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                     child: Column(
                       children: <Widget>[
                         ListTile(
@@ -129,8 +117,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                           ),
                           title: Text("Edit Store Details"),
                           trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(EditOnlineStorePipeline.routeName),
+                          onTap: () => Navigator.of(context).pushNamed(EditOnlineStorePipeline.routeName),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
@@ -140,8 +127,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                           ),
                           title: Text("Edit Bank Account Details"),
                           trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(EditBankAccountScreen.routeName),
+                          onTap: () => Navigator.of(context).pushNamed(EditBankAccountScreen.routeName),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
@@ -158,17 +144,14 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                                         padding: EdgeInsets.all(1),
                                         decoration: BoxDecoration(
                                           color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(6),
                                         ),
                                         constraints: BoxConstraints(
                                           minWidth: 13,
                                           minHeight: 13,
                                         ),
                                         child: Text(
-                                          notificationCount > 9
-                                              ? "9+"
-                                              : notificationCount.toString(),
+                                          notificationCount > 9 ? "9+" : notificationCount.toString(),
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 8,
@@ -182,9 +165,8 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                           ),
                           trailing: Icon(Icons.keyboard_arrow_right),
                           title: Text("View Store Purchases"),
-                          onTap: () => Navigator.of(context).pushNamed(
-                              StorePurchasesScreen.routeName,
-                              arguments: {"storeName": widget.store.name}),
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(StorePurchasesScreen.routeName, arguments: {"storeName": widget.store.name}),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
@@ -206,26 +188,19 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                                       children: [
                                         CachedNetworkImage(
                                           imageUrl: widget.store.qrCode!,
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
+                                          imageBuilder: (context, imageProvider) => Container(
                                             height: deviceSize.height * 0.3,
                                             decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover),
+                                              image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
                                             ),
                                           ),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
+                                          errorWidget: (context, url, error) => Container(
                                             height: deviceSize.height * 0.3,
                                             child: FittedBox(
                                                 fit: BoxFit.fill,
                                                 child: Center(
-                                                    child: Icon(
-                                                        Icons.error_outline,
-                                                        color: Theme.of(context)
-                                                            .errorColor))),
+                                                    child: Icon(Icons.error_outline,
+                                                        color: Theme.of(context).errorColor))),
                                           ),
                                         ),
                                       ],
@@ -273,28 +248,19 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                user
-                                    .deleteStore(widget.store.id, true)
-                                    .then((res) {
+                                user.deleteStore(widget.store.id, true).then((res) {
                                   if (res.getTag()) {
                                     SnackBar snackBar = SnackBar(
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
+                                        borderRadius: BorderRadius.circular(20.0),
                                       ),
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
+                                      backgroundColor: Theme.of(context).primaryColor,
                                       behavior: SnackBarBehavior.floating,
-                                      content: const Text(
-                                          'Deleted Store Successfully!',
-                                          textAlign: TextAlign.center,
-                                          style:
-                                              TextStyle(color: Colors.black87)),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.75,
+                                      content: const Text('Deleted Store Successfully!',
+                                          textAlign: TextAlign.center, style: TextStyle(color: Colors.black87)),
+                                      width: MediaQuery.of(context).size.width * 0.75,
                                     );
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
+                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                     Navigator.of(context).pop(false);
                                   } else {
                                     setState(() {
