@@ -1,7 +1,10 @@
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/StoreStorageProxy.dart';
+import 'package:final_project_yroz/screens/manage_physical_store_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../LogicLayer/User.dart';
 import '../widgets/default_store_item.dart';
 
 import '../dummy_data.dart';
@@ -103,8 +106,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                     physicalStores
                                         .map(
                                           (storeData) => StoreItem(
-                                              storeData //, widget.user!
-                                              ),
+                                              storeData, () => setState(() {})),
                                         )
                                         .toList(),
                                   ].expand((i) => i).toList(),
@@ -146,7 +148,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                   children: [
                                     onlineStores
                                         .map(
-                                          (storeData) => StoreItem(storeData),
+                                          (storeData) => StoreItem(
+                                              storeData, () => setState(() {})),
                                         )
                                         .toList(),
                                   ].expand((i) => i).toList(),

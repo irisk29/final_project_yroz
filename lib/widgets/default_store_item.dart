@@ -1,42 +1,94 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
+import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../LogicLayer/User.dart';
+import '../screens/manage_online_store_screen.dart';
+import '../screens/manage_physical_store_screen.dart';
 
 class StoreItem extends StatelessWidget {
   final StoreDTO store;
+  VoidCallback callback;
 
-  StoreItem(this.store);
+  StoreItem(this.store, this.callback);
 
-  void selectStore(BuildContext ctx) {
-    this.store is OnlineStoreDTO
-        ? Navigator.of(ctx).pushNamed(
-            OnlineStoreScreen.routeName,
-            arguments: {'store': store},
-          )
-        : Navigator.of(ctx).pushNamed(
-            PhysicalStoreScreen.routeName,
-            arguments: {'store': store},
-          );
+  void showManageMyStoreDialog(BuildContext ctx) {
+    SnackBar snackBar = SnackBar(
+      duration: Duration(seconds: 5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      backgroundColor: Theme.of(ctx).primaryColor,
+      behavior: SnackBarBehavior.floating,
+      content: const Text(
+          'You chose your store, you can see how other users see it using "Store Preview" option',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black87)),
+      width: MediaQuery.of(ctx).size.width * 0.8,
+    );
+    ScaffoldMessenger.of(ctx).showSnackBar(snackBar);
   }
 
-  bool myStore(BuildContext context){
-    if(Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!=null){
-      if(Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!.id == this.store.id)
-        return true;
-      else return false;
+  void selectStore(BuildContext ctx) {
+    final user = Provider.of<User>(ctx, listen: false);
+
+    if (user.storeOwnerState != null) {
+      user.storeOwnerState!.hasPhysicalStore(store.id)
+          ? Navigator.of(ctx)
+              .pushNamed(ManagePhysicalStoreScreen.routeName)
+              .then((value) {
+              if (value != null) callback();
+            })
+          : Navigator.of(ctx)
+              .pushNamed(ManageOnlineStoreScreen.routeName)
+              .then((value) {
+              if (value != null) callback();
+            });
+      showManageMyStoreDialog(ctx);
+    } else {
+      this.store is OnlineStoreDTO
+          ? Navigator.of(ctx).pushNamed(
+              OnlineStoreScreen.routeName,
+              arguments: {'store': store},
+            )
+          : Navigator.of(ctx).pushNamed(
+              PhysicalStoreScreen.routeName,
+              arguments: {'store': store},
+            );
     }
-    else if(Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!=null){
-      if(Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!.id == this.store.id)
+  }
+
+  bool myStore(BuildContext context) {
+    if (Provider.of<User>(context, listen: false)
+            .storeOwnerState!
+            .physicalStore !=
+        null) {
+      if (Provider.of<User>(context, listen: false)
+              .storeOwnerState!
+              .physicalStore!
+              .id ==
+          this.store.id)
         return true;
-      else return false;
-    }
-    else return false;
+      else
+        return false;
+    } else if (Provider.of<User>(context, listen: false)
+            .storeOwnerState!
+            .onlineStore !=
+        null) {
+      if (Provider.of<User>(context, listen: false)
+              .storeOwnerState!
+              .onlineStore!
+              .id ==
+          this.store.id)
+        return true;
+      else
+        return false;
+    } else
+      return false;
   }
 
   @override
@@ -97,7 +149,7 @@ class StoreItem extends StatelessWidget {
               height: constraints.maxHeight * 0.25,
               width: constraints.maxWidth,
               decoration: BoxDecoration(
-                color: myStore(context) ? Colors.red : Color.fromRGBO(255, 255, 255, 1),
+                color: Color.fromRGBO(255, 255, 255, 1),
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(15),
                     bottomLeft: Radius.circular(15)),
