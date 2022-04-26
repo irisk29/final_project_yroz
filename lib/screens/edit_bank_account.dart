@@ -28,13 +28,12 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
     final user = Provider.of<User>(context, listen: false);
     final bankAccount = await user.getStoreBankAccountDetails();
     return bankAccount != null
-        ? BankAccountForm(bankAccount.bankAccount, bankAccount.bankName,
-            bankAccount.branchNumber, () => _formChanged = true)
+        ? BankAccountForm(
+            bankAccount.bankAccount, bankAccount.bankName, bankAccount.branchNumber, () => _formChanged = true)
         : null;
   }
 
-  Future<void> _saveForm(
-      BankAccountForm bankAccountForm, BuildContext context) async {
+  Future<void> _saveForm(BankAccountForm bankAccountForm, BuildContext context) async {
     setState(() {
       _isLoading = true;
     });
@@ -49,14 +48,14 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
             _isLoading = false;
           });
           SnackBar snackBar = SnackBar(
+            duration: Duration(seconds: 2),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             behavior: SnackBarBehavior.floating,
             content: const Text('Saved Bank Account Successfully!',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black87)),
+                textAlign: TextAlign.center, style: TextStyle(color: Colors.black87)),
             width: MediaQuery.of(context).size.width * 0.75,
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -153,8 +152,7 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
                       ? Center(child: CircularProgressIndicator())
                       : snap.data == null
                           ? Center(
-                              child: Text(
-                                  "Sorry, we could not find your bank account details at the moment...",
+                              child: Text("Sorry, we could not find your bank account details at the moment...",
                                   textAlign: TextAlign.center),
                             )
                           : Padding(
@@ -166,17 +164,11 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
                                     width: deviceSize.width * 0.8,
                                     child: ElevatedButton(
                                       style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(18.0),
-                                                side: BorderSide(
-                                                    color: Colors.red))),
+                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(18.0),
+                                            side: BorderSide(color: Colors.red))),
                                       ),
-                                      onPressed: () => _saveForm(
-                                          snap.data as BankAccountForm,
-                                          context),
+                                      onPressed: () => _saveForm(snap.data as BankAccountForm, context),
                                       child: Text('Submit'),
                                     ),
                                   ),
