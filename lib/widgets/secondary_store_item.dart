@@ -72,7 +72,7 @@ class SecondaryStoreItem extends StatelessWidget {
                         ],
                         image: DecorationImage(
                             image: AssetImage(
-                                'assets/images/placeholder-image.png'),
+                                'assets/images/placeholder-image.jpeg'),
                             fit: BoxFit.cover),
                       ),
                     ),
