@@ -34,6 +34,13 @@ class _PhysicalPaymentScreenState extends State<PhysicalPaymentScreen> {
           resizeToAvoidBottomInset: false,
           appBar: AppBar(
             toolbarHeight: constraints.maxHeight * 0.1,
+            automaticallyImplyLeading: false,
+            leading: isLoading
+                ? Container()
+                : IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
             title: Align(
               alignment: Alignment.centerLeft,
               child: Text("Physical Payment"),
