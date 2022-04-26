@@ -64,7 +64,7 @@ class _ProductItemState extends State<ProductItem> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('\€${widget.product.price}',
+                          Text('\€${widget.product.price.toStringAsFixed(2)}',
                               style: TextStyle(fontSize: 16)),
                           IconButton(
                             icon: Icon(Icons.add_shopping_cart),
@@ -101,7 +101,7 @@ class _ProductItemState extends State<ProductItem> {
                                             content: Text(
                                               'Added item to cart!',
                                             ),
-                                            duration: Duration(seconds: 3),
+                                            duration: Duration(seconds: 2),
                                           ),
                                         );
                                       },

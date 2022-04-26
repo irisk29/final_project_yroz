@@ -42,6 +42,7 @@ class _OpeningHoursState extends State<OpeningHours> {
   void initState() {
     days = widget.openings.days;
     showHours = days.map((user) => false).toList();
+    showHours[0] = true;
     super.initState();
   }
 
@@ -49,6 +50,10 @@ class _OpeningHoursState extends State<OpeningHours> {
     setState(() {
       showHours[index] = !showHours[index];
     });
+  }
+
+  bool opSmaller(TimeOfDay me, TimeOfDay other) {
+    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
   }
 
   void _selectTime(int index1, int item) async {
@@ -61,14 +66,56 @@ class _OpeningHoursState extends State<OpeningHours> {
     );
     if (newTime != null) {
       setState(() {
-        item == 1
-            ? days[index1].operationHours =
-                Tuple2(newTime, days[index1].operationHours.item2)
-            : days[index1].operationHours =
+        if(item == 1)
+          if(opSmaller(newTime, days[index1].operationHours.item2))
+            days[index1].operationHours =
+                Tuple2(newTime, days[index1].operationHours.item2);
+          else{
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => AlertDialog(
+                title: Text("Opening Hours Error"),
+                content: Text(
+                    "The opening time cannot be bigger than the closing time"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            );
+          }
+        else {
+          if(opSmaller(days[index1].operationHours.item1, newTime))
+            days[index1].operationHours =
                 Tuple2(days[index1].operationHours.item1, newTime);
+          else{
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => AlertDialog(
+                title: Text("Opening Hours Error"),
+                content: Text(
+                    "The opening time cannot be bigger than the closing time"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            );
+          }
+        }
         widget.callback();
-      });
-    }
+        });
+      }
   }
 
   @override
@@ -90,6 +137,7 @@ class _OpeningHoursState extends State<OpeningHours> {
                   horizontal: 5,
                 ),
                 child: ListTile(
+                  onTap: () => showHour(index),
                     title: Text(days[index].day),
                     isThreeLine: false,
                     trailing: IconButton(

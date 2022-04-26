@@ -278,6 +278,7 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                                     .then((res) {
                                   if (res.getTag()) {
                                     SnackBar snackBar = SnackBar(
+                                      duration: Duration(seconds: 2),
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(20.0),

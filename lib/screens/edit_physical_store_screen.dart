@@ -144,6 +144,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
           .updatePhysicalStore(_editedStore!);
       if (res.getTag()) {
         SnackBar snackBar = SnackBar(
+          duration: Duration(seconds: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),

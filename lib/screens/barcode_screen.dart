@@ -47,7 +47,8 @@ class _QRViewExampleState extends State<QRViewExample> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       if (result != null)
-                        Text('Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}') // to change for another action
+                        Text(
+                            'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}') // to change for another action
                       else
                         Container(
                           margin: EdgeInsets.all(deviceSize.width * 0.05),
@@ -72,8 +73,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                 await controller?.flipCamera();
                 setState(() {});
               },
-              icon: Icon(Icons.flip_camera_ios_outlined,
-                  color: Theme.of(context).primaryColor),
+              icon: Icon(Icons.flip_camera_ios_outlined, color: Theme.of(context).primaryColor),
             ),
           )
         ],
@@ -90,11 +90,7 @@ class _QRViewExampleState extends State<QRViewExample> {
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Colors.red,
-          borderRadius: 10,
-          borderLength: 30,
-          borderWidth: 10,
-          cutOutSize: scanArea),
+          borderColor: Colors.red, borderRadius: 10, borderLength: 30, borderWidth: 10, cutOutSize: scanArea),
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
   }
@@ -107,11 +103,7 @@ class _QRViewExampleState extends State<QRViewExample> {
       setState(() {
         result = scanData;
         Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (ctx) =>
-                    PhysicalPaymentScreen(result!.code)));
+        Navigator.push(context, MaterialPageRoute(builder: (ctx) => PhysicalPaymentScreen(result!.code)));
         // Navigator.of(context).pushNamed(PhysicalPaymentScreen.routeName, arguments: {'store': result!.code});
       });
     });
@@ -121,7 +113,7 @@ class _QRViewExampleState extends State<QRViewExample> {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
     if (!p) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('no Permission')),
+        SnackBar(duration: Duration(seconds: 2), content: Text('no Permission')),
       );
     }
   }

@@ -19,6 +19,8 @@ import '../LogicLayer/SecretLoader.dart';
 import '../LogicModels/OpeningTimes.dart';
 import '../LogicModels/place.dart';
 import '../models/UserModel.dart';
+import 'manage_online_store_screen.dart';
+import 'manage_physical_store_screen.dart';
 
 class PhysicalStoreScreen extends StatefulWidget {
   static const routeName = '/physical-store';
@@ -144,6 +146,16 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.storefront),
+            onPressed: () => Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!.id == widget.store.id
+                ? Navigator.of(context)
+                .pushNamed(ManagePhysicalStoreScreen.routeName)
+                .then((value) {
+            }) : null
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
