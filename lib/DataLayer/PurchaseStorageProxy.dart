@@ -37,7 +37,9 @@ class PurchaseStorageProxy {
       return new Failure("No Purchases were found for transaction $transactionID", []);
     }
     PurchaseHistoryModel purchase = purchases.first; //transaction ID is unique
-    if (purchase.products == null || purchase.products!.isEmpty) return new Ok("No products for purchase", []);
+    print(purchase.products);
+    if (purchase.products == null) return new Ok("No products for purchase", []);
+    if (purchase.products!.isEmpty) return new Ok("No products for purchase", []);
     var purchaseProducts = jsonDecode(purchase.products!) as List<dynamic>;
     var convertedPurchaseProducts =
         purchaseProducts.map((e) => CartProductDTO.fromJson(e as Map<String, dynamic>)).toList();
