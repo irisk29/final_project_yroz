@@ -63,7 +63,7 @@ class _ProductItemState extends State<ProductItem> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('\€${widget.product.price}', style: TextStyle(fontSize: 16)),
+                          Text('\€${widget.product.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 16)),
                           IconButton(
                             icon: Icon(Icons.add_shopping_cart),
                             alignment: Alignment.center,

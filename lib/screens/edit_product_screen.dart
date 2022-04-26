@@ -146,10 +146,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
               Navigator.of(context).pop(Tuple2(_editedProduct, true));
             },
           ),
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _saveForm,
-          ),
         ],
       ),
       body: _isLoading
@@ -259,6 +255,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                 ? null
                                 : File(_pickedImage!.path));
                       },
+                    ),
+                    ElevatedButton(
+                      key: const Key("save"),
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          primary: Theme.of(context).primaryColor),
+                      child: Container(
+                        width: deviceSize.width * 0.3,
+                        margin: const EdgeInsets.all(12),
+                        child: const Text(
+                          'Save',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      onPressed: _saveForm,
                     ),
                   ],
                 ),

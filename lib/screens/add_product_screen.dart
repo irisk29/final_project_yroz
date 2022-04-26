@@ -204,6 +204,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         key: const Key('price'),
                         decoration: InputDecoration(labelText: 'Price'),
                         textInputAction: TextInputAction.next,
+                        maxLength: 10,
                         keyboardType:
                             TextInputType.numberWithOptions(decimal: true),
                         focusNode: _priceFocusNode,
@@ -264,6 +265,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   ? null
                                   : File(_pickedImage!.path));
                         },
+                      ),
+                      ElevatedButton(
+                        key: const Key("save"),
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            primary: Theme.of(context).primaryColor),
+                        child: Container(
+                          width: deviceSize.width * 0.3,
+                          margin: const EdgeInsets.all(12),
+                          child: const Text(
+                            'Save',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        onPressed: _saveForm,
                       ),
                     ],
                   ),
