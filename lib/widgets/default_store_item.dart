@@ -4,6 +4,9 @@ import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../LogicLayer/User.dart';
 
 class StoreItem extends StatelessWidget {
   final StoreDTO store;
@@ -20,6 +23,20 @@ class StoreItem extends StatelessWidget {
             PhysicalStoreScreen.routeName,
             arguments: {'store': store},
           );
+  }
+
+  bool myStore(BuildContext context){
+    if(Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!=null){
+      if(Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!.id == this.store.id)
+        return true;
+      else return false;
+    }
+    else if(Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!=null){
+      if(Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!.id == this.store.id)
+        return true;
+      else return false;
+    }
+    else return false;
   }
 
   @override
@@ -80,7 +97,7 @@ class StoreItem extends StatelessWidget {
               height: constraints.maxHeight * 0.25,
               width: constraints.maxWidth,
               decoration: BoxDecoration(
-                color: Color.fromRGBO(255, 255, 255, 1),
+                color: myStore(context) ? Colors.red : Color.fromRGBO(255, 255, 255, 1),
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(15),
                     bottomLeft: Radius.circular(15)),
