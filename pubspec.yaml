@@ -132,7 +132,7 @@ flutter:
      - assets/images/default_product.png
      - assets/images/favorite-stores.png
      - assets/images/favorite-products.png
-     - assets/images/placeholder-image.png
+     - assets/images/placeholder-image.jpeg
      - assets/secrets.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

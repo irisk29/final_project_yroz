@@ -139,7 +139,6 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   var _bankLoading = false;
   var _acceptTerms = false;
   var _categorySelected = true;
-  var _validBankAccount = false;
   var _formChanged;
 
   @override
@@ -415,6 +414,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
             _editedStore!.name,
             _editedStore!.address,
             _pickedImage,
+            null,
             _editedStore!.phoneNumber,
             openingHours.saveOpenHours());
       default:
@@ -622,14 +622,9 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         break;
       case 3:
         setState(() => _bankLoading = true);
-        final res =
-            _validBankAccount || await bankAccountForm.saveForm(context);
+        final res = await bankAccountForm.saveForm(context);
         setState(() => _bankLoading = false);
-        if (res)
-          setState(() {
-            _validBankAccount = true;
-            _currentStep += 1;
-          });
+        if (res) setState(() => _currentStep += 1);
         break;
       case 4:
         _saveForm();
