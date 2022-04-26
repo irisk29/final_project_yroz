@@ -122,16 +122,6 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.storefront),
-            onPressed: () => Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!.id == widget.store.id
-                ? Navigator.of(context)
-                .pushNamed(ManageOnlineStoreScreen.routeName)
-                .then((value) {
-            }) : null,
-          )
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(

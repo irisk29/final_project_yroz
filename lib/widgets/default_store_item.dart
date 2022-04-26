@@ -28,13 +28,13 @@ class StoreItem extends StatelessWidget {
           'You chose your store, you can see how other users see it using "Store Preview" option',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black87)),
-      width: MediaQuery.of(ctx).size.width * 0.75,
+      width: MediaQuery.of(ctx).size.width * 0.8,
     );
     ScaffoldMessenger.of(ctx).showSnackBar(snackBar);
   }
 
   void selectStore(BuildContext ctx) {
-    final user = Provider.of<User>(ctx);
+    final user = Provider.of<User>(ctx, listen: false);
 
     if (user.storeOwnerState != null) {
       user.storeOwnerState!.hasPhysicalStore(store.id)
@@ -60,6 +60,35 @@ class StoreItem extends StatelessWidget {
               arguments: {'store': store},
             );
     }
+  }
+
+  bool myStore(BuildContext context) {
+    if (Provider.of<User>(context, listen: false)
+            .storeOwnerState!
+            .physicalStore !=
+        null) {
+      if (Provider.of<User>(context, listen: false)
+              .storeOwnerState!
+              .physicalStore!
+              .id ==
+          this.store.id)
+        return true;
+      else
+        return false;
+    } else if (Provider.of<User>(context, listen: false)
+            .storeOwnerState!
+            .onlineStore !=
+        null) {
+      if (Provider.of<User>(context, listen: false)
+              .storeOwnerState!
+              .onlineStore!
+              .id ==
+          this.store.id)
+        return true;
+      else
+        return false;
+    } else
+      return false;
   }
 
   @override

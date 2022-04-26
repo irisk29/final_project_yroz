@@ -146,16 +146,6 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.storefront),
-            onPressed: () => Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!.id == widget.store.id
-                ? Navigator.of(context)
-                .pushNamed(ManagePhysicalStoreScreen.routeName)
-                .then((value) {
-            }) : null
-          )
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
