@@ -153,7 +153,7 @@ class _ProductItemState extends State<ProductItem> {
                                 borderRadius: BorderRadius.circular(15),
                                 image: DecorationImage(
                                     image: AssetImage(
-                                        'assets/images/placeholder-image.png'),
+                                        'assets/images/placeholder-image.jpeg'),
                                     fit: BoxFit.cover),
                               ),
                             ),

@@ -368,6 +368,7 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             _editedStore!.name,
             _editedStore!.address,
             _pickedImage,
+            _imageUrl,
             _editedStore!.phoneNumber,
             openingHours.saveOpenHours());
       default:
