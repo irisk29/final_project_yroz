@@ -51,6 +51,7 @@ class ApplicationBloc with ChangeNotifier {
         location: Location(
             lat: currentLocation!.latitude, lng: currentLocation!.longitude),
       ),
+      address: ""
     );
     notifyListeners();
   }

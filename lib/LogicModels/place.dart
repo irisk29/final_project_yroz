@@ -34,14 +34,16 @@ class Place {
   final Geometry geometry;
   final String name;
   final String? vicinity;
+  final String address;
 
-  Place({required this.geometry, required this.name, this.vicinity});
+  Place({required this.geometry, required this.name, this.vicinity, required this.address});
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
       geometry: Geometry.fromJson(json['geometry']),
       name: json['formatted_address'],
       vicinity: json['vicinity'],
+      address: json['formatted_address'],
     );
   }
 
@@ -50,6 +52,7 @@ class Place {
       geometry: Geometry.fromLocation(address.results!.first.geometry!.location!),
       name: name,
       vicinity: add,
+      address: address.results!.first.formattedAddress!
     );
   }
 }

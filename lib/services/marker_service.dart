@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:final_project_yroz/LogicModels/place.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:flutter/material.dart';
 
 import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
@@ -46,7 +49,13 @@ class MarkerService {
           String origin_lat = (await GeolocatorService().getCurrentLocation()).latitude.toString();
           String origin_lng = (await GeolocatorService().getCurrentLocation()).longitude.toString();
           Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-          MapsLauncher.launchCoordinates(double.parse(dest_lat),double.parse(dest_lng));
+          if (!Platform.isIOS) {
+            MapsLauncher.launchCoordinates(
+                double.parse(dest_lat), double.parse(dest_lng));
+          }
+          else {
+            MapsLauncher.launchQuery(place.address);
+          }
           // String googleUrl = 'https://maps.googleapis.com/maps/api/directions/json?origin=$origin_lat,$origin_lng&destination=$dest_lat,$dest_lng&key=${secret.API_KEY}';
           // if (await canLaunch(googleUrl)) {
           //   await launch(googleUrl);

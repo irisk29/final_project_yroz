@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
@@ -212,7 +214,13 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
                   Place place = Place.fromStore(widget.store.name, address, widget.store.address);
                   String dest_lat = place.geometry.location.lat.toString();
                   String dest_lng = place.geometry.location.lng.toString();
-                  MapsLauncher.launchCoordinates(double.parse(dest_lat), double.parse(dest_lng));
+                  if (!Platform.isIOS) {
+                    MapsLauncher.launchCoordinates(
+                        double.parse(dest_lat), double.parse(dest_lng));
+                  }
+                  else {
+                    MapsLauncher.launchQuery(place.address);
+                  }
                 }
                 //open change location
               },
