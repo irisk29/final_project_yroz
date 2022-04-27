@@ -409,14 +409,23 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                 child: Center(child: CircularProgressIndicator()))
             : bankAccountForm;
       case 4:
-        return StorePreview(
-            false,
-            _editedStore!.name,
-            _editedStore!.address,
-            _pickedImage,
-            null,
-            _editedStore!.phoneNumber,
-            openingHours.saveOpenHours());
+        return SizedBox(
+          height: deviceSize.height * 0.65,
+          child: Column(
+            children: [
+              StorePreview(
+                  false,
+                  _editedStore!.name,
+                  _editedStore!.address,
+                  _pickedImage,
+                  null,
+                  _editedStore!.phoneNumber,
+                  openingHours.saveOpenHours(),
+                  null,
+                  true)
+            ],
+          ),
+        );
       default:
         return null;
     }

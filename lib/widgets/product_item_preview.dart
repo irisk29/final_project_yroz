@@ -1,26 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../DTOs/ProductDTO.dart';
-import '../LogicLayer/User.dart';
 
-class ProductItem extends StatefulWidget {
+class ProductItemPreview extends StatelessWidget {
   final ProductDTO product;
-  final String storeID;
 
-  ProductItem(this.product, this.storeID);
+  ProductItemPreview(this.product);
 
-  @override
-  State<ProductItem> createState() => _ProductItemState();
-}
-
-class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context, listen: false);
-    final myController = TextEditingController();
-
     return LayoutBuilder(
       builder: (context, constraints) => SizedBox(
         width: constraints.maxWidth,
@@ -55,11 +43,11 @@ class _ProductItemState extends State<ProductItem> {
                       Column(
                         children: [
                           Text(
-                            widget.product.name,
+                            product.name,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          widget.product.description != null
-                              ? Text(widget.product.description!,
+                          product.description != null
+                              ? Text(product.description!,
                                   style: TextStyle(color: Colors.black54))
                               : Container(),
                         ],
@@ -68,59 +56,8 @@ class _ProductItemState extends State<ProductItem> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('\€${widget.product.price.toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 16)),
-                          IconButton(
-                            icon: Icon(Icons.add_shopping_cart),
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(0),
-                            onPressed: () async {
-                              double quantity = 0;
-                              await showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: Text('Select quantity'),
-                                  content: TextField(
-                                    controller: myController,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            decimal: true),
-                                  ),
-                                  actions: [
-                                    FlatButton(
-                                      child: Text('Okay'),
-                                      onPressed: () {
-                                        quantity =
-                                            double.parse(myController.text);
-                                        Navigator.of(context).pop();
-                                        user.updateOrCreateCartProduct(
-                                            widget.product,
-                                            widget.storeID,
-                                            quantity);
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Added item to cart!',
-                                            ),
-                                            duration: Duration(seconds: 2),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    FlatButton(
-                                      child: Text('Cancel'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
+                          Text('\€${product.price.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 16))
                         ],
                       ),
                     ],
@@ -135,10 +72,10 @@ class _ProductItemState extends State<ProductItem> {
                       top: constraints.maxHeight * 0.06,
                       bottom: constraints.maxHeight * 0.06),
                   child: FittedBox(
-                    child: widget.product.imageUrl != null &&
-                            widget.product.imageUrl!.isNotEmpty
+                    child: product.imageUrl != null &&
+                            product.imageUrl!.isNotEmpty
                         ? CachedNetworkImage(
-                            imageUrl: widget.product.imageUrl!,
+                            imageUrl: product.imageUrl!,
                             imageBuilder: (context, imageProvider) => Container(
                               height: constraints.maxHeight,
                               width: constraints.maxWidth * 0.45,

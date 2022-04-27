@@ -464,11 +464,12 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                                 });
                               } else {
                                 setState(() {
-                                  _products.removeWhere((element) =>
-                                      element.name == e.name &&
-                                      element.price == e.price &&
-                                      element.description == e.description);
-                                  _products.add(result.item1!);
+                                  final index = _products.indexWhere(
+                                      (element) =>
+                                          element.name == e.name &&
+                                          element.price == e.price &&
+                                          element.description == e.description);
+                                  _products[index] = result.item1!;
                                   _formChanged = true;
                                 });
                               }
@@ -506,14 +507,23 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           ],
         );
       case 4:
-        return StorePreview(
-            true,
-            _editedStore!.name,
-            _editedStore!.address,
-            _pickedImage,
-            _imageUrl,
-            _editedStore!.phoneNumber,
-            openingHours.saveOpenHours());
+        return SizedBox(
+          height: deviceSize.height * 0.65,
+          child: Column(
+            children: [
+              StorePreview(
+                  true,
+                  _editedStore!.name,
+                  _editedStore!.address,
+                  _pickedImage,
+                  _imageUrl,
+                  _editedStore!.phoneNumber,
+                  openingHours.saveOpenHours(),
+                  _products,
+                  true),
+            ],
+          ),
+        );
       default:
         return null;
     }

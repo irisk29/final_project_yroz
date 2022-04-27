@@ -25,7 +25,7 @@ class StoreItem extends StatelessWidget {
       backgroundColor: Theme.of(ctx).primaryColor,
       behavior: SnackBarBehavior.floating,
       content: const Text(
-          'You chose your store, you can see how other users see it using "Store Preview" option',
+          'You chose your store, you can see how other users see it using "View My Store" option',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black87)),
       width: MediaQuery.of(ctx).size.width * 0.8,
@@ -37,18 +37,31 @@ class StoreItem extends StatelessWidget {
     final user = Provider.of<User>(ctx, listen: false);
 
     if (user.storeOwnerState != null) {
-      user.storeOwnerState!.hasPhysicalStore(store.id)
-          ? Navigator.of(ctx)
-              .pushNamed(ManagePhysicalStoreScreen.routeName)
-              .then((value) {
-              if (value != null) callback();
-            })
-          : Navigator.of(ctx)
-              .pushNamed(ManageOnlineStoreScreen.routeName)
-              .then((value) {
-              if (value != null) callback();
-            });
-      showManageMyStoreDialog(ctx);
+      if (user.storeOwnerState!.hasPhysicalStore(store.id)) {
+        Navigator.of(ctx)
+            .pushNamed(ManagePhysicalStoreScreen.routeName)
+            .then((value) {
+          if (value != null) callback();
+        });
+        showManageMyStoreDialog(ctx);
+      } else if (user.storeOwnerState!.hasOnlineStore(store.id)) {
+        Navigator.of(ctx)
+            .pushNamed(ManageOnlineStoreScreen.routeName)
+            .then((value) {
+          if (value != null) callback();
+        });
+        showManageMyStoreDialog(ctx);
+      } else {
+        this.store is OnlineStoreDTO
+            ? Navigator.of(ctx).pushNamed(
+                OnlineStoreScreen.routeName,
+                arguments: {'store': store},
+              )
+            : Navigator.of(ctx).pushNamed(
+                PhysicalStoreScreen.routeName,
+                arguments: {'store': store},
+              );
+      }
     } else {
       this.store is OnlineStoreDTO
           ? Navigator.of(ctx).pushNamed(

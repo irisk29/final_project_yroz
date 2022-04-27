@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/edit_online_store_screen.dart';
+import 'package:final_project_yroz/screens/store_preview_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,14 +55,14 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
         title: Column(
           children: [
             Text(
-              widget.store.name,
+              "Store Management",
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              widget.store.categories.join(", "),
+              widget.store.name,
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
@@ -122,6 +123,18 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Column(
                       children: <Widget>[
+                        ListTile(
+                          leading: Icon(
+                            Icons.storefront,
+                            color: Colors.purple,
+                          ),
+                          title: Text("View My Store"),
+                          trailing: Icon(Icons.keyboard_arrow_right),
+                          onTap: () => Navigator.of(context).pushNamed(
+                              StorePreviewScreen.routeName,
+                              arguments: {'store': widget.store}),
+                        ),
+                        _buildDivider(deviceSize),
                         ListTile(
                           leading: Icon(
                             Icons.edit,

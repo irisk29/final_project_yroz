@@ -149,13 +149,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               style: const TextStyle(fontSize: 22),
             ),
           ),
-          actions: <Widget>[
-            IconButton(
-              key: const Key('save'),
-              icon: Icon(Icons.save),
-              onPressed: _saveForm,
-            ),
-          ],
         ),
         body: _isLoading
             ? Center(
@@ -266,27 +259,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   : File(_pickedImage!.path));
                         },
                       ),
-                      ElevatedButton(
-                        key: const Key("save"),
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            primary: Theme.of(context).primaryColor),
-                        child: Container(
-                          width: deviceSize.width * 0.3,
-                          margin: const EdgeInsets.all(12),
-                          child: const Text(
-                            'Save',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        onPressed: _saveForm,
-                      ),
                     ],
                   ),
                 ),
               ),
+        bottomSheet: Container(
+          width: double.infinity,
+          child: ElevatedButton(
+            key: const Key("save"),
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                primary: Theme.of(context).primaryColor),
+            child: Container(
+              width: deviceSize.width * 0.3,
+              margin: const EdgeInsets.all(12),
+              child: const Text(
+                'Save',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            onPressed: _saveForm,
+          ),
+        ),
       ),
     );
   }
