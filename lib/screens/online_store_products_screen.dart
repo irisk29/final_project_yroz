@@ -87,7 +87,8 @@ class _OnlineStoreProductsScreenState extends State<OnlineStoreProductsScreen> {
                   ListTile(
                     title: Text(
                       "Products:",
-                      style: TextStyle(fontSize: 20),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                   ),
                   SizedBox(

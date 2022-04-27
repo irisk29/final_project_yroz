@@ -364,15 +364,23 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
       case 2:
         return openingHours;
       case 3:
-        return StorePreview(
-            false,
-            _editedStore!.name,
-            _editedStore!.address,
-            _pickedImage,
-            _imageUrl,
-            _editedStore!.phoneNumber,
-            openingHours.saveOpenHours(),
-            null);
+        return SizedBox(
+          height: deviceSize.height * 0.65,
+          child: Column(
+            children: [
+              StorePreview(
+                  false,
+                  _editedStore!.name,
+                  _editedStore!.address,
+                  _pickedImage,
+                  _imageUrl,
+                  _editedStore!.phoneNumber,
+                  openingHours.saveOpenHours(),
+                  null,
+                  true)
+            ],
+          ),
+        );
       default:
         return null;
     }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:final_project_yroz/widgets/store_products_preview.dart';
@@ -24,6 +23,7 @@ class StorePreview extends StatefulWidget {
   final String phoneNumber;
   final Openings operationHours;
   final List<ProductDTO>? products;
+  final bool backOnTop;
 
   StorePreview(
       this.isOnlineStore,
@@ -33,7 +33,8 @@ class StorePreview extends StatefulWidget {
       this.imageUrl,
       this.phoneNumber,
       this.operationHours,
-      this.products);
+      this.products,
+      this.backOnTop);
 
   @override
   _StorePreviewState createState() => _StorePreviewState();
@@ -99,8 +100,8 @@ class _StorePreviewState extends State<StorePreview> {
     var deviceSize = MediaQuery.of(context).size;
 
     return _productsMode
-        ? StoreProductsPreview(
-            widget.products!, () => setState(() => _productsMode = false))
+        ? StoreProductsPreview(widget.products!,
+            () => setState(() => _productsMode = false), widget.backOnTop)
         : Expanded(
             flex: 6,
             child: SingleChildScrollView(

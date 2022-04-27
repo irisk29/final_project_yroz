@@ -48,17 +48,23 @@ class _StorePreviewScreenState extends State<StorePreviewScreen> {
           ],
         ),
       ),
-      body: StorePreview(
-          widget.store is OnlineStoreDTO,
-          widget.store.name,
-          widget.store.address,
-          null,
-          widget.store.image,
-          widget.store.phoneNumber,
-          widget.store.operationHours,
-          widget.store is OnlineStoreDTO
-              ? (widget.store as OnlineStoreDTO).products
-              : null),
+      body: SizedBox(
+        height: deviceSize.height,
+        child: Column(children: [
+          StorePreview(
+              widget.store is OnlineStoreDTO,
+              widget.store.name,
+              widget.store.address,
+              null,
+              widget.store.image,
+              widget.store.phoneNumber,
+              widget.store.operationHours,
+              widget.store is OnlineStoreDTO
+                  ? (widget.store as OnlineStoreDTO).products
+                  : null,
+              false),
+        ]),
+      ),
     );
   }
 }

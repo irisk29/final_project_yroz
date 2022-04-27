@@ -54,14 +54,14 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
         title: Column(
           children: [
             Text(
-              widget.store.name,
+              "Store Management",
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              widget.store.categories.join(", "),
+              widget.store.name,
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
@@ -129,8 +129,9 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                           ),
                           title: Text("View My Store"),
                           trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(StorePreviewScreen.routeName),
+                          onTap: () => Navigator.of(context).pushNamed(
+                              StorePreviewScreen.routeName,
+                              arguments: {'store': widget.store}),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(

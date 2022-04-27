@@ -55,14 +55,14 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
         title: Column(
           children: [
             Text(
-              widget.store.name,
+              "Store Management",
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              widget.store.categories.join(", "),
+              widget.store.name,
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
@@ -130,8 +130,9 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
                           ),
                           title: Text("View My Store"),
                           trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(StorePreviewScreen.routeName),
+                          onTap: () => Navigator.of(context).pushNamed(
+                              StorePreviewScreen.routeName,
+                              arguments: {'store': widget.store}),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(

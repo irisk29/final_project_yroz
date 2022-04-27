@@ -5,23 +5,25 @@ import 'package:flutter/material.dart';
 class StoreProductsPreview extends StatelessWidget {
   final List<ProductDTO> products;
   final VoidCallback callback;
+  final bool backOnTop;
 
-  StoreProductsPreview(this.products, this.callback);
+  StoreProductsPreview(this.products, this.callback, this.backOnTop);
 
   @override
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return SizedBox(
-      height: deviceSize.height * 0.65,
+    return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ListTile(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => callback(),
-            ),
+            leading: backOnTop
+                ? IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => callback(),
+                  )
+                : null,
             title: Text(
               "Products:",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -29,8 +31,7 @@ class StoreProductsPreview extends StatelessWidget {
             onTap: null,
           ),
           products.length > 0
-              ? Container(
-                  height: deviceSize.height * 0.55,
+              ? Expanded(
                   child: GridView.count(
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
@@ -45,15 +46,18 @@ class StoreProductsPreview extends StatelessWidget {
                         .toList(),
                   ),
                 )
-              : Container(
-                  width: deviceSize.width,
-                  height: deviceSize.height * 0.55,
-                  child: Center(
-                    child: Text(
-                        "This store does not offer any products for sale",
-                        textAlign: TextAlign.center),
-                  ),
+              : Center(
+                  child: Text("This store does not offer any products for sale",
+                      textAlign: TextAlign.center),
                 ),
+          !backOnTop
+              ? ListTile(
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => callback(),
+                  ),
+                )
+              : SizedBox()
         ],
       ),
     );
