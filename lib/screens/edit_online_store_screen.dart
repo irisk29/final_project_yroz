@@ -513,7 +513,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             _pickedImage,
             _imageUrl,
             _editedStore!.phoneNumber,
-            openingHours.saveOpenHours());
+            openingHours.saveOpenHours(),
+            _products);
       default:
         return null;
     }

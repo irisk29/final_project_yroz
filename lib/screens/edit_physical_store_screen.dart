@@ -371,7 +371,8 @@ class _EditPhysicalStorePipelineState extends State<EditPhysicalStorePipeline> {
             _pickedImage,
             _imageUrl,
             _editedStore!.phoneNumber,
-            openingHours.saveOpenHours());
+            openingHours.saveOpenHours(),
+            null);
       default:
         return null;
     }
