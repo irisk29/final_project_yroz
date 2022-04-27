@@ -23,7 +23,7 @@ class SearchBarItem extends StatelessWidget {
       backgroundColor: Theme.of(ctx).primaryColor,
       behavior: SnackBarBehavior.floating,
       content: const Text(
-          'You chose your store, you can see how other users see it using "Store Preview" option',
+          'You chose your store, you can see how other users see it using "View My Store" option',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black87)),
       width: MediaQuery.of(ctx).size.width * 0.8,

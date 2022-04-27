@@ -3,6 +3,7 @@ import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/screens/edit_bank_account.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
+import 'package:final_project_yroz/screens/store_preview_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -121,6 +122,17 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Column(
                       children: <Widget>[
+                        ListTile(
+                          leading: Icon(
+                            Icons.storefront,
+                            color: Colors.purple,
+                          ),
+                          title: Text("View My Store"),
+                          trailing: Icon(Icons.keyboard_arrow_right),
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(StorePreviewScreen.routeName),
+                        ),
+                        _buildDivider(deviceSize),
                         ListTile(
                           leading: Icon(
                             Icons.edit,

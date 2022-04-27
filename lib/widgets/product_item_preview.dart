@@ -35,19 +35,23 @@ class ProductItemPreview extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(
                     left: constraints.maxWidth * 0.04,
-                    top: constraints.maxHeight * 0.075,
                   ),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        product.name,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      Column(
+                        children: [
+                          Text(
+                            product.name,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          product.description != null
+                              ? Text(product.description!,
+                                  style: TextStyle(color: Colors.black54))
+                              : Container(),
+                        ],
                       ),
-                      product.description != null
-                          ? Text(product.description!,
-                              style: TextStyle(color: Colors.black54))
-                          : Container(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,

@@ -18,6 +18,10 @@ class StoreProductsPreview extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ListTile(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => callback(),
+            ),
             title: Text(
               "Products:",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -26,12 +30,12 @@ class StoreProductsPreview extends StatelessWidget {
           ),
           products.length > 0
               ? Container(
-                  height: deviceSize.height * 0.45,
+                  height: deviceSize.height * 0.55,
                   child: GridView.count(
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
                     crossAxisCount: 1,
-                    childAspectRatio: 3.5,
+                    childAspectRatio: 3.75,
                     mainAxisSpacing: deviceSize.height * 0.01,
                     crossAxisSpacing: deviceSize.width * 0.025,
                     children: products
@@ -43,39 +47,13 @@ class StoreProductsPreview extends StatelessWidget {
                 )
               : Container(
                   width: deviceSize.width,
-                  height: deviceSize.height * 0.45,
+                  height: deviceSize.height * 0.55,
                   child: Center(
                     child: Text(
                         "This store does not offer any products for sale",
                         textAlign: TextAlign.center),
                   ),
                 ),
-          Align(
-            alignment: FractionalOffset.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  left: deviceSize.width * 0.02,
-                  right: deviceSize.width * 0.02,
-                  bottom: deviceSize.width * 0.02),
-              child: Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      width: 0.5,
-                      color: Colors.black54,
-                    ),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: ListTile(
-                  title: Text(
-                    "Back To Store Page",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  onTap: () => callback(),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );
