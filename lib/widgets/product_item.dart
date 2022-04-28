@@ -52,76 +52,93 @@ class _ProductItemState extends State<ProductItem> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            widget.product.name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          widget.product.description != null
-                              ? Text(widget.product.description!,
-                                  style: TextStyle(color: Colors.black54))
-                              : Container(),
-                        ],
+                      Container(
+                        width: constraints.maxWidth * 0.45,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.product.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: constraints.maxHeight * 0.125,
+                              ),
+                            ),
+                            widget.product.description != null
+                                ? Text(widget.product.description!,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: constraints.maxHeight * 0.115,
+                                    ))
+                                : Container(),
+                          ],
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('\€${widget.product.price.toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 16)),
-                          IconButton(
-                            icon: Icon(Icons.add_shopping_cart),
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(0),
-                            onPressed: () async {
-                              double quantity = 0;
-                              await showDialog(
-                                context: context,
-                                builder: (_) => AlertDialog(
-                                  title: Text('Select quantity'),
-                                  content: TextField(
-                                    controller: myController,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            decimal: true),
-                                  ),
-                                  actions: [
-                                    FlatButton(
-                                      child: Text('Okay'),
-                                      onPressed: () {
-                                        quantity =
-                                            double.parse(myController.text);
-                                        Navigator.of(context).pop();
-                                        user.updateOrCreateCartProduct(
-                                            widget.product,
-                                            widget.storeID,
-                                            quantity);
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Added item to cart!',
-                                            ),
-                                            duration: Duration(seconds: 2),
-                                          ),
-                                        );
-                                      },
+                      Container(
+                        width: constraints.maxWidth * 0.45,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text('\€${widget.product.price.toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: 16)),
+                            IconButton(
+                              icon: Icon(Icons.add_shopping_cart),
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(0),
+                              onPressed: () async {
+                                double quantity = 0;
+                                await showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text('Select quantity'),
+                                    content: TextField(
+                                      controller: myController,
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(
+                                              decimal: true),
                                     ),
-                                    FlatButton(
-                                      child: Text('Cancel'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                                    actions: [
+                                      FlatButton(
+                                        child: Text('Okay'),
+                                        onPressed: () {
+                                          quantity =
+                                              double.parse(myController.text);
+                                          Navigator.of(context).pop();
+                                          user.updateOrCreateCartProduct(
+                                              widget.product,
+                                              widget.storeID,
+                                              quantity);
+                                          ScaffoldMessenger.of(context)
+                                              .hideCurrentSnackBar();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Added item to cart!',
+                                              ),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text('Cancel'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

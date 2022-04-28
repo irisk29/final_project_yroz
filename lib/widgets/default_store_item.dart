@@ -183,15 +183,14 @@ class StoreItem extends StatelessWidget {
                     height: constraints.maxHeight * 0.14,
                     child: Column(
                       children: [
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              this.store.name,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Color.fromRGBO(20, 19, 42, 1)),
-                            ),
+                        Text(
+                          this.store.name,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Color.fromRGBO(20, 19, 42, 1),
+                            fontSize: constraints.maxHeight * 0.11,
                           ),
                         ),
                       ],
@@ -199,20 +198,17 @@ class StoreItem extends StatelessWidget {
                   ),
                   Container(
                     height: constraints.maxHeight * 0.09,
-                    width: constraints.maxWidth * 0.9,
+                    width: constraints.maxWidth * 0.95,
                     child: Column(
                       children: [
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              this.store.address,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 10,
-                              ),
-                            ),
+                        Text(
+                          this.store.address,
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: constraints.maxHeight * 0.0725,
                           ),
                         ),
                       ],

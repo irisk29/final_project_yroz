@@ -176,6 +176,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           if (double.tryParse(value) != null) {
                             return 'Product name can not be a number';
                           }
+                          if (value.length > 40) {
+                            return 'Can be max 40 characters long.';
+                          }
                           return null;
                         },
                         onChanged: (_) => _formChanged = true,
@@ -214,13 +217,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           if (double.parse(value) <= 0) {
                             return 'Please enter a number greater than zero.';
                           }
+                          if (double.parse(value).toStringAsFixed(2).length >
+                              9) {
+                            return 'Price too large, please enter a smaller price.';
+                          }
                           return null;
                         },
                         onChanged: (_) => _formChanged = true,
                         onSaved: (value) {
                           _editedProduct = ProductDTO(
                               name: _editedProduct!.name,
-                              price: double.parse(value!),
+                              price: double.parse(
+                                  double.parse(value!).toStringAsFixed(2)),
                               description: _editedProduct!.description,
                               imageUrl: _editedProduct!.imageUrl,
                               id: _editedProduct!.id,
@@ -240,6 +248,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter a description.';
+                          }
+                          if (value.length > 60) {
+                            return 'Can be max 60 characters long.';
                           }
                           return null;
                         },

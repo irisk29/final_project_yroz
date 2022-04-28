@@ -186,38 +186,29 @@ class SecondaryStoreItem extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     height: constraints.maxHeight * 0.1,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              this.store.name + " | " + this.store.address,
-                              style: TextStyle(
-                                  color: Colors.black.withOpacity(0.85)),
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      this.store.name + " | " + this.store.address,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black.withOpacity(0.85),
+                        fontSize: constraints.maxHeight * 0.08,
+                      ),
                     ),
                   ),
                   Container(
                     height: constraints.maxHeight * 0.075,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              this.store.categories.join(', '),
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    width: constraints.maxWidth * 0.95,
+                    child: Text(
+                      this.store.categories.join(', '),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: constraints.maxHeight * 0.06,
+                      ),
                     ),
                   ),
                 ],

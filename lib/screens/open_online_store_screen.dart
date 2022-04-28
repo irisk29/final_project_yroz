@@ -320,8 +320,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                           if (value!.isEmpty) {
                             return 'Please provide a value.';
                           }
-                          if (value.length < 2) {
-                            return 'Should be at least 2 characters long.';
+                          if (value.length > 40) {
+                            return 'Can be max 40 characters long.';
                           }
                           return null;
                         },
@@ -537,7 +537,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(e.name),
+                                Text(e.name, overflow: TextOverflow.ellipsis),
                                 Text(
                                   e.description!,
                                   style: const TextStyle(
@@ -547,7 +547,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
                                   softWrap: true,
-                                  overflow: TextOverflow.fade,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),

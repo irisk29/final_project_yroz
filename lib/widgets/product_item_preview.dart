@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../DTOs/ProductDTO.dart';
@@ -40,25 +42,42 @@ class ProductItemPreview extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            product.name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          product.description != null
-                              ? Text(product.description!,
-                                  style: TextStyle(color: Colors.black54))
-                              : Container(),
-                        ],
+                      Container(
+                        width: constraints.maxWidth * 0.45,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: constraints.maxHeight * 0.125,
+                              ),
+                            ),
+                            product.description != null
+                                ? Text(product.description!,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: constraints.maxHeight * 0.115,
+                                    ))
+                                : Container(),
+                          ],
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('\€${product.price.toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 16))
-                        ],
+                      Container(
+                        width: constraints.maxWidth * 0.45,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text('\€${product.price.toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: 16))
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -72,59 +91,70 @@ class ProductItemPreview extends StatelessWidget {
                       top: constraints.maxHeight * 0.06,
                       bottom: constraints.maxHeight * 0.06),
                   child: FittedBox(
-                    child: product.imageUrl != null &&
-                            product.imageUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: product.imageUrl!,
-                            imageBuilder: (context, imageProvider) => Container(
-                              height: constraints.maxHeight,
-                              width: constraints.maxWidth * 0.45,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                                image: DecorationImage(
-                                    image: imageProvider, fit: BoxFit.cover),
-                              ),
-                            ),
-                            placeholder: (context, url) => Container(
-                              height: constraints.maxHeight,
-                              width: constraints.maxWidth * 0.45,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/placeholder-image.jpeg'),
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              height: constraints.maxHeight,
-                              width: constraints.maxWidth * 0.45,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: FittedBox(
-                                  fit: BoxFit.fill,
-                                  child: Center(
-                                      child: Icon(Icons.error_outline,
-                                          color:
-                                              Theme.of(context).errorColor))),
-                            ),
-                          )
-                        : Container(
+                    child: product.imageFromPhone != null
+                        ? Container(
                             height: constraints.maxHeight,
                             width: constraints.maxWidth * 0.45,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/default_product.png'),
-                                  fit: BoxFit.cover),
-                            ),
-                          ),
+                            child: Image.file(
+                                File(product.imageFromPhone!.path),
+                                fit: BoxFit.cover),
+                          )
+                        : product.imageFromPhone == null &&
+                                product.imageUrl != null &&
+                                product.imageUrl!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: product.imageUrl!,
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  height: constraints.maxHeight,
+                                  width: constraints.maxWidth * 0.45,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
+                                placeholder: (context, url) => Container(
+                                  height: constraints.maxHeight,
+                                  width: constraints.maxWidth * 0.45,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/placeholder-image.jpeg'),
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  height: constraints.maxHeight,
+                                  width: constraints.maxWidth * 0.45,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: FittedBox(
+                                      fit: BoxFit.fill,
+                                      child: Center(
+                                          child: Icon(Icons.error_outline,
+                                              color: Theme.of(context)
+                                                  .errorColor))),
+                                ),
+                              )
+                            : Container(
+                                height: constraints.maxHeight,
+                                width: constraints.maxWidth * 0.45,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/default_product.png'),
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
                     fit: BoxFit.fill,
                   ),
                 ),
