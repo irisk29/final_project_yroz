@@ -208,7 +208,7 @@ class StoreItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.black54,
-                            fontSize: constraints.maxHeight * 0.0725,
+                            fontSize: constraints.maxHeight * 0.07,
                           ),
                         ),
                       ],

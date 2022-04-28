@@ -91,48 +91,16 @@ class _ProductItemState extends State<ProductItem> {
                               alignment: Alignment.center,
                               padding: EdgeInsets.all(0),
                               onPressed: () async {
-                                double quantity = 0;
-                                await showDialog(
-                                  context: context,
-                                  builder: (_) => AlertDialog(
-                                    title: Text('Select quantity'),
-                                    content: TextField(
-                                      controller: myController,
-                                      keyboardType:
-                                          TextInputType.numberWithOptions(
-                                              decimal: true),
+                                user.updateOrCreateCartProduct(
+                                    widget.product, widget.storeID, 1);
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Added item to cart!',
                                     ),
-                                    actions: [
-                                      FlatButton(
-                                        child: Text('Okay'),
-                                        onPressed: () {
-                                          quantity =
-                                              double.parse(myController.text);
-                                          Navigator.of(context).pop();
-                                          user.updateOrCreateCartProduct(
-                                              widget.product,
-                                              widget.storeID,
-                                              quantity);
-                                          ScaffoldMessenger.of(context)
-                                              .hideCurrentSnackBar();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Added item to cart!',
-                                              ),
-                                              duration: Duration(seconds: 2),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      FlatButton(
-                                        child: Text('Cancel'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
+                                    duration: Duration(seconds: 2),
                                   ),
                                 );
                               },

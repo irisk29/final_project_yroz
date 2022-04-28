@@ -163,11 +163,25 @@ class InvoiceScreen extends StatelessWidget {
                                                           .toInt()
                                                           .toString()),
                                                     ),
-                                                    Text("\€" +
-                                                        (product.price *
-                                                                product.amount)
-                                                            .toStringAsFixed(
-                                                                2)),
+                                                    (product.price *
+                                                                    product
+                                                                        .amount)
+                                                                .toStringAsFixed(
+                                                                    2)
+                                                                .length >
+                                                            9
+                                                        ? Text("\€" +
+                                                            (product.price *
+                                                                    product
+                                                                        .amount)
+                                                                .toStringAsExponential(
+                                                                    2))
+                                                        : Text("\€" +
+                                                            (product.price *
+                                                                    product
+                                                                        .amount)
+                                                                .toStringAsFixed(
+                                                                    2)),
                                                   ],
                                                 ),
                                               );
@@ -225,13 +239,26 @@ class InvoiceScreen extends StatelessWidget {
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
-                                              Text(
-                                                  "\€" +
-                                                      creditAmount
-                                                          .toStringAsFixed(2),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold)),
+                                              creditAmount
+                                                          .toStringAsFixed(2)
+                                                          .length >
+                                                      9
+                                                  ? Text(
+                                                      "\€" +
+                                                          creditAmount
+                                                              .toStringAsExponential(
+                                                                  2),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold))
+                                                  : Text(
+                                                      "\€" +
+                                                          creditAmount
+                                                              .toStringAsFixed(
+                                                                  2),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold)),
                                             ],
                                           ),
                                         ),
@@ -247,14 +274,28 @@ class InvoiceScreen extends StatelessWidget {
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold)),
-                                              Text(
-                                                  "\€" +
-                                                      (cashbackAmount +
-                                                              creditAmount)
-                                                          .toStringAsFixed(2),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold)),
+                                              (cashbackAmount + creditAmount)
+                                                          .toStringAsFixed(2)
+                                                          .length >
+                                                      9
+                                                  ? Text(
+                                                      "\€" +
+                                                          (cashbackAmount +
+                                                                  creditAmount)
+                                                              .toStringAsExponential(
+                                                                  2),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold))
+                                                  : Text(
+                                                      "\€" +
+                                                          (cashbackAmount +
+                                                                  creditAmount)
+                                                              .toStringAsFixed(
+                                                                  2),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold)),
                                             ],
                                           ),
                                         ),
