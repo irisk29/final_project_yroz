@@ -112,7 +112,12 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
                                         Expanded(
                                           flex: 3,
                                           child: Text(
-                                            '${product.amount.toInt()} X \€${product.price.toStringAsFixed(2)}',
+                                            product.price
+                                                        .toStringAsFixed(2)
+                                                        .length >
+                                                    9
+                                                ? '${product.amount.toInt()} X \€${product.price.toStringAsExponential(2)}'
+                                                : '${product.amount.toInt()} X \€${product.price.toStringAsFixed(2)}',
                                             textAlign: TextAlign.end,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,

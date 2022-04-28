@@ -242,9 +242,8 @@ class _PaymentCardState extends State<PaymentCard>
                           ),
                           child: Column(
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     "AMOUNT TO PAY",

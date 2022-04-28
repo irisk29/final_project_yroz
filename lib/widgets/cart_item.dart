@@ -137,39 +137,6 @@ class _CartItemState extends State<CartItem> {
               ),
               trailing: Text(
                   'X ${widget.quantity % 1 == 0 ? widget.quantity.toInt() : widget.quantity.toStringAsFixed(2)}'),
-              onLongPress: () async {
-                double quantity = 0;
-                await showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                          title: Text('Select quantity'),
-                          content: TextField(
-                            controller: myController,
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                          ),
-                          actions: [
-                            FlatButton(
-                              child: Text('Okay'),
-                              onPressed: () async {
-                                quantity = double.parse(myController.text);
-                                Navigator.of(context).pop();
-                                // await Provider.of<User>(context, listen: false).updateProductQuantityInBag(widget.product!, widget.storeID, quantity);
-                                // setState(() {
-                                //   widget.quantity = quantity;
-                                //       () => widget.update();
-                                // });
-                              },
-                            ),
-                            FlatButton(
-                              child: Text('Cancel'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        ));
-              },
             ),
           ),
         ),
