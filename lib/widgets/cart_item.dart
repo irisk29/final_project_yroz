@@ -76,11 +76,13 @@ class _CartItemState extends State<CartItem> {
         },
         onDismissed: (direction) async {
           await Provider.of<User>(context, listen: false)
-              .removeProductFromShoppingBag(widget.product!.cartID, widget.storeID);
+              .removeProductFromShoppingBag(
+                  widget.product!.cartID, widget.storeID);
           setState(() {
             () => widget.update();
           });
-          Navigator.pushReplacementNamed(context, CartScreen.routeName, arguments: {'store': widget.storeID});
+          Navigator.pushReplacementNamed(context, CartScreen.routeName,
+              arguments: {'store': widget.storeID});
         },
         child: Card(
           margin: EdgeInsets.symmetric(
@@ -88,18 +90,25 @@ class _CartItemState extends State<CartItem> {
             vertical: deviceSize.height * 0.01,
           ),
           child: Padding(
-            padding: EdgeInsets.only(top: deviceSize.height * 0.01, bottom: deviceSize.height * 0.005),
+            padding: EdgeInsets.only(
+                top: deviceSize.height * 0.01,
+                bottom: deviceSize.height * 0.005),
             child: ListTile(
               leading: CircleAvatar(
                 radius: deviceSize.width * 0.06,
                 child: Padding(
                   padding: EdgeInsets.all(deviceSize.width * 0.01),
                   child: FittedBox(
-                    child: Text('\€${(widget.price * widget.quantity).toStringAsFixed(2)}'),
+                    child: Text(
+                        '\€${(widget.price * widget.quantity).toStringAsFixed(2)}'),
                   ),
                 ),
               ),
-              title: Text(widget.title),
+              title: Text(
+                widget.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               subtitle: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -111,21 +120,23 @@ class _CartItemState extends State<CartItem> {
                       IconButton(
                         icon: Icon(Icons.remove_circle),
                         onPressed: () {
-                          user.decreaseProductQuantityLocally(widget.storeID, widget.product!.cartID);
+                          user.decreaseProductQuantityLocally(
+                              widget.storeID, widget.product!.cartID);
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.add_circle),
                         onPressed: () {
-                          user.addProductToShoppingBagLocally(widget.storeID, widget.product!);
+                          user.addProductToShoppingBagLocally(
+                              widget.storeID, widget.product!);
                         },
                       ),
                     ],
                   ),
                 ],
               ),
-              trailing:
-                  Text('X ${widget.quantity % 1 == 0 ? widget.quantity.toInt() : widget.quantity.toStringAsFixed(2)}'),
+              trailing: Text(
+                  'X ${widget.quantity % 1 == 0 ? widget.quantity.toInt() : widget.quantity.toStringAsFixed(2)}'),
               onLongPress: () async {
                 double quantity = 0;
                 await showDialog(
@@ -134,7 +145,8 @@ class _CartItemState extends State<CartItem> {
                           title: Text('Select quantity'),
                           content: TextField(
                             controller: myController,
-                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
                           ),
                           actions: [
                             FlatButton(

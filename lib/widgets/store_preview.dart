@@ -200,29 +200,6 @@ class _StorePreviewState extends State<StorePreview> {
                       color: Colors.grey,
                     ),
                     title: Text(widget.address),
-                    onTap: () async {
-                      Secret secret =
-                          await SecretLoader(secretPath: "assets/secrets.json")
-                              .load();
-                      var googleGeocoding = GoogleGeocoding(secret.API_KEY);
-                      GeocodingResponse? address = await googleGeocoding
-                          .geocoding
-                          .get(widget.address, []);
-                      if (address != null) {
-                        Place place = Place.fromStore(
-                            widget.title, address, widget.address);
-                        String dest_lat =
-                            place.geometry.location.lat.toString();
-                        String dest_lng =
-                            place.geometry.location.lng.toString();
-                        if (!Platform.isIOS) {
-                          MapsLauncher.launchCoordinates(
-                              double.parse(dest_lat), double.parse(dest_lng));
-                        } else {
-                          MapsLauncher.launchQuery(place.address);
-                        }
-                      }
-                    },
                   ),
                   ListTile(
                     leading: Icon(
@@ -230,10 +207,6 @@ class _StorePreviewState extends State<StorePreview> {
                       color: Colors.grey,
                     ),
                     title: Text(widget.phoneNumber),
-                    onTap: () {
-                      launch("tel://${widget.phoneNumber}");
-                      //open change language
-                    },
                   ),
                   ListTile(
                     title: Text(

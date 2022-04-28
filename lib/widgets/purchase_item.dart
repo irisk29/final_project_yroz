@@ -59,6 +59,8 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
             children: [
               ListTile(
                 title: Text(widget.storeName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(
                     "Credit amount:  \€${creditAmount}\nCash-back amount:  \€${cashBackAmount}\n${purchaseDate}"),
@@ -99,9 +101,23 @@ class _HistoryPurchaseItemState extends State<HistoryPurchaseItem> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       children: [
-                                        Text(product.name),
-                                        Text(
-                                            '${product.amount.toInt()} X \€${product.price.toStringAsFixed(2)}'),
+                                        Expanded(
+                                          flex: 7,
+                                          child: Text(
+                                            product.name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            '${product.amount.toInt()} X \€${product.price.toStringAsFixed(2)}',
+                                            textAlign: TextAlign.end,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   );

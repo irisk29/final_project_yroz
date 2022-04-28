@@ -257,8 +257,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                           if (value!.isEmpty) {
                             return 'Please provide a value.';
                           }
-                          if (value.length < 2) {
-                            return 'Should be at least 2 characters long.';
+                          if (value.length > 40) {
+                            return 'Can be max 40 characters long.';
                           }
                           return null;
                         },
