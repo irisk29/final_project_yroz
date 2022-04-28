@@ -69,7 +69,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
   Future<void> _authenticate(AuthProvider authProvider) async {
     setState(() => _isLoading = true);
     var res = await Provider.of<User>(context, listen: false).signIn(authProvider, context);
-    if (!res.getTag()) {
+    if (!res.getTag() && res.getValue() == null) {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(

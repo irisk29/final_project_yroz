@@ -126,9 +126,10 @@ class User extends ChangeNotifier {
         }
       } else {
         //becuase we do not allow 2 devices at the same time for 1 user, the social login succeeds, but our app
-        //regects the authentication, therefore we need to sign out the user from the social network
+        //rejects the authentication, therefore we need to sign out the user from the social network
         await Amplify.Auth.signOut(options: SignOutOptions(globalSignOut: true));
-        return new Failure("You are already logged-in in another device, please sign out.");
+        if (currUser.item2) return new Failure("You are already logged-in in another device, please sign out.");
+        return new Failure("", 1);
       }
       notifyListeners();
       Navigator.of(context).pushNamed(TabsScreen.routeName);
