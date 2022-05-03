@@ -106,7 +106,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                 actions: [
                   IconButton(
                     icon: Icon(
-                      IconData(0xf04b7, fontFamily: 'MaterialIcons'),
+                      Icons.add_card
                     ),
                     onPressed: () async {
                       bool? res = await Navigator.of(context)
