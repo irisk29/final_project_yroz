@@ -648,9 +648,10 @@ class User extends ChangeNotifier {
       }
       this.eWalletBalance = await getEWalletBalance();
       await clearShoppingBagInStore(shoppingBagDTO.onlineStoreID);
+      //
       await PurchaseStorageProxy()
           .savePurchase(res.getValue()!, this.id!, shoppingBagDTO.onlineStoreID, shoppingBagDTO.products);
-      return new Ok("Purchase was succsseful", res.getValue());
+      return new Ok("Purchase was successful", res.getValue());
     } on Exception catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return Failure("Something went wrong, please try again later...");
