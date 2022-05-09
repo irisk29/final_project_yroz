@@ -2,10 +2,8 @@
     package="com.yroz.yroz">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <queries>
@@ -33,6 +31,7 @@
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
@@ -62,7 +61,8 @@
             </intent-filter>
         </activity>
        <activity
-               android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity">
+               android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"
+               android:exported="false">
            <intent-filter>
                <action android:name="android.intent.action.VIEW" />
                <category android:name="android.intent.category.DEFAULT" />
@@ -80,5 +80,6 @@
 
             android:name="flutterEmbedding"
             android:value="2" />
+
     </application>
 </manifest>
