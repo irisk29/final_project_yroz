@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:final_project_yroz/LogicLayer/ConnectivityProvider.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/screens/auth_screen.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
@@ -82,10 +80,7 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (context) => User.withNull(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ConnectivityProvider(),
-        ),
+        )
       ],
       child: MaterialApp(
         builder: (context, child) {
