@@ -28,7 +28,8 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
     User user = Provider.of<User>(context, listen: false);
     final start = DateFormat('yyyy/MM/dd hh:mm:ss').parse('2022/1/1 10:00:00');
     final end = DateTime.now();
-    final purchases = await user.getSuccssefulPurchaseHistoryForUserInRange(start, end);
+    final purchases =
+        await user.getSuccssefulPurchaseHistoryForUserInRange(start, end);
     List<Tuple2<String, PurchaseHistoryDTO>> purchaseTuples = [];
     for (var purchase in purchases) {
       var res = await StoreStorageProxy().getStoreNameByID(purchase.storeID);
@@ -61,17 +62,20 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
       body: FutureBuilder(
         future: _purchasesFuture,
         builder: (BuildContext context, AsyncSnapshot snap) {
-          if (snap.connectionState != ConnectionState.done) return Center(child: CircularProgressIndicator());
+          if (snap.connectionState != ConnectionState.done)
+            return Center(child: CircularProgressIndicator());
           if (snap.data.length > 0) {
-            (snap.data as List<Tuple2<String, PurchaseHistoryDTO>>)
-                .sort((p1, p2) => p1.item2.purchaseDate.compareTo(p2.item2.purchaseDate));
+            (snap.data as List<Tuple2<String, PurchaseHistoryDTO>>).sort(
+                (p1, p2) =>
+                    p1.item2.purchaseDate.compareTo(p2.item2.purchaseDate));
             return Padding(
               padding: EdgeInsets.only(top: deviceSize.height * 0.01),
               child: ListView.builder(
                   scrollDirection: Axis.vertical,
                   itemCount: snap.data.length,
                   itemBuilder: (context, index) => HistoryPurchaseItem(
-                      snap.data[snap.data.length - index - 1].item2, snap.data[snap.data.length - index - 1].item1)),
+                      snap.data[snap.data.length - index - 1].item2,
+                      snap.data[snap.data.length - index - 1].item1)),
             );
           }
           return Container(
@@ -91,7 +95,9 @@ class _UserPurchasesScreenState extends State<UserPurchasesScreen> {
                 ),
                 Padding(
                   padding: EdgeInsets.all(deviceSize.height * 0.01),
-                  child: Text("Latest Purchases", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: Text("Latest Purchases",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
                 Text("No Purchases made yet"),
               ],

@@ -22,7 +22,6 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
-
 /** This is an auto generated class representing the PurchaseHistoryModel type in your schema. */
 @immutable
 class PurchaseHistoryModel extends Model {
@@ -38,93 +37,114 @@ class PurchaseHistoryModel extends Model {
 
   @override
   getInstanceType() => classType;
-  
+
   @override
   String getId() {
     return id;
   }
-  
+
   TemporalDateTime get date {
     try {
       return _date!;
-    } catch(e) {
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   String get transactionID {
     try {
       return _transactionID!;
-    } catch(e) {
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   String? get products {
     return _products;
   }
-  
+
   String? get userID {
     return _userID;
   }
-  
+
   String? get storeID {
     return _storeID;
   }
-  
+
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
-  
+
   TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-  
-  const PurchaseHistoryModel._internal({required this.id, required date, required transactionID, products, userID, storeID, createdAt, updatedAt}): _date = date, _transactionID = transactionID, _products = products, _userID = userID, _storeID = storeID, _createdAt = createdAt, _updatedAt = updatedAt;
-  
-  factory PurchaseHistoryModel({String? id, required TemporalDateTime date, required String transactionID, String? products, String? userID, String? storeID}) {
+
+  const PurchaseHistoryModel._internal(
+      {required this.id,
+      required date,
+      required transactionID,
+      products,
+      userID,
+      storeID,
+      createdAt,
+      updatedAt})
+      : _date = date,
+        _transactionID = transactionID,
+        _products = products,
+        _userID = userID,
+        _storeID = storeID,
+        _createdAt = createdAt,
+        _updatedAt = updatedAt;
+
+  factory PurchaseHistoryModel(
+      {String? id,
+      required TemporalDateTime date,
+      required String transactionID,
+      String? products,
+      String? userID,
+      String? storeID}) {
     return PurchaseHistoryModel._internal(
-      id: id == null ? UUID.getUUID() : id,
-      date: date,
-      transactionID: transactionID,
-      products: products,
-      userID: userID,
-      storeID: storeID);
+        id: id == null ? UUID.getUUID() : id,
+        date: date,
+        transactionID: transactionID,
+        products: products,
+        userID: userID,
+        storeID: storeID);
   }
-  
+
   bool equals(Object other) {
     return this == other;
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is PurchaseHistoryModel &&
-      id == other.id &&
-      _date == other._date &&
-      _transactionID == other._transactionID &&
-      _products == other._products &&
-      _userID == other._userID &&
-      _storeID == other._storeID;
+        id == other.id &&
+        _date == other._date &&
+        _transactionID == other._transactionID &&
+        _products == other._products &&
+        _userID == other._userID &&
+        _storeID == other._storeID;
   }
-  
+
   @override
   int get hashCode => toString().hashCode;
-  
+
   @override
   String toString() {
     var buffer = new StringBuffer();
-    
+
     buffer.write("PurchaseHistoryModel {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("date=" + (_date != null ? _date!.format() : "null") + ", ");
@@ -132,109 +152,124 @@ class PurchaseHistoryModel extends Model {
     buffer.write("products=" + "$_products" + ", ");
     buffer.write("userID=" + "$_userID" + ", ");
     buffer.write("storeID=" + "$_storeID" + ", ");
-    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("createdAt=" +
+        (_createdAt != null ? _createdAt!.format() : "null") +
+        ", ");
+    buffer.write(
+        "updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-    
+
     return buffer.toString();
   }
-  
-  PurchaseHistoryModel copyWith({String? id, TemporalDateTime? date, String? transactionID, String? products, String? userID, String? storeID}) {
+
+  PurchaseHistoryModel copyWith(
+      {String? id,
+      TemporalDateTime? date,
+      String? transactionID,
+      String? products,
+      String? userID,
+      String? storeID}) {
     return PurchaseHistoryModel._internal(
-      id: id ?? this.id,
-      date: date ?? this.date,
-      transactionID: transactionID ?? this.transactionID,
-      products: products ?? this.products,
-      userID: userID ?? this.userID,
-      storeID: storeID ?? this.storeID);
+        id: id ?? this.id,
+        date: date ?? this.date,
+        transactionID: transactionID ?? this.transactionID,
+        products: products ?? this.products,
+        userID: userID ?? this.userID,
+        storeID: storeID ?? this.storeID);
   }
-  
-  PurchaseHistoryModel.fromJson(Map<String, dynamic> json)  
-    : id = json['id'],
-      _date = json['date'] != null ? TemporalDateTime.fromString(json['date']) : null,
-      _transactionID = json['transactionID'],
-      _products = json['products'],
-      _userID = json['userID'],
-      _storeID = json['storeID'],
-      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
-  
+
+  PurchaseHistoryModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        _date = json['date'] != null
+            ? TemporalDateTime.fromString(json['date'])
+            : null,
+        _transactionID = json['transactionID'],
+        _products = json['products'],
+        _userID = json['userID'],
+        _storeID = json['storeID'],
+        _createdAt = json['createdAt'] != null
+            ? TemporalDateTime.fromString(json['createdAt'])
+            : null,
+        _updatedAt = json['updatedAt'] != null
+            ? TemporalDateTime.fromString(json['updatedAt'])
+            : null;
+
   Map<String, dynamic> toJson() => {
-    'id': id, 'date': _date?.format(), 'transactionID': _transactionID, 'products': _products, 'userID': _userID, 'storeID': _storeID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
-  };
+        'id': id,
+        'date': _date?.format(),
+        'transactionID': _transactionID,
+        'products': _products,
+        'userID': _userID,
+        'storeID': _storeID,
+        'createdAt': _createdAt?.format(),
+        'updatedAt': _updatedAt?.format()
+      };
 
   static final QueryField ID = QueryField(fieldName: "purchaseHistoryModel.id");
   static final QueryField DATE = QueryField(fieldName: "date");
-  static final QueryField TRANSACTIONID = QueryField(fieldName: "transactionID");
+  static final QueryField TRANSACTIONID =
+      QueryField(fieldName: "transactionID");
   static final QueryField PRODUCTS = QueryField(fieldName: "products");
   static final QueryField USERID = QueryField(fieldName: "userID");
   static final QueryField STOREID = QueryField(fieldName: "storeID");
-  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+  static var schema =
+      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "PurchaseHistoryModel";
     modelSchemaDefinition.pluralName = "PurchaseHistoryModels";
-    
+
     modelSchemaDefinition.authRules = [
-      AuthRule(
-        authStrategy: AuthStrategy.PUBLIC,
-        operations: [
-          ModelOperation.CREATE,
-          ModelOperation.UPDATE,
-          ModelOperation.DELETE,
-          ModelOperation.READ
-        ])
+      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
+        ModelOperation.CREATE,
+        ModelOperation.UPDATE,
+        ModelOperation.DELETE,
+        ModelOperation.READ
+      ])
     ];
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: PurchaseHistoryModel.DATE,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        key: PurchaseHistoryModel.DATE,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: PurchaseHistoryModel.TRANSACTIONID,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: PurchaseHistoryModel.TRANSACTIONID,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: PurchaseHistoryModel.PRODUCTS,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: PurchaseHistoryModel.PRODUCTS,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: PurchaseHistoryModel.USERID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: PurchaseHistoryModel.USERID,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: PurchaseHistoryModel.STOREID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: PurchaseHistoryModel.STOREID,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'createdAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        fieldName: 'createdAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'updatedAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
+        fieldName: 'updatedAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
   });
 }
 
 class _PurchaseHistoryModelModelType extends ModelType<PurchaseHistoryModel> {
   const _PurchaseHistoryModelModelType();
-  
+
   @override
   PurchaseHistoryModel fromJson(Map<String, dynamic> jsonData) {
     return PurchaseHistoryModel.fromJson(jsonData);

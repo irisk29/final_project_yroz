@@ -36,7 +36,11 @@ class Place {
   final String? vicinity;
   final String address;
 
-  Place({required this.geometry, required this.name, this.vicinity, required this.address});
+  Place(
+      {required this.geometry,
+      required this.name,
+      this.vicinity,
+      required this.address});
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
@@ -47,12 +51,13 @@ class Place {
     );
   }
 
-  factory Place.fromStore(String name, geo.GeocodingResponse address, String add) {
+  factory Place.fromStore(
+      String name, geo.GeocodingResponse address, String add) {
     return Place(
-      geometry: Geometry.fromLocation(address.results!.first.geometry!.location!),
-      name: name,
-      vicinity: add,
-      address: address.results!.first.formattedAddress!
-    );
+        geometry:
+            Geometry.fromLocation(address.results!.first.geometry!.location!),
+        name: name,
+        vicinity: add,
+        address: address.results!.first.formattedAddress!);
   }
 }

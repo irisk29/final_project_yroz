@@ -23,10 +23,8 @@ class SecondaryStoreItem extends StatelessWidget {
       ),
       backgroundColor: Theme.of(ctx).primaryColor,
       behavior: SnackBarBehavior.floating,
-      content: const Text(
-          'You chose your store, you can see how other users see it using "View My Store" option',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black87)),
+      content: const Text('You chose your store, you can see how other users see it using "View My Store" option',
+          textAlign: TextAlign.center, style: TextStyle(color: Colors.black87)),
       width: MediaQuery.of(ctx).size.width * 0.8,
     );
     ScaffoldMessenger.of(ctx).showSnackBar(snackBar);
@@ -93,8 +91,7 @@ class SecondaryStoreItem extends StatelessWidget {
                             offset: new Offset(10.0, 0.0),
                           ),
                         ],
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
+                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                       ),
                     ),
                     placeholder: (context, url) => Container(
@@ -115,9 +112,7 @@ class SecondaryStoreItem extends StatelessWidget {
                           ),
                         ],
                         image: DecorationImage(
-                            image: AssetImage(
-                                'assets/images/placeholder-image.jpeg'),
-                            fit: BoxFit.cover),
+                            image: AssetImage('assets/images/placeholder-image.jpeg'), fit: BoxFit.cover),
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
@@ -163,9 +158,7 @@ class SecondaryStoreItem extends StatelessWidget {
                           offset: new Offset(10.0, 0.0),
                         ),
                       ],
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/default-store.png'),
-                          fit: BoxFit.cover),
+                      image: DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                     ),
                   ),
           ),
@@ -176,9 +169,7 @@ class SecondaryStoreItem extends StatelessWidget {
               width: constraints.maxWidth,
               decoration: BoxDecoration(
                 color: Color.fromRGBO(255, 255, 255, 1),
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(20.0),
-                    bottomLeft: Radius.circular(20.0)),
+                borderRadius: BorderRadius.only(bottomRight: Radius.circular(20.0), bottomLeft: Radius.circular(20.0)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -36,7 +36,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     widget.userEmail = routeArgs['email'] as String;
     widget.isStoreOwner = routeArgs['isStoreOwner'] as bool;
     super.didChangeDependencies();
@@ -53,10 +54,12 @@ class _FeedBackScreen extends State<FeedBackScreen> {
     setState(() => _isLoading = true);
 
     String finalText = "";
-    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    Secret secret =
+        await SecretLoader(secretPath: "assets/secrets.json").load();
 
     for (Tuple2<int, int> item in _ratings) {
-      finalText += "Question: ${questions[item.item1]}\nRating: ${item.item2}\n\n";
+      finalText +=
+          "Question: ${questions[item.item1]}\nRating: ${item.item2}\n\n";
     }
     String freeText = _textEditingController.text;
     if (freeText.isNotEmpty) {
@@ -66,8 +69,11 @@ class _FeedBackScreen extends State<FeedBackScreen> {
     String companyEmail = secret.COMPANY_EMAIL;
     String subject = "FeedBack From User ${widget.userEmail}";
     print(companyEmail);
-    final MailOptions mailOptions =
-        MailOptions(body: finalText, subject: subject, recipients: [companyEmail], isHTML: false);
+    final MailOptions mailOptions = MailOptions(
+        body: finalText,
+        subject: subject,
+        recipients: [companyEmail],
+        isHTML: false);
 
     await FlutterMailer.send(mailOptions);
 
@@ -75,7 +81,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
 
     //android -> isAppInstalled will return false in IOS
     const GMAIL_SCHEMA = 'com.google.android.gm';
-    final bool gmailinstalled = await FlutterMailer.isAppInstalled(GMAIL_SCHEMA);
+    final bool gmailinstalled =
+        await FlutterMailer.isAppInstalled(GMAIL_SCHEMA);
     print("gmail: $gmailinstalled");
     if (gmailinstalled) {
       final MailerResponse response = await FlutterMailer.send(mailOptions);
@@ -86,7 +93,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
             borderRadius: BorderRadius.circular(10.0),
           ),
           behavior: SnackBarBehavior.floating,
-          content: const Text('Mail sent successfully', textAlign: TextAlign.center),
+          content:
+              const Text('Mail sent successfully', textAlign: TextAlign.center),
           width: MediaQuery.of(context).size.width * 0.5,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -107,7 +115,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
             backgroundColor: Theme.of(context).primaryColor,
             behavior: SnackBarBehavior.floating,
             content: const Text('Thank you for your feedback!',
-                textAlign: TextAlign.center, style: TextStyle(color: Colors.black87)),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black87)),
             width: MediaQuery.of(context).size.width * 0.75,
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -180,7 +189,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
             ? Align(
                 alignment: Alignment.center,
                 child: ListView(
-                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   children: [
                     Center(
                       child: SizedBox(
@@ -192,7 +202,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                             CircularProgressIndicator(),
                             Container(
                               width: deviceSize.width * 0.6,
-                              child: Text("We are sending your feedback to us, it might take a few seconds...",
+                              child: Text(
+                                  "We are sending your feedback to us, it might take a few seconds...",
                                   textAlign: TextAlign.center),
                             )
                           ],
@@ -207,19 +218,25 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                   child: SizedBox(
                     height: deviceSize.height * 0.85,
                     child: Padding(
-                      padding: EdgeInsets.only(left: deviceSize.width * 0.05, right: deviceSize.width * 0.05),
+                      padding: EdgeInsets.only(
+                          left: deviceSize.width * 0.05,
+                          right: deviceSize.width * 0.05),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text("Please Rate the Following Aspects:",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(bottom: deviceSize.height * 0.015),
-                                child: Text(questions[0], textAlign: TextAlign.left),
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[0],
+                                    textAlign: TextAlign.left),
                               ),
                               Center(child: _ratingBar(0)),
                             ],
@@ -228,8 +245,10 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(bottom: deviceSize.height * 0.015),
-                                child: Text(questions[1], textAlign: TextAlign.left),
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[1],
+                                    textAlign: TextAlign.left),
                               ),
                               Center(child: _ratingBar(1)),
                             ],
@@ -238,8 +257,10 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(bottom: deviceSize.height * 0.015),
-                                child: Text(questions[2], textAlign: TextAlign.left),
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[2],
+                                    textAlign: TextAlign.left),
                               ),
                               Center(child: _ratingBar(2)),
                             ],
@@ -248,8 +269,10 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(bottom: deviceSize.height * 0.015),
-                                child: Text(questions[3], textAlign: TextAlign.left),
+                                padding: EdgeInsets.only(
+                                    bottom: deviceSize.height * 0.015),
+                                child: Text(questions[3],
+                                    textAlign: TextAlign.left),
                               ),
                               Center(child: _ratingBar(3)),
                             ],
@@ -259,8 +282,10 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(bottom: deviceSize.height * 0.015),
-                                  child: Text(questions[4], textAlign: TextAlign.left),
+                                  padding: EdgeInsets.only(
+                                      bottom: deviceSize.height * 0.015),
+                                  child: Text(questions[4],
+                                      textAlign: TextAlign.left),
                                 ),
                                 Center(child: _ratingBar(4)),
                               ],
@@ -268,7 +293,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                           if (_showError)
                             Text(
                               "Please fill at least one field",
-                              style: TextStyle(color: Theme.of(context).errorColor),
+                              style: TextStyle(
+                                  color: Theme.of(context).errorColor),
                             ),
                           TextField(
                             controller: _textEditingController,
@@ -278,7 +304,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                               hintText: 'Please tell us more',
                               hintStyle: TextStyle(color: Colors.grey),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0)),
                               ),
                             ),
                           ),
@@ -299,7 +326,8 @@ class _FeedBackScreen extends State<FeedBackScreen> {
                               ),
                             ),
                             onPressed: () async {
-                              if (_ratings.isEmpty && _textEditingController.text.isEmpty) {
+                              if (_ratings.isEmpty &&
+                                  _textEditingController.text.isEmpty) {
                                 setState(() => _showError = true);
                                 return;
                               }

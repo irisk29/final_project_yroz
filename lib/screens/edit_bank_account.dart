@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/widgets/bank_account_form.dart';
+import 'package:final_project_yroz/widgets/snake_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,19 +48,7 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
           setState(() {
             _isLoading = false;
           });
-          SnackBar snackBar = SnackBar(
-            duration: Duration(seconds: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            backgroundColor: Theme.of(context).primaryColor,
-            behavior: SnackBarBehavior.floating,
-            content: const Text('Saved Bank Account Successfully!',
-                textAlign: TextAlign.center, style: TextStyle(color: Colors.black87)),
-            width: MediaQuery.of(context).size.width * 0.75,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.of(context).pop();
+          showSnackBar(context, 'Saved Bank Account Successfully!');
         } else {
           await showDialog(
             context: context,

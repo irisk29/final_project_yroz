@@ -105,9 +105,7 @@ class _CreditCardsScreenScreenState extends State<CreditCardsScreen> {
                 ),
                 actions: [
                   IconButton(
-                    icon: Icon(
-                      Icons.add_card
-                    ),
+                    icon: Icon(Icons.add_card),
                     onPressed: () async {
                       bool? res = await Navigator.of(context)
                           .pushNamed(AddCreditCardScreen.routeName) as bool?;

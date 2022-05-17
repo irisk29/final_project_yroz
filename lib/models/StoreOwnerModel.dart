@@ -23,7 +23,6 @@ import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
-
 /** This is an auto generated class representing the StoreOwnerModel type in your schema. */
 @immutable
 class StoreOwnerModel extends Model {
@@ -40,209 +39,273 @@ class StoreOwnerModel extends Model {
 
   @override
   getInstanceType() => classType;
-  
+
   @override
   String getId() {
     return id;
   }
-  
+
   OnlineStoreModel? get onlineStoreModel {
     return _onlineStoreModel;
   }
-  
+
   PhysicalStoreModel? get physicalStoreModel {
     return _physicalStoreModel;
   }
-  
+
   String? get bankAccountToken {
     return _bankAccountToken;
   }
-  
+
   TemporalDateTime? get lastPurchasesView {
     return _lastPurchasesView;
   }
-  
+
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
-  
+
   TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-  
+
   String? get storeOwnerModelOnlineStoreModelId {
     return _storeOwnerModelOnlineStoreModelId;
   }
-  
+
   String? get storeOwnerModelPhysicalStoreModelId {
     return _storeOwnerModelPhysicalStoreModelId;
   }
-  
-  const StoreOwnerModel._internal({required this.id, onlineStoreModel, physicalStoreModel, bankAccountToken, lastPurchasesView, createdAt, updatedAt, storeOwnerModelOnlineStoreModelId, storeOwnerModelPhysicalStoreModelId}): _onlineStoreModel = onlineStoreModel, _physicalStoreModel = physicalStoreModel, _bankAccountToken = bankAccountToken, _lastPurchasesView = lastPurchasesView, _createdAt = createdAt, _updatedAt = updatedAt, _storeOwnerModelOnlineStoreModelId = storeOwnerModelOnlineStoreModelId, _storeOwnerModelPhysicalStoreModelId = storeOwnerModelPhysicalStoreModelId;
-  
-  factory StoreOwnerModel({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? bankAccountToken, TemporalDateTime? lastPurchasesView, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
+
+  const StoreOwnerModel._internal(
+      {required this.id,
+      onlineStoreModel,
+      physicalStoreModel,
+      bankAccountToken,
+      lastPurchasesView,
+      createdAt,
+      updatedAt,
+      storeOwnerModelOnlineStoreModelId,
+      storeOwnerModelPhysicalStoreModelId})
+      : _onlineStoreModel = onlineStoreModel,
+        _physicalStoreModel = physicalStoreModel,
+        _bankAccountToken = bankAccountToken,
+        _lastPurchasesView = lastPurchasesView,
+        _createdAt = createdAt,
+        _updatedAt = updatedAt,
+        _storeOwnerModelOnlineStoreModelId = storeOwnerModelOnlineStoreModelId,
+        _storeOwnerModelPhysicalStoreModelId =
+            storeOwnerModelPhysicalStoreModelId;
+
+  factory StoreOwnerModel(
+      {String? id,
+      OnlineStoreModel? onlineStoreModel,
+      PhysicalStoreModel? physicalStoreModel,
+      String? bankAccountToken,
+      TemporalDateTime? lastPurchasesView,
+      String? storeOwnerModelOnlineStoreModelId,
+      String? storeOwnerModelPhysicalStoreModelId}) {
     return StoreOwnerModel._internal(
-      id: id == null ? UUID.getUUID() : id,
-      onlineStoreModel: onlineStoreModel,
-      physicalStoreModel: physicalStoreModel,
-      bankAccountToken: bankAccountToken,
-      lastPurchasesView: lastPurchasesView,
-      storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId,
-      storeOwnerModelPhysicalStoreModelId: storeOwnerModelPhysicalStoreModelId);
+        id: id == null ? UUID.getUUID() : id,
+        onlineStoreModel: onlineStoreModel,
+        physicalStoreModel: physicalStoreModel,
+        bankAccountToken: bankAccountToken,
+        lastPurchasesView: lastPurchasesView,
+        storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId,
+        storeOwnerModelPhysicalStoreModelId:
+            storeOwnerModelPhysicalStoreModelId);
   }
-  
+
   bool equals(Object other) {
     return this == other;
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is StoreOwnerModel &&
-      id == other.id &&
-      _onlineStoreModel == other._onlineStoreModel &&
-      _physicalStoreModel == other._physicalStoreModel &&
-      _bankAccountToken == other._bankAccountToken &&
-      _lastPurchasesView == other._lastPurchasesView &&
-      _storeOwnerModelOnlineStoreModelId == other._storeOwnerModelOnlineStoreModelId &&
-      _storeOwnerModelPhysicalStoreModelId == other._storeOwnerModelPhysicalStoreModelId;
+        id == other.id &&
+        _onlineStoreModel == other._onlineStoreModel &&
+        _physicalStoreModel == other._physicalStoreModel &&
+        _bankAccountToken == other._bankAccountToken &&
+        _lastPurchasesView == other._lastPurchasesView &&
+        _storeOwnerModelOnlineStoreModelId ==
+            other._storeOwnerModelOnlineStoreModelId &&
+        _storeOwnerModelPhysicalStoreModelId ==
+            other._storeOwnerModelPhysicalStoreModelId;
   }
-  
+
   @override
   int get hashCode => toString().hashCode;
-  
+
   @override
   String toString() {
     var buffer = new StringBuffer();
-    
+
     buffer.write("StoreOwnerModel {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("bankAccountToken=" + "$_bankAccountToken" + ", ");
-    buffer.write("lastPurchasesView=" + (_lastPurchasesView != null ? _lastPurchasesView!.format() : "null") + ", ");
-    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
-    buffer.write("storeOwnerModelOnlineStoreModelId=" + "$_storeOwnerModelOnlineStoreModelId" + ", ");
-    buffer.write("storeOwnerModelPhysicalStoreModelId=" + "$_storeOwnerModelPhysicalStoreModelId");
+    buffer.write("lastPurchasesView=" +
+        (_lastPurchasesView != null ? _lastPurchasesView!.format() : "null") +
+        ", ");
+    buffer.write("createdAt=" +
+        (_createdAt != null ? _createdAt!.format() : "null") +
+        ", ");
+    buffer.write("updatedAt=" +
+        (_updatedAt != null ? _updatedAt!.format() : "null") +
+        ", ");
+    buffer.write("storeOwnerModelOnlineStoreModelId=" +
+        "$_storeOwnerModelOnlineStoreModelId" +
+        ", ");
+    buffer.write("storeOwnerModelPhysicalStoreModelId=" +
+        "$_storeOwnerModelPhysicalStoreModelId");
     buffer.write("}");
-    
+
     return buffer.toString();
   }
-  
-  StoreOwnerModel copyWith({String? id, OnlineStoreModel? onlineStoreModel, PhysicalStoreModel? physicalStoreModel, String? bankAccountToken, TemporalDateTime? lastPurchasesView, String? storeOwnerModelOnlineStoreModelId, String? storeOwnerModelPhysicalStoreModelId}) {
+
+  StoreOwnerModel copyWith(
+      {String? id,
+      OnlineStoreModel? onlineStoreModel,
+      PhysicalStoreModel? physicalStoreModel,
+      String? bankAccountToken,
+      TemporalDateTime? lastPurchasesView,
+      String? storeOwnerModelOnlineStoreModelId,
+      String? storeOwnerModelPhysicalStoreModelId}) {
     return StoreOwnerModel._internal(
-      id: id ?? this.id,
-      onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
-      physicalStoreModel: physicalStoreModel ?? this.physicalStoreModel,
-      bankAccountToken: bankAccountToken ?? this.bankAccountToken,
-      lastPurchasesView: lastPurchasesView ?? this.lastPurchasesView,
-      storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId ?? this.storeOwnerModelOnlineStoreModelId,
-      storeOwnerModelPhysicalStoreModelId: storeOwnerModelPhysicalStoreModelId ?? this.storeOwnerModelPhysicalStoreModelId);
+        id: id ?? this.id,
+        onlineStoreModel: onlineStoreModel ?? this.onlineStoreModel,
+        physicalStoreModel: physicalStoreModel ?? this.physicalStoreModel,
+        bankAccountToken: bankAccountToken ?? this.bankAccountToken,
+        lastPurchasesView: lastPurchasesView ?? this.lastPurchasesView,
+        storeOwnerModelOnlineStoreModelId: storeOwnerModelOnlineStoreModelId ??
+            this.storeOwnerModelOnlineStoreModelId,
+        storeOwnerModelPhysicalStoreModelId:
+            storeOwnerModelPhysicalStoreModelId ??
+                this.storeOwnerModelPhysicalStoreModelId);
   }
-  
-  StoreOwnerModel.fromJson(Map<String, dynamic> json)  
-    : id = json['id'],
-      _onlineStoreModel = json['onlineStoreModel']?['serializedData'] != null
-        ? OnlineStoreModel.fromJson(new Map<String, dynamic>.from(json['onlineStoreModel']['serializedData']))
-        : null,
-      _physicalStoreModel = json['physicalStoreModel']?['serializedData'] != null
-        ? PhysicalStoreModel.fromJson(new Map<String, dynamic>.from(json['physicalStoreModel']['serializedData']))
-        : null,
-      _bankAccountToken = json['bankAccountToken'],
-      _lastPurchasesView = json['lastPurchasesView'] != null ? TemporalDateTime.fromString(json['lastPurchasesView']) : null,
-      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
-      _storeOwnerModelOnlineStoreModelId = json['storeOwnerModelOnlineStoreModelId'],
-      _storeOwnerModelPhysicalStoreModelId = json['storeOwnerModelPhysicalStoreModelId'];
-  
+
+  StoreOwnerModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        _onlineStoreModel = json['onlineStoreModel']?['serializedData'] != null
+            ? OnlineStoreModel.fromJson(new Map<String, dynamic>.from(
+                json['onlineStoreModel']['serializedData']))
+            : null,
+        _physicalStoreModel =
+            json['physicalStoreModel']?['serializedData'] != null
+                ? PhysicalStoreModel.fromJson(new Map<String, dynamic>.from(
+                    json['physicalStoreModel']['serializedData']))
+                : null,
+        _bankAccountToken = json['bankAccountToken'],
+        _lastPurchasesView = json['lastPurchasesView'] != null
+            ? TemporalDateTime.fromString(json['lastPurchasesView'])
+            : null,
+        _createdAt = json['createdAt'] != null
+            ? TemporalDateTime.fromString(json['createdAt'])
+            : null,
+        _updatedAt = json['updatedAt'] != null
+            ? TemporalDateTime.fromString(json['updatedAt'])
+            : null,
+        _storeOwnerModelOnlineStoreModelId =
+            json['storeOwnerModelOnlineStoreModelId'],
+        _storeOwnerModelPhysicalStoreModelId =
+            json['storeOwnerModelPhysicalStoreModelId'];
+
   Map<String, dynamic> toJson() => {
-    'id': id, 'onlineStoreModel': _onlineStoreModel?.toJson(), 'physicalStoreModel': _physicalStoreModel?.toJson(), 'bankAccountToken': _bankAccountToken, 'lastPurchasesView': _lastPurchasesView?.format(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'storeOwnerModelOnlineStoreModelId': _storeOwnerModelOnlineStoreModelId, 'storeOwnerModelPhysicalStoreModelId': _storeOwnerModelPhysicalStoreModelId
-  };
+        'id': id,
+        'onlineStoreModel': _onlineStoreModel?.toJson(),
+        'physicalStoreModel': _physicalStoreModel?.toJson(),
+        'bankAccountToken': _bankAccountToken,
+        'lastPurchasesView': _lastPurchasesView?.format(),
+        'createdAt': _createdAt?.format(),
+        'updatedAt': _updatedAt?.format(),
+        'storeOwnerModelOnlineStoreModelId': _storeOwnerModelOnlineStoreModelId,
+        'storeOwnerModelPhysicalStoreModelId':
+            _storeOwnerModelPhysicalStoreModelId
+      };
 
   static final QueryField ID = QueryField(fieldName: "storeOwnerModel.id");
   static final QueryField ONLINESTOREMODEL = QueryField(
-    fieldName: "onlineStoreModel",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (OnlineStoreModel).toString()));
+      fieldName: "onlineStoreModel",
+      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
+          ofModelName: (OnlineStoreModel).toString()));
   static final QueryField PHYSICALSTOREMODEL = QueryField(
-    fieldName: "physicalStoreModel",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (PhysicalStoreModel).toString()));
-  static final QueryField BANKACCOUNTTOKEN = QueryField(fieldName: "bankAccountToken");
-  static final QueryField LASTPURCHASESVIEW = QueryField(fieldName: "lastPurchasesView");
-  static final QueryField STOREOWNERMODELONLINESTOREMODELID = QueryField(fieldName: "storeOwnerModelOnlineStoreModelId");
-  static final QueryField STOREOWNERMODELPHYSICALSTOREMODELID = QueryField(fieldName: "storeOwnerModelPhysicalStoreModelId");
-  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+      fieldName: "physicalStoreModel",
+      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
+          ofModelName: (PhysicalStoreModel).toString()));
+  static final QueryField BANKACCOUNTTOKEN =
+      QueryField(fieldName: "bankAccountToken");
+  static final QueryField LASTPURCHASESVIEW =
+      QueryField(fieldName: "lastPurchasesView");
+  static final QueryField STOREOWNERMODELONLINESTOREMODELID =
+      QueryField(fieldName: "storeOwnerModelOnlineStoreModelId");
+  static final QueryField STOREOWNERMODELPHYSICALSTOREMODELID =
+      QueryField(fieldName: "storeOwnerModelPhysicalStoreModelId");
+  static var schema =
+      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "StoreOwnerModel";
     modelSchemaDefinition.pluralName = "StoreOwnerModels";
-    
+
     modelSchemaDefinition.authRules = [
-      AuthRule(
-        authStrategy: AuthStrategy.PUBLIC,
-        operations: [
-          ModelOperation.CREATE,
-          ModelOperation.UPDATE,
-          ModelOperation.DELETE,
-          ModelOperation.READ
-        ])
+      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
+        ModelOperation.CREATE,
+        ModelOperation.UPDATE,
+        ModelOperation.DELETE,
+        ModelOperation.READ
+      ])
     ];
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-      key: StoreOwnerModel.ONLINESTOREMODEL,
-      isRequired: false,
-      ofModelName: (OnlineStoreModel).toString(),
-      associatedKey: OnlineStoreModel.ID
-    ));
-    
+        key: StoreOwnerModel.ONLINESTOREMODEL,
+        isRequired: false,
+        ofModelName: (OnlineStoreModel).toString(),
+        associatedKey: OnlineStoreModel.ID));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
-      key: StoreOwnerModel.PHYSICALSTOREMODEL,
-      isRequired: false,
-      ofModelName: (PhysicalStoreModel).toString(),
-      associatedKey: PhysicalStoreModel.ID
-    ));
-    
+        key: StoreOwnerModel.PHYSICALSTOREMODEL,
+        isRequired: false,
+        ofModelName: (PhysicalStoreModel).toString(),
+        associatedKey: PhysicalStoreModel.ID));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: StoreOwnerModel.BANKACCOUNTTOKEN,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: StoreOwnerModel.BANKACCOUNTTOKEN,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: StoreOwnerModel.LASTPURCHASESVIEW,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        key: StoreOwnerModel.LASTPURCHASESVIEW,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'createdAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        fieldName: 'createdAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'updatedAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        fieldName: 'updatedAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: StoreOwnerModel.STOREOWNERMODELONLINESTOREMODELID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
+        key: StoreOwnerModel.STOREOWNERMODELONLINESTOREMODELID,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: StoreOwnerModel.STOREOWNERMODELPHYSICALSTOREMODELID,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
+        key: StoreOwnerModel.STOREOWNERMODELPHYSICALSTOREMODELID,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
   });
 }
 
 class _StoreOwnerModelModelType extends ModelType<StoreOwnerModel> {
   const _StoreOwnerModelModelType();
-  
+
   @override
   StoreOwnerModel fromJson(Map<String, dynamic> jsonData) {
     return StoreOwnerModel.fromJson(jsonData);

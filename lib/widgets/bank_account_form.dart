@@ -15,7 +15,11 @@ class BankAccountForm extends StatelessWidget {
   );
   final _bankAccountForm = GlobalKey<FormState>();
 
-  BankAccountForm([this.accountNumber, this.bankName, this.branchNumber, this.callback = null]);
+  BankAccountForm(
+      [this.accountNumber,
+      this.bankName,
+      this.branchNumber,
+      this.callback = null]);
 
   BankAccountDTO? buildBankAccountDTO() {
     if (accountNumber != null && bankName != null && branchNumber != null) {
@@ -27,7 +31,8 @@ class BankAccountForm extends StatelessWidget {
   Future<bool> saveForm(BuildContext context) async {
     if (_bankAccountForm.currentState!.validate()) {
       _bankAccountForm.currentState!.save();
-      final res = await InternalPaymentGateway().validateBankAccount(bankName!, branchNumber!, accountNumber!);
+      final res = await InternalPaymentGateway()
+          .validateBankAccount(bankName!, branchNumber!, accountNumber!);
       if (res.getTag()) return true;
       showDialog(
         context: context,

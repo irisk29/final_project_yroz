@@ -37,7 +37,10 @@ class OnlineStoreDTO extends StoreDTO {
   }
 
   void removeProduct(ProductDTO product) {
-    this.products.removeWhere((element) => element.name==product.name && element.price==product.price && element.description==product.description);
+    this.products.removeWhere((element) =>
+        element.name == product.name &&
+        element.price == product.price &&
+        element.description == product.description);
     ;
   }
 

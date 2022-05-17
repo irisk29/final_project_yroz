@@ -6,10 +6,9 @@ class Category {
   final Color color;
   final AssetImage image;
 
-  const Category({
-    required this.id,
-    required this.title,
-    this.color = Colors.orange,
-    required this.image
-  });
+  const Category(
+      {required this.id,
+      required this.title,
+      this.color = Colors.orange,
+      required this.image});
 }

@@ -6,8 +6,16 @@ class CartProductDTO extends ProductDTO {
   double amount;
   String cartID;
 
-  CartProductDTO(String id, String name, double price, String category, String? imageUrl, String? description,
-      double amount, String storeID, String cartID)
+  CartProductDTO(
+      String id,
+      String name,
+      double price,
+      String category,
+      String? imageUrl,
+      String? description,
+      double amount,
+      String storeID,
+      String cartID)
       : this.amount = amount,
         this.cartID = cartID,
         super(
@@ -41,7 +49,8 @@ class CartProductDTO extends ProductDTO {
             imageUrl: json.containsKey('imageUrl') ? json['imageUrl'] : "",
             description: json['description'],
             storeID: json['storeID'],
-            imageFromPhone: json.containsKey('imageUrl') ? File(json['imageUrl']) : null);
+            imageFromPhone:
+                json.containsKey('imageUrl') ? File(json['imageUrl']) : null);
 
   Map<String, dynamic> toJson() => {
         'id': id,
