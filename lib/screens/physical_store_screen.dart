@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/src/iterable_extensions.dart';
+import 'package:final_project_yroz/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
@@ -31,8 +32,7 @@ class PhysicalStoreScreen extends StatefulWidget {
   _PhysicalStoreScreenState createState() => _PhysicalStoreScreenState();
 
   //for test purposes
-  Widget wrapWithMaterial(
-      List<NavigatorObserver> nav, UserModel user, Map<String, Object> args) {
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user, Map<String, Object> args) {
     args.toString();
     return MaterialApp(
       routes: {
@@ -62,8 +62,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
 
   @override
   void didChangeDependencies() {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as StoreDTO;
     super.didChangeDependencies();
   }
@@ -75,13 +74,11 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
   }
 
   bool opBigger(TimeOfDay me, TimeOfDay other) {
-    return other.hour < me.hour ||
-        other.hour == me.hour && other.minute < me.minute;
+    return other.hour < me.hour || other.hour == me.hour && other.minute < me.minute;
   }
 
   bool opSmaller(TimeOfDay me, TimeOfDay other) {
-    return other.hour > me.hour ||
-        other.hour == me.hour && other.minute > me.minute;
+    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
   }
 
   int isStoreOpen() {
@@ -90,8 +87,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
       if (e.day.toLowerCase() == day) {
         if (e.closed) return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if (opBigger(time, e.operationHours.item1) &&
-            opSmaller(time, e.operationHours.item2)) {
+        if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
           if (lessthanfifteen(e.operationHours.item2, time)) {
             return 1;
           }
@@ -110,10 +106,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
       if (e.closed)
         map = map + "Closed";
       else {
-        map = map +
-            e.operationHours.item1.format(context) +
-            " - " +
-            e.operationHours.item2.format(context);
+        map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
       }
       map = map + '\n';
     }
@@ -157,35 +150,27 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                       imageBuilder: (context, imageProvider) => Container(
                         height: deviceSize.height * 0.35,
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: imageProvider, fit: BoxFit.cover),
+                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                         ),
                       ),
                       placeholder: (context, url) => Container(
                         height: deviceSize.height * 0.35,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/placeholder-image.jpeg'),
-                              fit: BoxFit.cover),
+                              image: AssetImage('assets/images/placeholder-image.jpeg'), fit: BoxFit.cover),
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(
                         height: deviceSize.height * 0.35,
                         child: FittedBox(
                             fit: BoxFit.fill,
-                            child: Center(
-                                child: Icon(Icons.error_outline,
-                                    color: Theme.of(context).errorColor))),
+                            child: Center(child: Icon(Icons.error_outline, color: Theme.of(context).errorColor))),
                       ),
                     )
                   : Container(
                       height: deviceSize.height * 0.35,
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image:
-                                AssetImage('assets/images/default-store.png'),
-                            fit: BoxFit.cover),
+                        image: DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                       ),
                     ),
             ),
@@ -198,20 +183,16 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               onTap: () async {
                 Provider.of<User>(context, listen: false)
                             .favoriteStores
-                            .firstWhereOrNull(
-                                (e) => e.item1 == widget.store.id) ==
+                            .firstWhereOrNull((e) => e.item1 == widget.store.id) ==
                         null
-                    ? await Provider.of<User>(context, listen: false)
-                        .addFavoriteStore(widget.store.id, false)
-                    : await Provider.of<User>(context, listen: false)
-                        .removeFavoriteStore(widget.store.id, false);
+                    ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, false)
+                    : await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, false);
                 setState(() {});
                 //open change language
               },
               trailing: Provider.of<User>(context, listen: false)
                           .favoriteStores
-                          .firstWhereOrNull(
-                              (e) => e.item1 == widget.store.id) !=
+                          .firstWhereOrNull((e) => e.item1 == widget.store.id) !=
                       null
                   ? Icon(
                       Icons.favorite,
@@ -252,20 +233,15 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               ),
               title: Text(widget.store.address),
               onTap: () async {
-                Secret secret =
-                    await SecretLoader(secretPath: "assets/secrets.json")
-                        .load();
+                Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
                 var googleGeocoding = GoogleGeocoding(secret.API_KEY);
-                GeocodingResponse? address = await googleGeocoding.geocoding
-                    .get(widget.store.address, []);
+                GeocodingResponse? address = await googleGeocoding.geocoding.get(widget.store.address, []);
                 if (address != null) {
-                  Place place = Place.fromStore(
-                      widget.store.name, address, widget.store.address);
+                  Place place = Place.fromStore(widget.store.name, address, widget.store.address);
                   String dest_lat = place.geometry.location.lat.toString();
                   String dest_lng = place.geometry.location.lng.toString();
                   if (!Platform.isIOS) {
-                    MapsLauncher.launchCoordinates(
-                        double.parse(dest_lat), double.parse(dest_lng));
+                    MapsLauncher.launchCoordinates(double.parse(dest_lat), double.parse(dest_lng));
                   } else {
                     MapsLauncher.launchQuery(place.address);
                   }
@@ -292,9 +268,7 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
               onTap: null,
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  left: deviceSize.width * 0.02,
-                  right: deviceSize.width * 0.02),
+              padding: EdgeInsets.only(left: deviceSize.width * 0.02, right: deviceSize.width * 0.02),
               child: Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -326,16 +300,14 @@ class _PhysicalStoreScreenState extends State<PhysicalStoreScreen> {
                                     size: 10,
                                   ),
                                 ),
-                                TextSpan(
-                                    text: ' No Expiration Date',
-                                    style: TextStyle(fontSize: 12)),
+                                TextSpan(text: ' No Expiration Date', style: TextStyle(fontSize: 12)),
                               ],
                             ),
                           )
                         ],
                       ),
                       Text(
-                        "7%",
+                        MyApp.CASH_BACK_PRECENTEGE,
                         style: TextStyle(fontSize: 18),
                       ),
                     ],

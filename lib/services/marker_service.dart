@@ -46,14 +46,18 @@ class MarkerService {
         onTap: () async {
           String dest_lat = place.geometry.location.lat.toString();
           String dest_lng = place.geometry.location.lng.toString();
-          String origin_lat = (await GeolocatorService().getCurrentLocation()).latitude.toString();
-          String origin_lng = (await GeolocatorService().getCurrentLocation()).longitude.toString();
-          Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+          String origin_lat = (await GeolocatorService().getCurrentLocation())
+              .latitude
+              .toString();
+          String origin_lng = (await GeolocatorService().getCurrentLocation())
+              .longitude
+              .toString();
+          Secret secret =
+              await SecretLoader(secretPath: "assets/secrets.json").load();
           if (!Platform.isIOS) {
             MapsLauncher.launchCoordinates(
                 double.parse(dest_lat), double.parse(dest_lng));
-          }
-          else {
+          } else {
             MapsLauncher.launchQuery(place.address);
           }
           // String googleUrl = 'https://maps.googleapis.com/maps/api/directions/json?origin=$origin_lat,$origin_lng&destination=$dest_lat,$dest_lng&key=${secret.API_KEY}';
@@ -62,7 +66,6 @@ class MarkerService {
           // } else {
           //   throw 'Could not open the map.';
           // }
-        }
-    );
+        });
   }
 }

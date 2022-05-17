@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:final_project_yroz/LogicLayer/ConnectivityProvider.dart';
 import 'package:final_project_yroz/screens/add_credit_card_screen.dart';
 import 'package:final_project_yroz/screens/auth_screen.dart';
 import 'package:final_project_yroz/screens/barcode_screen.dart';
@@ -14,7 +15,6 @@ import 'package:final_project_yroz/screens/online_store_products_screen.dart';
 import 'package:final_project_yroz/screens/online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_online_store_screen.dart';
 import 'package:final_project_yroz/screens/open_physical_store_screen.dart';
-import 'package:final_project_yroz/screens/physical_payment_screen.dart';
 import 'package:final_project_yroz/screens/physical_store_screen.dart';
 import 'package:final_project_yroz/screens/store_preview_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
@@ -41,6 +41,8 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
+  static String CASH_BACK_PRECENTEGE = '';
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -81,6 +83,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => User.withNull(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ConnectivityProvider(),
+        ),
       ],
       child: MaterialApp(
         builder: (context, child) {
@@ -102,24 +107,20 @@ class _MyAppState extends State<MyApp> {
           TabsScreen.routeName: (ctx) => TabsScreen(),
           EditProductScreen.routeName: (ctx) => EditProductScreen(null),
           CategoryScreen.routeName: (ctx) => CategoryScreen(),
-          OpenPhysicalStorePipeline.routeName: (ctx) =>
-              OpenPhysicalStorePipeline(),
+          OpenPhysicalStorePipeline.routeName: (ctx) => OpenPhysicalStorePipeline(),
           OpenOnlineStorePipeline.routeName: (ctx) => OpenOnlineStorePipeline(),
           PhysicalStoreScreen.routeName: (ctx) => PhysicalStoreScreen(),
           OnlineStoreScreen.routeName: (ctx) => OnlineStoreScreen(),
-          OnlineStoreProductsScreen.routeName: (ctx) =>
-              OnlineStoreProductsScreen(),
+          OnlineStoreProductsScreen.routeName: (ctx) => OnlineStoreProductsScreen(),
           LoadingSplashScreen.routeName: (ctx) => LoadingSplashScreen(),
           EditOnlineStorePipeline.routeName: (ctx) => EditOnlineStorePipeline(),
-          EditPhysicalStorePipeline.routeName: (ctx) =>
-              EditPhysicalStorePipeline(),
+          EditPhysicalStorePipeline.routeName: (ctx) => EditPhysicalStorePipeline(),
           EditBankAccountScreen.routeName: (ctx) => EditBankAccountScreen(),
           QRViewExample.routeName: (ctx) => QRViewExample(),
           CreditCardsScreen.routeName: (ctx) => CreditCardsScreen(),
           AddCreditCardScreen.routeName: (ctx) => AddCreditCardScreen(),
           ManageOnlineStoreScreen.routeName: (ctx) => ManageOnlineStoreScreen(),
-          ManagePhysicalStoreScreen.routeName: (ctx) =>
-              ManagePhysicalStoreScreen(),
+          ManagePhysicalStoreScreen.routeName: (ctx) => ManagePhysicalStoreScreen(),
           StorePurchasesScreen.routeName: (ctx) => StorePurchasesScreen(),
           UserPurchasesScreen.routeName: (ctx) => UserPurchasesScreen(),
           TutorialScreen.routeName: (ctx) => TutorialScreen(),

@@ -25,7 +25,10 @@ class AccountAppBar {
             onPressed: () => Navigator.pushNamed(
                   context,
                   FeedBackScreen.routeName,
-                  arguments: {'email': user.email, 'isStoreOwner': user.storeOwnerState != null},
+                  arguments: {
+                    'email': user.email,
+                    'isStoreOwner': user.storeOwnerState != null
+                  },
                 ),
             icon: Icon(Icons.feedback_outlined))
       ],

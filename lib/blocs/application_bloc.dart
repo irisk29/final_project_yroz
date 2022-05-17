@@ -46,13 +46,12 @@ class ApplicationBloc with ChangeNotifier {
     }
     currentLocation = await geoLocatorService.getCurrentLocation();
     selectedLocationStatic = Place(
-      name: "null",
-      geometry: Geometry(
-        location: Location(
-            lat: currentLocation!.latitude, lng: currentLocation!.longitude),
-      ),
-      address: ""
-    );
+        name: "null",
+        geometry: Geometry(
+          location: Location(
+              lat: currentLocation!.latitude, lng: currentLocation!.longitude),
+        ),
+        address: "");
     notifyListeners();
   }
 
@@ -88,7 +87,7 @@ class ApplicationBloc with ChangeNotifier {
       var places = await placesService.getPlacesFromList(placeType!);
       markers = [];
       if (places.length > 0) {
-        for(Place p in places) {
+        for (Place p in places) {
           var newMarker = markerService.createMarkerFromPlace(p, false);
           markers.add(newMarker);
         }
@@ -109,7 +108,7 @@ class ApplicationBloc with ChangeNotifier {
     var places = await placesService.getPlacesFromList("");
     markers = [];
     if (places.length > 0) {
-      for(Place p in places) {
+      for (Place p in places) {
         var newMarker = markerService.createMarkerFromPlace(p, false);
         markers.add(newMarker);
       }

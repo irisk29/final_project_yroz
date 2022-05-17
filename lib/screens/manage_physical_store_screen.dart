@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
@@ -5,6 +7,7 @@ import 'package:final_project_yroz/screens/edit_bank_account.dart';
 import 'package:final_project_yroz/screens/edit_physical_store_screen.dart';
 import 'package:final_project_yroz/screens/store_preview_screen.dart';
 import 'package:final_project_yroz/screens/store_purchase_history.dart';
+import 'package:final_project_yroz/widgets/snake_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,8 +17,7 @@ class ManagePhysicalStoreScreen extends StatefulWidget {
   late StoreDTO store;
 
   @override
-  _ManagePhysicalStoreScreenState createState() =>
-      _ManagePhysicalStoreScreenState();
+  _ManagePhysicalStoreScreenState createState() => _ManagePhysicalStoreScreenState();
 }
 
 class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
@@ -24,9 +26,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
   @override
   void didChangeDependencies() {
     if (!isLoading) {
-      widget.store = Provider.of<User>(context, listen: false)
-          .storeOwnerState!
-          .physicalStore!;
+      widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.physicalStore!;
       super.didChangeDependencies();
     }
   }
@@ -82,44 +82,35 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                             imageBuilder: (context, imageProvider) => Container(
                               height: deviceSize.height * 0.3,
                               decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: imageProvider, fit: BoxFit.cover),
+                                image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                               ),
                             ),
                             placeholder: (context, url) => Container(
                               height: deviceSize.height * 0.3,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/placeholder-image.jpeg'),
-                                    fit: BoxFit.cover),
+                                    image: AssetImage('assets/images/placeholder-image.jpeg'), fit: BoxFit.cover),
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
                               height: deviceSize.height * 0.3,
                               child: FittedBox(
                                   fit: BoxFit.fill,
-                                  child: Center(
-                                      child: Icon(Icons.error_outline,
-                                          color:
-                                              Theme.of(context).errorColor))),
+                                  child: Center(child: Icon(Icons.error_outline, color: Theme.of(context).errorColor))),
                             ),
                           )
                         : Container(
                             height: deviceSize.height * 0.3,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/default-store.png'),
-                                  fit: BoxFit.cover),
+                                  image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                             ),
                           ),
                   ),
                   Card(
                     elevation: 4.0,
                     margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                     child: Column(
                       children: <Widget>[
                         ListTile(
@@ -129,9 +120,8 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                           ),
                           title: Text("View My Store"),
                           trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context).pushNamed(
-                              StorePreviewScreen.routeName,
-                              arguments: {'store': widget.store}),
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(StorePreviewScreen.routeName, arguments: {'store': widget.store}),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
@@ -141,8 +131,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                           ),
                           title: Text("Edit Store Details"),
                           trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(EditPhysicalStorePipeline.routeName),
+                          onTap: () => Navigator.of(context).pushNamed(EditPhysicalStorePipeline.routeName),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
@@ -152,8 +141,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                           ),
                           title: Text("Edit Bank Account Details"),
                           trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(EditBankAccountScreen.routeName),
+                          onTap: () => Navigator.of(context).pushNamed(EditBankAccountScreen.routeName),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
@@ -170,17 +158,14 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                                         padding: EdgeInsets.all(1),
                                         decoration: BoxDecoration(
                                           color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(6),
                                         ),
                                         constraints: BoxConstraints(
                                           minWidth: 13,
                                           minHeight: 13,
                                         ),
                                         child: Text(
-                                          notificationCount > 9
-                                              ? "9+"
-                                              : notificationCount.toString(),
+                                          notificationCount > 9 ? "9+" : notificationCount.toString(),
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: 8,
@@ -194,9 +179,8 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                           ),
                           trailing: Icon(Icons.keyboard_arrow_right),
                           title: Text("View Store Purchases"),
-                          onTap: () => Navigator.of(context).pushNamed(
-                              StorePurchasesScreen.routeName,
-                              arguments: {"storeName": widget.store.name}),
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(StorePurchasesScreen.routeName, arguments: {"storeName": widget.store.name}),
                         ),
                         _buildDivider(deviceSize),
                         ListTile(
@@ -218,26 +202,19 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                                       children: [
                                         CachedNetworkImage(
                                           imageUrl: widget.store.qrCode!,
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
+                                          imageBuilder: (context, imageProvider) => Container(
                                             height: deviceSize.height * 0.3,
                                             decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.contain),
+                                              image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
                                             ),
                                           ),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
+                                          errorWidget: (context, url, error) => Container(
                                             height: deviceSize.height * 0.3,
                                             child: FittedBox(
                                                 fit: BoxFit.fill,
                                                 child: Center(
-                                                    child: Icon(
-                                                        Icons.error_outline,
-                                                        color: Theme.of(context)
-                                                            .errorColor))),
+                                                    child: Icon(Icons.error_outline,
+                                                        color: Theme.of(context).errorColor))),
                                           ),
                                         ),
                                       ],
@@ -274,34 +251,9 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                                         setState(() {
                                           isLoading = true;
                                         });
-                                        user
-                                            .convertPhysicalStoreToOnline(
-                                                widget.store)
-                                            .then((res) {
+                                        user.convertPhysicalStoreToOnline(widget.store).then((res) {
                                           if (res.getTag()) {
-                                            SnackBar snackBar = SnackBar(
-                                              duration: Duration(seconds: 2),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                              ),
-                                              backgroundColor: Theme.of(context)
-                                                  .primaryColor,
-                                              behavior:
-                                                  SnackBarBehavior.floating,
-                                              content: const Text(
-                                                  'Upgrade to Online Store Successfully!',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: Colors.black87)),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.75,
-                                            );
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(snackBar);
-                                            Navigator.of(context).pop(false);
+                                            showSnackBar(context, 'Upgrade to Online Store Successfully!');
                                           } else {
                                             setState(() {
                                               isLoading = false;
@@ -309,8 +261,7 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                                             showDialog(
                                               context: context,
                                               builder: (ctx) => AlertDialog(
-                                                title:
-                                                    Text('Upgrade Store Error'),
+                                                title: Text('Upgrade Store Error'),
                                                 content: Text(res.getMessage()),
                                                 actions: <Widget>[
                                                   FlatButton(
@@ -366,56 +317,54 @@ class _ManagePhysicalStoreScreenState extends State<ManagePhysicalStoreScreen> {
                             ),
                             FlatButton(
                               child: Text('Yes'),
-                              onPressed: () {
+                              onPressed: () async {
                                 Navigator.of(ctx).pop();
                                 setState(() {
                                   isLoading = true;
                                 });
-                                user
-                                    .deleteStore(widget.store.id, false)
-                                    .then((res) {
-                                  if (res.getTag()) {
-                                    SnackBar snackBar = SnackBar(
-                                      duration: Duration(seconds: 2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                      ),
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      behavior: SnackBarBehavior.floating,
-                                      content: const Text(
-                                          'Deleted Store Successfully!',
-                                          textAlign: TextAlign.center,
-                                          style:
-                                              TextStyle(color: Colors.black87)),
-                                      width: MediaQuery.of(context).size.width *
-                                          0.75,
-                                    );
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                    Navigator.of(context).pop(false);
-                                  } else {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    showDialog(
-                                      context: context,
-                                      builder: (ctx) => AlertDialog(
-                                        title: Text('Delete Store Error'),
-                                        content: Text(res.getMessage()),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('Okay'),
-                                            onPressed: () {
-                                              Navigator.of(ctx).pop();
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                });
+                                try {
+                                  var res = user.deleteStore(widget.store.id, false).then((res) {
+                                    if (res.getTag()) {
+                                      showSnackBar(context, 'Deleted Store Successfully!');
+                                    } else {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      showDialog(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: Text('Delete Store Error'),
+                                          content: Text(res.getMessage()),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              child: Text('Okay'),
+                                              onPressed: () {
+                                                Navigator.of(ctx).pop();
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  }).timeout(new Duration(minutes: 5));
+                                } on TimeoutException catch (e) {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: Text('Internet Connection Error'),
+                                      content:
+                                          Text("Please check your internet connectivity. Your store was not created."),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text('Okay'),
+                                          onPressed: () {
+                                            Navigator.of(ctx).pop();
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }
                               },
                             ),
                           ],

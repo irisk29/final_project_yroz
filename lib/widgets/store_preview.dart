@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
+import 'package:final_project_yroz/main.dart';
 import 'package:final_project_yroz/widgets/store_products_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:google_geocoding/google_geocoding.dart';
@@ -25,16 +26,8 @@ class StorePreview extends StatefulWidget {
   final List<ProductDTO>? products;
   final bool backOnTop;
 
-  StorePreview(
-      this.isOnlineStore,
-      this.title,
-      this.address,
-      this.imageFromPhone,
-      this.imageUrl,
-      this.phoneNumber,
-      this.operationHours,
-      this.products,
-      this.backOnTop);
+  StorePreview(this.isOnlineStore, this.title, this.address, this.imageFromPhone, this.imageUrl, this.phoneNumber,
+      this.operationHours, this.products, this.backOnTop);
 
   @override
   _StorePreviewState createState() => _StorePreviewState();
@@ -50,13 +43,11 @@ class _StorePreviewState extends State<StorePreview> {
   }
 
   bool opBigger(TimeOfDay me, TimeOfDay other) {
-    return other.hour < me.hour ||
-        other.hour == me.hour && other.minute < me.minute;
+    return other.hour < me.hour || other.hour == me.hour && other.minute < me.minute;
   }
 
   bool opSmaller(TimeOfDay me, TimeOfDay other) {
-    return other.hour > me.hour ||
-        other.hour == me.hour && other.minute > me.minute;
+    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
   }
 
   int isStoreOpen() {
@@ -65,8 +56,7 @@ class _StorePreviewState extends State<StorePreview> {
       if (e.day.toLowerCase() == day) {
         if (e.closed) return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if (opBigger(time, e.operationHours.item1) &&
-            opSmaller(time, e.operationHours.item2)) {
+        if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
           if (lessthanfifteen(e.operationHours.item2, time)) {
             return 1;
           }
@@ -85,10 +75,7 @@ class _StorePreviewState extends State<StorePreview> {
       if (e.closed)
         map = map + "closed";
       else {
-        map = map +
-            e.operationHours.item1.format(context) +
-            " - " +
-            e.operationHours.item2.format(context);
+        map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
       }
       map = map + '\n';
     }
@@ -100,8 +87,7 @@ class _StorePreviewState extends State<StorePreview> {
     var deviceSize = MediaQuery.of(context).size;
 
     return _productsMode
-        ? StoreProductsPreview(widget.products!,
-            () => setState(() => _productsMode = false), widget.backOnTop)
+        ? StoreProductsPreview(widget.products!, () => setState(() => _productsMode = false), widget.backOnTop)
         : Expanded(
             flex: 6,
             child: SingleChildScrollView(
@@ -114,41 +100,30 @@ class _StorePreviewState extends State<StorePreview> {
                           ? Container(
                               height: deviceSize.height * 0.3,
                               width: double.infinity,
-                              child: Image.file(
-                                  File(widget.imageFromPhone!.path),
-                                  fit: BoxFit.cover),
+                              child: Image.file(File(widget.imageFromPhone!.path), fit: BoxFit.cover),
                             )
-                          : widget.imageFromPhone == null &&
-                                  widget.imageUrl != null
+                          : widget.imageFromPhone == null && widget.imageUrl != null
                               ? CachedNetworkImage(
                                   imageUrl: widget.imageUrl!,
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
+                                  imageBuilder: (context, imageProvider) => Container(
                                     height: deviceSize.height * 0.3,
                                     decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover),
+                                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                                     ),
                                   ),
                                   placeholder: (context, url) => Container(
                                     height: deviceSize.height * 0.3,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/placeholder-image.jpeg'),
-                                          fit: BoxFit.cover),
+                                          image: AssetImage('assets/images/placeholder-image.jpeg'), fit: BoxFit.cover),
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
+                                  errorWidget: (context, url, error) => Container(
                                     height: deviceSize.height * 0.35,
                                     child: FittedBox(
                                       fit: BoxFit.fill,
-                                      child: Center(
-                                          child: Icon(Icons.error_outline,
-                                              color: Theme.of(context)
-                                                  .errorColor)),
+                                      child:
+                                          Center(child: Icon(Icons.error_outline, color: Theme.of(context).errorColor)),
                                     ),
                                   ),
                                 )
@@ -156,9 +131,7 @@ class _StorePreviewState extends State<StorePreview> {
                                   height: deviceSize.height * 0.3,
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/default-store.png'),
-                                        fit: BoxFit.cover),
+                                        image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
                                   ),
                                 ),
                     ),
@@ -166,8 +139,7 @@ class _StorePreviewState extends State<StorePreview> {
                   ListTile(
                     title: Text(
                       "About the store",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     onTap: null,
                   ),
@@ -211,15 +183,12 @@ class _StorePreviewState extends State<StorePreview> {
                   ListTile(
                     title: Text(
                       "Promotions",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     onTap: null,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: deviceSize.width * 0.02,
-                        right: deviceSize.width * 0.02),
+                    padding: EdgeInsets.only(left: deviceSize.width * 0.02, right: deviceSize.width * 0.02),
                     child: Card(
                       elevation: 2,
                       shape: RoundedRectangleBorder(
@@ -251,16 +220,14 @@ class _StorePreviewState extends State<StorePreview> {
                                           size: 10,
                                         ),
                                       ),
-                                      TextSpan(
-                                          text: ' No Expiration Date',
-                                          style: TextStyle(fontSize: 12)),
+                                      TextSpan(text: ' No Expiration Date', style: TextStyle(fontSize: 12)),
                                     ],
                                   ),
                                 )
                               ],
                             ),
                             Text(
-                              "7%",
+                              MyApp.CASH_BACK_PRECENTEGE,
                               style: TextStyle(fontSize: 18),
                             ),
                           ],
@@ -274,8 +241,7 @@ class _StorePreviewState extends State<StorePreview> {
                         ListTile(
                           title: Text(
                             "Shop now",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                           onTap: null,
                         ),

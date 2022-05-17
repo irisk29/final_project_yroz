@@ -25,8 +25,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Future<ResultInterface> saveOnlineFavorite(String id) async {
     ResultInterface res = await StoreStorageProxy().getOnlineStore(id);
     if (res.getTag()) {
-      if (favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
-        favoriteStores.add(res.getValue() as OnlineStoreDTO);
+      if (favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) ==
+          null) favoriteStores.add(res.getValue() as OnlineStoreDTO);
     }
     return res;
   }
@@ -34,8 +34,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Future<ResultInterface> savePhysicalFavorite(String id) async {
     ResultInterface res = await StoreStorageProxy().getPhysicalStore(id);
     if (res.getTag()) {
-      if (favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) == null)
-        favoriteStores.add(res.getValue() as StoreDTO);
+      if (favoriteStores.firstWhereOrNull((e) => e.id == res.getValue().id) ==
+          null) favoriteStores.add(res.getValue() as StoreDTO);
     }
     return res;
   }
@@ -87,16 +87,20 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                           ),
                           Padding(
                             padding: EdgeInsets.all(deviceSize.height * 0.01),
-                            child: Text("Favorites", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            child: Text("Favorites",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                           Text(
                               "Save here stores that you want to visit again.\n For now, you have no favorite stores...",
                               textAlign: TextAlign.center),
                           TextButton(
-                            onPressed: () => Navigator.pushReplacementNamed(context, TabsScreen.routeName),
+                            onPressed: () => Navigator.pushReplacementNamed(
+                                context, TabsScreen.routeName),
                             child: Text(
                               "Click here to find some",
-                              style: TextStyle(decoration: TextDecoration.underline),
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline),
                             ),
                           )
                         ],
@@ -114,7 +118,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                       childAspectRatio: 1.6,
                       mainAxisSpacing: deviceSize.height * 0.025,
                       crossAxisSpacing: deviceSize.width * 0.025,
-                      children: favoriteStores.map((storeData) => SecondaryStoreItem(storeData)).toList(),
+                      children: favoriteStores
+                          .map((storeData) => SecondaryStoreItem(storeData))
+                          .toList(),
                     );
         },
       ),

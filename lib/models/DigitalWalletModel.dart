@@ -22,7 +22,6 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
-
 /** This is an auto generated class representing the DigitalWalletModel type in your schema. */
 @immutable
 class DigitalWalletModel extends Model {
@@ -34,130 +33,142 @@ class DigitalWalletModel extends Model {
 
   @override
   getInstanceType() => classType;
-  
+
   @override
   String getId() {
     return id;
   }
-  
+
   double get cashBackAmount {
     try {
       return _cashBackAmount!;
-    } catch(e) {
+    } catch (e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
+          AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion: AmplifyExceptionMessages
+              .codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString());
     }
   }
-  
+
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
-  
+
   TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-  
-  const DigitalWalletModel._internal({required this.id, required cashBackAmount, createdAt, updatedAt}): _cashBackAmount = cashBackAmount, _createdAt = createdAt, _updatedAt = updatedAt;
-  
+
+  const DigitalWalletModel._internal(
+      {required this.id, required cashBackAmount, createdAt, updatedAt})
+      : _cashBackAmount = cashBackAmount,
+        _createdAt = createdAt,
+        _updatedAt = updatedAt;
+
   factory DigitalWalletModel({String? id, required double cashBackAmount}) {
     return DigitalWalletModel._internal(
-      id: id == null ? UUID.getUUID() : id,
-      cashBackAmount: cashBackAmount);
+        id: id == null ? UUID.getUUID() : id, cashBackAmount: cashBackAmount);
   }
-  
+
   bool equals(Object other) {
     return this == other;
   }
-  
+
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is DigitalWalletModel &&
-      id == other.id &&
-      _cashBackAmount == other._cashBackAmount;
+        id == other.id &&
+        _cashBackAmount == other._cashBackAmount;
   }
-  
+
   @override
   int get hashCode => toString().hashCode;
-  
+
   @override
   String toString() {
     var buffer = new StringBuffer();
-    
+
     buffer.write("DigitalWalletModel {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("cashBackAmount=" + (_cashBackAmount != null ? _cashBackAmount!.toString() : "null") + ", ");
-    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("cashBackAmount=" +
+        (_cashBackAmount != null ? _cashBackAmount!.toString() : "null") +
+        ", ");
+    buffer.write("createdAt=" +
+        (_createdAt != null ? _createdAt!.format() : "null") +
+        ", ");
+    buffer.write(
+        "updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-    
+
     return buffer.toString();
   }
-  
+
   DigitalWalletModel copyWith({String? id, double? cashBackAmount}) {
     return DigitalWalletModel._internal(
-      id: id ?? this.id,
-      cashBackAmount: cashBackAmount ?? this.cashBackAmount);
+        id: id ?? this.id,
+        cashBackAmount: cashBackAmount ?? this.cashBackAmount);
   }
-  
-  DigitalWalletModel.fromJson(Map<String, dynamic> json)  
-    : id = json['id'],
-      _cashBackAmount = (json['cashBackAmount'] as num?)?.toDouble(),
-      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
-  
+
+  DigitalWalletModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        _cashBackAmount = (json['cashBackAmount'] as num?)?.toDouble(),
+        _createdAt = json['createdAt'] != null
+            ? TemporalDateTime.fromString(json['createdAt'])
+            : null,
+        _updatedAt = json['updatedAt'] != null
+            ? TemporalDateTime.fromString(json['updatedAt'])
+            : null;
+
   Map<String, dynamic> toJson() => {
-    'id': id, 'cashBackAmount': _cashBackAmount, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
-  };
+        'id': id,
+        'cashBackAmount': _cashBackAmount,
+        'createdAt': _createdAt?.format(),
+        'updatedAt': _updatedAt?.format()
+      };
 
   static final QueryField ID = QueryField(fieldName: "digitalWalletModel.id");
-  static final QueryField CASHBACKAMOUNT = QueryField(fieldName: "cashBackAmount");
-  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+  static final QueryField CASHBACKAMOUNT =
+      QueryField(fieldName: "cashBackAmount");
+  static var schema =
+      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "DigitalWalletModel";
     modelSchemaDefinition.pluralName = "DigitalWalletModels";
-    
+
     modelSchemaDefinition.authRules = [
-      AuthRule(
-        authStrategy: AuthStrategy.PUBLIC,
-        operations: [
-          ModelOperation.CREATE,
-          ModelOperation.UPDATE,
-          ModelOperation.DELETE,
-          ModelOperation.READ
-        ])
+      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
+        ModelOperation.CREATE,
+        ModelOperation.UPDATE,
+        ModelOperation.DELETE,
+        ModelOperation.READ
+      ])
     ];
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-    
+
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: DigitalWalletModel.CASHBACKAMOUNT,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.double)
-    ));
-    
+        key: DigitalWalletModel.CASHBACKAMOUNT,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.double)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'createdAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
+        fieldName: 'createdAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-      fieldName: 'updatedAt',
-      isRequired: false,
-      isReadOnly: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
+        fieldName: 'updatedAt',
+        isRequired: false,
+        isReadOnly: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
   });
 }
 
 class _DigitalWalletModelModelType extends ModelType<DigitalWalletModel> {
   const _DigitalWalletModelModelType();
-  
+
   @override
   DigitalWalletModel fromJson(Map<String, dynamic> jsonData) {
     return DigitalWalletModel.fromJson(jsonData);

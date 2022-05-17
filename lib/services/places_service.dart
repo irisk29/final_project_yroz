@@ -11,9 +11,9 @@ import '../LogicLayer/Secret.dart';
 import '../LogicLayer/SecretLoader.dart';
 
 class PlacesService {
-
   Future<List<PlaceSearch>> getAutocomplete(String search) async {
-    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    Secret secret =
+        await SecretLoader(secretPath: "assets/secrets.json").load();
     var url =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$search&types=(cities)&key=$secret.API_KEY';
     var response = await http.get(Uri.parse(url));
@@ -23,7 +23,8 @@ class PlacesService {
   }
 
   Future<Place> getPlace(String placeId) async {
-    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    Secret secret =
+        await SecretLoader(secretPath: "assets/secrets.json").load();
     var url =
         'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$secret.API_KEY';
     var response = await http.get(Uri.parse(url));
@@ -32,8 +33,10 @@ class PlacesService {
     return Place.fromJson(jsonResult);
   }
 
-  Future<List<Place>> getPlaces(double lat, double lng, String placeType) async {
-    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+  Future<List<Place>> getPlaces(
+      double lat, double lng, String placeType) async {
+    Secret secret =
+        await SecretLoader(secretPath: "assets/secrets.json").load();
     placeType = placeType.toLowerCase();
     var url =
         'https://maps.googleapis.com/maps/api/place/textsearch/json?location=$lat,$lng&type=$placeType&rankby=distance&key=$secret.API_KEY';
@@ -44,23 +47,32 @@ class PlacesService {
   }
 
   Future<List<Place>> getPlacesFromList(String placeType) async {
-    List<StoreDTO> physicalStores = await StoreStorageProxy().fetchAllPhysicalStores();
-    List<OnlineStoreDTO> onlineStores = await StoreStorageProxy().fetchAllOnlineStores();
-    if(placeType!=""){
-      physicalStores = physicalStores.where((element) => element.categories.contains(placeType)).toList();
-      onlineStores = onlineStores.where((element) => element.categories.contains(placeType)).toList();
+    List<StoreDTO> physicalStores =
+        await StoreStorageProxy().fetchAllPhysicalStores();
+    List<OnlineStoreDTO> onlineStores =
+        await StoreStorageProxy().fetchAllOnlineStores();
+    if (placeType != "") {
+      physicalStores = physicalStores
+          .where((element) => element.categories.contains(placeType))
+          .toList();
+      onlineStores = onlineStores
+          .where((element) => element.categories.contains(placeType))
+          .toList();
     }
-    Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+    Secret secret =
+        await SecretLoader(secretPath: "assets/secrets.json").load();
     var googleGeocoding = GoogleGeocoding(secret.API_KEY);
     List<Place> places = [];
-    for(StoreDTO store in physicalStores){
-      GeocodingResponse? address = await googleGeocoding.geocoding.get(store.address, []);
-      if(address!=null)
+    for (StoreDTO store in physicalStores) {
+      GeocodingResponse? address =
+          await googleGeocoding.geocoding.get(store.address, []);
+      if (address != null)
         places.add(Place.fromStore(store.name, address, store.address));
     }
-    for(OnlineStoreDTO store in onlineStores){
-      GeocodingResponse? address = await googleGeocoding.geocoding.get(store.address, []);
-      if(address!=null)
+    for (OnlineStoreDTO store in onlineStores) {
+      GeocodingResponse? address =
+          await googleGeocoding.geocoding.get(store.address, []);
+      if (address != null)
         places.add(Place.fromStore(store.name, address, store.address));
     }
     return places;

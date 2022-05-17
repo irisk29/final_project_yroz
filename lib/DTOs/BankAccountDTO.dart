@@ -4,5 +4,6 @@ class BankAccountDTO {
   String bankAccount;
   String? token;
 
-  BankAccountDTO(this.bankName, this.branchNumber, this.bankAccount, [this.token]);
+  BankAccountDTO(this.bankName, this.branchNumber, this.bankAccount,
+      [this.token]);
 }
