@@ -61,8 +61,7 @@
             </intent-filter>
         </activity>
        <activity
-               android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity"
-               android:exported="false">
+               android:name="com.amplifyframework.auth.cognito.activities.HostedUIRedirectActivity">
            <intent-filter>
                <action android:name="android.intent.action.VIEW" />
                <category android:name="android.intent.category.DEFAULT" />
