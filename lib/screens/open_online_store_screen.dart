@@ -291,6 +291,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           content: Text("We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
           actions: <Widget>[
             ElevatedButton(
+              key: const Key('product_error'),
               onPressed: () {
                 Navigator.of(context).pop();
               },

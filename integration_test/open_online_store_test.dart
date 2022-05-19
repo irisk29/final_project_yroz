@@ -160,6 +160,8 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
+      await Future.delayed(Duration(seconds: 1));
+
       await tester.tap(find.byKey(Key("tutorial_okay_button"))); //tap the alert dialog for the store owner
       await tester.pumpAndSettle();
 
@@ -275,6 +277,121 @@ void main() {
           print("Not ready yet");
         }
       });
+    });
+
+    testWidgets('open online store - bad scenario', (WidgetTester tester) async {
+      await tester.pumpWidget(app.OpenOnlineStorePipeline().wrapWithMaterial([mockObserver]));
+      await tester.pumpAndSettle();
+
+      //agree to the terms
+      Finder fab = find.widgetWithText(ElevatedButton, "Agree");
+      await tester.tap(fab);
+      await tester.pump();
+
+      //start to fill the form
+      fab = find.byKey(Key('storeName'));
+      await tester.enterText(fab, "physical store test");
+      await tester.pump();
+
+      fab = find.byKey(Key('phoneNumber'));
+      await tester.enterText(fab, "123456789");
+      await tester.pump();
+
+      fab = find.byKey(Key('storeAddress'));
+      await tester.enterText(fab, "Ashdod, Israel");
+      await tester.pumpAndSettle();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key('store_category_0'));
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      //operations hours
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      //add 10 products
+      for(int i=1; i < 11; i++){
+        fab = find.byKey(Key("add_product")); //move to the add product screen
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
+
+        fab = find.byKey(Key('title'));
+        await tester.enterText(fab, "product$i");
+        await tester.pump();
+
+        fab = find.byKey(Key('price'));
+        await tester.enterText(fab, "$i");
+        await tester.pump();
+
+        fab = find.byKey(Key('description'));
+        await tester.enterText(fab, "very good product");
+        await tester.pump();
+
+        fab = find.byKey(Key("save")); //go back
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
+
+        await Future.delayed(Duration(seconds: 1));
+      }
+
+      //product error
+      fab = find.byKey(Key("add_product")); //move to the add product screen
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key('product_error'));
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key('bank_name'));
+      await tester.enterText(fab, "yroz");
+      await tester.pump();
+
+      fab = find.byKey(Key('branch_number'));
+      await tester.enterText(fab, "987");
+      await tester.pump();
+
+      fab = find.byKey(Key('account_number'));
+      await tester.enterText(fab, "211896261");
+      await tester.pump();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //move forward from one form to another
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      fab = find.byKey(Key("continue_button")); //when pressing this button it creates the store
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(Key("tutorial_okay_button"))); //tap the alert dialog for the store owner
+      await tester.pumpAndSettle();
+
+      // Verify the store was created
+      expect(find.byType(StoreItem), findsOneWidget);
+      ResultInterface storeOwnerRes = await UsersStorageProxy().getStoreOwnerState("test@gmail.com");
+      assert(storeOwnerRes.getTag() == true);
+      StoreOwnerModel storeOwnerModel = storeOwnerRes.getValue();
+      assert(storeOwnerModel.storeOwnerModelOnlineStoreModelId != null);
+      assert(storeOwnerModel.storeOwnerModelOnlineStoreModelId!.isNotEmpty);
     });
   });
 }
