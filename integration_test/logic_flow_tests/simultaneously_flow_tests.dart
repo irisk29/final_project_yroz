@@ -23,53 +23,45 @@ import 'package:integration_test/integration_test.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:tuple/tuple.dart';
 
-@Timeout(Duration(seconds: 60))
+@Timeout(Duration(seconds: 90))
 void main() {
   bool configured = false;
   Openings op = Openings(days: [
     new OpeningTimes(
         day: "Sunday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Monday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Tuesday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Wednesday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Thursday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Friday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Saturday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
   ]);
 
   Future<void> _configureAmplify() async {
     if (!configured) {
       Amplify.addPlugin(AmplifyAuthCognito());
       Amplify.addPlugin(AmplifyStorageS3());
-      Amplify.addPlugin(
-          AmplifyDataStore(modelProvider: ModelProvider.instance));
+      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
       Amplify.addPlugin(AmplifyAPI());
 
       // Amplify can only be configured once.
@@ -83,44 +75,35 @@ void main() {
   }
 
   Future<void> clearDB() async {
-    List<StoreProductModel> prods =
-        await Amplify.DataStore.query(StoreProductModel.classType);
+    List<StoreProductModel> prods = await Amplify.DataStore.query(StoreProductModel.classType);
     for (var p in prods) await Amplify.DataStore.delete(p);
 
-    List<OnlineStoreModel> onlines =
-        await Amplify.DataStore.query(OnlineStoreModel.classType);
+    List<OnlineStoreModel> onlines = await Amplify.DataStore.query(OnlineStoreModel.classType);
     for (var o in onlines) await Amplify.DataStore.delete(o);
 
-    List<PhysicalStoreModel> phys =
-        await Amplify.DataStore.query(PhysicalStoreModel.classType);
+    List<PhysicalStoreModel> phys = await Amplify.DataStore.query(PhysicalStoreModel.classType);
     for (var p in phys) await Amplify.DataStore.delete(p);
 
-    List<CartProductModel> carts =
-        await Amplify.DataStore.query(CartProductModel.classType);
+    List<CartProductModel> carts = await Amplify.DataStore.query(CartProductModel.classType);
     for (var c in carts) await Amplify.DataStore.delete(c);
 
-    List<ShoppingBagModel> bags =
-        await Amplify.DataStore.query(ShoppingBagModel.classType);
+    List<ShoppingBagModel> bags = await Amplify.DataStore.query(ShoppingBagModel.classType);
     for (var b in bags) await Amplify.DataStore.delete(b);
 
-    List<StoreOwnerModel> owners =
-        await Amplify.DataStore.query(StoreOwnerModel.classType);
+    List<StoreOwnerModel> owners = await Amplify.DataStore.query(StoreOwnerModel.classType);
     for (var o in owners) await Amplify.DataStore.delete(o);
 
     List<UserModel> users = await Amplify.DataStore.query(UserModel.classType);
     for (var u in users) await Amplify.DataStore.delete(u);
 
-    List<PurchaseHistoryModel> purchases =
-        await Amplify.DataStore.query(PurchaseHistoryModel.classType);
+    List<PurchaseHistoryModel> purchases = await Amplify.DataStore.query(PurchaseHistoryModel.classType);
     for (var p in purchases) await Amplify.DataStore.delete(p);
   }
 
-  IntegrationTestWidgetsFlutterBinding
-      .ensureInitialized(); // to make the tests work
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
 
   group('Purchase edited product', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
-        as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
 
     setUp(() {
       return Future(() async {
@@ -136,16 +119,14 @@ void main() {
     });
 
     test('Try to purchase changed name product', () async {
-      var res = await UsersStorageProxy()
-          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
+      var res = await UsersStorageProxy().createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       expect(res.item2, true); //created new user
       UserModel firstUser = res.item1;
       User user1 = User.fromModel(firstUser);
       await user1.createEWallet();
 
-      res = await UsersStorageProxy()
-          .createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
+      res = await UsersStorageProxy().createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
       expect(res.item2, true); //created new user
       UserModel secondUser = res.item1;
       User user2 = User.fromModel(secondUser);
@@ -158,7 +139,7 @@ void main() {
           name: "prod",
           price: 1.23,
           category: "",
-          imageUrl: null,
+          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
           description: "wow",
           storeID: "",
           imageFromPhone: null);
@@ -170,10 +151,8 @@ void main() {
           categories: ["Food"],
           operationHours: op,
           products: [productDTO]);
-      BankAccountDTO bankAccountDTO =
-          BankAccountDTO("Yroz", "987", "207884701");
-      var openStoreRes =
-          await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
+      BankAccountDTO bankAccountDTO = BankAccountDTO("Yroz", "987", "207884701");
+      var openStoreRes = await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
       String onlineModelID = openStoreRes.getValue();
       onlineStoreDTO.id = onlineModelID;
@@ -181,19 +160,10 @@ void main() {
       //"login" as the first user and make a purchase from the second user's store
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       CartProductDTO cartProductDTO = CartProductDTO(
-          "",
-          productDTO.name,
-          productDTO.price,
-          "",
-          null,
-          productDTO.description,
-          10,
-          onlineModelID,
-          "");
+          "", productDTO.name, productDTO.price, "", null, productDTO.description, 10, onlineModelID, "");
       await user1.updateOrCreateCartProduct(productDTO, onlineModelID, 10);
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
+      Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
 
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
@@ -201,8 +171,7 @@ void main() {
 
       final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
       String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
+      var addCreditCardRes = await user1.addCreditCard(num, "10/22", "987", "yroz");
       expect(addCreditCardRes.getTag(), true);
       String card = addCreditCardRes.getValue();
 
@@ -215,32 +184,28 @@ void main() {
       await Future.delayed(Duration(seconds: 5));
       //login as the first user and try to make a purchase
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
-      var makePaymentRes = await user1.makePaymentOnlineStore(card, 0,
-          productDTO.price * cartProductDTO.amount, user1.bagInStores.first);
+      var makePaymentRes = await user1.makePaymentOnlineStore(
+          card, 0, productDTO.price * cartProductDTO.amount, user1.bagInStores.first);
       expect(makePaymentRes.getTag(), true);
 
-      ShoppingBagDTO? shoppingBag =
-          await user1.getCurrShoppingBag(onlineModelID);
+      ShoppingBagDTO? shoppingBag = await user1.getCurrShoppingBag(onlineModelID);
       expect(shoppingBag == null, true); //becuase the payment was succsseful
 
       DateTime now = DateTime.now();
       DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
+      var purchases = await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
       expect(purchases.length, 1);
     });
 
     test('Try to purchase changed product price', () async {
-      var res = await UsersStorageProxy()
-          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
+      var res = await UsersStorageProxy().createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       expect(res.item2, true); //created new user
       UserModel firstUser = res.item1;
       User user1 = User.fromModel(firstUser);
       await user1.createEWallet();
 
-      res = await UsersStorageProxy()
-          .createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
+      res = await UsersStorageProxy().createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
       expect(res.item2, true); //created new user
       UserModel secondUser = res.item1;
       User user2 = User.fromModel(secondUser);
@@ -253,7 +218,7 @@ void main() {
           name: "prod",
           price: 1.23,
           category: "",
-          imageUrl: null,
+          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
           description: "wow",
           storeID: "",
           imageFromPhone: null);
@@ -265,10 +230,8 @@ void main() {
           categories: ["Food"],
           operationHours: op,
           products: [productDTO]);
-      BankAccountDTO bankAccountDTO =
-          BankAccountDTO("Yroz", "987", "207884701");
-      var openStoreRes =
-          await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
+      BankAccountDTO bankAccountDTO = BankAccountDTO("Yroz", "987", "207884701");
+      var openStoreRes = await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
       String onlineModelID = openStoreRes.getValue();
       onlineStoreDTO.id = onlineModelID;
@@ -276,19 +239,10 @@ void main() {
       //"login" as the first user and make a purchase from the second user's store
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       CartProductDTO cartProductDTO = CartProductDTO(
-          "",
-          productDTO.name,
-          productDTO.price,
-          "",
-          null,
-          productDTO.description,
-          10,
-          onlineModelID,
-          "");
+          "", productDTO.name, productDTO.price, "", null, productDTO.description, 10, onlineModelID, "");
       await user1.updateOrCreateCartProduct(productDTO, onlineModelID, 10);
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
+      Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
 
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
@@ -296,8 +250,7 @@ void main() {
 
       final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
       String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
+      var addCreditCardRes = await user1.addCreditCard(num, "10/22", "987", "yroz");
       expect(addCreditCardRes.getTag(), true);
       String card = addCreditCardRes.getValue();
 
@@ -311,35 +264,28 @@ void main() {
       //login as the first user and try to make a purchase
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       var makePaymentRes = await user1.makePaymentOnlineStore(
-          card,
-          0,
-          cartProductDTO.price * cartProductDTO.amount,
-          user1.bagInStores.first);
+          card, 0, cartProductDTO.price * cartProductDTO.amount, user1.bagInStores.first);
       expect(makePaymentRes.getTag(), true);
 
-      ShoppingBagDTO? shoppingBag =
-          await user1.getCurrShoppingBag(onlineModelID);
+      ShoppingBagDTO? shoppingBag = await user1.getCurrShoppingBag(onlineModelID);
       expect(shoppingBag == null, true); //becuase the payment was succsseful
 
       DateTime now = DateTime.now();
       DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
+      var purchases = await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
       expect(purchases.length, 1);
       expect(purchases[0].creditAmount, 1.23 * 10);
     });
 
     test('Try to purchase deleted product', () async {
-      var res = await UsersStorageProxy()
-          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
+      var res = await UsersStorageProxy().createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       expect(res.item2, true); //created new user
       UserModel firstUser = res.item1;
       User user1 = User.fromModel(firstUser);
       await user1.createEWallet();
 
-      res = await UsersStorageProxy()
-          .createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
+      res = await UsersStorageProxy().createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
       expect(res.item2, true); //created new user
       UserModel secondUser = res.item1;
       User user2 = User.fromModel(secondUser);
@@ -352,7 +298,7 @@ void main() {
           name: "prod",
           price: 1.23,
           category: "",
-          imageUrl: null,
+          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
           description: "wow",
           storeID: "",
           imageFromPhone: null);
@@ -364,10 +310,8 @@ void main() {
           categories: ["Food"],
           operationHours: op,
           products: [productDTO]);
-      BankAccountDTO bankAccountDTO =
-          BankAccountDTO("Yroz", "987", "207884701");
-      var openStoreRes =
-          await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
+      BankAccountDTO bankAccountDTO = BankAccountDTO("Yroz", "987", "207884701");
+      var openStoreRes = await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
       String onlineModelID = openStoreRes.getValue();
       onlineStoreDTO.id = onlineModelID;
@@ -375,19 +319,10 @@ void main() {
       //"login" as the first user and make a purchase from the second user's store
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       CartProductDTO cartProductDTO = CartProductDTO(
-          "",
-          productDTO.name,
-          productDTO.price,
-          "",
-          null,
-          productDTO.description,
-          10,
-          onlineModelID,
-          "");
+          "", productDTO.name, productDTO.price, "", null, productDTO.description, 10, onlineModelID, "");
       await user1.updateOrCreateCartProduct(productDTO, onlineModelID, 10);
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
+      Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
 
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
@@ -395,8 +330,7 @@ void main() {
 
       final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
       String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
+      var addCreditCardRes = await user1.addCreditCard(num, "10/22", "987", "yroz");
       expect(addCreditCardRes.getTag(), true);
       String card = addCreditCardRes.getValue();
 
@@ -410,27 +344,21 @@ void main() {
       //login as the first user and try to make a purchase
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       var makePaymentRes = await user1.makePaymentOnlineStore(
-          card,
-          0,
-          cartProductDTO.price * cartProductDTO.amount,
-          user1.bagInStores.first);
+          card, 0, cartProductDTO.price * cartProductDTO.amount, user1.bagInStores.first);
       expect(makePaymentRes.getTag(), true);
 
-      ShoppingBagDTO? shoppingBag =
-          await user1.getCurrShoppingBag(onlineModelID);
+      ShoppingBagDTO? shoppingBag = await user1.getCurrShoppingBag(onlineModelID);
       expect(shoppingBag == null, true); //becuase the payment was succsseful
 
       DateTime now = DateTime.now();
       DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
+      var purchases = await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
       expect(purchases.length, 1);
     });
   });
 
   group('Physical purchase from online store', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
-        as IntegrationTestWidgetsFlutterBinding;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
 
     setUp(() {
       return Future(() async {
@@ -446,16 +374,14 @@ void main() {
     });
 
     test('Upgrade to online store & physical purchase from it', () async {
-      var res = await UsersStorageProxy()
-          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
+      var res = await UsersStorageProxy().createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
       expect(res.item2, true); //created new user
       UserModel firstUser = res.item1;
       User user1 = User.fromModel(firstUser);
       await user1.createEWallet();
 
-      res = await UsersStorageProxy()
-          .createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
+      res = await UsersStorageProxy().createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
       expect(res.item2, true); //created new user
       UserModel secondUser = res.item1;
       User user2 = User.fromModel(secondUser);
@@ -470,10 +396,8 @@ void main() {
           phoneNumber: "+972123456789",
           categories: ["Food"],
           operationHours: op);
-      BankAccountDTO bankAccountDTO =
-          BankAccountDTO("Yroz", "987", "207884701");
-      var openStoreRes =
-          await user2.openPhysicalStore(storeDTO, bankAccountDTO);
+      BankAccountDTO bankAccountDTO = BankAccountDTO("Yroz", "987", "207884701");
+      var openStoreRes = await user2.openPhysicalStore(storeDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
       String physicalModelID = openStoreRes.getValue();
       storeDTO.id = physicalModelID;
@@ -487,7 +411,7 @@ void main() {
           name: "prod",
           price: 1.23,
           category: "",
-          imageUrl: null,
+          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
           description: "wow",
           storeID: "",
           imageFromPhone: null);
@@ -505,8 +429,7 @@ void main() {
       //"login" as the first user and make a purchase from the second user's store
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
+      Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
 
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
@@ -514,19 +437,16 @@ void main() {
 
       final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
       String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
+      var addCreditCardRes = await user1.addCreditCard(num, "10/22", "987", "yroz");
       expect(addCreditCardRes.getTag(), true);
       String card = addCreditCardRes.getValue();
 
-      var makePaymentRes =
-          await user1.makePaymentPhysicalStore(card, 0, 1.23, onlineModelID);
+      var makePaymentRes = await user1.makePaymentPhysicalStore(card, 0, 1.23, onlineModelID);
       expect(makePaymentRes.getTag(), true);
 
       DateTime now = DateTime.now();
       DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
+      var purchases = await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
       expect(purchases.length, 1);
     });
   });
