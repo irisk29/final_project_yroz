@@ -22,6 +22,7 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
+
 /** This is an auto generated class representing the CartProductModel type in your schema. */
 @immutable
 class CartProductModel extends Model {
@@ -40,242 +41,184 @@ class CartProductModel extends Model {
 
   @override
   getInstanceType() => classType;
-
+  
   @override
   String getId() {
     return id;
   }
-
+  
   String get name {
     try {
       return _name!;
-    } catch (e) {
+    } catch(e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get categories {
     try {
       return _categories!;
-    } catch (e) {
+    } catch(e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   double get price {
     try {
       return _price!;
-    } catch (e) {
+    } catch(e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String? get imageUrl {
     return _imageUrl;
   }
-
+  
   String? get description {
     return _description;
   }
-
+  
   double get amount {
     try {
       return _amount!;
-    } catch (e) {
+    } catch(e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String? get storeProductID {
     return _storeProductID;
   }
-
+  
   String get shoppingbagmodelID {
     try {
       return _shoppingbagmodelID!;
-    } catch (e) {
+    } catch(e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
-
+  
   TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-
-  const CartProductModel._internal(
-      {required this.id,
-      required name,
-      required categories,
-      required price,
-      imageUrl,
-      description,
-      required amount,
-      storeProductID,
-      required shoppingbagmodelID,
-      createdAt,
-      updatedAt})
-      : _name = name,
-        _categories = categories,
-        _price = price,
-        _imageUrl = imageUrl,
-        _description = description,
-        _amount = amount,
-        _storeProductID = storeProductID,
-        _shoppingbagmodelID = shoppingbagmodelID,
-        _createdAt = createdAt,
-        _updatedAt = updatedAt;
-
-  factory CartProductModel(
-      {String? id,
-      required String name,
-      required String categories,
-      required double price,
-      String? imageUrl,
-      String? description,
-      required double amount,
-      String? storeProductID,
-      required String shoppingbagmodelID}) {
+  
+  const CartProductModel._internal({required this.id, required name, required categories, required price, imageUrl, description, required amount, storeProductID, required shoppingbagmodelID, createdAt, updatedAt}): _name = name, _categories = categories, _price = price, _imageUrl = imageUrl, _description = description, _amount = amount, _storeProductID = storeProductID, _shoppingbagmodelID = shoppingbagmodelID, _createdAt = createdAt, _updatedAt = updatedAt;
+  
+  factory CartProductModel({String? id, required String name, required String categories, required double price, String? imageUrl, String? description, required double amount, String? storeProductID, required String shoppingbagmodelID}) {
     return CartProductModel._internal(
-        id: id == null ? UUID.getUUID() : id,
-        name: name,
-        categories: categories,
-        price: price,
-        imageUrl: imageUrl,
-        description: description,
-        amount: amount,
-        storeProductID: storeProductID,
-        shoppingbagmodelID: shoppingbagmodelID);
+      id: id == null ? UUID.getUUID() : id,
+      name: name,
+      categories: categories,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+      amount: amount,
+      storeProductID: storeProductID,
+      shoppingbagmodelID: shoppingbagmodelID);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is CartProductModel &&
-        id == other.id &&
-        _name == other._name &&
-        _categories == other._categories &&
-        _price == other._price &&
-        _imageUrl == other._imageUrl &&
-        _description == other._description &&
-        _amount == other._amount &&
-        _storeProductID == other._storeProductID &&
-        _shoppingbagmodelID == other._shoppingbagmodelID;
+      id == other.id &&
+      _name == other._name &&
+      _categories == other._categories &&
+      _price == other._price &&
+      _imageUrl == other._imageUrl &&
+      _description == other._description &&
+      _amount == other._amount &&
+      _storeProductID == other._storeProductID &&
+      _shoppingbagmodelID == other._shoppingbagmodelID;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("CartProductModel {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
     buffer.write("categories=" + "$_categories" + ", ");
-    buffer.write(
-        "price=" + (_price != null ? _price!.toString() : "null") + ", ");
+    buffer.write("price=" + (_price != null ? _price!.toString() : "null") + ", ");
     buffer.write("imageUrl=" + "$_imageUrl" + ", ");
     buffer.write("description=" + "$_description" + ", ");
-    buffer.write(
-        "amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
+    buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
     buffer.write("storeProductID=" + "$_storeProductID" + ", ");
     buffer.write("shoppingbagmodelID=" + "$_shoppingbagmodelID" + ", ");
-    buffer.write("createdAt=" +
-        (_createdAt != null ? _createdAt!.format() : "null") +
-        ", ");
-    buffer.write(
-        "updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  CartProductModel copyWith(
-      {String? id,
-      String? name,
-      String? categories,
-      double? price,
-      String? imageUrl,
-      String? description,
-      double? amount,
-      String? storeProductID,
-      String? shoppingbagmodelID}) {
+  
+  CartProductModel copyWith({String? id, String? name, String? categories, double? price, String? imageUrl, String? description, double? amount, String? storeProductID, String? shoppingbagmodelID}) {
     return CartProductModel._internal(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        categories: categories ?? this.categories,
-        price: price ?? this.price,
-        imageUrl: imageUrl ?? this.imageUrl,
-        description: description ?? this.description,
-        amount: amount ?? this.amount,
-        storeProductID: storeProductID ?? this.storeProductID,
-        shoppingbagmodelID: shoppingbagmodelID ?? this.shoppingbagmodelID);
+      id: id ?? this.id,
+      name: name ?? this.name,
+      categories: categories ?? this.categories,
+      price: price ?? this.price,
+      imageUrl: imageUrl ?? this.imageUrl,
+      description: description ?? this.description,
+      amount: amount ?? this.amount,
+      storeProductID: storeProductID ?? this.storeProductID,
+      shoppingbagmodelID: shoppingbagmodelID ?? this.shoppingbagmodelID);
   }
-
-  CartProductModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        _name = json['name'],
-        _categories = json['categories'],
-        _price = (json['price'] as num?)?.toDouble(),
-        _imageUrl = json['imageUrl'],
-        _description = json['description'],
-        _amount = (json['amount'] as num?)?.toDouble(),
-        _storeProductID = json['storeProductID'],
-        _shoppingbagmodelID = json['shoppingbagmodelID'],
-        _createdAt = json['createdAt'] != null
-            ? TemporalDateTime.fromString(json['createdAt'])
-            : null,
-        _updatedAt = json['updatedAt'] != null
-            ? TemporalDateTime.fromString(json['updatedAt'])
-            : null;
-
+  
+  CartProductModel.fromJson(Map<String, dynamic> json)  
+    : id = json['id'],
+      _name = json['name'],
+      _categories = json['categories'],
+      _price = (json['price'] as num?)?.toDouble(),
+      _imageUrl = json['imageUrl'],
+      _description = json['description'],
+      _amount = (json['amount'] as num?)?.toDouble(),
+      _storeProductID = json['storeProductID'],
+      _shoppingbagmodelID = json['shoppingbagmodelID'],
+      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+  
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': _name,
-        'categories': _categories,
-        'price': _price,
-        'imageUrl': _imageUrl,
-        'description': _description,
-        'amount': _amount,
-        'storeProductID': _storeProductID,
-        'shoppingbagmodelID': _shoppingbagmodelID,
-        'createdAt': _createdAt?.format(),
-        'updatedAt': _updatedAt?.format()
-      };
+    'id': id, 'name': _name, 'categories': _categories, 'price': _price, 'imageUrl': _imageUrl, 'description': _description, 'amount': _amount, 'storeProductID': _storeProductID, 'shoppingbagmodelID': _shoppingbagmodelID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+  };
 
   static final QueryField ID = QueryField(fieldName: "cartProductModel.id");
   static final QueryField NAME = QueryField(fieldName: "name");
@@ -284,83 +227,92 @@ class CartProductModel extends Model {
   static final QueryField IMAGEURL = QueryField(fieldName: "imageUrl");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
   static final QueryField AMOUNT = QueryField(fieldName: "amount");
-  static final QueryField STOREPRODUCTID =
-      QueryField(fieldName: "storeProductID");
-  static final QueryField SHOPPINGBAGMODELID =
-      QueryField(fieldName: "shoppingbagmodelID");
-  static var schema =
-      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+  static final QueryField STOREPRODUCTID = QueryField(fieldName: "storeProductID");
+  static final QueryField SHOPPINGBAGMODELID = QueryField(fieldName: "shoppingbagmodelID");
+  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "CartProductModel";
     modelSchemaDefinition.pluralName = "CartProductModels";
-
+    
     modelSchemaDefinition.authRules = [
-      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
-        ModelOperation.CREATE,
-        ModelOperation.UPDATE,
-        ModelOperation.DELETE,
-        ModelOperation.READ
-      ])
+      AuthRule(
+        authStrategy: AuthStrategy.PUBLIC,
+        operations: [
+          ModelOperation.CREATE,
+          ModelOperation.UPDATE,
+          ModelOperation.DELETE,
+          ModelOperation.READ
+        ])
     ];
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.NAME,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: CartProductModel.NAME,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.CATEGORIES,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: CartProductModel.CATEGORIES,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.PRICE,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.double)));
-
+      key: CartProductModel.PRICE,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.IMAGEURL,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: CartProductModel.IMAGEURL,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.DESCRIPTION,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: CartProductModel.DESCRIPTION,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.AMOUNT,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.double)));
-
+      key: CartProductModel.AMOUNT,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.STOREPRODUCTID,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: CartProductModel.STOREPRODUCTID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: CartProductModel.SHOPPINGBAGMODELID,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: CartProductModel.SHOPPINGBAGMODELID,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-        fieldName: 'createdAt',
-        isRequired: false,
-        isReadOnly: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
-
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-        fieldName: 'updatedAt',
-        isRequired: false,
-        isReadOnly: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
   });
 }
 
 class _CartProductModelModelType extends ModelType<CartProductModel> {
   const _CartProductModelModelType();
-
+  
   @override
   CartProductModel fromJson(Map<String, dynamic> jsonData) {
     return CartProductModel.fromJson(jsonData);
