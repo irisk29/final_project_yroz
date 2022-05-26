@@ -32,7 +32,8 @@ class OnlineStoreScreen extends StatefulWidget {
 class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   @override
   void didChangeDependencies() {
-    final routeArgs = ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
     widget.store = routeArgs['store'] as OnlineStoreDTO;
     super.didChangeDependencies();
   }
@@ -44,11 +45,13 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   }
 
   bool opBigger(TimeOfDay me, TimeOfDay other) {
-    return other.hour < me.hour || other.hour == me.hour && other.minute < me.minute;
+    return other.hour < me.hour ||
+        other.hour == me.hour && other.minute < me.minute;
   }
 
   bool opSmaller(TimeOfDay me, TimeOfDay other) {
-    return other.hour > me.hour || other.hour == me.hour && other.minute > me.minute;
+    return other.hour > me.hour ||
+        other.hour == me.hour && other.minute > me.minute;
   }
 
   int isStoreOpen() {
@@ -57,7 +60,8 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
       if (e.day.toLowerCase() == day) {
         if (e.closed) return 2;
         TimeOfDay time = TimeOfDay.fromDateTime(DateTime.now());
-        if (opBigger(time, e.operationHours.item1) && opSmaller(time, e.operationHours.item2)) {
+        if (opBigger(time, e.operationHours.item1) &&
+            opSmaller(time, e.operationHours.item2)) {
           if (lessthanfifteen(e.operationHours.item2, time)) {
             return 1;
           }
@@ -76,7 +80,10 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
       if (e.closed)
         map = map + "Closed";
       else {
-        map = map + e.operationHours.item1.format(context) + " - " + e.operationHours.item2.format(context);
+        map = map +
+            e.operationHours.item1.format(context) +
+            " - " +
+            e.operationHours.item2.format(context);
       }
       map = map + '\n';
     }
@@ -94,233 +101,263 @@ class _OnlineStoreScreenState extends State<OnlineStoreScreen> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: deviceSize.height * 0.1,
-        centerTitle: true,
-        title: Column(
-          children: [
-            Text(
-              widget.store.name,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
+          centerTitle: true,
+          title: Column(
+            children: [
+              Text(
+                widget.store.name,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Text(
-              widget.store.categories.join(", "),
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
+              Text(
+                widget.store.categories.join(", "),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Center(
-              child: widget.store.image != null
-                  ? CachedNetworkImage(
-                      imageUrl: widget.store.image!,
-                      imageBuilder: (context, imageProvider) => Container(
-                        height: deviceSize.height * 0.35,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Center(
+                child: widget.store.image != null
+                    ? CachedNetworkImage(
+                        imageUrl: widget.store.image!,
+                        imageBuilder: (context, imageProvider) => Container(
+                          height: deviceSize.height * 0.35,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: imageProvider, fit: BoxFit.cover),
+                          ),
                         ),
-                      ),
-                      placeholder: (context, url) => Container(
+                        placeholder: (context, url) => Container(
+                          height: deviceSize.height * 0.35,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/images/placeholder-image.jpeg'),
+                                fit: BoxFit.cover),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          height: deviceSize.height * 0.35,
+                          child: FittedBox(
+                            fit: BoxFit.fill,
+                            child: Center(
+                                child: Icon(Icons.error_outline,
+                                    color: Theme.of(context).errorColor)),
+                          ),
+                        ),
+                      )
+                    : Container(
                         height: deviceSize.height * 0.35,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage('assets/images/placeholder-image.jpeg'), fit: BoxFit.cover),
+                              image:
+                                  AssetImage('assets/images/default-store.png'),
+                              fit: BoxFit.cover),
                         ),
                       ),
-                      errorWidget: (context, url, error) => Container(
-                        height: deviceSize.height * 0.35,
-                        child: FittedBox(
-                          fit: BoxFit.fill,
-                          child: Center(child: Icon(Icons.error_outline, color: Theme.of(context).errorColor)),
-                        ),
-                      ),
-                    )
-                  : Container(
-                      height: deviceSize.height * 0.35,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
-                      ),
-                    ),
-            ),
-            ListTile(
-              title: Text(
-                "About the store",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
-              onTap: () async {
-                Provider.of<User>(context, listen: false)
+              ListTile(
+                title: Text(
+                  "About the store",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: () async {
+                  Provider.of<User>(context, listen: false)
+                              .favoriteStores
+                              .firstWhereOrNull(
+                                  (e) => e.item1 == widget.store.id) ==
+                          null
+                      ? await Provider.of<User>(context, listen: false)
+                          .addFavoriteStore(widget.store.id, true)
+                      : await Provider.of<User>(context, listen: false)
+                          .removeFavoriteStore(widget.store.id, true);
+                  setState(() {});
+                  //open change language
+                },
+                trailing: Provider.of<User>(context, listen: false)
                             .favoriteStores
-                            .firstWhereOrNull((e) => e.item1 == widget.store.id) ==
+                            .firstWhereOrNull(
+                                (e) => e.item1 == widget.store.id) !=
                         null
-                    ? await Provider.of<User>(context, listen: false).addFavoriteStore(widget.store.id, true)
-                    : await Provider.of<User>(context, listen: false).removeFavoriteStore(widget.store.id, true);
-                setState(() {});
-                //open change language
-              },
-              trailing: Provider.of<User>(context, listen: false)
-                          .favoriteStores
-                          .firstWhereOrNull((e) => e.item1 == widget.store.id) !=
-                      null
-                  ? Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    )
-                  : Icon(
-                      Icons.favorite_border,
-                      color: Colors.black,
-                    ),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.circle,
-                color: isStoreOpen() == 0
-                    ? Colors.green
+                    ? Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
+                    : Icon(
+                        Icons.favorite_border,
+                        color: Colors.black,
+                      ),
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.circle,
+                  color: isStoreOpen() == 0
+                      ? Colors.green
+                      : isStoreOpen() == 1
+                          ? Colors.orange
+                          : Colors.red,
+                ),
+                title: isStoreOpen() == 0
+                    ? Text("Open Now")
                     : isStoreOpen() == 1
-                        ? Colors.orange
-                        : Colors.red,
+                        ? Text("Closing Soon")
+                        : Text("Closed"),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                            title: Text('Opening hours'),
+                            content: Text(mapAsString()),
+                          ));
+                },
               ),
-              title: isStoreOpen() == 0
-                  ? Text("Open Now")
-                  : isStoreOpen() == 1
-                      ? Text("Closing Soon")
-                      : Text("Closed"),
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                          title: Text('Opening hours'),
-                          content: Text(mapAsString()),
-                        ));
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.location_on,
-                color: Colors.grey,
-              ),
-              title: Text(widget.store.address),
-              onTap: () async {
-                Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-                var googleGeocoding = GoogleGeocoding(secret.API_KEY);
-                GeocodingResponse? address = await googleGeocoding.geocoding.get(widget.store.address, []);
-                if (address != null) {
-                  Place place = Place.fromStore(widget.store.name, address, widget.store.address);
-                  String dest_lat = place.geometry.location.lat.toString();
-                  String dest_lng = place.geometry.location.lng.toString();
-                  if (!Platform.isIOS) {
-                    MapsLauncher.launchCoordinates(double.parse(dest_lat), double.parse(dest_lng));
-                  } else {
-                    MapsLauncher.launchQuery(place.address);
+              ListTile(
+                leading: Icon(
+                  Icons.location_on,
+                  color: Colors.grey,
+                ),
+                title: Text(widget.store.address),
+                onTap: () async {
+                  Secret secret =
+                      await SecretLoader(secretPath: "assets/secrets.json")
+                          .load();
+                  var googleGeocoding = GoogleGeocoding(secret.API_KEY);
+                  GeocodingResponse? address = await googleGeocoding.geocoding
+                      .get(widget.store.address, []);
+                  if (address != null) {
+                    Place place = Place.fromStore(
+                        widget.store.name, address, widget.store.address);
+                    String dest_lat = place.geometry.location.lat.toString();
+                    String dest_lng = place.geometry.location.lng.toString();
+                    if (!Platform.isIOS) {
+                      MapsLauncher.launchCoordinates(
+                          double.parse(dest_lat), double.parse(dest_lng));
+                    } else {
+                      MapsLauncher.launchQuery(place.address);
+                    }
                   }
-                }
-                //open change location
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.phone,
-                color: Colors.grey,
+                  //open change location
+                },
               ),
-              title: Text(widget.store.phoneNumber),
-              onTap: () {
-                launch("tel://${widget.store.phoneNumber}");
-                //open change language
-              },
-            ),
-            ListTile(
-              title: Text(
-                "Promotions",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ListTile(
+                leading: Icon(
+                  Icons.phone,
+                  color: Colors.grey,
+                ),
+                title: Text(widget.store.phoneNumber),
+                onTap: () {
+                  launch("tel://${widget.store.phoneNumber}");
+                  //open change language
+                },
               ),
-              onTap: null,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: deviceSize.width * 0.02, right: deviceSize.width * 0.02),
-              child: Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      width: 0.5,
-                      color: Colors.black54,
-                    ),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: Container(
-                  padding: EdgeInsets.all(deviceSize.width * 0.03),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Cashback",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          Text.rich(
-                            TextSpan(
-                              children: <InlineSpan>[
-                                WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: Icon(
-                                    Icons.circle,
-                                    color: Colors.green,
-                                    size: 10,
-                                  ),
-                                ),
-                                TextSpan(text: ' No Expiration Date', style: TextStyle(fontSize: 12)),
-                              ],
+              ListTile(
+                title: Text(
+                  "Promotions",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: null,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: deviceSize.width * 0.02,
+                    right: deviceSize.width * 0.02),
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        width: 0.5,
+                        color: Colors.black54,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Container(
+                    padding: EdgeInsets.all(deviceSize.width * 0.03),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Cashback",
+                              style: TextStyle(fontSize: 18),
                             ),
-                          )
-                        ],
-                      ),
-                      Text(
-                        MyApp.CASH_BACK_PRECENTEGE,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text(
-                "Shop now",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              onTap: null,
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: deviceSize.width * 0.02, right: deviceSize.width * 0.02, bottom: deviceSize.width * 0.02),
-              child: Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      width: 0.5,
-                      color: Colors.black54,
+                            Text.rich(
+                              TextSpan(
+                                children: <InlineSpan>[
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: Icon(
+                                      Icons.circle,
+                                      color: Colors.green,
+                                      size: 10,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                      text: ' No Expiration Date',
+                                      style: TextStyle(fontSize: 12)),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          MyApp.CASH_BACK_PRECENTEGE,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: ListTile(
-                  title: Text(
-                    "Visit Our Online Shop",
-                    style: TextStyle(fontSize: 16),
                   ),
-                  onTap: () => routeToOnlineStoreProducts(context),
-                  trailing: Icon(Icons.keyboard_arrow_right),
                 ),
               ),
-            ),
-          ],
+              ListTile(
+                title: Text(
+                  "Shop now",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+                onTap: null,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: deviceSize.width * 0.02,
+                    right: deviceSize.width * 0.02,
+                    bottom: deviceSize.width * 0.02),
+                child: Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        width: 0.5,
+                        color: Colors.black54,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: ListTile(
+                    title: Text(
+                      "Visit Our Online Shop",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    onTap: () => routeToOnlineStoreProducts(context),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -65,17 +65,29 @@ class _QRViewExampleState extends State<QRViewExample> {
               )
             ],
           ),
-          Container(
-            alignment: Alignment.topLeft,
-            padding: EdgeInsets.only(top: deviceSize.height * 0.025),
-            child: IconButton(
-              onPressed: () async {
-                await controller?.flipCamera();
-                setState(() {});
-              },
-              icon: Icon(Icons.flip_camera_ios_outlined,
-                  color: Theme.of(context).primaryColor),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: deviceSize.height * 0.025),
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(Icons.arrow_back,
+                      color: Theme.of(context).primaryColor),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: deviceSize.height * 0.025),
+                child: IconButton(
+                  onPressed: () async {
+                    await controller?.flipCamera();
+                    setState(() {});
+                  },
+                  icon: Icon(Icons.flip_camera_ios_outlined,
+                      color: Theme.of(context).primaryColor),
+                ),
+              ),
+            ],
           )
         ],
       ),

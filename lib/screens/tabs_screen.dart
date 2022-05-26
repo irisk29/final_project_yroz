@@ -113,51 +113,54 @@ class _TabsScreenState extends State<TabsScreen> {
     ];
 
     return LayoutBuilder(
-      builder: (context, constraints) => Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: appBars[_selectedPageIndex],
-        body: [
-          CategoriesScreen(),
-          SearchScreen(),
-          MapScreen(),
-          FavoriteScreen(),
-          const AccountScreen()
-        ][_selectedPageIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          onTap: _selectPage,
-          backgroundColor: Colors.white,
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Theme.of(context).primaryColor,
-          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-          currentIndex: _selectedPageIndex,
-          items: [
-            BottomNavigationBarItem(
-              backgroundColor: Theme.of(context).primaryColor,
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Theme.of(context).primaryColor,
-              icon: Icon(Icons.search),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Theme.of(context).primaryColor,
-              icon: Icon(Icons.location_on_outlined),
-              label: 'Nearby',
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Theme.of(context).primaryColor,
-              icon: Icon(Icons.favorite_border),
-              label: 'Favorites',
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Theme.of(context).primaryColor,
-              icon: Icon(Icons.account_circle),
-              label: 'Account',
-            ),
-          ],
+      builder: (context, constraints) => WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: appBars[_selectedPageIndex],
+          body: [
+            CategoriesScreen(),
+            SearchScreen(),
+            MapScreen(),
+            FavoriteScreen(),
+            const AccountScreen()
+          ][_selectedPageIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            onTap: _selectPage,
+            backgroundColor: Colors.white,
+            unselectedItemColor: Colors.grey,
+            selectedItemColor: Theme.of(context).primaryColor,
+            selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+            currentIndex: _selectedPageIndex,
+            items: [
+              BottomNavigationBarItem(
+                backgroundColor: Theme.of(context).primaryColor,
+                icon: Icon(Icons.home_outlined),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                backgroundColor: Theme.of(context).primaryColor,
+                icon: Icon(Icons.search),
+                label: 'Search',
+              ),
+              BottomNavigationBarItem(
+                backgroundColor: Theme.of(context).primaryColor,
+                icon: Icon(Icons.location_on_outlined),
+                label: 'Nearby',
+              ),
+              BottomNavigationBarItem(
+                backgroundColor: Theme.of(context).primaryColor,
+                icon: Icon(Icons.favorite_border),
+                label: 'Favorites',
+              ),
+              BottomNavigationBarItem(
+                backgroundColor: Theme.of(context).primaryColor,
+                icon: Icon(Icons.account_circle),
+                label: 'Account',
+              ),
+            ],
+          ),
         ),
       ),
     );

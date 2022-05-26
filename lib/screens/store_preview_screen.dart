@@ -25,45 +25,52 @@ class _StorePreviewScreenState extends State<StorePreviewScreen> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: deviceSize.height * 0.1,
-        centerTitle: true,
-        title: Column(
-          children: [
-            Text(
-              widget.store.name,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
+          centerTitle: true,
+          title: Column(
+            children: [
+              Text(
+                widget.store.name,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Text(
-              widget.store.categories.join(", "),
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
+              Text(
+                widget.store.categories.join(", "),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-      body: SizedBox(
-        height: deviceSize.height,
-        child: Column(children: [
-          StorePreview(
-              widget.store is OnlineStoreDTO,
-              widget.store.name,
-              widget.store.address,
-              null,
-              widget.store.image,
-              widget.store.phoneNumber,
-              widget.store.operationHours,
-              widget.store is OnlineStoreDTO
-                  ? (widget.store as OnlineStoreDTO).products
-                  : null,
-              false),
-        ]),
+        body: SizedBox(
+          height: deviceSize.height,
+          child: Column(children: [
+            StorePreview(
+                widget.store is OnlineStoreDTO,
+                widget.store.name,
+                widget.store.address,
+                null,
+                widget.store.image,
+                widget.store.phoneNumber,
+                widget.store.operationHours,
+                widget.store is OnlineStoreDTO
+                    ? (widget.store as OnlineStoreDTO).products
+                    : null,
+                false),
+          ]),
+        ),
       ),
     );
   }

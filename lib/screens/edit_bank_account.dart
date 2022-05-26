@@ -29,12 +29,13 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
     final user = Provider.of<User>(context, listen: false);
     final bankAccount = await user.getStoreBankAccountDetails();
     return bankAccount != null
-        ? BankAccountForm(
-            bankAccount.bankAccount, bankAccount.bankName, bankAccount.branchNumber, () => _formChanged = true)
+        ? BankAccountForm(bankAccount.bankAccount, bankAccount.bankName,
+            bankAccount.branchNumber, () => _formChanged = true)
         : null;
   }
 
-  Future<void> _saveForm(BankAccountForm bankAccountForm, BuildContext context) async {
+  Future<void> _saveForm(
+      BankAccountForm bankAccountForm, BuildContext context) async {
     setState(() {
       _isLoading = true;
     });
@@ -109,63 +110,75 @@ class _EditBankAccountState extends State<EditBankAccountScreen> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: deviceSize.height * 0.1,
-          automaticallyImplyLeading: false,
-          leading: _isLoading
-              ? Container()
-              : IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () => _exitWithoutSavingDialog(),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            toolbarHeight: deviceSize.height * 0.1,
+            automaticallyImplyLeading: false,
+            leading: _isLoading
+                ? Container()
+                : IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => _exitWithoutSavingDialog(),
+                  ),
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Edit Bank Account",
+                style: const TextStyle(
+                  fontSize: 22,
                 ),
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Edit Bank Account",
-              style: const TextStyle(
-                fontSize: 22,
               ),
             ),
           ),
-        ),
-        resizeToAvoidBottomInset: false,
-        body: _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : FutureBuilder(
-                future: bankAccountFuture,
-                builder: (BuildContext ctx, AsyncSnapshot snap) {
-                  return snap.connectionState != ConnectionState.done
-                      ? Center(child: CircularProgressIndicator())
-                      : snap.data == null
-                          ? Center(
-                              child: Text("Sorry, we could not find your bank account details at the moment...",
-                                  textAlign: TextAlign.center),
-                            )
-                          : Padding(
-                              padding: EdgeInsets.all(deviceSize.width * 0.03),
-                              child: Column(
-                                children: [
-                                  snap.data,
-                                  SizedBox(
-                                    width: deviceSize.width * 0.8,
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(18.0),
-                                            side: BorderSide(color: Colors.red))),
+          resizeToAvoidBottomInset: false,
+          body: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : FutureBuilder(
+                  future: bankAccountFuture,
+                  builder: (BuildContext ctx, AsyncSnapshot snap) {
+                    return snap.connectionState != ConnectionState.done
+                        ? Center(child: CircularProgressIndicator())
+                        : snap.data == null
+                            ? Center(
+                                child: Text(
+                                    "Sorry, we could not find your bank account details at the moment...",
+                                    textAlign: TextAlign.center),
+                              )
+                            : Padding(
+                                padding:
+                                    EdgeInsets.all(deviceSize.width * 0.03),
+                                child: Column(
+                                  children: [
+                                    snap.data,
+                                    SizedBox(
+                                      width: deviceSize.width * 0.8,
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                                  RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          18.0),
+                                                  side: BorderSide(
+                                                      color: Colors.red))),
+                                        ),
+                                        onPressed: () => _saveForm(
+                                            snap.data as BankAccountForm,
+                                            context),
+                                        child: Text('Submit'),
                                       ),
-                                      onPressed: () => _saveForm(snap.data as BankAccountForm, context),
-                                      child: Text('Submit'),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                },
-              ),
+                                  ],
+                                ),
+                              );
+                  },
+                ),
+        ),
       ),
     );
   }

@@ -86,150 +86,160 @@ class _StorePurchasesScreenState extends State<StorePurchasesScreen> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: deviceSize.height * 0.1,
-        title: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Latest Purchases",
-            style: const TextStyle(
-              fontSize: 22,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
+          title: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Latest Purchases",
+              style: const TextStyle(
+                fontSize: 22,
+              ),
             ),
           ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-      body: FutureBuilder(
-        future: _purchasesFuture,
-        builder: (BuildContext context, AsyncSnapshot snap) {
-          return snap.connectionState != ConnectionState.done
-              ? Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: _pullRefresh,
-                  child: newStorePurchases.length +
-                              earlierStorePurchases.length >
-                          0
-                      ? Column(
-                          children: [
-                            Container(
-                              height: deviceSize.height * 0.2,
-                              width: double.infinity,
-                              color: Colors.white,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        height: deviceSize.height * 0.075,
-                                        child:
-                                            Image.asset('assets/icon/icon.png'),
-                                      ),
-                                      Text(
-                                        "  \€" +
-                                            totalStoreEarning()
-                                                .toStringAsFixed(2),
-                                        style: TextStyle(
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.bold,
+        body: FutureBuilder(
+          future: _purchasesFuture,
+          builder: (BuildContext context, AsyncSnapshot snap) {
+            return snap.connectionState != ConnectionState.done
+                ? Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: _pullRefresh,
+                    child: newStorePurchases.length +
+                                earlierStorePurchases.length >
+                            0
+                        ? Column(
+                            children: [
+                              Container(
+                                height: deviceSize.height * 0.2,
+                                width: double.infinity,
+                                color: Colors.white,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: deviceSize.height * 0.075,
+                                          child: Image.asset(
+                                              'assets/icon/icon.png'),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    "Total Earnings",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                                        Text(
+                                          "  \€" +
+                                              totalStoreEarning()
+                                                  .toStringAsFixed(2),
+                                          style: TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  )
-                                ],
+                                    Text(
+                                      "Total Earnings",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                            Flexible(
-                              child: ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                itemCount: newStorePurchases.length +
-                                    earlierStorePurchases.length,
-                                itemBuilder: (context, index) {
-                                  if (index == 0 &&
-                                      newStorePurchases.length > 0) {
-                                    return Column(children: [
-                                      ListTile(title: Text("New")),
-                                      HistoryPurchaseItem(
+                              Flexible(
+                                child: ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  itemCount: newStorePurchases.length +
+                                      earlierStorePurchases.length,
+                                  itemBuilder: (context, index) {
+                                    if (index == 0 &&
+                                        newStorePurchases.length > 0) {
+                                      return Column(children: [
+                                        ListTile(title: Text("New")),
+                                        HistoryPurchaseItem(
+                                            newStorePurchases[
+                                                newStorePurchases.length -
+                                                    index -
+                                                    1],
+                                            storeName)
+                                      ]);
+                                    } else if (index ==
+                                        newStorePurchases.length) {
+                                      return Column(children: [
+                                        ListTile(title: Text("Earlier")),
+                                        HistoryPurchaseItem(
+                                            earlierStorePurchases[
+                                                earlierStorePurchases.length -
+                                                    (index -
+                                                        newStorePurchases
+                                                            .length) -
+                                                    1],
+                                            storeName)
+                                      ]);
+                                    } else if (index <
+                                        newStorePurchases.length) {
+                                      return HistoryPurchaseItem(
                                           newStorePurchases[
                                               newStorePurchases.length -
                                                   index -
                                                   1],
-                                          storeName)
-                                    ]);
-                                  } else if (index ==
-                                      newStorePurchases.length) {
-                                    return Column(children: [
-                                      ListTile(title: Text("Earlier")),
-                                      HistoryPurchaseItem(
-                                          earlierStorePurchases[
-                                              earlierStorePurchases.length -
-                                                  (index -
-                                                      newStorePurchases
-                                                          .length) -
-                                                  1],
-                                          storeName)
-                                    ]);
-                                  } else if (index < newStorePurchases.length) {
+                                          storeName);
+                                    }
                                     return HistoryPurchaseItem(
-                                        newStorePurchases[
-                                            newStorePurchases.length -
-                                                index -
+                                        earlierStorePurchases[
+                                            earlierStorePurchases.length -
+                                                (index -
+                                                    newStorePurchases.length) -
                                                 1],
                                         storeName);
-                                  }
-                                  return HistoryPurchaseItem(
-                                      earlierStorePurchases[
-                                          earlierStorePurchases.length -
-                                              (index -
-                                                  newStorePurchases.length) -
-                                              1],
-                                      storeName);
-                                },
-                              ),
-                            ),
-                          ],
-                        )
-                      : Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: deviceSize.width * 0.11,
-                                backgroundColor: Theme.of(context).primaryColor,
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  child: Icon(Icons.history, size: 40),
-                                  radius: deviceSize.width * 0.1,
+                                  },
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.all(deviceSize.height * 0.01),
-                                child: Text("Latest Purchases",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                              Text(
-                                  "We are Sorry, no purchases made in your store yet"),
                             ],
+                          )
+                        : Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: deviceSize.width * 0.11,
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    child: Icon(Icons.history, size: 40),
+                                    radius: deviceSize.width * 0.1,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.all(deviceSize.height * 0.01),
+                                  child: Text("Latest Purchases",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                Text(
+                                    "We are Sorry, no purchases made in your store yet"),
+                              ],
+                            ),
                           ),
-                        ),
-                );
-        },
+                  );
+          },
+        ),
       ),
     );
   }

@@ -130,167 +130,171 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: _isLoading
-              ? Container()
-              : IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () => _exitWithoutSavingDialog(),
-                ),
-          toolbarHeight: deviceSize.height * 0.1,
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Add Product',
-              style: const TextStyle(fontSize: 22),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            leading: _isLoading
+                ? Container()
+                : IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => _exitWithoutSavingDialog(),
+                  ),
+            toolbarHeight: deviceSize.height * 0.1,
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Add Product',
+                style: const TextStyle(fontSize: 22),
+              ),
             ),
           ),
-        ),
-        body: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _form,
-                  child: ListView(
-                    children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage, null,
-                          _pickedImage, false),
-                      TextFormField(
-                        key: const Key('title'),
-                        decoration: InputDecoration(labelText: 'Title'),
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(_priceFocusNode);
-                        },
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please provide a value.';
-                          }
-                          if (double.tryParse(value) != null) {
-                            return 'Product name can not be a number';
-                          }
-                          if (value.length > 40) {
-                            return 'Can be max 40 characters long.';
-                          }
-                          return null;
-                        },
-                        onChanged: (_) => _formChanged = true,
-                        onSaved: (value) {
-                          _editedProduct = ProductDTO(
-                              name: value!,
-                              price: _editedProduct!.price,
-                              description: _editedProduct!.description,
-                              imageUrl: _editedProduct!.imageUrl,
-                              id: _editedProduct!.id,
-                              category: '',
-                              storeID: '',
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
-                        },
-                      ),
-                      TextFormField(
-                        key: const Key('price'),
-                        decoration: InputDecoration(labelText: 'Price'),
-                        textInputAction: TextInputAction.next,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        focusNode: _priceFocusNode,
-                        onFieldSubmitted: (_) {
-                          FocusScope.of(context)
-                              .requestFocus(_descriptionFocusNode);
-                        },
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter a price.';
-                          }
-                          if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number.';
-                          }
-                          if (double.parse(value) <= 0) {
-                            return 'Please enter a number greater than zero.';
-                          }
-                          if (double.parse(value).toStringAsFixed(2).length >
-                              9) {
-                            return 'Price too large, please enter a smaller price.';
-                          }
-                          return null;
-                        },
-                        onChanged: (_) => _formChanged = true,
-                        onSaved: (value) {
-                          _editedProduct = ProductDTO(
-                              name: _editedProduct!.name,
-                              price: double.parse(
-                                  double.parse(value!).toStringAsFixed(2)),
-                              description: _editedProduct!.description,
-                              imageUrl: _editedProduct!.imageUrl,
-                              id: _editedProduct!.id,
-                              category: '',
-                              storeID: '',
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
-                        },
-                      ),
-                      TextFormField(
-                        key: const Key('description'),
-                        decoration: InputDecoration(labelText: 'Description'),
-                        maxLines: 3,
-                        textInputAction: TextInputAction.done,
-                        focusNode: _descriptionFocusNode,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter a description.';
-                          }
-                          if (value.length > 60) {
-                            return 'Can be max 60 characters long.';
-                          }
-                          return null;
-                        },
-                        onChanged: (_) => _formChanged = true,
-                        onSaved: (value) {
-                          _editedProduct = ProductDTO(
-                              name: _editedProduct!.name,
-                              price: _editedProduct!.price,
-                              description: value!,
-                              imageUrl: _editedProduct!.imageUrl,
-                              id: _editedProduct!.id,
-                              category: '',
-                              storeID: '',
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
-                        },
-                      ),
-                    ],
+          body: _isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _form,
+                    child: ListView(
+                      children: <Widget>[
+                        ImageInput(_selectImage, _unselectImage, null,
+                            _pickedImage, false),
+                        TextFormField(
+                          key: const Key('title'),
+                          decoration: InputDecoration(labelText: 'Title'),
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context)
+                                .requestFocus(_priceFocusNode);
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please provide a value.';
+                            }
+                            if (double.tryParse(value) != null) {
+                              return 'Product name can not be a number';
+                            }
+                            if (value.length > 40) {
+                              return 'Can be max 40 characters long.';
+                            }
+                            return null;
+                          },
+                          onChanged: (_) => _formChanged = true,
+                          onSaved: (value) {
+                            _editedProduct = ProductDTO(
+                                name: value!,
+                                price: _editedProduct!.price,
+                                description: _editedProduct!.description,
+                                imageUrl: _editedProduct!.imageUrl,
+                                id: _editedProduct!.id,
+                                category: '',
+                                storeID: '',
+                                imageFromPhone: _pickedImage == null
+                                    ? null
+                                    : File(_pickedImage!.path));
+                          },
+                        ),
+                        TextFormField(
+                          key: const Key('price'),
+                          decoration: InputDecoration(labelText: 'Price'),
+                          textInputAction: TextInputAction.next,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          focusNode: _priceFocusNode,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context)
+                                .requestFocus(_descriptionFocusNode);
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter a price.';
+                            }
+                            if (double.tryParse(value) == null) {
+                              return 'Please enter a valid number.';
+                            }
+                            if (double.parse(value) <= 0) {
+                              return 'Please enter a number greater than zero.';
+                            }
+                            if (double.parse(value).toStringAsFixed(2).length >
+                                9) {
+                              return 'Price too large, please enter a smaller price.';
+                            }
+                            return null;
+                          },
+                          onChanged: (_) => _formChanged = true,
+                          onSaved: (value) {
+                            _editedProduct = ProductDTO(
+                                name: _editedProduct!.name,
+                                price: double.parse(
+                                    double.parse(value!).toStringAsFixed(2)),
+                                description: _editedProduct!.description,
+                                imageUrl: _editedProduct!.imageUrl,
+                                id: _editedProduct!.id,
+                                category: '',
+                                storeID: '',
+                                imageFromPhone: _pickedImage == null
+                                    ? null
+                                    : File(_pickedImage!.path));
+                          },
+                        ),
+                        TextFormField(
+                          key: const Key('description'),
+                          decoration: InputDecoration(labelText: 'Description'),
+                          maxLines: 3,
+                          textInputAction: TextInputAction.done,
+                          focusNode: _descriptionFocusNode,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter a description.';
+                            }
+                            if (value.length > 60) {
+                              return 'Can be max 60 characters long.';
+                            }
+                            return null;
+                          },
+                          onChanged: (_) => _formChanged = true,
+                          onSaved: (value) {
+                            _editedProduct = ProductDTO(
+                                name: _editedProduct!.name,
+                                price: _editedProduct!.price,
+                                description: value!,
+                                imageUrl: _editedProduct!.imageUrl,
+                                id: _editedProduct!.id,
+                                category: '',
+                                storeID: '',
+                                imageFromPhone: _pickedImage == null
+                                    ? null
+                                    : File(_pickedImage!.path));
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-        bottomSheet: Container(
-          width: double.infinity,
-          child: ElevatedButton(
-            key: const Key("save"),
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+          bottomSheet: Container(
+            width: double.infinity,
+            child: ElevatedButton(
+              key: const Key("save"),
+              style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  primary: Theme.of(context).primaryColor),
+              child: Container(
+                width: deviceSize.width * 0.3,
+                margin: const EdgeInsets.all(12),
+                child: const Text(
+                  'Save',
+                  textAlign: TextAlign.center,
                 ),
-                primary: Theme.of(context).primaryColor),
-            child: Container(
-              width: deviceSize.width * 0.3,
-              margin: const EdgeInsets.all(12),
-              child: const Text(
-                'Save',
-                textAlign: TextAlign.center,
               ),
+              onPressed: _saveForm,
             ),
-            onPressed: _saveForm,
           ),
         ),
       ),
