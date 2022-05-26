@@ -27,7 +27,8 @@ class LoadingSplashScreen extends StatefulWidget {
   State<LoadingSplashScreen> createState() => _LoadingSplashScreenState();
 }
 
-class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerProviderStateMixin {
+class _LoadingSplashScreenState extends State<LoadingSplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController controller;
 
   @override
@@ -53,19 +54,28 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
         if (msg.eventName == 'modelSynced') {
           currentModelIndex++;
           timers.add(stopwatch.elapsed);
-          var avgTime = timers.reduce((value, element) => value + element) ~/ timers.length;
-          var duration = MODEL_COUNT - currentModelIndex > 0 ? avgTime * (MODEL_COUNT - currentModelIndex) : avgTime;
-          duration = 1 - controller.value > 0 ? duration * (1 / (1 - controller.value)) : duration;
+          var avgTime = timers.reduce((value, element) => value + element) ~/
+              timers.length;
+          var duration = MODEL_COUNT - currentModelIndex > 0
+              ? avgTime * (MODEL_COUNT - currentModelIndex)
+              : avgTime;
+          duration = 1 - controller.value > 0
+              ? duration * (1 / (1 - controller.value))
+              : duration;
           controller.duration = duration;
           ticker = controller.forward();
           stopwatch = new Stopwatch()..start();
         } else if (msg.eventName == 'ready') {
           FLog.info(text: "AWS Amplify is ready");
           final isUserAlreadySignedIn = await isSignedIn();
-          Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+          Secret secret =
+              await SecretLoader(secretPath: "assets/secrets.json").load();
           MyApp.CASH_BACK_PRECENTEGE = secret.CASH_BACK_PRECENTEGE;
           ticker.whenCompleteOrCancel(() => Navigator.pushReplacementNamed(
-              context, isUserAlreadySignedIn ? TabsScreen.routeName : AuthScreen.routeName));
+              context,
+              isUserAlreadySignedIn
+                  ? TabsScreen.routeName
+                  : AuthScreen.routeName));
         }
       });
     });
@@ -99,7 +109,8 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
     try {
       await Amplify.configure(amplifyconfig);
     } on AmplifyAlreadyConfiguredException {
-      FLog.error(text: "Amplify was already configured. Was the app restarted?");
+      FLog.error(
+          text: "Amplify was already configured. Was the app restarted?");
     }
   }
 
@@ -108,14 +119,17 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
     try {
       await Amplify.Auth.getCurrentUser();
       var res2 = await Amplify.Auth.fetchUserAttributes();
-      email = res2.firstWhere((element) => element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) == 0);
+      email = res2.firstWhere((element) =>
+          element.userAttributeKey.compareTo(CognitoUserAttributeKey.email) ==
+          0);
     } catch (e) {
       FLog.error(text: e.toString(), stacktrace: StackTrace.current);
       return false;
     }
     UserModel? model = await UsersStorageProxy().fetchFullUser(email.value);
     print("isLoggedIn: ${model != null && model.isLoggedIn}");
-    if (model != null) await Provider.of<User>(context, listen: false).userFromModel(model);
+    if (model != null)
+      await Provider.of<User>(context, listen: false).userFromModel(model);
     if (model != null && model.isLoggedIn) {
       UserAuthenticator().setCurrentUserId(model.email);
       return true;
@@ -126,38 +140,43 @@ class _LoadingSplashScreenState extends State<LoadingSplashScreen> with TickerPr
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) => Scaffold(
-        backgroundColor: Color.fromARGB(255, 255, 179, 179),
-        body: Stack(
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(height: constraints.maxHeight * 0.15, child: Image.asset('assets/icon/icon.png')),
-                ],
-              ),
-            ),
-            Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: constraints.maxHeight * 0.1,
-                  left: constraints.maxWidth * 0.075,
-                  right: constraints.maxWidth * 0.075,
+      builder: (context, constraints) => WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          backgroundColor: Color.fromARGB(255, 255, 179, 179),
+          body: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        height: constraints.maxHeight * 0.19,
+                        child: Image.asset('assets/icon/icon.png')),
+                  ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  child: LinearProgressIndicator(
-                    backgroundColor: Colors.white70,
-                    value: controller.value,
-                    minHeight: constraints.maxHeight * 0.05,
+              ),
+              Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: constraints.maxHeight * 0.1,
+                    left: constraints.maxWidth * 0.075,
+                    right: constraints.maxWidth * 0.075,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    child: LinearProgressIndicator(
+                      backgroundColor: Colors.white70,
+                      value: controller.value,
+                      minHeight: constraints.maxHeight * 0.05,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -29,10 +29,7 @@ class _CartScreenState extends State<CartScreen> {
     var deviceSize = MediaQuery.of(context).size;
 
     return WillPopScope(
-      onWillPop: () async {
-        provider.saveShoppingBag(widget.storeID);
-        return true;
-      },
+      onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           title: Align(
@@ -41,6 +38,13 @@ class _CartScreenState extends State<CartScreen> {
               'Your Cart',
               style: const TextStyle(fontSize: 22),
             ),
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              provider.saveShoppingBag(widget.storeID);
+              Navigator.of(context).pop();
+            },
           ),
           toolbarHeight: deviceSize.height * 0.1,
         ),

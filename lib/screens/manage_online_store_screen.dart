@@ -18,7 +18,8 @@ class ManageOnlineStoreScreen extends StatefulWidget {
   late OnlineStoreDTO store;
 
   @override
-  _ManageOnlineStoreScreenState createState() => _ManageOnlineStoreScreenState();
+  _ManageOnlineStoreScreenState createState() =>
+      _ManageOnlineStoreScreenState();
 }
 
 class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
@@ -27,7 +28,9 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
   @override
   void didChangeDependencies() {
     if (!isLoading) {
-      widget.store = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore!;
+      widget.store = Provider.of<User>(context, listen: false)
+          .storeOwnerState!
+          .onlineStore!;
       super.didChangeDependencies();
     }
   }
@@ -41,281 +44,314 @@ class _ManageOnlineStoreScreenState extends State<ManageOnlineStoreScreen> {
     }
     var deviceSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: deviceSize.height * 0.1,
-        automaticallyImplyLeading: false,
-        leading: isLoading
-            ? Container()
-            : IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () => Navigator.of(context).pop(),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: deviceSize.height * 0.1,
+          automaticallyImplyLeading: false,
+          leading: isLoading
+              ? Container()
+              : IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+          centerTitle: true,
+          title: Column(
+            children: [
+              Text(
+                "Store Management",
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-        centerTitle: true,
-        title: Column(
-          children: [
-            Text(
-              "Store Management",
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+              Text(
+                widget.store.name,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                ),
               ),
-            ),
-            Text(
-              widget.store.name,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  Center(
-                    child: widget.store.image != null
-                        ? CachedNetworkImage(
-                            imageUrl: widget.store.image!,
-                            imageBuilder: (context, imageProvider) => Container(
-                              height: deviceSize.height * 0.3,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Center(
+                      child: widget.store.image != null
+                          ? CachedNetworkImage(
+                              imageUrl: widget.store.image!,
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                height: deviceSize.height * 0.3,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: imageProvider, fit: BoxFit.cover),
+                                ),
                               ),
-                            ),
-                            placeholder: (context, url) => Container(
+                              placeholder: (context, url) => Container(
+                                height: deviceSize.height * 0.3,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/placeholder-image.jpeg'),
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                height: deviceSize.height * 0.3,
+                                child: FittedBox(
+                                    fit: BoxFit.fill,
+                                    child: Center(
+                                        child: Icon(Icons.error_outline,
+                                            color:
+                                                Theme.of(context).errorColor))),
+                              ),
+                            )
+                          : Container(
                               height: deviceSize.height * 0.3,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: AssetImage('assets/images/placeholder-image.jpeg'), fit: BoxFit.cover),
+                                    image: AssetImage(
+                                        'assets/images/default-store.png'),
+                                    fit: BoxFit.cover),
                               ),
                             ),
-                            errorWidget: (context, url, error) => Container(
-                              height: deviceSize.height * 0.3,
-                              child: FittedBox(
-                                  fit: BoxFit.fill,
-                                  child: Center(child: Icon(Icons.error_outline, color: Theme.of(context).errorColor))),
+                    ),
+                    Card(
+                      elevation: 4.0,
+                      margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: Icon(
+                              Icons.storefront,
+                              color: Colors.purple,
                             ),
-                          )
-                        : Container(
-                            height: deviceSize.height * 0.3,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/images/default-store.png'), fit: BoxFit.cover),
+                            title: Text("View My Store"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () => Navigator.of(context).pushNamed(
+                                StorePreviewScreen.routeName,
+                                arguments: {'store': widget.store}),
+                          ),
+                          _buildDivider(deviceSize),
+                          ListTile(
+                            leading: Icon(
+                              Icons.edit,
+                              color: Colors.purple,
                             ),
+                            title: Text("Edit Store Details"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () => Navigator.of(context)
+                                .pushNamed(EditOnlineStorePipeline.routeName),
                           ),
-                  ),
-                  Card(
-                    elevation: 4.0,
-                    margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                          leading: Icon(
-                            Icons.storefront,
-                            color: Colors.purple,
+                          _buildDivider(deviceSize),
+                          ListTile(
+                            leading: Icon(
+                              Icons.account_balance,
+                              color: Colors.purple,
+                            ),
+                            title: Text("Edit Bank Account Details"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () => Navigator.of(context)
+                                .pushNamed(EditBankAccountScreen.routeName),
                           ),
-                          title: Text("View My Store"),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(StorePreviewScreen.routeName, arguments: {'store': widget.store}),
-                        ),
-                        _buildDivider(deviceSize),
-                        ListTile(
-                          leading: Icon(
-                            Icons.edit,
-                            color: Colors.purple,
-                          ),
-                          title: Text("Edit Store Details"),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context).pushNamed(EditOnlineStorePipeline.routeName),
-                        ),
-                        _buildDivider(deviceSize),
-                        ListTile(
-                          leading: Icon(
-                            Icons.account_balance,
-                            color: Colors.purple,
-                          ),
-                          title: Text("Edit Bank Account Details"),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context).pushNamed(EditBankAccountScreen.routeName),
-                        ),
-                        _buildDivider(deviceSize),
-                        ListTile(
-                          leading: Stack(
-                            children: <Widget>[
-                              Icon(
-                                Icons.history,
-                                color: Colors.purple,
-                              ),
-                              notificationCount > 0
-                                  ? Positioned(
-                                      right: 0,
-                                      child: Container(
-                                        padding: EdgeInsets.all(1),
-                                        decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        constraints: BoxConstraints(
-                                          minWidth: 13,
-                                          minHeight: 13,
-                                        ),
-                                        child: Text(
-                                          notificationCount > 9 ? "9+" : notificationCount.toString(),
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 8,
+                          _buildDivider(deviceSize),
+                          ListTile(
+                            leading: Stack(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.history,
+                                  color: Colors.purple,
+                                ),
+                                notificationCount > 0
+                                    ? Positioned(
+                                        right: 0,
+                                        child: Container(
+                                          padding: EdgeInsets.all(1),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
                                           ),
-                                          textAlign: TextAlign.center,
+                                          constraints: BoxConstraints(
+                                            minWidth: 13,
+                                            minHeight: 13,
+                                          ),
+                                          child: Text(
+                                            notificationCount > 9
+                                                ? "9+"
+                                                : notificationCount.toString(),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 8,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
+                                      )
+                                    : SizedBox(),
+                              ],
+                            ),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            title: Text("View Store Purchases"),
+                            onTap: () => Navigator.of(context).pushNamed(
+                                StorePurchasesScreen.routeName,
+                                arguments: {"storeName": widget.store.name}),
+                          ),
+                          _buildDivider(deviceSize),
+                          ListTile(
+                            leading: Icon(
+                              Icons.qr_code_2_sharp,
+                              color: Colors.purple,
+                            ),
+                            title: Text("Store QR Code"),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            onTap: () => showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text(
+                                        'QR Code',
+                                        style: TextStyle(fontSize: 25),
                                       ),
-                                    )
-                                  : SizedBox(),
-                            ],
-                          ),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          title: Text("View Store Purchases"),
-                          onTap: () => Navigator.of(context)
-                              .pushNamed(StorePurchasesScreen.routeName, arguments: {"storeName": widget.store.name}),
-                        ),
-                        _buildDivider(deviceSize),
-                        ListTile(
-                          leading: Icon(
-                            Icons.qr_code_2_sharp,
-                            color: Colors.purple,
-                          ),
-                          title: Text("Store QR Code"),
-                          trailing: Icon(Icons.keyboard_arrow_right),
-                          onTap: () => showDialog(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                    title: Text(
-                                      'QR Code',
-                                      style: TextStyle(fontSize: 25),
-                                    ),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl: widget.store.qrCode!,
-                                          imageBuilder: (context, imageProvider) => Container(
-                                            height: deviceSize.height * 0.3,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          CachedNetworkImage(
+                                            imageUrl: widget.store.qrCode!,
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                              height: deviceSize.height * 0.3,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.contain),
+                                              ),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Container(
+                                              height: deviceSize.height * 0.3,
+                                              child: FittedBox(
+                                                  fit: BoxFit.fill,
+                                                  child: Center(
+                                                      child: Icon(
+                                                          Icons.error_outline,
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .errorColor))),
                                             ),
                                           ),
-                                          errorWidget: (context, url, error) => Container(
-                                            height: deviceSize.height * 0.3,
-                                            child: FittedBox(
-                                                fit: BoxFit.fill,
-                                                child: Center(
-                                                    child: Icon(Icons.error_outline,
-                                                        color: Theme.of(context).errorColor))),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      primary: Colors.red,
-                    ),
-                    child: Container(
-                      margin: EdgeInsets.all(deviceSize.width * 0.025),
-                      child: const Text(
-                        'DELETE STORE',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: Text('Are you sure?'),
-                          content: Text(
-                            'Deleting your store means that all information on it will be deleted, you will not be able to restored this action.',
+                                        ],
+                                      ),
+                                    )),
                           ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('No'),
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text('Yes'),
-                              onPressed: () async {
-                                Navigator.of(ctx).pop();
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                try {
-                                  var res = user.deleteStore(widget.store.id, true).then((res) {
-                                    if (res.getTag()) {
-                                      showSnackBar(context, 'Deleted Store Successfully!');
-                                    } else {
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                      showDialog(
-                                        context: context,
-                                        builder: (ctx) => AlertDialog(
-                                          title: Text('Delete Store Error'),
-                                          content: Text(res.getMessage()),
-                                          actions: <Widget>[
-                                            FlatButton(
-                                              child: Text('Okay'),
-                                              onPressed: () {
-                                                Navigator.of(ctx).pop();
-                                              },
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  }).timeout(new Duration(minutes: 5));
-                                } on TimeoutException catch (e) {
-                                  await showDialog(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: Text('Internet Connection Error'),
-                                      content:
-                                          Text("Please check your internet connectivity. Your store was not created."),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text('Okay'),
-                                          onPressed: () {
-                                            Navigator.of(ctx).pop();
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                      );
-                    },
-                  ),
-                ],
+                        primary: Colors.red,
+                      ),
+                      child: Container(
+                        margin: EdgeInsets.all(deviceSize.width * 0.025),
+                        child: const Text(
+                          'DELETE STORE',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text('Are you sure?'),
+                            content: Text(
+                              'Deleting your store means that all information on it will be deleted, you will not be able to restored this action.',
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('No'),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('Yes'),
+                                onPressed: () async {
+                                  Navigator.of(ctx).pop();
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  try {
+                                    var res = user
+                                        .deleteStore(widget.store.id, true)
+                                        .then((res) {
+                                      if (res.getTag()) {
+                                        showSnackBar(context,
+                                            'Deleted Store Successfully!');
+                                      } else {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => AlertDialog(
+                                            title: Text('Delete Store Error'),
+                                            content: Text(res.getMessage()),
+                                            actions: <Widget>[
+                                              FlatButton(
+                                                child: Text('Okay'),
+                                                onPressed: () {
+                                                  Navigator.of(ctx).pop();
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      }
+                                    }).timeout(new Duration(minutes: 5));
+                                  } on TimeoutException catch (e) {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title:
+                                            Text('Internet Connection Error'),
+                                        content: Text(
+                                            "Please check your internet connectivity. Your store was not created."),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('Okay'),
+                                            onPressed: () {
+                                              Navigator.of(ctx).pop();
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 

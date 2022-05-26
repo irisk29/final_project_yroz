@@ -152,145 +152,149 @@ class AddCreditCardScreenState extends State<AddCreditCardScreen> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: _isLoading
-              ? Container()
-              : IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () => _exitWithoutSavingDialog(),
-                ),
-          toolbarHeight: deviceSize.height * 0.1,
-          title: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "New Credit Card",
-              style: const TextStyle(fontSize: 22),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            leading: _isLoading
+                ? Container()
+                : IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => _exitWithoutSavingDialog(),
+                  ),
+            toolbarHeight: deviceSize.height * 0.1,
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "New Credit Card",
+                style: const TextStyle(fontSize: 22),
+              ),
             ),
           ),
-        ),
-        body: _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Container(
-                child: SafeArea(
-                  child: Column(
-                    children: <Widget>[
-                      CreditCardWidget(
-                        glassmorphismConfig: useGlassMorphism
-                            ? Glassmorphism.defaultConfig()
-                            : null,
-                        cardNumber: cardNumber,
-                        expiryDate: expiryDate,
-                        cardHolderName: cardHolderName,
-                        cvvCode: cvvCode,
-                        showBackView: isCvvFocused,
-                        obscureCardNumber: true,
-                        obscureCardCvv: true,
-                        isHolderNameVisible: true,
-                        cardBgColor: Colors.blue,
-                        isSwipeGestureEnabled: true,
-                        onCreditCardWidgetChange:
-                            (CreditCardBrand creditCardBrand) {},
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: <Widget>[
-                              form.CreditCardForm(
-                                formKey: formKey,
-                                obscureCvv: true,
-                                obscureNumber: true,
-                                cardNumber: cardNumber,
-                                cvvCode: cvvCode,
-                                isHolderNameVisible: true,
-                                isCardNumberVisible: true,
-                                isExpiryDateVisible: true,
-                                cardHolderName: cardHolderName,
-                                expiryDate: expiryDate,
-                                themeColor: Colors.blue,
-                                textColor: Colors.black,
-                                cardNumberDecoration: InputDecoration(
-                                  labelText: 'Number',
-                                  hintText: 'XXXX XXXX XXXX XXXX',
-                                  hintStyle:
-                                      const TextStyle(color: Colors.black),
-                                  labelStyle:
-                                      const TextStyle(color: Colors.black),
-                                  focusedBorder: border,
-                                  enabledBorder: border,
+          body: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Container(
+                  child: SafeArea(
+                    child: Column(
+                      children: <Widget>[
+                        CreditCardWidget(
+                          glassmorphismConfig: useGlassMorphism
+                              ? Glassmorphism.defaultConfig()
+                              : null,
+                          cardNumber: cardNumber,
+                          expiryDate: expiryDate,
+                          cardHolderName: cardHolderName,
+                          cvvCode: cvvCode,
+                          showBackView: isCvvFocused,
+                          obscureCardNumber: true,
+                          obscureCardCvv: true,
+                          isHolderNameVisible: true,
+                          cardBgColor: Colors.blue,
+                          isSwipeGestureEnabled: true,
+                          onCreditCardWidgetChange:
+                              (CreditCardBrand creditCardBrand) {},
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: <Widget>[
+                                form.CreditCardForm(
+                                  formKey: formKey,
+                                  obscureCvv: true,
+                                  obscureNumber: true,
+                                  cardNumber: cardNumber,
+                                  cvvCode: cvvCode,
+                                  isHolderNameVisible: true,
+                                  isCardNumberVisible: true,
+                                  isExpiryDateVisible: true,
+                                  cardHolderName: cardHolderName,
+                                  expiryDate: expiryDate,
+                                  themeColor: Colors.blue,
+                                  textColor: Colors.black,
+                                  cardNumberDecoration: InputDecoration(
+                                    labelText: 'Number',
+                                    hintText: 'XXXX XXXX XXXX XXXX',
+                                    hintStyle:
+                                        const TextStyle(color: Colors.black),
+                                    labelStyle:
+                                        const TextStyle(color: Colors.black),
+                                    focusedBorder: border,
+                                    enabledBorder: border,
+                                  ),
+                                  expiryDateDecoration: InputDecoration(
+                                    hintStyle:
+                                        const TextStyle(color: Colors.black),
+                                    labelStyle:
+                                        const TextStyle(color: Colors.black),
+                                    focusedBorder: border,
+                                    enabledBorder: border,
+                                    labelText: 'Expired Date',
+                                    hintText: 'XX/XX',
+                                  ),
+                                  cvvCodeDecoration: InputDecoration(
+                                    hintStyle:
+                                        const TextStyle(color: Colors.black),
+                                    labelStyle:
+                                        const TextStyle(color: Colors.black),
+                                    focusedBorder: border,
+                                    enabledBorder: border,
+                                    labelText: 'CVV',
+                                    hintText: 'XXX',
+                                  ),
+                                  cardHolderDecoration: InputDecoration(
+                                    hintStyle:
+                                        const TextStyle(color: Colors.black),
+                                    labelStyle:
+                                        const TextStyle(color: Colors.black),
+                                    focusedBorder: border,
+                                    enabledBorder: border,
+                                    labelText: 'Card Holder',
+                                  ),
+                                  onCreditCardModelChange:
+                                      onCreditCardModelChange,
                                 ),
-                                expiryDateDecoration: InputDecoration(
-                                  hintStyle:
-                                      const TextStyle(color: Colors.black),
-                                  labelStyle:
-                                      const TextStyle(color: Colors.black),
-                                  focusedBorder: border,
-                                  enabledBorder: border,
-                                  labelText: 'Expired Date',
-                                  hintText: 'XX/XX',
+                                const SizedBox(
+                                  height: 20,
                                 ),
-                                cvvCodeDecoration: InputDecoration(
-                                  hintStyle:
-                                      const TextStyle(color: Colors.black),
-                                  labelStyle:
-                                      const TextStyle(color: Colors.black),
-                                  focusedBorder: border,
-                                  enabledBorder: border,
-                                  labelText: 'CVV',
-                                  hintText: 'XXX',
-                                ),
-                                cardHolderDecoration: InputDecoration(
-                                  hintStyle:
-                                      const TextStyle(color: Colors.black),
-                                  labelStyle:
-                                      const TextStyle(color: Colors.black),
-                                  focusedBorder: border,
-                                  enabledBorder: border,
-                                  labelText: 'Card Holder',
-                                ),
-                                onCreditCardModelChange:
-                                    onCreditCardModelChange,
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              ElevatedButton(
-                                key: const Key("save"),
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    primary: Theme.of(context).primaryColor),
-                                child: Container(
-                                  width: deviceSize.width * 0.3,
-                                  margin: const EdgeInsets.all(12),
-                                  child: const Text(
-                                    'Save',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      package: 'flutter_credit_card',
+                                ElevatedButton(
+                                  key: const Key("save"),
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      primary: Theme.of(context).primaryColor),
+                                  child: Container(
+                                    width: deviceSize.width * 0.3,
+                                    margin: const EdgeInsets.all(12),
+                                    child: const Text(
+                                      'Save',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        package: 'flutter_credit_card',
+                                      ),
                                     ),
                                   ),
+                                  onPressed: () {
+                                    formKey.currentState!.save();
+                                    if (formKey.currentState!.validate()) {
+                                      saveCreditCard();
+                                    }
+                                  },
                                 ),
-                                onPressed: () {
-                                  formKey.currentState!.save();
-                                  if (formKey.currentState!.validate()) {
-                                    saveCreditCard();
-                                  }
-                                },
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }

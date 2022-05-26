@@ -30,35 +30,38 @@ class _OnlinePaymentScreenState extends State<OnlinePaymentScreen> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: LayoutBuilder(
-        builder: (context, constraints) => Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            toolbarHeight: constraints.maxHeight * 0.1,
-            automaticallyImplyLeading: false,
-            leading: isLoading
-                ? Container()
-                : IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-            title: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Online Payment',
-                style: const TextStyle(fontSize: 22),
+        builder: (context, constraints) => WillPopScope(
+          onWillPop: () async => false,
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              toolbarHeight: constraints.maxHeight * 0.1,
+              automaticallyImplyLeading: false,
+              leading: isLoading
+                  ? Container()
+                  : IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+              title: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Online Payment',
+                  style: const TextStyle(fontSize: 22),
+                ),
               ),
             ),
-          ),
-          body: Container(
-            height: constraints.maxHeight * 0.85,
-            width: constraints.maxWidth,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                PaymentCard(
-                    widget.storeID, () => setState(() => isLoading = true)),
-              ],
+            body: Container(
+              height: constraints.maxHeight * 0.85,
+              width: constraints.maxWidth,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  PaymentCard(
+                      widget.storeID, () => setState(() => isLoading = true)),
+                ],
+              ),
             ),
           ),
         ),
@@ -127,28 +130,31 @@ class _PaymentCardState extends State<PaymentCard>
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          title: Text("Missing Credit Card"),
-          content: Text(
-              "You have no credit cards available, please enter a credit card to proceed"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Okay'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context)
-                    .pushNamed(AddCreditCardScreen.routeName)
-                    .then((_) => setState(() {}));
-              },
-            ),
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-            )
-          ],
+        builder: (ctx) => WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: Text("Missing Credit Card"),
+            content: Text(
+                "You have no credit cards available, please enter a credit card to proceed"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .pushNamed(AddCreditCardScreen.routeName)
+                      .then((_) => setState(() {}));
+                },
+              ),
+              FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
         ),
       );
     }

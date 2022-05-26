@@ -64,7 +64,9 @@ class _MapScreenState extends State<MapScreen> {
     final deviceSize = MediaQuery.of(context).size;
     final applicationBloc = Provider.of<ApplicationBloc>(context);
 
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
         body: applicationBloc.currentLocation == null
             ? Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
@@ -143,7 +145,9 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ],
                 ),
-              ));
+              ),
+      ),
+    );
   }
 
   Future<void> _goToPlace(Place place) async {
