@@ -11,8 +11,6 @@ class TutorialScreen extends StatefulWidget {
 }
 
 class _TutorialScreenState extends State<TutorialScreen> {
-  bool showArrows = true;
-
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
@@ -37,7 +35,6 @@ class _TutorialScreenState extends State<TutorialScreen> {
             actions: [
               ArrowElement(
                 id: 'action',
-                targetAnchor: Alignment.centerLeft,
                 child: IconButton(
                   icon: Icon(Icons.storefront),
                   onPressed: () {},
@@ -78,37 +75,27 @@ class _TutorialScreenState extends State<TutorialScreen> {
           body: Stack(
             children: [
               categoriesScreen,
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ArrowElement(
-                      show: showArrows,
-                      id: 'arrow',
-                      sourceAnchor: Alignment.topCenter,
-                      targetId: 'action',
-                      color: Colors.purple,
-                      child: AlertDialog(
-                        title: Text('Congratulations!'),
-                        content: Text(
-                            "You can now manage your store from this button"),
-                        actions: [
-                          FlatButton(
-                              key: const Key("tutorial_okay_button"),
-                              child: Text('Okay'),
-                              onPressed: () {
-                                setState(() {
-                                  showArrows = !showArrows;
-                                });
-                                Navigator.of(context)
-                                    .pushReplacementNamed(TabsScreen.routeName);
-                              }),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              AlertDialog(
+                title: ArrowElement(
+                    id: 'arrow',
+                    sourceAnchor: Alignment.topCenter,
+                    targetId: 'action',
+                    color: Colors.purple,
+                    child: Container(
+                        margin: EdgeInsets.only(
+                          top: deviceSize.height * 0.01,
+                        ),
+                        child: Text('Congratulations!'))),
+                content: Text("You can now manage your store from this button"),
+                actions: [
+                  FlatButton(
+                      key: const Key("tutorial_okay_button"),
+                      child: Text('Okay'),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushReplacementNamed(TabsScreen.routeName);
+                      }),
+                ],
               ),
             ],
           ),
