@@ -91,8 +91,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                       color: Colors.purple,
                       child: AlertDialog(
                         title: Text('Congratulations!'),
-                        content: Text(
-                            "You can now manage your store from this button"),
+                        content: Text("You can now manage your store from this button"),
                         actions: [
                           FlatButton(
                               key: const Key("tutorial_okay_button"),
@@ -101,8 +100,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                                 setState(() {
                                   showArrows = !showArrows;
                                 });
-                                Navigator.of(context)
-                                    .pushReplacementNamed(TabsScreen.routeName);
+                                Navigator.of(context).pushReplacementNamed(TabsScreen.routeName);
                               }),
                         ],
                       ),

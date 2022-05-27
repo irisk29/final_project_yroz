@@ -47,38 +47,31 @@ class OpenPhysicalStorePipeline extends StatefulWidget {
     new OpeningTimes(
         day: "Sunday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Monday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Tuesday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Wednesday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Thursday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Friday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Saturday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
   ]);
 
   @override
@@ -147,8 +140,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
   @override
   void initState() {
     _formChanged = false;
-    openingHours = OpeningHours(
-        OpenPhysicalStorePipeline.openings.clone(), () => _formChanged = true);
+    openingHours = OpeningHours(OpenPhysicalStorePipeline.openings.clone(), () => _formChanged = true);
     super.initState();
   }
 
@@ -192,9 +184,8 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
     _editedStore!.operationHours = openingHours.saveOpenHours();
     try {
       final res = await Provider.of<User>(context, listen: false)
-          .openPhysicalStore(
-              _editedStore!, bankAccountForm.buildBankAccountDTO()!)
-          .timeout(new Duration(minutes: 5));
+          .openPhysicalStore(_editedStore!, bankAccountForm.buildBankAccountDTO()!)
+          .timeout(new Duration(minutes: 15));
       if (res.getTag())
         Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
       else {
@@ -219,8 +210,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text('Internet Connection Error'),
-          content: Text(
-              "Please check your internet connectivity. Your store was not created."),
+          content: Text("Please check your internet connectivity. Your store was not created."),
           actions: <Widget>[
             FlatButton(
               child: Text('Okay'),
@@ -269,8 +259,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage, null,
-                          _pickedImage, true),
+                      ImageInput(_selectImage, _unselectImage, null, _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         controller: _nameController,
@@ -296,9 +285,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                               qrCode: _editedStore!.qrCode,
                               image: _editedStore!.image,
                               id: '',
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                       IntlPhoneField(
@@ -322,18 +309,14 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                               qrCode: _editedStore!.qrCode,
                               image: _editedStore!.image,
                               id: '',
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                       TextFormField(
                         key: const Key('storeAddress'),
                         decoration: InputDecoration(labelText: 'Address'),
                         controller: OpenPhysicalStorePipeline._controller,
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => destinationBuilder),
+                        onTap: () => showDialog(context: context, builder: (context) => destinationBuilder),
                         onChanged: (_) => _formChanged = true,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -354,9 +337,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                               qrCode: _editedStore!.qrCode,
                               image: _editedStore!.image,
                               id: '',
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                     ],
@@ -384,8 +365,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isChecked) =>
-                      _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
+                  onChanged: (isChecked) => _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
                 ),
               ),
             ),
@@ -398,9 +378,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                         shrinkWrap: true,
                         children: _selectedItems
                             .map((e) => Padding(
-                                padding: EdgeInsets.only(
-                                    right: deviceSize.width * 0.01,
-                                    left: deviceSize.width * 0.01),
+                                padding: EdgeInsets.only(right: deviceSize.width * 0.01, left: deviceSize.width * 0.01),
                                 child: Chip(
                                   deleteIcon: Icon(
                                     Icons.close,
@@ -427,25 +405,15 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
         return openingHours;
       case 3:
         return _bankLoading
-            ? SizedBox(
-                height: deviceSize.height * 0.625,
-                child: Center(child: CircularProgressIndicator()))
+            ? SizedBox(height: deviceSize.height * 0.625, child: Center(child: CircularProgressIndicator()))
             : bankAccountForm;
       case 4:
         return SizedBox(
           height: deviceSize.height * 0.65,
           child: Column(
             children: [
-              StorePreview(
-                  false,
-                  _editedStore!.name,
-                  _editedStore!.address,
-                  _pickedImage,
-                  null,
-                  _editedStore!.phoneNumber,
-                  openingHours.saveOpenHours(),
-                  null,
-                  true)
+              StorePreview(false, _editedStore!.name, _editedStore!.address, _pickedImage, null,
+                  _editedStore!.phoneNumber, openingHours.saveOpenHours(), null, true)
             ],
           ),
         );
@@ -520,8 +488,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
               ? Align(
                   alignment: Alignment.center,
                   child: ListView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                     children: [
                       Center(
                         child: SizedBox(
@@ -533,8 +500,7 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                               CircularProgressIndicator(),
                               Container(
                                 width: deviceSize.width * 0.6,
-                                child: Text(
-                                    "We are opening your store, it might take a few seconds...",
+                                child: Text("We are opening your store, it might take a few seconds...",
                                     textAlign: TextAlign.center),
                               )
                             ],
@@ -577,45 +543,33 @@ class _OpenPhysicalStorePipelineState extends State<OpenPhysicalStorePipeline> {
                                   child: Align(
                                     alignment: FractionalOffset.bottomCenter,
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         _currentStep > 0
                                             ? Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: deviceSize.width *
-                                                        0.025),
+                                                padding: EdgeInsets.only(left: deviceSize.width * 0.025),
                                                 child: CircleAvatar(
                                                   radius: 25,
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .primaryColor,
+                                                  backgroundColor: Theme.of(context).primaryColor,
                                                   child: IconButton(
                                                     color: Colors.black54,
                                                     onPressed: cancel,
-                                                    icon:
-                                                        Icon(Icons.arrow_back),
+                                                    icon: Icon(Icons.arrow_back),
                                                   ),
                                                 ),
                                               )
                                             : Container(),
                                         Padding(
-                                          padding: EdgeInsets.only(
-                                              right: deviceSize.width * 0.025),
+                                          padding: EdgeInsets.only(right: deviceSize.width * 0.025),
                                           child: CircleAvatar(
                                             radius: 25,
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
+                                            backgroundColor: Theme.of(context).primaryColor,
                                             child: IconButton(
                                               key: const Key("continue_button"),
                                               color: Colors.black54,
-                                              onPressed: () async =>
-                                                  await continued(context),
-                                              icon: Icon(_currentStep < 4
-                                                  ? Icons.arrow_forward
-                                                  : Icons.done),
+                                              onPressed: () async => await continued(context),
+                                              icon: Icon(_currentStep < 4 ? Icons.arrow_forward : Icons.done),
                                             ),
                                           ),
                                         ),

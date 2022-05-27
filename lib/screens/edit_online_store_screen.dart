@@ -35,8 +35,7 @@ class EditOnlineStorePipeline extends StatefulWidget {
     return _EditOnlineStorePipelineState();
   }
 
-  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) =>
-      MaterialApp(
+  Widget wrapWithMaterial(List<NavigatorObserver> nav, UserModel user) => MaterialApp(
         routes: {
           TabsScreen.routeName: (ctx) => TabsScreen().wrapWithMaterial(nav),
         },
@@ -82,14 +81,10 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
   @override
   void initState() {
     _formChanged = false;
-    _editedStore =
-        Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
+    _editedStore = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
     EditOnlineStorePipeline._controller.text = _editedStore!.address;
-    openingHours = OpeningHours(
-        _editedStore!.operationHours.clone(), () => _formChanged = true);
-    _pickedImage = _editedStore!.imageFromPhone != null
-        ? XFile(_editedStore!.imageFromPhone!.path)
-        : null;
+    openingHours = OpeningHours(_editedStore!.operationHours.clone(), () => _formChanged = true);
+    _pickedImage = _editedStore!.imageFromPhone != null ? XFile(_editedStore!.imageFromPhone!.path) : null;
     _imageUrl = _editedStore!.image;
     super.initState();
   }
@@ -107,9 +102,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           controller: EditOnlineStorePipeline._controller,
           builder: AddressDialogBuilder(),
           onDone: (Address address) => address);
-      _editedStore = Provider.of<User>(context, listen: false)
-          .storeOwnerState!
-          .onlineStore;
+      _editedStore = Provider.of<User>(context, listen: false).storeOwnerState!.onlineStore;
       _selectedItems.addAll(_editedStore!.categories);
       _products.addAll(_editedStore!.products);
     }
@@ -142,15 +135,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
       _editedStore!.categories = _selectedItems;
       _editedStore!.products = _products;
       _editedStore!.operationHours = openingHours.saveOpenHours();
-      _editedStore!.imageFromPhone =
-          _pickedImage != null ? File(_pickedImage!.path) : null;
+      _editedStore!.imageFromPhone = _pickedImage != null ? File(_pickedImage!.path) : null;
       _editedStore!.image = _imageUrl;
       try {
         final res = await Provider.of<User>(context, listen: false)
             .updateOnlineStore(
               _editedStore!,
             )
-            .timeout(new Duration(minutes: 5));
+            .timeout(new Duration(minutes: 15));
         if (res.getTag()) {
           showSnackBar(context, 'Saved Store Details Successfully!');
         } else {
@@ -175,8 +167,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('Internet Connection Error'),
-            content: Text(
-                "Please check your internet connectivity. Your store was not created."),
+            content: Text("Please check your internet connectivity. Your store was not created."),
             actions: <Widget>[
               FlatButton(
                 child: Text('Okay'),
@@ -254,8 +245,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             "Store's Products Limitation",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
-          content: Text(
-              "We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
+          content: Text("We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
@@ -287,8 +277,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage, _imageUrl,
-                          _pickedImage, true),
+                      ImageInput(_selectImage, _unselectImage, _imageUrl, _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         initialValue: _editedStore!.name,
@@ -346,9 +335,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         controller: EditOnlineStorePipeline._controller,
                         onTap: () {
                           _formChanged = true;
-                          showDialog(
-                              context: context,
-                              builder: (context) => destinationBuilder);
+                          showDialog(context: context, builder: (context) => destinationBuilder);
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -397,8 +384,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isChecked) =>
-                      _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
+                  onChanged: (isChecked) => _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
                 ),
               ),
             ),
@@ -411,9 +397,7 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                         shrinkWrap: true,
                         children: _selectedItems
                             .map((e) => Padding(
-                                padding: EdgeInsets.only(
-                                    right: deviceSize.width * 0.01,
-                                    left: deviceSize.width * 0.01),
+                                padding: EdgeInsets.only(right: deviceSize.width * 0.01, left: deviceSize.width * 0.01),
                                 child: Chip(
                                   deleteIcon: Icon(
                                     Icons.close,
@@ -448,19 +432,15 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
             Wrap(
               children: _products
                   .map((e) => Padding(
-                        padding: EdgeInsets.only(
-                            right: deviceSize.width * 0.01,
-                            left: deviceSize.width * 0.01),
+                        padding: EdgeInsets.only(right: deviceSize.width * 0.01, left: deviceSize.width * 0.01),
                         child: Chip(
                           deleteIcon: Icon(
                             Icons.edit,
                           ),
                           onDeleted: () async {
-                            final Tuple2<ProductDTO?, bool>? result =
-                                await Navigator.push(
+                            final Tuple2<ProductDTO?, bool>? result = await Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProductScreen(e)),
+                              MaterialPageRoute(builder: (context) => EditProductScreen(e)),
                             );
                             if (result != null) {
                               if (result.item2) {
@@ -473,11 +453,10 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                                 });
                               } else {
                                 setState(() {
-                                  final index = _products.indexWhere(
-                                      (element) =>
-                                          element.name == e.name &&
-                                          element.price == e.price &&
-                                          element.description == e.description);
+                                  final index = _products.indexWhere((element) =>
+                                      element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
                                   _products[index] = result.item1!;
                                   _formChanged = true;
                                 });
@@ -520,16 +499,8 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           height: deviceSize.height * 0.65,
           child: Column(
             children: [
-              StorePreview(
-                  true,
-                  _editedStore!.name,
-                  _editedStore!.address,
-                  _pickedImage,
-                  _imageUrl,
-                  _editedStore!.phoneNumber,
-                  openingHours.saveOpenHours(),
-                  _products,
-                  true),
+              StorePreview(true, _editedStore!.name, _editedStore!.address, _pickedImage, _imageUrl,
+                  _editedStore!.phoneNumber, openingHours.saveOpenHours(), _products, true),
             ],
           ),
         );
@@ -598,29 +569,25 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
           body: _isLoading
               ? Align(
                   alignment: Alignment.center,
-                  child: ListView(
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                      children: [
-                        Center(
-                          child: SizedBox(
-                            height: deviceSize.height * 0.8,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CircularProgressIndicator(),
-                                Container(
-                                  width: deviceSize.width * 0.6,
-                                  child: Text(
-                                      "We are updating your store details, it might take a few seconds...",
-                                      textAlign: TextAlign.center),
-                                )
-                              ],
-                            ),
-                          ),
+                  child: ListView(keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag, children: [
+                    Center(
+                      child: SizedBox(
+                        height: deviceSize.height * 0.8,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            Container(
+                              width: deviceSize.width * 0.6,
+                              child: Text("We are updating your store details, it might take a few seconds...",
+                                  textAlign: TextAlign.center),
+                            )
+                          ],
                         ),
-                      ]),
+                      ),
+                    ),
+                  ]),
                 )
               : SingleChildScrollView(
                   child: Center(
@@ -655,17 +622,14 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                               alignment: FractionalOffset.bottomCenter,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   _currentStep > 0
                                       ? Padding(
-                                          padding: EdgeInsets.only(
-                                              left: deviceSize.width * 0.025),
+                                          padding: EdgeInsets.only(left: deviceSize.width * 0.025),
                                           child: CircleAvatar(
                                             radius: 25,
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
+                                            backgroundColor: Theme.of(context).primaryColor,
                                             child: IconButton(
                                               color: Colors.black54,
                                               onPressed: cancel,
@@ -675,19 +639,15 @@ class _EditOnlineStorePipelineState extends State<EditOnlineStorePipeline> {
                                         )
                                       : Container(),
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        right: deviceSize.width * 0.025),
+                                    padding: EdgeInsets.only(right: deviceSize.width * 0.025),
                                     child: CircleAvatar(
                                       radius: 25,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
+                                      backgroundColor: Theme.of(context).primaryColor,
                                       child: IconButton(
                                         key: const Key("continue_button"),
                                         color: Colors.black54,
                                         onPressed: continued,
-                                        icon: Icon(_currentStep < 4
-                                            ? Icons.arrow_forward
-                                            : Icons.done),
+                                        icon: Icon(_currentStep < 4 ? Icons.arrow_forward : Icons.done),
                                       ),
                                     ),
                                   )
