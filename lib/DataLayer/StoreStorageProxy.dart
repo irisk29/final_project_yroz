@@ -549,7 +549,8 @@ class StoreStorageProxy {
     return Openings(days: []);
   }
 
-  Future<ResultInterface> createProductForOnlineStore(ProductDTO productDTO, String onlineStoreModelID) async {
+  Future<ResultInterface> createProductForOnlineStore(ProductDTO productDTO, String onlineStoreModelID,
+      [String? url]) async {
     try {
       StoreProductModel productModel = StoreProductModel(
           name: productDTO.name,
@@ -557,15 +558,15 @@ class StoreStorageProxy {
           categories: productDTO.category,
           description: productDTO.description,
           onlinestoremodelID: onlineStoreModelID);
+      String? imageUrl = url;
       if (productDTO.imageFromPhone != null) {
         String id = "${productModel.id}${generateRandomString(10)}";
         var res = await uploadPicture(id, productDTO.imageFromPhone); // uploading the picture to s3
         if (!res.getTag()) return res;
         Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
-        String imageUrl = "${secret.S3_URL}${id}";
-        productModel = productModel.copyWith(imageUrl: imageUrl);
+        imageUrl = "${secret.S3_URL}${id}";
       }
-
+      productModel = productModel.copyWith(imageUrl: imageUrl);
       await Amplify.DataStore.save(productModel);
       FLog.info(
           text: "created product with ID: ${productModel.id} and added it to the online store: ${onlineStoreModelID}");
@@ -674,7 +675,7 @@ class StoreStorageProxy {
 
     List<StoreProductModel> updatedProd = [];
     for (var p in products) {
-      var res = await createProductForOnlineStore(p, storeID);
+      var res = await createProductForOnlineStore(p, storeID, p.imageUrl);
       if (res.getTag()) {
         updatedProd.add(res.getValue());
       } else {

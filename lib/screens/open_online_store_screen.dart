@@ -49,38 +49,31 @@ class OpenOnlineStorePipeline extends StatefulWidget {
     new OpeningTimes(
         day: "Sunday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Monday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Tuesday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Wednesday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Thursday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Friday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Saturday",
         closed: false,
-        operationHours: Tuple2(
-            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
   ]);
 
   @override
@@ -149,8 +142,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
   @override
   void initState() {
     _formChanged = false;
-    openingHours = OpeningHours(
-        OpenOnlineStorePipeline.openings.clone(), () => _formChanged = true);
+    openingHours = OpeningHours(OpenOnlineStorePipeline.openings.clone(), () => _formChanged = true);
     super.initState();
   }
 
@@ -195,9 +187,8 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
     _editedStore!.operationHours = openingHours.saveOpenHours();
     try {
       final res = await Provider.of<User>(context, listen: false)
-          .openOnlineStore(
-              _editedStore!, bankAccountForm.buildBankAccountDTO()!)
-          .timeout(new Duration(minutes: 5));
+          .openOnlineStore(_editedStore!, bankAccountForm.buildBankAccountDTO()!)
+          .timeout(new Duration(minutes: 15));
       if (res.getTag())
         Navigator.of(context).pushReplacementNamed(TutorialScreen.routeName);
       else {
@@ -222,8 +213,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text('Internet Connection Error'),
-          content: Text(
-              "Please check your internet connectivity. Your store was not created."),
+          content: Text("Please check your internet connectivity. Your store was not created."),
           actions: <Widget>[
             FlatButton(
               child: Text('Okay'),
@@ -298,8 +288,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             "Store's Products Limitation",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
-          content: Text(
-              "We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
+          content: Text("We are Sorry, in this version store can contain up to ${productsLimitation} products only"),
           actions: <Widget>[
             ElevatedButton(
               key: const Key('product_error'),
@@ -332,8 +321,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                   key: _detailsform,
                   child: Column(
                     children: <Widget>[
-                      ImageInput(_selectImage, _unselectImage, null,
-                          _pickedImage, true),
+                      ImageInput(_selectImage, _unselectImage, null, _pickedImage, true),
                       TextFormField(
                         key: const Key('storeName'),
                         controller: _nameController,
@@ -358,9 +346,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               image: _editedStore!.image,
                               id: '',
                               products: _editedStore!.products,
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                           _formChanged = true;
                         },
                         onSaved: (value) {
@@ -373,9 +359,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               image: _editedStore!.image,
                               id: '',
                               products: _editedStore!.products,
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                       IntlPhoneField(
@@ -400,18 +384,14 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               image: _editedStore!.image,
                               id: '',
                               products: _editedStore!.products,
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                       TextFormField(
                         key: const Key('storeAddress'),
                         decoration: InputDecoration(labelText: 'Address'),
                         controller: OpenOnlineStorePipeline._controller,
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => destinationBuilder),
+                        onTap: () => showDialog(context: context, builder: (context) => destinationBuilder),
                         onChanged: (_) => _formChanged = true,
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -432,9 +412,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                               image: _editedStore!.image,
                               id: '',
                               products: _editedStore!.products,
-                              imageFromPhone: _pickedImage == null
-                                  ? null
-                                  : File(_pickedImage!.path));
+                              imageFromPhone: _pickedImage == null ? null : File(_pickedImage!.path));
                         },
                       ),
                     ],
@@ -462,8 +440,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                   value: _selectedItems.contains(DUMMY_CATEGORIES[index].title),
                   title: Text(DUMMY_CATEGORIES[index].title),
                   controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (isChecked) =>
-                      _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
+                  onChanged: (isChecked) => _itemChange(DUMMY_CATEGORIES[index].title, isChecked!),
                 ),
               ),
             ),
@@ -476,9 +453,7 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                         shrinkWrap: true,
                         children: _selectedItems
                             .map((e) => Padding(
-                                padding: EdgeInsets.only(
-                                    right: deviceSize.width * 0.01,
-                                    left: deviceSize.width * 0.01),
+                                padding: EdgeInsets.only(right: deviceSize.width * 0.01, left: deviceSize.width * 0.01),
                                 child: Chip(
                                   deleteIcon: Icon(
                                     Icons.close,
@@ -514,19 +489,15 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
             Wrap(
               children: _products
                   .map((e) => Padding(
-                        padding: EdgeInsets.only(
-                            right: deviceSize.width * 0.01,
-                            left: deviceSize.width * 0.01),
+                        padding: EdgeInsets.only(right: deviceSize.width * 0.01, left: deviceSize.width * 0.01),
                         child: Chip(
                           deleteIcon: Icon(
                             Icons.edit,
                           ),
                           onDeleted: () async {
-                            final Tuple2<ProductDTO?, bool>? result =
-                                await Navigator.push(
+                            final Tuple2<ProductDTO?, bool>? result = await Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditProductScreen(e)),
+                              MaterialPageRoute(builder: (context) => EditProductScreen(e)),
                             );
                             if (result != null) {
                               if (result.item2) {
@@ -539,11 +510,10 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                 });
                               } else {
                                 setState(() {
-                                  final index = _products.indexWhere(
-                                      (element) =>
-                                          element.name == e.name &&
-                                          element.price == e.price &&
-                                          element.description == e.description);
+                                  final index = _products.indexWhere((element) =>
+                                      element.name == e.name &&
+                                      element.price == e.price &&
+                                      element.description == e.description);
                                   _products[index] = result.item1!;
                                   _formChanged = true;
                                 });
@@ -583,25 +553,15 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
         );
       case 4:
         return _bankLoading
-            ? SizedBox(
-                height: deviceSize.height * 0.625,
-                child: Center(child: CircularProgressIndicator()))
+            ? SizedBox(height: deviceSize.height * 0.625, child: Center(child: CircularProgressIndicator()))
             : bankAccountForm;
       case 5:
         return SizedBox(
           height: deviceSize.height * 0.65,
           child: Column(
             children: [
-              StorePreview(
-                  true,
-                  _editedStore!.name,
-                  _editedStore!.address,
-                  _pickedImage,
-                  null,
-                  _editedStore!.phoneNumber,
-                  openingHours.saveOpenHours(),
-                  _products,
-                  true),
+              StorePreview(true, _editedStore!.name, _editedStore!.address, _pickedImage, null,
+                  _editedStore!.phoneNumber, openingHours.saveOpenHours(), _products, true),
             ],
           ),
         );
@@ -675,29 +635,25 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
           body: _isLoading
               ? Align(
                   alignment: Alignment.center,
-                  child: ListView(
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                      children: [
-                        Center(
-                          child: SizedBox(
-                            height: deviceSize.height * 0.8,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CircularProgressIndicator(),
-                                Container(
-                                  width: deviceSize.width * 0.6,
-                                  child: Text(
-                                      "We are opening your store, it might take a few seconds...",
-                                      textAlign: TextAlign.center),
-                                )
-                              ],
-                            ),
-                          ),
+                  child: ListView(keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag, children: [
+                    Center(
+                      child: SizedBox(
+                        height: deviceSize.height * 0.8,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                            Container(
+                              width: deviceSize.width * 0.6,
+                              child: Text("We are opening your store, it might take a few seconds...",
+                                  textAlign: TextAlign.center),
+                            )
+                          ],
                         ),
-                      ]),
+                      ),
+                    ),
+                  ]),
                 )
               : SingleChildScrollView(
                   child: Container(
@@ -733,45 +689,33 @@ class _OpenOnlineStorePipelineState extends State<OpenOnlineStorePipeline> {
                                   child: Align(
                                     alignment: FractionalOffset.bottomCenter,
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         _currentStep > 0
                                             ? Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: deviceSize.width *
-                                                        0.025),
+                                                padding: EdgeInsets.only(left: deviceSize.width * 0.025),
                                                 child: CircleAvatar(
                                                   radius: 25,
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .primaryColor,
+                                                  backgroundColor: Theme.of(context).primaryColor,
                                                   child: IconButton(
                                                     color: Colors.black54,
                                                     onPressed: cancel,
-                                                    icon:
-                                                        Icon(Icons.arrow_back),
+                                                    icon: Icon(Icons.arrow_back),
                                                   ),
                                                 ),
                                               )
                                             : Container(),
                                         Padding(
-                                          padding: EdgeInsets.only(
-                                              right: deviceSize.width * 0.025),
+                                          padding: EdgeInsets.only(right: deviceSize.width * 0.025),
                                           child: CircleAvatar(
                                             radius: 25,
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
+                                            backgroundColor: Theme.of(context).primaryColor,
                                             child: IconButton(
                                               key: const Key("continue_button"),
                                               color: Colors.black54,
-                                              onPressed: () async =>
-                                                  await continued(context),
-                                              icon: Icon(_currentStep < 5
-                                                  ? Icons.arrow_forward
-                                                  : Icons.done),
+                                              onPressed: () async => await continued(context),
+                                              icon: Icon(_currentStep < 5 ? Icons.arrow_forward : Icons.done),
                                             ),
                                           ),
                                         ),
