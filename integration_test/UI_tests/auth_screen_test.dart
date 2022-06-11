@@ -5,18 +5,18 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:final_project_yroz/screens/online_store_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:final_project_yroz/screens/auth_screen.dart';
 
 void main() {
-  testWidgets('Online Store Screen test', (WidgetTester tester) async {
+  testWidgets('Auth Screen test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(OnlineStoreScreen());
+    await tester.pumpWidget(new Directionality(textDirection: TextDirection.ltr, child: MediaQuery(data: MediaQueryData(), child: AuthScreen())));
 
     // Verify that our counter starts at 0.
-    expect(find.text('About the store'), findsOneWidget);
-    expect(find.text('Open Now'), findsOneWidget);
-    expect(find.text('www.mooo.com'), findsOneWidget);
-    expect(find.text('+44 345 3366'), findsOneWidget);
+    expect(find.text('Sign in with Google'), findsOneWidget);
+    expect(find.text('Sign in with Facebook'), findsOneWidget);
+    expect(find.text('Sign in with Amazon'), findsNothing);
   });
 }
