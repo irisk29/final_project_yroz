@@ -41,13 +41,13 @@ dependencies:
   flutter_signin_button: ^2.0.0
   google_maps_flutter: ^2.1.1
   geolocator: ^8.0.5
-  amplify_flutter: ^0.4.2
-  amplify_auth_cognito: ^0.4.2
-  amplify_datastore: ^0.4.2
-  amplify_api: ^0.4.2
+  amplify_flutter: ^0.5.1
+  amplify_auth_cognito: ^0.5.1
+  amplify_datastore: ^0.5.1
+  amplify_api: ^0.5.1
   tuple: ^2.0.0
   qr_flutter: ^4.0.0
-  amplify_storage_s3: ^0.4.2
+  amplify_storage_s3: ^0.5.1
   cupertino_icons: ^1.0.4
   qr_code_scanner: ^0.5.2
   url_launcher: ^6.0.0-nullsafety
