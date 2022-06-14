@@ -270,6 +270,9 @@ class _PaymentCardState extends State<PaymentCard>
                                   if (double.tryParse(value) == null) {
                                     return 'Amount has be a number';
                                   }
+                                  if (double.parse(value) <= 0) {
+                                    return 'Amount has be a positive number';
+                                  }
                                   return null;
                                 },
                                 onChanged: (value) {
