@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -17,12 +16,9 @@ import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
 import 'package:final_project_yroz/models/ModelProvider.dart';
-import 'package:final_project_yroz/screens/tabs_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-
-import 'package:final_project_yroz/screens/open_online_store_screen.dart' as app;
 import 'package:mockito/mockito.dart';
 import 'package:tuple/tuple.dart';
 
@@ -34,46 +30,46 @@ void main() {
     new OpeningTimes(
         day: "Sunday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Monday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Tuesday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Wednesday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Thursday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Friday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
     new OpeningTimes(
         day: "Saturday",
         closed: false,
-        operationHours: Tuple2(TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
+        operationHours: Tuple2(
+            TimeOfDay(hour: 7, minute: 0), TimeOfDay(hour: 23, minute: 59))),
   ]);
-
-  takeScreenshot(tester, binding) async {
-    if (Platform.isAndroid) {
-      await binding.convertFlutterSurfaceToImage();
-      await tester.pumpAndSettle();
-    }
-    await binding.takeScreenshot('test-screenshot');
-  }
 
   Future<void> _configureAmplify() async {
     if (!configured) {
       Amplify.addPlugin(AmplifyAuthCognito());
       Amplify.addPlugin(AmplifyStorageS3());
-      Amplify.addPlugin(AmplifyDataStore(modelProvider: ModelProvider.instance));
+      Amplify.addPlugin(
+          AmplifyDataStore(modelProvider: ModelProvider.instance));
       Amplify.addPlugin(AmplifyAPI());
 
       // Amplify can only be configured once.
@@ -86,19 +82,22 @@ void main() {
     }
   }
 
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized(); // to make the tests work
+  IntegrationTestWidgetsFlutterBinding
+      .ensureInitialized(); // to make the tests work
 
   group('non-functional tests', () {
-    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
-    late NavigatorObserver mockObserver;
+    final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+        as IntegrationTestWidgetsFlutterBinding;
 
     setUp(() async {
       await _configureAmplify();
       UserAuthenticator().setCurrentUserId("test@gmail.com");
-      UserModel currUser =
-          new UserModel(email: "test@gmail.com", name: "test name", hideStoreOwnerOptions: false, isLoggedIn: true);
+      UserModel currUser = new UserModel(
+          email: "test@gmail.com",
+          name: "test name",
+          hideStoreOwnerOptions: false,
+          isLoggedIn: true);
       await Amplify.DataStore.save(currUser);
-      mockObserver = MockNavigatorObserver();
       return Future(() => print("starting test.."));
     });
 
@@ -108,169 +107,46 @@ void main() {
     });
 
     Future<void> clearDB() async {
-      List<StoreProductModel> prods = await Amplify.DataStore.query(StoreProductModel.classType);
+      List<StoreProductModel> prods =
+          await Amplify.DataStore.query(StoreProductModel.classType);
       for (var p in prods) await Amplify.DataStore.delete(p);
 
-      List<OnlineStoreModel> onlines = await Amplify.DataStore.query(OnlineStoreModel.classType);
+      List<OnlineStoreModel> onlines =
+          await Amplify.DataStore.query(OnlineStoreModel.classType);
       for (var o in onlines) await Amplify.DataStore.delete(o);
 
-      List<PhysicalStoreModel> phys = await Amplify.DataStore.query(PhysicalStoreModel.classType);
+      List<PhysicalStoreModel> phys =
+          await Amplify.DataStore.query(PhysicalStoreModel.classType);
       for (var p in phys) await Amplify.DataStore.delete(p);
 
-      List<CartProductModel> carts = await Amplify.DataStore.query(CartProductModel.classType);
+      List<CartProductModel> carts =
+          await Amplify.DataStore.query(CartProductModel.classType);
       for (var c in carts) await Amplify.DataStore.delete(c);
 
-      List<ShoppingBagModel> bags = await Amplify.DataStore.query(ShoppingBagModel.classType);
+      List<ShoppingBagModel> bags =
+          await Amplify.DataStore.query(ShoppingBagModel.classType);
       for (var b in bags) await Amplify.DataStore.delete(b);
 
-      List<StoreOwnerModel> owners = await Amplify.DataStore.query(StoreOwnerModel.classType);
+      List<StoreOwnerModel> owners =
+          await Amplify.DataStore.query(StoreOwnerModel.classType);
       for (var o in owners) await Amplify.DataStore.delete(o);
 
-      List<UserModel> users = await Amplify.DataStore.query(UserModel.classType);
+      List<UserModel> users =
+          await Amplify.DataStore.query(UserModel.classType);
       for (var u in users) await Amplify.DataStore.delete(u);
 
-      List<PurchaseHistoryModel> purchases = await Amplify.DataStore.query(PurchaseHistoryModel.classType);
+      List<PurchaseHistoryModel> purchases =
+          await Amplify.DataStore.query(PurchaseHistoryModel.classType);
       for (var p in purchases) await Amplify.DataStore.delete(p);
     }
 
-    testWidgets('user with store owner role UI', (WidgetTester tester) async {
-      await tester.pumpWidget(app.OpenOnlineStorePipeline().wrapWithMaterial([mockObserver]));
-      await tester.pumpAndSettle();
-
-      //agree to the terms
-      Finder fab = find.widgetWithText(ElevatedButton, "Agree");
-      await tester.tap(fab);
-      await tester.pump();
-
-      //start to fill the form
-      fab = find.byKey(Key('storeName'));
-      await tester.enterText(fab, "physical store test");
-      await tester.pump();
-
-      fab = find.byKey(Key('phoneNumber'));
-      await tester.enterText(fab, "123456789");
-      await tester.pump();
-
-      fab = find.byKey(Key('storeAddress'));
-      await tester.enterText(fab, "Ashdod, Israel");
-      await tester.pumpAndSettle();
-
-      FocusManager.instance.primaryFocus?.unfocus();
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key('store_category_0'));
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      //operations hours
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      //add product
-      fab = find.byKey(Key("add_product")); //move to the add product screen
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key('title'));
-      await tester.enterText(fab, "shoelace");
-      await tester.pump();
-
-      fab = find.byKey(Key('price'));
-      await tester.enterText(fab, "12.5");
-      await tester.pump();
-
-      fab = find.byKey(Key('description'));
-      await tester.enterText(fab, "very good product");
-      await tester.pump();
-
-      fab = find.byKey(Key("save")); //go back
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key('bank_name'));
-      await tester.enterText(fab, "yroz");
-      await tester.pump();
-
-      fab = find.byKey(Key('branch_number'));
-      await tester.enterText(fab, "987");
-      await tester.pump();
-
-      fab = find.byKey(Key('account_number'));
-      await tester.enterText(fab, "211896261");
-      await tester.pump();
-
-      FocusManager.instance.primaryFocus?.unfocus();
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //move forward from one form to another
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      fab = find.byKey(Key("continue_button")); //when pressing this button it creates the store
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
-
-      // Verify the user has now the store owner role by viewing the store managment icon
-      expect(find.byIcon(Icons.storefront), findsOneWidget);
-      await Future.delayed(Duration(seconds: 1));
-
-      await tester.tap(find.byKey(Key("tutorial_okay_button"))); //tap the alert dialog for the store owner
-      await tester.pumpAndSettle();
-    });
-
-    testWidgets('consumer role UI', (WidgetTester tester) async {
-      await tester.pumpWidget(TabsScreen().wrapWithMaterial([mockObserver]));
-      await tester.pumpAndSettle();
-
-      // Verify that the consumer does not have the store managment button
-      expect(find.byIcon(Icons.storefront), findsNothing);
-    });
-
-    testWidgets('50 users simultaneously', (WidgetTester tester) async {
-      int numOfUsers = 50;
-      List<User> arr = [];
-      for (int i = 0; i < numOfUsers; i++) {
-        var res = await UsersStorageProxy().createUser("flowtest$i@gmail.com", "test$i flow", "https://pic.png");
-        User currUser = User.fromModel(res.item1);
-        arr.add(currUser);
-        await Amplify.DataStore.save(res.item1);
-      }
-
-      int responses = 0;
-      for (int i = 0; i < arr.length; i++) {
-        UserAuthenticator().setCurrentUserId("flowtest$i@gmail.com");
-        arr[i].getEWalletBalance().then((value) => responses++);
-      }
-      await Future.delayed(Duration(seconds: 5));
-      expect(responses, numOfUsers);
-
-      for (int i = 0; i < numOfUsers; i++) {
-        var u = await UsersStorageProxy().getUser("flowtest$i@gmail.com");
-        if (u != null) {
-          print("deleted user - ${u.email}");
-          await Amplify.DataStore.delete(u);
-        }
-      }
-    });
-
-    testWidgets('95% of the actions are under 3 seconds', (WidgetTester tester) async {
+    testWidgets('95% of the actions are under 3 seconds',
+        (WidgetTester tester) async {
       int actionsUnder3Seconds = 0;
       int totalActions = 20;
 
-      var uRes = await UsersStorageProxy().createUser("flowtest2@gmail.com", "test2 flow", "https://pic.png");
+      var uRes = await UsersStorageProxy()
+          .createUser("flowtest2@gmail.com", "test2 flow", "https://pic.png");
       User user2 = User.fromModel(uRes.item1);
 
       var user = await UsersStorageProxy().getUser("test@gmail.com");
@@ -278,7 +154,8 @@ void main() {
 
       User currUser = User.fromModel(user!);
 
-      Secret secret = await SecretLoader(secretPath: "assets/secrets.json").load();
+      Secret secret =
+          await SecretLoader(secretPath: "assets/secrets.json").load();
       final key = encrypt.Key.fromUtf8(secret.KEY);
       final iv = encrypt.IV.fromUtf8(secret.IV);
       final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
@@ -327,7 +204,8 @@ void main() {
           categories: ["Food"],
           operationHours: op,
           products: [productDTO, productDTO2]);
-      BankAccountDTO bankAccountDTO = BankAccountDTO("Yroz", "987", "207884701");
+      BankAccountDTO bankAccountDTO =
+          BankAccountDTO("Yroz", "987", "207884701");
 
       stopwatch = Stopwatch()..start();
       var res = await currUser.openOnlineStore(onlineStoreDTO, bankAccountDTO);
@@ -349,7 +227,8 @@ void main() {
           operationHours: op);
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       stopwatch = Stopwatch()..start();
-      var phyRes = await user2.openPhysicalStore(physicalStoreDTO, bankAccountDTO);
+      var phyRes =
+          await user2.openPhysicalStore(physicalStoreDTO, bankAccountDTO);
       String phyID = phyRes.getTag() ? phyRes.getValue() : "";
       if (stopwatch.elapsed.inSeconds <= 3) actionsUnder3Seconds++;
       stopwatch.stop();
@@ -445,7 +324,8 @@ void main() {
       stopwatch.stop();
 
       stopwatch = Stopwatch()..start();
-      await currUser.makePaymentOnlineStore(creditToken, 0, shopBagRes!.calculateTotalPrice(), shopBagRes);
+      await currUser.makePaymentOnlineStore(
+          creditToken, 0, shopBagRes!.calculateTotalPrice(), shopBagRes);
       if (stopwatch.elapsed.inSeconds <= 3) actionsUnder3Seconds++;
       stopwatch.stop();
 
@@ -467,12 +347,14 @@ void main() {
       clearDB();
     });
 
-    testWidgets('100 simultaneously requests under 3 seconds', (WidgetTester tester) async {
+    testWidgets('100 simultaneously requests under 3 seconds',
+        (WidgetTester tester) async {
       int numOfUsers = 100;
       List<User> arr = [];
       int time = 0;
       for (int i = 0; i < numOfUsers; i++) {
-        var res = await UsersStorageProxy().createUser("flowtest$i@gmail.com", "test$i flow", "https://pic.png");
+        var res = await UsersStorageProxy().createUser(
+            "flowtest$i@gmail.com", "test$i flow", "https://pic.png");
         User currUser = User.fromModel(res.item1);
         arr.add(currUser);
         await Amplify.DataStore.save(res.item1);
@@ -481,7 +363,9 @@ void main() {
       for (int i = 0; i < arr.length; i++) {
         UserAuthenticator().setCurrentUserId("flowtest$i@gmail.com");
         var stopwatch = Stopwatch()..start();
-        arr[i].getEWalletBalance().then((value) => time += stopwatch.elapsed.inSeconds);
+        arr[i]
+            .getEWalletBalance()
+            .then((value) => time += stopwatch.elapsed.inSeconds);
       }
       await Future.delayed(Duration(seconds: 15));
       double avgTime = time / numOfUsers;

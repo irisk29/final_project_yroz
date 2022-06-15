@@ -4,15 +4,11 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:final_project_yroz/DTOs/BankAccountDTO.dart';
-import 'package:final_project_yroz/DTOs/CartProductDTO.dart';
 import 'package:final_project_yroz/DTOs/OnlineStoreDTO.dart';
 import 'package:final_project_yroz/DTOs/ProductDTO.dart';
-import 'package:final_project_yroz/DTOs/ShoppingBagDTO.dart';
 import 'package:final_project_yroz/DTOs/StoreDTO.dart';
 import 'package:final_project_yroz/DataLayer/UsersStorageProxy.dart';
 import 'package:final_project_yroz/DataLayer/user_authenticator.dart';
-import 'package:final_project_yroz/LogicLayer/Secret.dart';
-import 'package:final_project_yroz/LogicLayer/SecretLoader.dart';
 import 'package:final_project_yroz/LogicLayer/User.dart';
 import 'package:final_project_yroz/LogicModels/OpeningTimes.dart';
 import 'package:final_project_yroz/amplifyconfiguration.dart';
@@ -20,7 +16,6 @@ import 'package:final_project_yroz/models/ModelProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:tuple/tuple.dart';
 
 void main() {
@@ -117,7 +112,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding
       .ensureInitialized(); // to make the tests work
 
-  group('Purchase edited product', () {
+  group('Favorites - online store', () {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
         as IntegrationTestWidgetsFlutterBinding;
 
@@ -134,7 +129,7 @@ void main() {
       });
     });
 
-    test('Try to purchase changed name product', () async {
+    test('add to favorite - good scenario', () async {
       var res = await UsersStorageProxy()
           .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
@@ -157,7 +152,7 @@ void main() {
           name: "prod",
           price: 1.23,
           category: "",
-          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
+          imageUrl: null,
           description: "wow",
           storeID: "",
           imageFromPhone: null);
@@ -175,61 +170,22 @@ void main() {
           await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
       String onlineModelID = openStoreRes.getValue();
-      onlineStoreDTO.id = onlineModelID;
 
-      //"login" as the first user and make a purchase from the second user's store
+      //"login" as the first user and add the second user's store to favorites
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
-      CartProductDTO cartProductDTO = CartProductDTO(
-          "",
-          productDTO.name,
-          productDTO.price,
-          "",
-          null,
-          productDTO.description,
-          10,
-          onlineModelID,
-          "");
-      await user1.updateOrCreateCartProduct(productDTO, onlineModelID, 10);
+      var favRes = await user1.addFavoriteStore(onlineModelID, true);
+      expect(favRes.getTag(), true);
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
-
-      final key = encrypt.Key.fromUtf8(secret.KEY);
-      final iv = encrypt.IV.fromUtf8(secret.IV);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
-
-      final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
-      String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
-      expect(addCreditCardRes.getTag(), true);
-      String card = addCreditCardRes.getValue();
-
-      //login as the second user and edit product name
-      UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
-      productDTO.name = "changed_prod";
-      var updateRes = await user2.updateOnlineStore(onlineStoreDTO);
-      expect(updateRes.getTag(), true);
-
-      await Future.delayed(Duration(seconds: 5));
-      //login as the first user and try to make a purchase
-      UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
-      var makePaymentRes = await user1.makePaymentOnlineStore(card, 0,
-          productDTO.price * cartProductDTO.amount, user1.bagInStores.first);
-      expect(makePaymentRes.getTag(), true);
-
-      ShoppingBagDTO? shoppingBag =
-          await user1.getCurrShoppingBag(onlineModelID);
-      expect(shoppingBag == null, true); //becuase the payment was succsseful
-
-      DateTime now = DateTime.now();
-      DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
-      expect(purchases.length, 1);
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      List<Tuple2<String, bool>> fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.first.item1, onlineModelID);
+      expect(fav.first.item2, true);
     });
 
-    test('Try to purchase changed product price', () async {
+    test('add to favorite - store is already one', () async {
       var res = await UsersStorageProxy()
           .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
@@ -252,7 +208,7 @@ void main() {
           name: "prod",
           price: 1.23,
           category: "",
-          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
+          imageUrl: null,
           description: "wow",
           storeID: "",
           imageFromPhone: null);
@@ -270,65 +226,35 @@ void main() {
           await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
       String onlineModelID = openStoreRes.getValue();
-      onlineStoreDTO.id = onlineModelID;
 
-      //"login" as the first user and make a purchase from the second user's store
+      //"login" as the first user and add the second user's store to favorites
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
-      CartProductDTO cartProductDTO = CartProductDTO(
-          "",
-          productDTO.name,
-          productDTO.price,
-          "",
-          null,
-          productDTO.description,
-          10,
-          onlineModelID,
-          "");
-      await user1.updateOrCreateCartProduct(productDTO, onlineModelID, 10);
+      var favRes = await user1.addFavoriteStore(onlineModelID, true);
+      expect(favRes.getTag(), true);
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      List<Tuple2<String, bool>> fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.first.item1, onlineModelID);
+      expect(fav.first.item2, true);
 
-      final key = encrypt.Key.fromUtf8(secret.KEY);
-      final iv = encrypt.IV.fromUtf8(secret.IV);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
+      favRes = await user1.addFavoriteStore(onlineModelID, true);
+      expect(favRes.getTag(), false); //already a favorite
 
-      final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
-      String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
-      expect(addCreditCardRes.getTag(), true);
-      String card = addCreditCardRes.getValue();
-
-      //login as the second user and edit product name
-      UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
-      productDTO.price = 1.5;
-      var updateRes = await user2.updateOnlineStore(onlineStoreDTO);
-      expect(updateRes.getTag(), true);
-
-      await Future.delayed(Duration(seconds: 5));
-      //login as the first user and try to make a purchase
-      UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
-      var makePaymentRes = await user1.makePaymentOnlineStore(
-          card,
-          0,
-          cartProductDTO.price * cartProductDTO.amount,
-          user1.bagInStores.first);
-      expect(makePaymentRes.getTag(), true);
-
-      ShoppingBagDTO? shoppingBag =
-          await user1.getCurrShoppingBag(onlineModelID);
-      expect(shoppingBag == null, true); //becuase the payment was succsseful
-
-      DateTime now = DateTime.now();
-      DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
-      expect(purchases.length, 1);
-      expect(purchases[0].creditAmount, 1.23 * 10);
+      //check that the favorite list did not change
+      userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.length, 1);
+      expect(fav.first.item1, onlineModelID);
+      expect(fav.first.item2, true);
     });
 
-    test('Try to purchase deleted product', () async {
+    test('remove favorite - good scenario', () async {
       var res = await UsersStorageProxy()
           .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
@@ -351,7 +277,7 @@ void main() {
           name: "prod",
           price: 1.23,
           category: "",
-          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
+          imageUrl: null,
           description: "wow",
           storeID: "",
           imageFromPhone: null);
@@ -369,65 +295,50 @@ void main() {
           await user2.openOnlineStore(onlineStoreDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
       String onlineModelID = openStoreRes.getValue();
-      onlineStoreDTO.id = onlineModelID;
 
-      //"login" as the first user and make a purchase from the second user's store
+      //"login" as the first user and add the second user's store to favorites, then remove it
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
-      CartProductDTO cartProductDTO = CartProductDTO(
-          "",
-          productDTO.name,
-          productDTO.price,
-          "",
-          null,
-          productDTO.description,
-          10,
-          onlineModelID,
-          "");
-      await user1.updateOrCreateCartProduct(productDTO, onlineModelID, 10);
+      var favRes = await user1.addFavoriteStore(onlineModelID, true);
+      expect(favRes.getTag(), true);
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      List<Tuple2<String, bool>> fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.first.item1, onlineModelID);
+      expect(fav.first.item2, true);
 
-      final key = encrypt.Key.fromUtf8(secret.KEY);
-      final iv = encrypt.IV.fromUtf8(secret.IV);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
+      favRes = await user1.removeFavoriteStore(onlineModelID, true);
+      expect(favRes.getTag(), true);
 
-      final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
-      String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
-      expect(addCreditCardRes.getTag(), true);
-      String card = addCreditCardRes.getValue();
+      userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.length, 0);
+    });
 
-      //login as the second user and edit product name
-      UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
-      onlineStoreDTO.products = [];
-      var updateRes = await user2.updateOnlineStore(onlineStoreDTO);
-      expect(updateRes.getTag(), true);
-
-      await Future.delayed(Duration(seconds: 5));
-      //login as the first user and try to make a purchase
+    test('remove favorite - bad scenario: no such favorite', () async {
+      var res = await UsersStorageProxy()
+          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
-      var makePaymentRes = await user1.makePaymentOnlineStore(
-          card,
-          0,
-          cartProductDTO.price * cartProductDTO.amount,
-          user1.bagInStores.first);
-      expect(makePaymentRes.getTag(), true);
+      expect(res.item2, true); //created new user
+      UserModel firstUser = res.item1;
+      User user1 = User.fromModel(firstUser);
+      await user1.createEWallet();
 
-      ShoppingBagDTO? shoppingBag =
-          await user1.getCurrShoppingBag(onlineModelID);
-      expect(shoppingBag == null, true); //becuase the payment was succsseful
+      var favRes = await user1.removeFavoriteStore("aa", true);
+      expect(favRes.getTag(), false);
 
-      DateTime now = DateTime.now();
-      DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
-      expect(purchases.length, 1);
-    }, timeout: Timeout(Duration(minutes: 2)));
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, false); //no favorites
+    });
   });
 
-  group('Physical purchase from online store', () {
+  group('Favorites - physical store', () {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
         as IntegrationTestWidgetsFlutterBinding;
 
@@ -444,7 +355,7 @@ void main() {
       });
     });
 
-    test('Upgrade to online store & physical purchase from it', () async {
+    test('add to favorite - good scenario', () async {
       var res = await UsersStorageProxy()
           .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
@@ -462,7 +373,7 @@ void main() {
       //"login" as the second user and open an online store
       UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
       await user2.createEWallet();
-      StoreDTO storeDTO = StoreDTO(
+      StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
           name: "test store",
           address: "Ashdod, Israel",
@@ -472,61 +383,154 @@ void main() {
       BankAccountDTO bankAccountDTO =
           BankAccountDTO("Yroz", "987", "207884701");
       var openStoreRes =
-          await user2.openPhysicalStore(storeDTO, bankAccountDTO);
+          await user2.openPhysicalStore(physicalStoreDTO, bankAccountDTO);
       expect(openStoreRes.getTag(), true);
-      String physicalModelID = openStoreRes.getValue();
-      storeDTO.id = physicalModelID;
+      String physicalStoreID = openStoreRes.getValue();
 
-      var upgradeRes = await user2.convertPhysicalStoreToOnline(storeDTO);
-      expect(upgradeRes.getTag(), true);
-      String onlineModelID = upgradeRes.getValue();
+      //"login" as the first user and add the second user's store to favorites
+      UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
+      var favRes = await user1.addFavoriteStore(physicalStoreID, false);
+      expect(favRes.getTag(), true);
 
-      ProductDTO productDTO = ProductDTO(
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      List<Tuple2<String, bool>> fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.first.item1, physicalStoreID);
+      expect(fav.first.item2, false);
+    });
+
+    test('add to favorite - store is already one', () async {
+      var res = await UsersStorageProxy()
+          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
+      UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
+      expect(res.item2, true); //created new user
+      UserModel firstUser = res.item1;
+      User user1 = User.fromModel(firstUser);
+      await user1.createEWallet();
+
+      res = await UsersStorageProxy()
+          .createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
+      expect(res.item2, true); //created new user
+      UserModel secondUser = res.item1;
+      User user2 = User.fromModel(secondUser);
+
+      //"login" as the second user and open an online store
+      UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
+      await user2.createEWallet();
+      StoreDTO physicalStoreDTO = StoreDTO(
           id: "",
-          name: "prod",
-          price: 1.23,
-          category: "",
-          imageUrl: 'https://i.ibb.co/Sw9GgBp/clothes.png',
-          description: "wow",
-          storeID: "",
-          imageFromPhone: null);
-      OnlineStoreDTO onlineStoreDTO = OnlineStoreDTO(
-          id: onlineModelID,
           name: "test store",
           address: "Ashdod, Israel",
           phoneNumber: "+972123456789",
           categories: ["Food"],
-          operationHours: op,
-          products: [productDTO]);
-      var updateRes = await user2.updateOnlineStore(onlineStoreDTO);
-      expect(updateRes.getTag(), true);
+          operationHours: op);
+      BankAccountDTO bankAccountDTO =
+          BankAccountDTO("Yroz", "987", "207884701");
+      var openStoreRes =
+          await user2.openPhysicalStore(physicalStoreDTO, bankAccountDTO);
+      expect(openStoreRes.getTag(), true);
+      String physicalStoreID = openStoreRes.getValue();
 
-      //"login" as the first user and make a purchase from the second user's store
+      //"login" as the first user and add the second user's store to favorites
       UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
+      var favRes = await user1.addFavoriteStore(physicalStoreID, false);
+      expect(favRes.getTag(), true);
 
-      Secret secret =
-          await SecretLoader(secretPath: "assets/secrets.json").load();
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      List<Tuple2<String, bool>> fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.first.item1, physicalStoreID);
+      expect(fav.first.item2, false);
 
-      final key = encrypt.Key.fromUtf8(secret.KEY);
-      final iv = encrypt.IV.fromUtf8(secret.IV);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
+      favRes = await user1.addFavoriteStore(physicalStoreID, false);
+      expect(favRes.getTag(), false); //already a favorite
 
-      final encrypted = encrypter.encrypt("6886 1232 0788 4701", iv: iv);
-      String num = encrypted.base16.toString();
-      var addCreditCardRes =
-          await user1.addCreditCard(num, "10/22", "987", "yroz");
-      expect(addCreditCardRes.getTag(), true);
-      String card = addCreditCardRes.getValue();
+      //check that the favorite list did not change
+      userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.length, 1);
+      expect(fav.first.item1, physicalStoreID);
+      expect(fav.first.item2, false);
+    });
 
-      var makePaymentRes =
-          await user1.makePaymentPhysicalStore(card, 0, 1.23, onlineModelID);
-      expect(makePaymentRes.getTag(), true);
+    test('remove favorite - good scenario', () async {
+      var res = await UsersStorageProxy()
+          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
+      UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
+      expect(res.item2, true); //created new user
+      UserModel firstUser = res.item1;
+      User user1 = User.fromModel(firstUser);
+      await user1.createEWallet();
 
-      DateTime now = DateTime.now();
-      DateTime dayAgo = new DateTime(now.year, now.month, now.day - 1);
-      var purchases =
-          await user1.getSuccssefulPurchaseHistoryForUserInRange(dayAgo, now);
-      expect(purchases.length, 1);
-    }, timeout: Timeout(Duration(minutes: 1)));
+      res = await UsersStorageProxy()
+          .createUser("flowtest2@gmail.com", "test flow2", "https://pic.png");
+      expect(res.item2, true); //created new user
+      UserModel secondUser = res.item1;
+      User user2 = User.fromModel(secondUser);
+
+      //"login" as the second user and open an online store
+      UserAuthenticator().setCurrentUserId("flowtest2@gmail.com");
+      await user2.createEWallet();
+      StoreDTO physicalStoreDTO = StoreDTO(
+          id: "",
+          name: "test store",
+          address: "Ashdod, Israel",
+          phoneNumber: "+972123456789",
+          categories: ["Food"],
+          operationHours: op);
+      BankAccountDTO bankAccountDTO =
+          BankAccountDTO("Yroz", "987", "207884701");
+      var openStoreRes =
+          await user2.openPhysicalStore(physicalStoreDTO, bankAccountDTO);
+      expect(openStoreRes.getTag(), true);
+      String physicalStoreID = openStoreRes.getValue();
+
+      //"login" as the first user and add the second user's store to favorites, then remove it
+      UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
+      var favRes = await user1.addFavoriteStore(physicalStoreID, false);
+      expect(favRes.getTag(), true);
+
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      List<Tuple2<String, bool>> fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.first.item1, physicalStoreID);
+      expect(fav.first.item2, false);
+
+      favRes = await user1.removeFavoriteStore(physicalStoreID, true);
+      expect(favRes.getTag(), true);
+
+      userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, true);
+      fav = UsersStorageProxy.fromJsonToTupleList(
+          userWithFavorites.favoriteStores!);
+      expect(fav.length, 0);
+    });
+
+    test('remove favorite - bad scenario: no such favorite', () async {
+      var res = await UsersStorageProxy()
+          .createUser("flowtest@gmail.com", "test flow", "https://pic.png");
+      UserAuthenticator().setCurrentUserId("flowtest@gmail.com");
+      expect(res.item2, true); //created new user
+      UserModel firstUser = res.item1;
+      User user1 = User.fromModel(firstUser);
+      await user1.createEWallet();
+
+      var favRes = await user1.removeFavoriteStore("aa", false);
+      expect(favRes.getTag(), false);
+
+      var userWithFavorites = await UsersStorageProxy().getUser(user1.email!);
+      expect(userWithFavorites != null, true);
+      expect(userWithFavorites!.favoriteStores != null, false); //no favorites
+    });
   });
 }

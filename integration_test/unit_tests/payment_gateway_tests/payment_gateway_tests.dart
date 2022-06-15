@@ -6,11 +6,23 @@ import 'package:integration_test/integration_test.dart';
 
 import 'package:encrypt/encrypt.dart' as encrypt;
 
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+
 void main() {
   final internalPaymentGateway = InternalPaymentGateway();
 
   IntegrationTestWidgetsFlutterBinding
       .ensureInitialized(); // to make the tests work
+
+  DateTime _getPSTTime() {
+    tz.initializeTimeZones();
+
+    final DateTime now = DateTime.now();
+    final pacificTimeZone = tz.getLocation('Asia/Jerusalem');
+
+    return tz.TZDateTime.from(now, pacificTimeZone);
+  }
 
   group('create user account', () {
     final userId = "unittest";
@@ -907,8 +919,8 @@ void main() {
   });
 
   group('purchase history', () {
-    final userId = "unittest-user" + DateTime.now().toString();
-    final storeId = "unittest-store" + DateTime.now().toString();
+    final userId = "unittest-user" + _getPSTTime().toString();
+    final storeId = "unittest-store" + _getPSTTime().toString();
     String? bankToken, creditToken, walletToken, paymentToken;
 
     setUpAll(() {
@@ -962,8 +974,8 @@ void main() {
     });
 
     test('good scenario', () async {
-      DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
-      DateTime now = DateTime.now();
+      DateTime now = _getPSTTime();
+      DateTime yesterday = now.subtract(const Duration(days: 1));
       final result = await internalPaymentGateway.getPurchaseHistory(
           yesterday, now,
           userId: userId, storeId: storeId, succeeded: true);
@@ -973,8 +985,8 @@ void main() {
     });
 
     test('sad scenario - no such purchase history', () async {
-      DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
-      DateTime now = DateTime.now();
+      DateTime now = _getPSTTime();
+      DateTime yesterday = now.subtract(const Duration(days: 1));
       final result = await internalPaymentGateway.getPurchaseHistory(
           yesterday, now,
           userId: userId, storeId: storeId, succeeded: false);
