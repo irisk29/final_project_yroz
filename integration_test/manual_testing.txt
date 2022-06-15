@@ -1,0 +1,11 @@
+Manual tests plan:
+
+We conducted manual tests for many of the aspects of the project.
+
+Most of our user input constraints are only able to be checked via the UI as the constraints are part of the user interface code.
+
+Therefore, we had to go through every screen and form that has such constraints to check the values are enforced.
+
+Moreover, we have tested that our UI widgets do not overflow in many cellular devices.
+
+Furthermore, to conduct a full physical purchase, there have to be two cellphones so these were also tested manually.
