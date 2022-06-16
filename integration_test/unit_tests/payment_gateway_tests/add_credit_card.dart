@@ -1,0 +1,93 @@
+import 'package:final_project_yroz/InternalPaymentGateway/InternalPaymentGateway.dart';
+import 'package:final_project_yroz/LogicLayer/Secret.dart';
+import 'package:final_project_yroz/LogicLayer/SecretLoader.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
+import 'package:encrypt/encrypt.dart' as encrypt;
+
+void main() {
+  final internalPaymentGateway = InternalPaymentGateway();
+
+  IntegrationTestWidgetsFlutterBinding
+      .ensureInitialized(); // to make the tests work
+
+  group('add credit card', () {
+    final userId = "unittest";
+
+    setUpAll(() {
+      return Future(() async {
+        await internalPaymentGateway.createUserAccount(userId);
+      });
+    });
+
+    tearDownAll(() {
+      return Future(() async {
+        await internalPaymentGateway.deleteUserAccount(userId);
+      });
+    });
+
+    Future<String> encryptCreditNumber(String cardNumber) async {
+      Secret secret =
+          await SecretLoader(secretPath: "assets/secrets.json").load();
+
+      final key = encrypt.Key.fromUtf8(secret.KEY);
+      final iv = encrypt.IV.fromUtf8(secret.IV);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key, padding: null));
+
+      final encrypted = encrypter.encrypt(cardNumber, iv: iv);
+      return encrypted.base16.toString();
+    }
+
+    test('good scenario', () async {
+      String cardNumber =
+          "6886 1232 0788 4701"; // card number exists in the repo
+      String expiryDate = "10/22";
+      String cvv = "987";
+      String cardHolder = "Yroz";
+
+      String encryptedCardNumber = await encryptCreditNumber(cardNumber);
+      final result = await internalPaymentGateway.addUserCreditCard(
+          userId, encryptedCardNumber, expiryDate, cvv, cardHolder);
+      expect(result.getTag(), true);
+      expect(result.getValue() != null, true); // must get a token back
+
+      await internalPaymentGateway.removeUserCreditCard(
+          userId, result.getValue()!);
+    });
+
+    test('sad scenario - invalid card', () async {
+      String cardNumber =
+          "6886 1232 0788 4700"; // card number not exists in the repo
+      String expiryDate = "10/22";
+      String cvv = "987";
+      String cardHolder = "Yroz";
+
+      String encryptedCardNumber = await encryptCreditNumber(cardNumber);
+      final result = await internalPaymentGateway.addUserCreditCard(
+          userId, encryptedCardNumber, expiryDate, cvv, cardHolder);
+      expect(result.getTag(), false);
+    });
+
+    test('sad scenario - adding same card twice', () async {
+      String cardNumber = "6886 1232 0788 4701";
+      String expiryDate = "10/22";
+      String cvv = "987";
+      String cardHolder = "Yroz";
+
+      String encryptedCardNumber = await encryptCreditNumber(cardNumber);
+      var result = await internalPaymentGateway.addUserCreditCard(
+          userId, encryptedCardNumber, expiryDate, cvv, cardHolder);
+      expect(result.getTag(), true);
+      expect(result.getValue() != null, true); // must get a token back
+
+      final cardToken = result.getValue()!;
+
+      result = await internalPaymentGateway.addUserCreditCard(
+          userId, encryptedCardNumber, expiryDate, cvv, cardHolder);
+      expect(result.getTag(), false); // cannot add the same card twice
+
+      await internalPaymentGateway.removeUserCreditCard(userId, cardToken);
+    });
+  });
+}
